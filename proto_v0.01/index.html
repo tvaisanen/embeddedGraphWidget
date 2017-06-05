@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header" id="header">
+        GraphID: 23GJ3SJ5K, Modified by: J.Doe, Date: 2.6.2017
+    </div>
+
+    <div class="tool-panel" id="tool-panel">
+        Status: <span id="graph-state">Initial state</span>
+        <select id="layout-options">
+            <option value="cola">cola</option>
+            <option value="breadthfirst">breadth first</option>
+            <option value="circle">circle</option>
+            <option value="concentric">concentric</option>
+            <option value="cose">cose</option>
+            <option value="grid">grid</option>
+            <option value="random">random</option>
+        </select>
+        <button id="run-layout-button">Set Layout</button>
+        <button id="download-graph-button">Save Image</button>
+    </div>
+
+    <div class="content">
+        <div class="panel" id="cy-panel">
+            <div class="browser-nav">
+                <div class="browser-nav-item__active">Graphs</div>
+                <div class="browser-nav-item">Elements</div>
+                <div class="browser-nav-item">Styles</div>
+
+            </div>
+            <hr>
+            <ol id="category-list" style="display-inside:block"></ol>
+        </div>
+        <div class="graph-canvas" id="cy" style=""></div>
+    </div>
+
+
+    <div class="footer" id="footer">
+        <button id="load-graphs-button">Load Graphs</button>
+
+        <span>name:</span>
+        <input id="graph-query" type="text" name="graphquery"><br>
+        <button id="load-graph-button">Load Graph</button>
+
+        <span>name:</span>
+        <input id="graph-name" type="text" name="firstname"><br>
+
+        <button id="save-graph-button">Save Graph</button>
+    </div>
+</div>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.0.0/cytoscape.js'></script>
+<script src='https://rawgit.com/cytoscape/cytoscape.js-cola/master/cola.js'></script>
+<script type='text/javascript' src='https://rawgit.com/cytoscape/cytoscape.js-cola/master/cytoscape-cola.js'></script>
+<script src='embeddedGraphWidget.js'></script>
+
+
+</body>
+</html>

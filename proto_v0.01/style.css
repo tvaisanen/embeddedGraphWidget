@@ -1,0 +1,81 @@
+
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    width:95vw;
+    background-color: #1976D2;
+    color: #ffffff;
+    text-indent: 10px;
+}
+
+.tool-panel {
+    width:95vw;
+    background-color: #BBDEFB;
+    color: #000000;
+    text-indent: 10px;
+}
+
+
+
+.content {
+    display: flex;
+    flex-direction: row;
+}
+
+.graph-canvas {
+    width:70vw;
+    height:80vh;
+    background-color:#E3F2FD;
+}
+
+.panel {
+    width:25vw;
+    height:80vh;
+    background-color:#90CAF9;
+    word-wrap: break-word;
+    overflow: auto;
+}
+
+.footer {
+    display: flex;
+    width:95vw;
+    background-color:#1976D2;
+    color: white;
+    justify-content: flex-end;
+}
+
+.browser-nav {
+    display: flex;
+    flex-direction: row;
+    margin: auto;
+    flex-flow: row wrap;
+    justify-content: space-around;
+
+}
+.browser-nav-item {
+    padding-left: 3px;
+    padding-right: 3px;
+}
+
+.browser-nav-item__active {
+    text-decoration: underline;
+}
+
+::-webkit-scrollbar
+{
+  width: 4px;  /* for vertical scrollbars */
+  height: 4px; /* for horizontal scrollbars */
+}
+
+::-webkit-scrollbar-track
+{
+  background: #BBDEFB;
+}
+
+::-webkit-scrollbar-thumb
+{
+  background: #0D47A1;
+}
