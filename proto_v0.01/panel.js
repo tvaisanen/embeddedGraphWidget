@@ -3,42 +3,54 @@
  */
 var d = document;
 
-
-var containerProps = {
-    containerId: "panel-container",
-    content: {
-        graphs: {label: "Graphs", active: true, data: "Data for graphs"},
-        elements: {label: "Elements", active: false, data: "Data for elements"},
-        styles: {label: "Styles", active: false, data: "Data for styles"}
-    }
-};
-
 var panel = (function () {
 
     var props;
 
-    function renderGraphsContent(content){
+    function renderGraphsContent(content) {
         var div = document.createElement('div');
         div.innerHTML = content.data;
-        console.debug(div);
+
         return div;
     }
 
-    function renderElementsContent(content){
+    function renderElementsContent() {
+        var content = props.content.elements;
         var div = document.createElement('div');
         div.innerHTML = content.data;
-        console.debug(div);
+
         return div;
     }
 
-    function renderStylesContent(content){
+    function renderStylesContent() {
+        console.group("renderStylesContent()");
+
+        var content = props.content.styles;
         var div = document.createElement('div');
-        div.innerHTML = content.data;
+        var ul = document.createElement('ul');
+
+        console.log(content);
+        content.styles.forEach(function (style) {
+
+            // get the style
+            var categoryStyle = {};
+
+            console.debug(style);
+            var li = document.createElement('li');
+            li.innerHTML = style;
+            ul.appendChild(li);
+
+
+        });
+        div.appendChild(ul);
         console.debug(div);
+        console.groupEnd();
+
         return div;
     }
 
-    function handleNavClick(event, keyToActivate, navLinks){
+
+    function handleNavClick(event, keyToActivate, navLinks) {
 
         var links = Object.keys(navLinks);
         links.forEach(function (key) {
@@ -46,24 +58,26 @@ var panel = (function () {
         });
 
         navLinks[keyToActivate].active = true;
-        console.debug('handleNavClick()');
+
         updatePanel();
     }
 
-    function renderNavigation(navLinks){
+    function renderNavigation(navLinks) {
 
         var divNav = document.createElement('div');
         divNav.id = "panel-nav";
         var links = Object.keys(navLinks);
 
-        links.forEach(function(key) {
-            console.log(key);
+        links.forEach(function (key) {
+
             var link = navLinks[key];
             var divLink = d.createElement('div');
-            if (link.active){
-                divLink.classList.add("browser-nav-item__active");
+
+            if (link.active) {
+                divLink.classList.add("browser-nav__item--active");
+
             } else {
-                divLink.classList.add("browser-nav-item__inactive");
+                divLink.classList.add("browser-nav__item--inactive");
                 divLink.addEventListener('click', function (event) {
                     handleNavClick(event, key, navLinks);
                 });
@@ -75,20 +89,19 @@ var panel = (function () {
 
         divNav.classList.add("browser-nav");
 
-        console.debug('renderNavigation()');
         return divNav;
     }
 
-    function updatePanel(){
-        console.debug('updatePanel()');
+    function updatePanel() {
+
         var divNav = d.getElementById('panel-nav');
         var divContent = d.getElementById('panel-content');
 
-        divNav.childNodes.forEach(function(child){
+        divNav.childNodes.forEach(function (child) {
             divNav.remove(child);
         });
 
-        divContent.childNodes.forEach(function(child){
+        divContent.childNodes.forEach(function (child) {
             divContent.remove(child);
         });
 
@@ -97,7 +110,7 @@ var panel = (function () {
         renderContent();
     }
 
-    function changeContentView(){
+    function changeContentView() {
 
     }
 
@@ -122,7 +135,6 @@ var panel = (function () {
         }
 
 
-
         return divContent;
 
     }
@@ -131,7 +143,7 @@ var panel = (function () {
         props = initProps;
     }
 
-    function renderPanel(){
+    function renderPanel() {
         var content = props.content;
         var container = document.getElementById(props.containerId);
         container.appendChild(renderNavigation(content));
@@ -143,9 +155,12 @@ var panel = (function () {
         render: function (props) {
             setProps(props);
             renderPanel();
+        },
+
+        updateStylesContent: function (newCategories, styles) {
+            renderStylesContent(newCategories, styles);
         }
     }
 
 })();
 
-panel.render(containerProps);

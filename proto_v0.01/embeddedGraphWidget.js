@@ -3,11 +3,30 @@
  */
 console.info('Initializing cytoscape element..');
 
+var containerProps = {
+    containerId: "panel-container",
+    content: {
+        graphs: {label: "Graphs", active: true, data: "Data for graphs"},
+        elements: {label: "Elements", active: false, data: "Data for elements"},
+        styles: {
+            label: "Styles",
+            active: false,
+            styles: [
+                'style1',
+                'style2'
+            ]
+        }
+    }
+};
+
+
 var configs = {
 
     // This is a proxy server for development
     API_PATH: 'http://127.0.0.1:5000/'
 };
+
+
 
 var gwClient = (function () {
     /*
@@ -39,9 +58,7 @@ var gwClient = (function () {
     }
 
     function fetchNode(pagename) {
-    /*
-     *        Use with GraphinWiki getGraphJSON -action
-     *
+        /*
      *        Example response
      *
      *        GET http://localhost/?action=getGraphJSON&pagename=personA
@@ -106,6 +123,7 @@ var gwClient = (function () {
         console.groupCollapsed('Debugging gwClient.fetchNode()');
         console.debug(requestUrl);
         console.debug(nodeRequest);
+        console.groupEnd();
         return fetch(nodeRequest).then(function (response) { return validateResponse(response); });
     }
 
@@ -125,9 +143,12 @@ var gwClient = (function () {
 
 })();
 
-
-
 gwClient.setConfigs(configs);
+
+
+
+
+
 
 var lineStyleOptions = {
     'width': 'integer',
@@ -150,77 +171,14 @@ function arrayContains(array, value) {
     return array.indexOf(value) !== -1;
 }
 
-function styleList(style) {
-    var ul = document.createElement('ul');
-    // ul.className = 'category-style-parameter-list';
-    console.groupCollapsed('styleList -function');
-    console.debug(style);
-    console.debug(style.selector);
-    console.debug(style.style);
-    var styles = style.style;
-    var styleKeyValues = Object.keys(styles).map(function (key) {
-        return {key: key, value: styles[key]};
-    });
-    styleKeyValues.forEach(function (style) {
-        var li = document.createElement('li');
-        var str = style.key + " : " + style.value;
-        li.innerHTML = li.innerHTML + str;
-        ul.appendChild(li);
-    });
-    console.debug(ul);
-    console.groupEnd();
-    return ul;
-}
 
-function categoryListElement(category, style) {
-    var li = document.createElement('li');
-    var div = document.createElement('div');
-    div.appendChild(styleList(style));
-    li.innerHTML = li.innerHTML + category;
-    li.appendChild(div);
-    return li;
-}
+
 
 function categoryList(categories, styles) {
 
 }
 
-function renderStyles(containerId, newCategories, styles) {
 
-    var container = document.getElementById(containerId);
-
-    var categoryList = document.createElement('section');
-    categoryList.setAttribute('id', 'category-list');
-
-    var ul = document.createElement('ul');
-
-    container.appendChild(categoryList);
-    categoryList.appendChild(ul);
-
-    newCategories.forEach(function (category) {
-
-        // get the style
-        var categoryStyle = {};
-        console.groupCollapsed("Style Debug!");
-        console.debug(category);
-        styles.forEach(function (style) {
-            /*
-             * edge._notype == gwikicategory
-             * false
-             * edge.gwikicategory == gwikicategory
-             * true
-             * */
-            if (style.selector.endsWith(category)) {
-                categoryStyle = style;
-                console.debug(style);
-            }
-        });
-
-        ul.appendChild(categoryListElement(category, categoryStyle));
-        // li.innerHTML = li.innerHTML + category + JSON.stringify(categoryStyle);
-        console.groupEnd();
-    });
-}
 
 function updateCategories(newCategories) {
     /*
@@ -241,89 +199,8 @@ function updateCategories(newCategories) {
         }
     });
 
-    renderStyles('cy-panel', newUniqueCategories, cy.style().json());
+    panel.updateStylesContent(newUniqueCategories, cy.style().json());
 
-}
-
-function fetchNode(path, pagename) {
-    /*
-     *        Example response
-     *
-     *        GET http://localhost/?action=getGraphJSON&pagename=personA
-     *
-     *        -- response --
-     *        200 OK
-     *        Date:  Wed, 31 May 2017 09:39:36 GMT
-     *        Server:  Apache/2.4.18 (Ubuntu)
-     *        Vary:  Cookie,User-Agent,Accept-Language
-     *        Set-Cookie:  MOIN_SESSION_80_ROOT=9b96593c92f886182f30993f6657a1c5f05c94f4; Expires=Sat, 29-May-2027 09:39:00 GMT; Max-Age=315360000; Path=/
-     *        Content-Length:  780
-     *        Keep-Alive:  timeout=5, max=100
-     *        Connection:  Keep-Alive
-     *        Content-Type:  application/json
-     *
-     *        {
-     *            "debug": "<AllContext ['AllContext']>",
-     *            "data": {
-     *                "in": {
-     *                    "_notype": [
-     *                        "TestUser",
-     *                        "organizationA",
-     *                        "personB"
-     *                    ]
-     *                },
-     *                "acl": "",
-     *                "meta": {
-     *                    "foo": [
-     *                        "[[bar]]"
-     *                    ]
-     *                },
-     *                "mtime": 1496140265.359017,
-     *                "saved": true,
-     *                "out": {
-     *                    "_notype": [
-     *                        "organizationA",
-     *                        "CategoryCategory",
-     *                        "CategoryAsd"
-     *                    ],
-     *                    "gwikicategory": [
-     *                        "CategoryCategory",
-     *                        "CategoryAsd"
-     *                    ],
-     *                    "foo": [
-     *                        "bar"
-     *                    ]
-     *                }
-     *            },
-     *            "response_time": 0.000621795654296875
-     *        }
-     *
-     * */
-    var developmentPath = 'http://127.0.0.1:5000/' + pagename
-    var nodeRequest = new Request(developmentPath, {
-        headers: new Headers({
-            'Content-Type': 'application/json',
-            'Origin': 'http://localhost'
-        }),
-        method: 'GET',
-        mode: 'cors'
-    });
-    console.info(nodeRequest);
-    var response = null;
-    return fetch(nodeRequest).then(function (resp) {
-
-        console.debug(resp.status);
-        if (resp.status >= 200 && resp.status < 300) {
-            var json = resp.json(); // there's always a body
-            console.debug(json);
-            console.debug(resp.ok);
-            return json;
-        } else {
-            return json.then(Promise.reject.bind(Promise));
-        }
-
-
-    });
 }
 
 
@@ -455,9 +332,12 @@ cy.on('tap', 'node', function (evt) {
         try {
 
             console.debug('node.data: ' + JSON.stringify(node.data.out));
-
+            console.debug(node.data.out);
             // update existing categories with new ones
             var newCategoriesIn = [];
+
+
+
             for (var k in node.data.out) newCategoriesIn.push(k);
             updateCategories(newCategoriesIn);
 
@@ -510,12 +390,13 @@ cy.on('tap', 'node', function (evt) {
 
                     cy.add(newEdge);
                     var e = cy.getElementById(edgeId);
-
+                    console.group("Debugging edge classes");
                     console.info(e.id() + " gets class: " + category);
                     console.info("classes: ");
                     console.info(e.classes());
                     e.addClass(category);
                     console.info(e.id() + "HAS CLASS " + category + ": " + e.hasClass(category));
+                    console.groupEnd();
                 })
             });
 
@@ -617,7 +498,7 @@ function handleLoadGraph() {
         headers: new Headers({
             'Content-Type': 'application/json'
         }),
-        method: 'get',
+        method: 'get'
     });
     console.debug(loadGraphRequest);
     var promise = fetch(loadGraphRequest);
@@ -690,11 +571,7 @@ function renderBrowserContent(active, containerId, newCategories, styles) {
 
 
 
-
-function graphWidget(containerId){
-
-}
-
+panel.render(containerProps);
 
 
 
