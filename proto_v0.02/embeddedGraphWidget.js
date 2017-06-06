@@ -1,15 +1,249 @@
 /**
- * Created by toni on 31.5.2017.
+ * Created by Toni Väisänen on 5.6.2017.
  */
-console.info('Initializing cytoscape element..');
+var configs = {
+
+    // This is a proxy server for development
+    API_PATH: 'http://127.0.0.1:5000/'
+};
+
+
+var gwClient = (function () {
+    /*
+    * Client for requesting and posting data to graphing wiki
+    *
+    *
+    * */
+
+    // private methods
+    var configs = {};
+
+    function setConfiguration(configuration) {
+        configs = configuration;
+    }
+
+    function validateResponse(response) {
+        if (response.status >= 200 && response.status < 300) {
+            console.info("response status [200, 300]");
+            var json = response.json();
+            var responseData = json.data;
+            return json;
+        } else {
+            console.debug(response);
+            console.groupEnd();
+            return json.then(Promise.reject.bind(Promise));
+        }
+    }
+
+    function fetchNode(pagename) {
+        /*
+     *        Example response
+     *
+     *        GET http://localhost/?action=getGraphJSON&pagename=personA
+     *
+     *        -- response --
+     *        200 OK
+     *        Date:  Wed, 31 May 2017 09:39:36 GMT
+     *        Server:  Apache/2.4.18 (Ubuntu)
+     *        Vary:  Cookie,User-Agent,Accept-Language
+     *        Set-Cookie:  MOIN_SESSION_80_ROOT=9b96593c92f886182f30993f6657a1c5f05c94f4; Expires=Sat, 29-May-2027 09:39:00 GMT; Max-Age=315360000; Path=/
+     *        Content-Length:  780
+     *        Keep-Alive:  timeout=5, max=100
+     *        Connection:  Keep-Alive
+     *        Content-Type:  application/json
+     *
+     *        {
+     *            "debug": "<AllContext ['AllContext']>",
+     *            "data": {
+     *                "in": {
+     *                    "_notype": [
+     *                        "TestUser",
+     *                        "organizationA",
+     *                        "personB"
+     *                    ]
+     *                },
+     *                "acl": "",
+     *                "meta": {
+     *                    "foo": [
+     *                        "[[bar]]"
+     *                    ]
+     *                },
+     *                "mtime": 1496140265.359017,
+     *                "saved": true,
+     *                "out": {
+     *                    "_notype": [
+     *                        "organizationA",
+     *                        "CategoryCategory",
+     *                        "CategoryAsd"
+     *                    ],
+     *                    "gwikicategory": [
+     *                        "CategoryCategory",
+     *                        "CategoryAsd"
+     *                    ],
+     *                    "foo": [
+     *                        "bar"
+     *                    ]
+     *                }
+     *            },
+     *            "response_time": 0.000621795654296875
+     *        }
+     *
+     * */
+
+        var requestUrl = configs.API_PATH + pagename;
+
+        var nodeRequest = new Request(requestUrl, {
+            headers: new Headers({
+                'Content-Type': 'application/json'
+            }),
+            method: 'GET'
+        });
+        console.groupCollapsed('Debugging gwClient.fetchNode()');
+        console.debug(requestUrl);
+        console.debug(nodeRequest);
+        return fetch(nodeRequest).then(function (response) { return validateResponse(response); });
+    }
+
+
+    // public methods
+    return {
+
+        setConfigs: function(configs){
+            setConfiguration(configs);
+        },
+
+        getNodeData: function (pagename) {
+            // remember to use getNodeData(pagename).then( ... do stuff )
+            return fetchNode(pagename);
+        }
+    }
+
+})();
+
+var EmbeddedGraphWidget = {
+
+    cy: cytoscape({
+    container: document.getElementById('cy'),
+    elements: [{group: 'nodes', data: {id: 'personA'}}],
+    style: [ // the stylesheet for the graph
+        {
+            selector: 'node',
+            style: {
+                'background-color': '#666',
+                'label': 'data(id)'
+            }
+        },
+
+        {
+            selector: 'edge',
+            style: {
+                'width': 3,
+                'line-color': '#ccc',
+                'target-arrow-color': '#ccc',
+                'target-arrow-shape': 'triangle',
+                'curve-style': 'bezier',
+                'overlay-padding': 1
+            }
+        },
+
+        {
+            selector: 'edge.foo',
+            style: {
+                'width': 3,
+                'line-color': '#cc1244',
+                'line-style': 'dashed',
+                'target-arrow-color': '#000000',
+                'target-arrow-shape': 'triangle',
+                'curve-style': 'bezier'
+            }
+        },
+
+        {
+            selector: 'edge._notype',
+            style: {
+                'width': 3,
+                'line-color': '#002fcc',
+                'line-style': 'dotted',
+                'target-arrow-color': '#ffffff',
+                'target-arrow-shape': 'triangle',
+                'curve-style': 'bezier'
+            }
+        },
+
+        {
+            selector: 'edge.gwikicategory',
+            style: {
+                'width': 3,
+                'line-color': '#0fcc12',
+                'line-style': 'dotted',
+                'target-arrow-color': '#ffffff',
+                'target-arrow-shape': 'triangle',
+                'curve-style': 'bezier'
+            }
+        }
+    ]
+        
+    }),
+
+    setAndRunLayout: function() {
+        console.info("running 'setAndRunLayout()'-function")
+        var layoutOption = document.querySelector('#layout-options').value;
+        var layout = cy.makeLayout({name: layoutOption})
+        layout.run();
+    },
+
+    getStyleList: function (style) {
+        /*
+        * Method for generating HTML list of style parameters of a category
+        * param: style cy.style() -object
+        *
+        *   style = {
+        *      selector:"group.category"
+        *      style: Object
+        *      curve-style: "bezier"
+        *      line-color: "#002fcc"
+        *      line-style: "dotted"
+        *      target-arrow-color: "#ffffff"
+        *      target-arrow-shape: "triangle"
+        *      width: "3px"
+        * */
+        var ul = document.createElement("ul");
+        var styles = style.style;
+        var styleKeyValues = Object.keys(styles).map(function (key) {
+            return {key: key, value: styles[key]};
+        });
+
+        styleKeyValues.forEach(function (style) {
+            var li = document.createElement('li');
+            var str = style.key + " : " + style.value;
+            li.innerHTML = li.innerHTML + str;
+            ul.appendChild(li);
+        });
+
+        return ul;
+    },
+
+    eventHandler: function (event) {
+        this.doSomething(event.target.id);
+    },
+
+    doSomething: function (id) {
+        console.log(id);
+    }
+};
+/*
+addListener(element, "click", function (event) {
+    EmbeddedGraphWidget.eventHandler(event);
+});
+
 
 var lineStyleOptions = {
-    'width': 'integer',
-    'line-color': 'rgb',
-    'line-style': [],
-    'target-arrow-color': 'rgb',
-    'target-arrow-shape': [],
-    'curve-style': []
+    "width": "integer",
+    "line-color": "rgb",
+    "line-style": [],
+    "target-arrow-color": "rgb",
+    "target-arrow-shape": [],
+    "curve-style": []
 };
 
 
@@ -17,17 +251,19 @@ var lineStyleOptions = {
  store link categories
  update when new nodes are added
  */
+/*
 var categories = [];
 
 
 function arrayContains(array, value) {
+    "use strict";
     return array.indexOf(value) !== -1;
 }
 
 function styleList(style) {
-    var ul = document.createElement('ul');
-    // ul.className = 'category-style-parameter-list';
-    console.groupCollapsed('styleList -function');
+    var ul = document.createElement("ul");
+    // ul.className = "category-style-parameter-list";
+    console.groupCollapsed("styleList -function");
     console.debug(style);
     console.debug(style.selector);
     console.debug(style.style);
@@ -119,156 +355,8 @@ function updateCategories(newCategories) {
 
 }
 
-function fetchNode(path, pagename) {
-    /*
-     *        Example response
-     *
-     *        GET http://localhost/?action=getGraphJSON&pagename=personA
-     *
-     *        -- response --
-     *        200 OK
-     *        Date:  Wed, 31 May 2017 09:39:36 GMT
-     *        Server:  Apache/2.4.18 (Ubuntu)
-     *        Vary:  Cookie,User-Agent,Accept-Language
-     *        Set-Cookie:  MOIN_SESSION_80_ROOT=9b96593c92f886182f30993f6657a1c5f05c94f4; Expires=Sat, 29-May-2027 09:39:00 GMT; Max-Age=315360000; Path=/
-     *        Content-Length:  780
-     *        Keep-Alive:  timeout=5, max=100
-     *        Connection:  Keep-Alive
-     *        Content-Type:  application/json
-     *
-     *        {
-     *            "debug": "<AllContext ['AllContext']>",
-     *            "data": {
-     *                "in": {
-     *                    "_notype": [
-     *                        "TestUser",
-     *                        "organizationA",
-     *                        "personB"
-     *                    ]
-     *                },
-     *                "acl": "",
-     *                "meta": {
-     *                    "foo": [
-     *                        "[[bar]]"
-     *                    ]
-     *                },
-     *                "mtime": 1496140265.359017,
-     *                "saved": true,
-     *                "out": {
-     *                    "_notype": [
-     *                        "organizationA",
-     *                        "CategoryCategory",
-     *                        "CategoryAsd"
-     *                    ],
-     *                    "gwikicategory": [
-     *                        "CategoryCategory",
-     *                        "CategoryAsd"
-     *                    ],
-     *                    "foo": [
-     *                        "bar"
-     *                    ]
-     *                }
-     *            },
-     *            "response_time": 0.000621795654296875
-     *        }
-     *
-     * */
-    var developmentPath = 'http://127.0.0.1:5000/' + pagename
-    var nodeRequest = new Request(developmentPath, {
-        headers: new Headers({
-            'Content-Type': 'application/json',
-            'Origin': 'http://localhost'
-        }),
-        method: 'GET',
-        mode: 'cors'
-    });
-    console.info(nodeRequest);
-    var response = null;
-    return fetch(nodeRequest).then(function (resp) {
-
-        console.debug(resp.status);
-        if (resp.status >= 200 && resp.status < 300) {
-            var json = resp.json(); // there's always a body
-            console.debug(json);
-            console.debug(resp.ok);
-            return json;
-        } else {
-            return json.then(Promise.reject.bind(Promise));
-        }
 
 
-    });
-}
-
-
-/* If graph_json hasn't been initialized correctly
- *  Initialize it by loading the nodes
- */
-if (typeof graph_json === 'undefined') {
-    // window.alert("This feature is still under development. Unfortunately this page isn't yet supported.");
-}
-
-var cy = cytoscape({
-    container: document.getElementById('cy'),
-    elements: [{group: 'nodes', data: {id: 'personA'}}],
-    style: [ // the stylesheet for the graph
-        {
-            selector: 'node',
-            style: {
-                'background-color': '#666',
-                'label': 'data(id)'
-            }
-        },
-
-        {
-            selector: 'edge',
-            style: {
-                'width': 3,
-                'line-color': '#ccc',
-                'target-arrow-color': '#ccc',
-                'target-arrow-shape': 'triangle',
-                'curve-style': 'bezier',
-                'overlay-padding': 1
-            }
-        },
-
-        {
-            selector: 'edge.foo',
-            style: {
-                'width': 3,
-                'line-color': '#cc1244',
-                'line-style': 'dashed',
-                'target-arrow-color': '#000000',
-                'target-arrow-shape': 'triangle',
-                'curve-style': 'bezier',
-            }
-        },
-
-        {
-            selector: 'edge._notype',
-            style: {
-                'width': 3,
-                'line-color': '#002fcc',
-                'line-style': 'dotted',
-                'target-arrow-color': '#ffffff',
-                'target-arrow-shape': 'triangle',
-                'curve-style': 'bezier',
-            }
-        },
-
-        {
-            selector: 'edge.gwikicategory',
-            style: {
-                'width': 3,
-                'line-color': '#0fcc12',
-                'line-style': 'dotted',
-                'target-arrow-color': '#ffffff',
-                'target-arrow-shape': 'triangle',
-                'curve-style': 'bezier',
-            }
-        }
-    ],
-});
 
 // initialize download image link
 
@@ -289,12 +377,7 @@ downloadGraphButton.addEventListener('click', downloadGraphPNG);
 
 // initialize run layout button action
 
-function setAndRunLayout() {
-    console.info("running 'setAndRunLayout()'-function")
-    var layoutOption = document.querySelector('#layout-options').value;
-    var layout = cy.makeLayout({name: layoutOption})
-    layout.run();
-}
+
 
 var runLayoutButton = document.querySelector('#run-layout-button');
 runLayoutButton.addEventListener('click', setAndRunLayout);
@@ -303,157 +386,10 @@ function addNode(node) {
     cy.add(node);
 }
 
-cy.on('tap', 'node', function (evt) {
 
-    var node = evt.target;
-
-    var posX = node.position().x;
-    var posY = node.position().y;
-
-    var nodeId = node.id();
-    var newNodes = [];
-
-    var nodePromise = fetchNode('', nodeId);
-
-
-    nodePromise.then(function (node) {
-
-        console.info('Inside promises THEN');
-        console.info(nodePromise);
-        console.info(node);
-
-
-        try {
-
-            console.debug('node.data: ' + JSON.stringify(node.data.out));
-
-            // update existing categories with new ones
-            var newCategoriesIn = [];
-            for (var k in node.data.out) newCategoriesIn.push(k);
-            updateCategories(newCategoriesIn);
-
-
-            newCategoriesIn.forEach(function (category) {
-                /*
-                 *  Iterate the outgoing connections for each category
-                 *
-                 * */
-                var nodesConnectedTo = node.data.out[category];
-                console.groupCollapsed('Iterating outgoing edges');
-                console.info('category: ' + category);
-                console.info('connected to: ' + nodesConnectedTo);
-                console.groupEnd();
-                nodesConnectedTo.forEach(function (node) {
-                    console.groupCollapsed('Creating new node with connection');
-                    try {
-                        var exists = cy.getElementById(node).isNode();
-                        console.info(node + " is already in the graph: " + exists);
-                    } catch (error) {
-                        console.error(error);
-                    }
-
-                    console.groupEnd();
-                    // Create new node if the node does not exist yet
-                    if (!cy.getElementById(node).isNode()) {
-                        console.info()
-                        var newNode = {
-                            group: 'nodes',
-                            data: {
-                                id: node,
-                                position: {
-                                    x: posX + Math.floor((Math.random() * 100) + 1) - 50,
-                                    y: posY + Math.floor((Math.random() * 100) + 1) - 50
-                                }
-                            }
-                        };
-                        cy.add(newNode);
-                    }
-                    var edgeId = nodeId + "_to_" + node;
-                    var newEdge = {
-                        group: 'edges',
-                        data: {
-                            id: nodeId + "_to_" + node,
-                            category: category,
-                            source: nodeId,
-                            target: node
-                        }
-                    };
-
-                    cy.add(newEdge);
-                    var e = cy.getElementById(edgeId);
-
-                    console.info(e.id() + " gets class: " + category);
-                    console.info("classes: ");
-                    console.info(e.classes());
-                    e.addClass(category);
-                    console.info(e.id() + "HAS CLASS " + category + ": " + e.hasClass(category));
-                })
-            });
-
-            var newCategoriesOut = [];
-            for (var k in node.data.in) newCategoriesOut.push(k);
-            updateCategories(newCategoriesOut);
-
-            newCategoriesOut.forEach(function (category) {
-
-                var nodesConnectedInto = node.data.in[category];
-                console.groupCollapsed('Iterating outgoing edges');
-                console.info('category: ' + category);
-                console.info('connected to: ' + nodesConnectedInto);
-                console.groupEnd();
-                nodesConnectedInto.forEach(function (node) {
-                    console.groupCollapsed('Creating new node with connection');
-                    console.info(node + " is already in the graph: " + cy.getElementById(node).isNode());
-                    console.groupEnd();
-                    // Create new node if the node does not exist yet
-                    if (!cy.getElementById(node).isNode()) {
-                        console.info()
-                        var newNode = {
-                            group: 'nodes',
-                            data: {
-                                id: node,
-                                position: {
-                                    x: posX + Math.floor((Math.random() * 100) + 1) - 50,
-                                    y: posY + Math.floor((Math.random() * 100) + 1) - 50
-                                }
-                            }
-                        };
-                        cy.add(newNode);
-                    }
-                    var edgeId = node + "_to_" + nodeId;
-                    var newEdge = {
-                        group: 'edges',
-                        data: {
-                            id: node + "_to_" + nodeId,
-                            category: category,
-                            source: node,
-                            target: nodeId
-                        }
-                    };
-
-                    cy.add(newEdge);
-                    var e = cy.getElementById(edgeId);
-
-                    console.info(e.id() + " gets class: " + category);
-                    console.info("classes: ");
-                    console.info(e.classes());
-                    e.addClass(category);
-                    console.info(e.id() + "HAS CLASS " + category + ": " + e.hasClass(category));
-                })
-            });
-
-
-            setAndRunLayout();
-        } catch (error) {
-            console.error(error);
-            console.info('no outgoing edges');
-        }
-
-
-    });
-});
 
 function handleSaveGraph() {
+
     var developmentPath = 'http://127.0.0.1:5000/save/';
     var graphToSave = cy.json();
     var graphId = document.getElementById('graph-name').value;
@@ -461,8 +397,10 @@ function handleSaveGraph() {
         id: graphId,
         data: graphToSave
     };
+
     console.log("GRAPHID: " + graphId);
     console.debug(graphToSave);
+
     var saveGraphRequest = new Request(developmentPath, {
         headers: new Headers({
             'Content-Type': 'application/json'
@@ -471,7 +409,9 @@ function handleSaveGraph() {
         body: JSON.stringify(payload)
     });
     console.debug(saveGraphRequest);
+
     var promise = fetch(saveGraphRequest);
+
     promise.then(function (response) {
         console.log(response);
     })
@@ -488,7 +428,7 @@ function handleLoadGraph() {
         headers: new Headers({
             'Content-Type': 'application/json'
         }),
-        method: 'get',
+        method: 'get'
     });
     console.debug(loadGraphRequest);
     var promise = fetch(loadGraphRequest);
@@ -559,10 +499,7 @@ function renderBrowserContent(active, containerId, newCategories, styles) {
 }
 
 
-
-
-
-function graphWidget(containerId){
+function graphWidget(containerId) {
 
 }
 
