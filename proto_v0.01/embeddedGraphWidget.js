@@ -6,7 +6,13 @@ console.info('Initializing cytoscape element..');
 var containerProps = {
     containerId: "panel-container",
     content: {
-        graphs: {label: "Graphs", active: true, data: "Data for graphs"},
+        graphs: {
+            label: "Graphs",
+            active: true,
+            graphs: [
+                'graph1',
+                'graph2'
+            ]},
         elements: {label: "Elements", active: false, data: "Data for elements"},
         styles: {
             label: "Styles",
@@ -30,7 +36,7 @@ var configs = {
 
 var gwClient = (function () {
     /*
-    * Client for requesting and posting data to graphing wiki
+    * Client for requesting and posting data to graphingwiki
     *
     *
     * */
@@ -127,6 +133,45 @@ var gwClient = (function () {
         return fetch(nodeRequest).then(function (response) { return validateResponse(response); });
     }
 
+    function loadGraphList() {
+        var requestUrl = configs.API_PATH + "graphs";
+        console.log("Loading graphs");
+        var loadGraphsRequest = new Request(requestUrl, {
+            headers: new Headers({
+                'Content-Type': 'application/json'
+            }),
+            method: 'get'
+        });
+        var promise = fetch(loadGraphsRequest);
+        promise.then(function (response) { return validateResponse(response); });
+    }
+
+    function getGraph(graphId) {
+        var requestUrl = configs.API_PATH + "graph/" + graphId;
+        console.log("GRAPHID: " + graphId);
+        var loadGraphRequest = new Request(requestUrl, {
+            headers: new Headers({
+                'Content-Type': 'application/json'
+            }),
+            method: 'get'
+        });
+        console.debug(loadGraphRequest);
+        var promise = fetch(loadGraphRequest);
+        promise.then(function (response) {
+            if (response.status >= 200 && response.status < 300) {
+                var json = response.json(); // there's always a body
+                console.debug(json);
+                console.debug(response.ok);
+                return json;
+            } else {
+                return json.then(Promise.reject.bind(Promise));
+            }
+        }).then(function (response) {
+            console.log(response);
+            var newGraphData = response.data;
+        });
+    }
+
 
     // public methods
     return {
@@ -138,6 +183,10 @@ var gwClient = (function () {
         getNodeData: function (pagename) {
             // remember to use getNodeData(pagename).then( ... do stuff )
             return fetchNode(pagename);
+        },
+
+        getGraphList: function(){
+            return loadGraphList();
         }
     }
 
@@ -558,15 +607,6 @@ var loadGraphsButton = document.querySelector('#load-graphs-button');
 loadGraphsButton.addEventListener('click', loadGraphList);
 
 
-function renderBrowserContent(active, containerId, newCategories, styles) {
-    if (active === 'graphs') {
-        return renderGraphList()
-    } else if (active === 'elements') {
-        return renderElements()
-    } else if (active === 'styles') {
-        return renderStyles(containerId, newCategories, styles);
-    }
-}
 
 
 

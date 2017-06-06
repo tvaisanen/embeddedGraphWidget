@@ -8,13 +8,43 @@ var panel = (function () {
     var props;
 
     function renderGraphsContent(content) {
+        /*
+        * Implement graphs tab rendering here
+        *
+        * */
+        console.group("renderGraphsContent()");
+
+        var content = props.content.graphs;
         var div = document.createElement('div');
-        div.innerHTML = content.data;
+        var ul = document.createElement('ul');
+
+        console.log(content);
+        content.graphs.forEach(function (graph) {
+
+            // get the graph
+            var categoryStyle = {};
+
+            console.debug(graph);
+            var li = document.createElement('li');
+            li.innerHTML = graph;
+            ul.appendChild(li);
+
+
+        });
+        div.appendChild(ul);
+        console.debug(div);
+        console.groupEnd();
+
+        return div;
 
         return div;
     }
 
     function renderElementsContent() {
+        /*
+        * Implement elements tab rendering here
+        *
+        * */
         var content = props.content.elements;
         var div = document.createElement('div');
         div.innerHTML = content.data;
@@ -23,6 +53,11 @@ var panel = (function () {
     }
 
     function renderStylesContent() {
+        /*
+        * Implement style tab rendering here
+        *
+        * */
+
         console.group("renderStylesContent()");
 
         var content = props.content.styles;
@@ -52,11 +87,13 @@ var panel = (function () {
 
     function handleNavClick(event, keyToActivate, navLinks) {
 
+        // toggle all navlink classes to inactive
         var links = Object.keys(navLinks);
         links.forEach(function (key) {
             navLinks[key].active = false;
         });
 
+        // activate clicked navlink
         navLinks[keyToActivate].active = true;
 
         updatePanel();
@@ -97,11 +134,15 @@ var panel = (function () {
         var divNav = d.getElementById('panel-nav');
         var divContent = d.getElementById('panel-content');
 
-        divNav.childNodes.forEach(function (child) {
+        var childsToRemove = divNav.childNodes;
+        console.log(childsToRemove);
+        console.log(typeof childsToRemove);
+        childsToRemove.forEach(function (child) {
             divNav.remove(child);
         });
 
-        divContent.childNodes.forEach(function (child) {
+        childsToRemove = divContent.childNodes;
+        childsToRemove.forEach(function (child) {
             divContent.remove(child);
         });
 
