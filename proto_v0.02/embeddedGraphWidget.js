@@ -23,15 +23,12 @@ var gwClient = (function () {
     }
 
     function validateResponse(response) {
+        /*
+         * Place to validate responses
+         */
         if (response.status >= 200 && response.status < 300) {
             console.info("response status [200, 300]");
-            var json = response.json();
-            var responseData = json.data;
-            return json;
-        } else {
-            console.debug(response);
-            console.groupEnd();
-            return json.then(Promise.reject.bind(Promise));
+            return response.json();
         }
     }
 
@@ -98,9 +95,6 @@ var gwClient = (function () {
             }),
             method: 'GET'
         });
-        console.groupCollapsed('Debugging gwClient.fetchNode()');
-        console.debug(requestUrl);
-        console.debug(nodeRequest);
         return fetch(nodeRequest).then(function (response) { return validateResponse(response); });
     }
 

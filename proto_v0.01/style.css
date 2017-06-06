@@ -56,12 +56,17 @@
 
 }
 .browser-nav-item {
+    display: flex;
     padding-left: 3px;
     padding-right: 3px;
 }
 
 .browser-nav-item__active {
     text-decoration: underline;
+}
+
+.browser-nav-item__inactive {
+    cursor: pointer;
 }
 
 ::-webkit-scrollbar
