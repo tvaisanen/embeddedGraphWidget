@@ -3,8 +3,17 @@
  */
 var d = document;
 
+var configs = {
+    // This is a proxy server for development
+    API_PATH: 'http://127.0.0.1:5000/'
+};
+
+console.log(gwClient);
+gwClient.setConfigs(configs);
+
 var testState = {
     containerId: "panel-container",
+    gw: gwClient,
     tabs: {
         graphs: {
             label: "Graphs",
@@ -36,7 +45,11 @@ var testState = {
     }
 };
 
-var panel = (function () {
+console.log("%cTodo:",  "color: green; font-size:15px;");
+console.log("%cLoad graphs from the server to the view",  "color: blue; font-size:13px;");
+
+var panel = (function (gwClient) {
+
 
     var props;
 
@@ -47,6 +60,12 @@ var panel = (function () {
          * */
 
         var content = props.tabs.graphs;
+        /*var graphListPromise = props.gw.getGraphList();
+        graphListPromise.then(function(response){
+            console.group("GraphListPromise");
+            console.log(response);
+            console.groupEnd();
+        });*/
         var div = document.createElement('div');
         div.setAttribute('id', "graphs-content");
         var ul = document.createElement('ul');
@@ -72,6 +91,15 @@ var panel = (function () {
         console.groupEnd();
     }
 
+    function testGraphingWikiClientInit(testState){
+        setProps(testState, 'all');
+        console.group("test that the graphingwiki reference is included in props");
+        console.log(props.gw);
+        var moduleName = props.gw.getModuleName();
+        assert(moduleName == "GraphingWiki client", "GraphingWiki client is callable");
+        console.groupEnd();
+    }
+
     function renderElementsContent() {
         /*
          * Implement elements tab rendering here
@@ -84,6 +112,7 @@ var panel = (function () {
 
         return div;
     }
+
     function testRenderElementsContent(testState){
         // set context for tests
         console.group("testRenderStylesContent()");
@@ -93,7 +122,6 @@ var panel = (function () {
         assert(stylesContent.id == "elements-content", "renderElementsContent() returns div with proper id");
         console.groupEnd();
     }
-
 
     function renderStylesContent() {
         /*
@@ -184,7 +212,7 @@ var panel = (function () {
         var tabs = props.tabs;
         var divNav = document.createElement('div');
         divNav.id = "panel-nav";
-        console.debug(tabs);
+
         var links = Object.keys(tabs);
 
         links.forEach(function (key) {
@@ -314,6 +342,8 @@ var panel = (function () {
         testRenderElementsContent(stateForTests);
         testRenderGraphsContent(stateForTests);
         testRenderStylesContent(stateForTests);
+        testGraphingWikiClientInit(stateForTests);
+
         console.groupEnd();
     }
 
@@ -346,7 +376,7 @@ var panel = (function () {
         }
     }
 
-})();
+})(gwClient);
 
 
 function assert(outcome, description) {
