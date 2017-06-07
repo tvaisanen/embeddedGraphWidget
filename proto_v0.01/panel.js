@@ -180,8 +180,13 @@ var panel = (function () {
 
     }
 
-    function setProps(initProps) {
-        props = initProps;
+    function setProps(props_, selector) {
+
+        if (selector === "all"){
+            props = props_;
+        } else  {
+            props.content[selector] = props_;
+        }
     }
 
     function renderPanel() {
@@ -194,12 +199,25 @@ var panel = (function () {
     return {
 
         render: function (props) {
-            setProps(props);
+            setProps(props, "all");
             renderPanel();
         },
 
         updateStylesContent: function (newCategories, styles) {
             renderStylesContent(newCategories, styles);
+        },
+
+        updateElementsContent: function (elementsProps, styles){
+            setProps(elementProps, 'elements')
+            renderElementsContent()
+        },
+
+        changeView: function (){
+
+        },
+
+        updateProps: function(){
+
         }
     }
 

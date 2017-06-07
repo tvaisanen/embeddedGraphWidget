@@ -3,7 +3,7 @@
  */
 console.info('Initializing cytoscape element..');
 
-var containerProps = {
+var state = {
     containerId: "panel-container",
     content: {
         graphs: {
@@ -157,19 +157,7 @@ var gwClient = (function () {
         });
         console.debug(loadGraphRequest);
         var promise = fetch(loadGraphRequest);
-        promise.then(function (response) {
-            if (response.status >= 200 && response.status < 300) {
-                var json = response.json(); // there's always a body
-                console.debug(json);
-                console.debug(response.ok);
-                return json;
-            } else {
-                return json.then(Promise.reject.bind(Promise));
-            }
-        }).then(function (response) {
-            console.log(response);
-            var newGraphData = response.data;
-        });
+        promise.then(function (response) { return validateResponse(response); });
     }
 
 
@@ -243,7 +231,7 @@ function updateCategories(newCategories) {
     // this could be written with reducer Todo ?
     newCategories.forEach(function (category) {
         if (categories.indexOf(category) === -1) {
-            newUniqueCategories.push(category)
+            newUniqueCategories.push(category);
             categories.push(category);
         }
     });
@@ -611,7 +599,7 @@ loadGraphsButton.addEventListener('click', loadGraphList);
 
 
 
-panel.render(containerProps);
+panel.render(state);
 
 
 

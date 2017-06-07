@@ -1,48 +1,46 @@
 
-.container {
+.app-container {
     display: flex;
     flex-direction: column;
 }
 
-.header {
-    width:95vw;
+.header-container {
+    width: 95vw;
     background-color: #1976D2;
     color: #ffffff;
     text-indent: 10px;
 }
 
-.tool-panel {
-    width:95vw;
+.toolbar-container {
+    width: 95vw;
     background-color: #BBDEFB;
     color: #000000;
     text-indent: 10px;
 }
 
-
-
-.content {
+.content-block {
     display: flex;
     flex-direction: row;
 }
 
-.graph-canvas {
-    width:70vw;
-    height:80vh;
-    background-color:#E3F2FD;
+.graph {
+    width: 70vw;
+    height: 80vh;
+    background-color: #E3F2FD;
 }
 
 .panel {
-    width:25vw;
-    height:80vh;
-    background-color:#90CAF9;
+    width: 25vw;
+    height: 80vh;
+    background-color: #90CAF9;
     word-wrap: break-word;
     overflow: auto;
 }
 
 .footer {
     display: flex;
-    width:95vw;
-    background-color:#1976D2;
+    width: 95vw;
+    background-color: #1976D2;
     color: white;
     justify-content: flex-end;
 }
@@ -52,30 +50,64 @@
     flex-direction: row;
     margin: auto;
     flex-flow: row wrap;
-    justify-content: space-around;
+    justify-content: center;
+    flex-grow: 1;
 
 }
-.browser-nav-item {
-    padding-left: 3px;
-    padding-right: 3px;
+
+[class^="browser-nav__item"] {
+    display: flex;
+    flex-grow: 1;
+    letter-spacing: 2px;
+
+    justify-content: center;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+
 }
 
-.browser-nav-item__active {
-    text-decoration: underline;
+.browser-nav__item--active {
+
+    background-color: #90CAF9;
+    border-bottom: inset;
+    border-bottom-width: 1px;
+
 }
 
-::-webkit-scrollbar
-{
-  width: 4px;  /* for vertical scrollbars */
-  height: 4px; /* for horizontal scrollbars */
+.browser-nav__item--inactive {
+    cursor: pointer;
+    background-color: #5f89af;
+    width: inherit;
+
 }
 
-::-webkit-scrollbar-track
-{
-  background: #BBDEFB;
+::-webkit-scrollbar {
+    width: 4px; /* for vertical scrollbars */
+    height: 4px; /* for horizontal scrollbars */
 }
 
-::-webkit-scrollbar-thumb
-{
-  background: #0D47A1;
+::-webkit-scrollbar-track {
+    background: #BBDEFB;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #0D47A1;
+}
+
+.pass:before {
+    content: 'PASS: ';
+    color:  blue;
+    font-weight: bold;
+}
+
+.fail:before {
+    content: 'FAIL: ';
+    color: red;
+    font-weight: bold;
+
+}
+
+.panel-test {
+    display: flex;
+    flex-direction: row;
 }

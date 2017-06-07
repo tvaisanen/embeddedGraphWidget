@@ -7,9 +7,9 @@
 </head>
 <body>
 
-<div class="container">
+<div class="app-container">
 
-    <div class="header" id="header">
+    <div class="header-container" id="header">
         GraphID: 23GJ3SJ5K, Modified by: J.Doe, Date: 2.6.2017
     </div>
 
@@ -28,18 +28,13 @@
         <button id="download-graph-button">Save Image</button>
     </div>
 
-    <div class="content">
-        <div class="panel" id="cy-panel">
-            <div class="browser-nav">
-                <div class="browser-nav-item__active">Graphs</div>
-                <div class="browser-nav-item">Elements</div>
-                <div class="browser-nav-item">Styles</div>
+    <div class="content-block">
+
+        <div class="panel" id="panel-container">
 
             </div>
-            <hr>
-            <ol id="category-list" style="display-inside:block"></ol>
-        </div>
-        <div class="graph-canvas" id="cy" style=""></div>
+
+        <div class="graph" id="cy" style=""></div>
     </div>
 
 
@@ -59,6 +54,7 @@
 <script src='https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.0.0/cytoscape.js'></script>
 <script src='https://rawgit.com/cytoscape/cytoscape.js-cola/master/cola.js'></script>
 <script type='text/javascript' src='https://rawgit.com/cytoscape/cytoscape.js-cola/master/cytoscape-cola.js'></script>
+<script src="panel.js"></script>
 <script src='embeddedGraphWidget.js'></script>
 
 
