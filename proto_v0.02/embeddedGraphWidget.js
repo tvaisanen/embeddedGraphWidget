@@ -3,108 +3,6 @@
  */
 console.info('Initializing cytoscape element..');
 
-var state = {
-    containerId: "panel-container",
-    tabs: {
-        graphs: {
-            label: "Graphs",
-            active: true,
-            graphs: [
-                'graph1',
-                'graph2'
-            ]
-        },
-        elements: {
-            label: "Elements",
-            active: false,
-            data: "Data for elements"
-        },
-        styles: {
-            label: "Styles",
-            active: false,
-            styles: [
-                {
-                    name: "category 1",
-                    data: "data for 1"
-                },
-                {
-                    name: "category 2",
-                    data: "data for 2"
-                }
-            ]
-        }
-    }
-};
-
-
-var configs = {
-    // This is a proxy server for development
-    API_PATH: 'http://127.0.0.1:5000/'
-};
-
-
-gwClient.setConfigs(configs);
-
-var lineStyleOptions = {
-    'width': 'integer',
-    'line-color': 'rgb',
-    'line-style': [],
-    'target-arrow-color': 'rgb',
-    'target-arrow-shape': [],
-    'curve-style': []
-};
-
-
-/*
- store link categories
- update when new nodes are added
- */
-var categories = [];
-
-
-function arrayContains(array, value) {
-    return array.indexOf(value) !== -1;
-}
-
-
-
-
-function categoryList(categories, styles) {
-
-}
-
-
-
-function updateCategories(newCategories) {
-    /*
-     when: A new node is loaded.
-     why: To add new possible categories.
-     how: [( the category is already listed ) ? do nothing : add new category to list]
-     CategoryStyles is the function, which handles the updating.
-     */
-
-    // this is what is passed to renderStyles -function.
-    var newUniqueCategories = [];
-
-    // this could be written with reducer Todo ?
-    newCategories.forEach(function (category) {
-        if (categories.indexOf(category) === -1) {
-            newUniqueCategories.push(category);
-            categories.push(category);
-        }
-    });
-
-    panel.updateStylesContent(newUniqueCategories, cy.style().json());
-
-}
-
-
-/* If graph_json hasn't been initialized correctly
- *  Initialize it by loading the nodes
- */
-if (typeof graph_json === 'undefined') {
-    // window.alert("This feature is still under development. Unfortunately this page isn't yet supported.");
-}
 
 var cy = cytoscape({
     container: document.getElementById('cy'),
@@ -114,7 +12,15 @@ var cy = cytoscape({
             selector: 'node',
             style: {
                 'background-color': '#666',
+                'size': '40',
                 'label': 'data(id)'
+            }
+        },
+
+        {
+            selector: 'node.highlight',
+            style: {
+                'background-color': '#c6c6c6',
             }
         },
 
@@ -167,39 +73,6 @@ var cy = cytoscape({
         }
     ],
 });
-
-// initialize download image link
-
-function downloadGraphPNG() {
-    console.info('running downloadGraphPNG() -function')
-    var png = cy.png();
-    var a = document.createElement('a');
-
-    a.href = png;
-    a.download = 'image.png';
-    console.debug(a);
-    a.click()
-}
-
-var downloadGraphButton = document.querySelector('#download-graph-button');
-downloadGraphButton.addEventListener('click', downloadGraphPNG);
-
-
-// initialize run layout button action
-
-function setAndRunLayout() {
-    console.info("running 'setAndRunLayout()'-function")
-    var layoutOption = document.querySelector('#layout-options').value;
-    var layout = cy.makeLayout({name: layoutOption})
-    layout.run();
-}
-
-var runLayoutButton = document.querySelector('#run-layout-button');
-runLayoutButton.addEventListener('click', setAndRunLayout);
-
-function addNode(node) {
-    cy.add(node);
-}
 
 cy.on('tap', 'node', function (evt) {
 
@@ -358,6 +231,147 @@ cy.on('tap', 'node', function (evt) {
     });
 });
 
+var state = {
+    containerId: "panel",
+    gw: gwClient,
+    cy: cy,
+    tabs: {
+        graphs: {
+            label: "Graphs",
+            active: true,
+            graphs: [
+                'graph1',
+                'graph2'
+            ]
+        },
+        elements: {
+            label: "Elements",
+            active: false,
+            data: "Data for elements"
+        },
+        styles: {
+            label: "Styles",
+            active: false,
+            styles: [
+                {
+                    name: "category 1",
+                    data: "data for 1"
+                },
+                {
+                    name: "category 2",
+                    data: "data for 2"
+                }
+            ]
+        }
+    }
+};
+
+
+var configs = {
+    // This is a proxy server for development
+    API_PATH: 'http://127.0.0.1:5000/'
+};
+
+
+gwClient.setConfigs(configs);
+
+var lineStyleOptions = {
+    'width': 'integer',
+    'line-color': 'rgb',
+    'line-style': [],
+    'target-arrow-color': 'rgb',
+    'target-arrow-shape': [],
+    'curve-style': []
+};
+
+
+/*
+ store link categories
+ update when new nodes are added
+ */
+var categories = [];
+
+
+function arrayContains(array, value) {
+    return array.indexOf(value) !== -1;
+}
+
+
+
+
+function categoryList(categories, styles) {
+
+}
+
+
+
+function updateCategories(newCategories) {
+    /*
+     when: A new node is loaded.
+     why: To add new possible categories.
+     how: [( the category is already listed ) ? do nothing : add new category to list]
+     CategoryStyles is the function, which handles the updating.
+     */
+
+    // this is what is passed to renderStyles -function.
+    var newUniqueCategories = [];
+
+    // this could be written with reducer Todo ?
+    newCategories.forEach(function (category) {
+        if (categories.indexOf(category) === -1) {
+            newUniqueCategories.push(category);
+            categories.push(category);
+        }
+    });
+
+    panel.updateStylesContent(newUniqueCategories, cy.style().json());
+
+}
+
+
+/* If graph_json hasn't been initialized correctly
+ *  Initialize it by loading the nodes
+ */
+if (typeof graph_json === 'undefined') {
+    // window.alert("This feature is still under development. Unfortunately this page isn't yet supported.");
+}
+
+
+// initialize download image link
+
+function downloadGraphPNG() {
+    console.info('running downloadGraphPNG() -function')
+    var png = cy.png();
+    var a = document.createElement('a');
+
+    a.href = png;
+    a.download = 'image.png';
+    console.debug(a);
+    a.click()
+}
+
+var downloadGraphButton = document.querySelector('#download-graph-button');
+downloadGraphButton.addEventListener('click', downloadGraphPNG);
+
+
+// initialize run layout button action
+
+function setAndRunLayout() {
+    console.info("running 'setAndRunLayout()'-function")
+    var layoutOption = document.querySelector('#layout-options').value;
+    var layout = cy.makeLayout({name: layoutOption})
+    layout.run();
+}
+
+var runLayoutButton = document.querySelector('#run-layout-button');
+runLayoutButton.addEventListener('click', setAndRunLayout);
+
+function addNode(node) {
+    cy.add(node);
+}
+
+
+
 function handleSaveGraph() {
     var developmentPath = 'http://127.0.0.1:5000/save/';
     var graphToSave = cy.json();
@@ -452,11 +466,9 @@ function loadGraphList() {
 var loadGraphsButton = document.querySelector('#load-graphs-button');
 loadGraphsButton.addEventListener('click', loadGraphList);
 
-
-
-
-
-
+console.log(panel);
+console.log(typeof state);
+console.log(state);
 panel.render(state);
 
 

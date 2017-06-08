@@ -1,3 +1,6 @@
+.body {
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+}
 
 .app-container {
     display: flex;
@@ -29,14 +32,6 @@
     background-color: #E3F2FD;
 }
 
-.panel {
-    width: 25vw;
-    height: 80vh;
-    background-color: #90CAF9;
-    word-wrap: break-word;
-    overflow: auto;
-}
-
 .footer {
     display: flex;
     width: 95vw;
@@ -45,41 +40,83 @@
     justify-content: flex-end;
 }
 
-.browser-nav {
+.panel {
+    width: 25vw;
+    height: 80vh;
+    background-color: #90CAF9;
+    word-wrap: break-word;
+    overflow: auto;
+    font-family: "Lucida Console", Monaco, monospace;
+}
+
+.tab-nav {
     display: flex;
     flex-direction: row;
-    margin: auto;
     flex-flow: row wrap;
-    justify-content: center;
+    justify-content: space-around;
     flex-grow: 1;
 
 }
 
-[class^="browser-nav__item"] {
+[class^="tab-nav__nav-item"] {
     display: flex;
     flex-grow: 1;
     letter-spacing: 2px;
-
+    flex-grow: 1;
     justify-content: center;
     border-top-left-radius: 3px;
     border-top-right-radius: 3px;
 
 }
 
-.browser-nav__item--active {
-
+.tab-nav__nav-item--active {
     background-color: #90CAF9;
     border-bottom: inset;
     border-bottom-width: 1px;
 
 }
 
-.browser-nav__item--inactive {
+.tab-nav__nav-item--inactive {
     cursor: pointer;
     background-color: #5f89af;
     width: inherit;
+}
+
+.tab-graph {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+[class^="tab-graph__list-item"] {
+    padding: 4px;
+}
+
+.panel-content {
+    padding: 0;
+    margin: 0;
+}
+
+[class^="tab-graph__filter-item"] {
+    padding: 0;
+}
+
+[class^="tab-graph__list-item"] {
 
 }
+
+ul {
+    padding: 0;
+    list-style-type: none;
+}
+
+li {
+    background-color: #a2a2a2;
+    margin: 0;
+    border-bottom: groove;
+} li:hover {
+    background-color: #cacaca;
+  }
 
 ::-webkit-scrollbar {
     width: 4px; /* for vertical scrollbars */
@@ -92,22 +129,4 @@
 
 ::-webkit-scrollbar-thumb {
     background: #0D47A1;
-}
-
-.pass:before {
-    content: 'PASS: ';
-    color:  blue;
-    font-weight: bold;
-}
-
-.fail:before {
-    content: 'FAIL: ';
-    color: red;
-    font-weight: bold;
-
-}
-
-.panel-test {
-    display: flex;
-    flex-direction: row;
 }

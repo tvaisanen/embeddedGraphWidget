@@ -4,16 +4,84 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" type="text/css" href="style.css">
-    <script src="https://wzrd.in/standalone/expect@latest"></script>
 </head>
 <body>
-<div id="panel-test-container" class="panel-test">
+<div id="panel-test-container" class="panel">
     <div class="panel" id="panel-container">
 
     </div>
-    <div id="test"></div>
+    <div id="cy"></div>
     <div id="state"></div>
 </div>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.0.0/cytoscape.js'></script>
+<script>
+    var testCy = cytoscape({
+    container: document.getElementById('cy'),
+    elements: [
+        {
+            group: 'nodes',
+            data: {id: 'testNodeOne'}
+        },
+        {
+            group: 'nodes',
+            data: {id: 'testNodeTwo'}
+        },
+        {
+            group: 'edges',
+            data: {
+                id: 'testNodeOne_to_testNodeTwo',
+                source: 'testNodeTwo',
+                target: 'testNodeOne'
+            }
+        },
+        {
+            group: 'edges',
+            data:
+                {
+                    id: 'testNodeOne_to_testNodeTwo',
+                    source: 'testNodeOne',
+                    target: 'testNodeTwo'
+                }
+        }
+        ]
+});
+var testState = {
+    containerId: "panel",
+    gw: gwClient,
+    cy: testCy,
+    tabs: {
+        graphs: {
+            label: "Graphs",
+            active: true,
+            graphs: [
+                'graph1',
+                'graph2'
+            ]
+        },
+        elements: {
+            label: "Elements",
+            active: false,
+            data: "Data for elements"
+
+        },
+        styles: {
+            label: "Styles",
+            active: false,
+            styles: [
+                {
+                    name: "category 1",
+                    data: "data for 1"
+                },
+                {
+                    name: "category 2",
+                    data: "data for 2"
+                }
+            ]
+        }
+    }
+};
+</script>
+<script src="assert.js"></script>
 <script src="gwClient.js"></script>
 <script src="panel.js"></script>
 <script>

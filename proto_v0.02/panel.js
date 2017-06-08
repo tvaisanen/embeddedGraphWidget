@@ -8,12 +8,14 @@ var configs = {
     API_PATH: 'http://127.0.0.1:5000/'
 };
 
-console.log(gwClient);
+console.log("%cTEST CY INIT OK BIBY?", "color:red;");
+
 gwClient.setConfigs(configs);
 
 var testState = {
     containerId: "panel-container",
     gw: gwClient,
+    cy: cy,
     tabs: {
         graphs: {
             label: "Graphs",
@@ -45,13 +47,103 @@ var testState = {
     }
 };
 
-console.log("%cTodo:",  "color: green; font-size:15px;");
-console.log("%cLoad graphs from the server to the view",  "color: blue; font-size:13px;");
+console.log("%cTodo:", "color: green; font-size:15px;");
+console.log("%cLoad graphs from the server to the view", "color: blue; font-size:13px;");
 
-var panel = (function (gwClient) {
+function unorderedListFromArray(array, mouseOver, mouseOut, toggleVisibility){
+    /*
+    * Todo: add support for the array containing evenListener -methods
+    * array: array of string items
+    * return: unordered html element with list items
+    * from the array
+    * */
+
+    var ul = d.createElement('ul');
+    array.forEach(function (item){
+        var li = d.createElement('li');
+
+        var checkBox = d.createElement('input');
+        checkBox.setAttribute('id', 'visibility_' + item);
+        checkBox.setAttribute('type', 'checkbox');
+        checkBox.setAttribute('checked', 'true');
+        checkBox.checked = true;
+        console.log(checkBox);
+        checkBox.addEventListener('change', function(event){
+            console.log(event.target);
+            toggleVisibility(event.target);
+            console.log(event.target.id);
+        });
+        console.log(checkBox);
+
+        li.appendChild(checkBox);
+
+        li.innerHTML += item;
+
+        li.setAttribute('id', item);
+
+        li.addEventListener('mouseover', function(evt){
+           mouseOver(evt.target.id);
+        });
+
+        li.addEventListener('mouseout', function(evt){
+           mouseOut(evt.target.id);
+        });
+
+        ul.appendChild(li);
+    });
+    return ul;
+}
+
+
+var panel = (function (gwClient, cy) {
 
 
     var props;
+
+    var classNames = {
+        container: 'panel',
+        tab: {
+            nav: {
+                container: 'tab-nav',
+                item: {
+                    active: 'tab-nav__nav-item--active',
+                    inactive: 'tab-nav__nav-item--inactive'
+                }
+            },
+            graph: {
+                container: 'tab-graph',
+                listHeader: 'tab-graph__list-header',
+                listItem: {
+                    active: 'tab-graph__list-item--active',
+                    inactive: 'tab-graph__list-item--inactive'
+                },
+                filter: "tab-graph__filter",
+                filterClasses: {
+                    input: "tab-elements__filter-input"
+                }
+            },
+            elements: {
+                container: 'tab-elements',
+                listHeader: 'tab-elements__list-header',
+                listItem: {
+                    active: 'tab-elements__list-item--active',
+                    inactive: 'tab-elements__list-item--inactive'
+                },
+                filter: "tab-elements__filter",
+                filterClasses: {
+                    input: "tab-elements__filter-input"
+                }
+            },
+            styles: {
+                container: 'tab-styles',
+                listHeader: 'tab-styles__list-header',
+                listItem: {
+                    active: 'tab-styles__list-item--active',
+                    inactive: 'tab-styles__list-item--inactive'
+                }
+            }
+        }
+    };
 
     function renderGraphsContent() {
         /*
@@ -60,43 +152,63 @@ var panel = (function (gwClient) {
          * */
 
         var content = props.tabs.graphs;
-        /*var graphListPromise = props.gw.getGraphList();
-        graphListPromise.then(function(response){
-            console.group("GraphListPromise");
-            console.log(response);
-            console.groupEnd();
-        });*/
+        var classes = classNames.tab.graph;
+
         var div = document.createElement('div');
-        div.setAttribute('id', "graphs-content");
         var ul = document.createElement('ul');
 
-        content.graphs.forEach(function (graph) {
-            // get the graph
-            var categoryStyle = {};
-            var li = document.createElement('li');
-            li.innerHTML = graph;
-            ul.appendChild(li);
+        div.setAttribute('id', classNames.tab.graph.container);
+
+        graphListPromise = props.gw.getGraphList();
+        graphListPromise.then(function (response) {
+            return response.json();
+
+        }).then(function (json) {
+            var graphs = json.data;
+            graphs.forEach(function (graph) {
+                var li = document.createElement('li');
+                li.classList.add(classes.listItem.inactive);
+                li.innerHTML = graph;
+
+                ul.appendChild(li);
+
+            });
+
         });
+
+
         div.appendChild(ul);
         return div;
     }
 
-    function testRenderGraphsContent(testState){
+    function testRenderGraphsContent(testState) {
         // set context for tests
         console.group("testRenderGraphsContent()");
         setProps(testState, 'all');
         handleNavClick('styles');
-        var stylesContent = renderGraphsContent();
-        assert(stylesContent.id == "graphs-content", "renderGraphsContent() returns div with proper id");
+        var stylesGraphs = renderGraphsContent();
+        var firstChild = stylesGraphs.childNodes[0];
+        assert(stylesGraphs.id == "graphs-content", "renderGraphsContent() returns div with proper id");
+        assert(firstChild.tagName == "UL", "renderGraphsContent() returns with correct html element");
         console.groupEnd();
     }
 
-    function testGraphingWikiClientInit(testState){
+    function testGraphingWikiClientInit(testState) {
         setProps(testState, 'all');
         console.group("test that the graphingwiki reference is included in props");
-        console.log(props.gw);
         var moduleName = props.gw.getModuleName();
         assert(moduleName == "GraphingWiki client", "GraphingWiki client is callable");
+        console.groupEnd();
+    }
+
+    function testCytoscapeIntegrationInit(testState) {
+        setProps(testState, 'all');
+        console.group("test that the cytoscape is integrated correctly");
+        console.log("props.cy: ");
+        console.log(props.cy.id);
+        cyId = props.cy.id;
+        console.debug(props.cy.elements());
+        assert(cyId == "cy", "Cytoscape initialized correctly?");
         console.groupEnd();
     }
 
@@ -106,14 +218,73 @@ var panel = (function (gwClient) {
          *
          * */
         var content = props.tabs.elements;
+        var cy = props.cy;
+
+        // which are meant to be used with
+        function getElementIDsToArray(selector){
+            /*
+             * param eles: cy.elements
+             * return: array of element id strings
+             */
+
+            var idArray = [];
+            try {
+                cy.elements(selector).forEach(function (el) {
+                    var id = el.id();
+                    idArray.push(id);
+                });
+            } catch (e) {
+                console.error(e);
+            }
+            return idArray;
+        }
+
+        function mouseOver(param){
+            cy.getElementById(param).toggleClass('highlight');
+        }
+
+        function mouseOut(param) {
+            cy.getElementById(param).toggleClass('highlight');
+        }
+
+        function toggleVisibility(param){
+            console.log("toggleVisibility()");
+            console.log(param);
+            cy.getElementById(param).hidden();
+        }
+
+        // extract the ids from aforementioned elements
+        var nodes = getElementIDsToArray("node");
+        var edges = getElementIDsToArray("edge");
+
+        var mockFilter = d.createElement("input");
+        mockFilter.type = "text";
+
         var div = document.createElement('div');
+
+        var hdNodes = d.createElement('h2');
+        hdNodes.innerHTML = "Nodes";
+
+        var pNodeNotes = d.createElement('p');
+        pNodeNotes.innerHTML = "order by degree?";
+
+        var hdEdges = d.createElement('h2');
+        hdEdges.innerHTML = "Edges";
+
+        var ulNodes = unorderedListFromArray(nodes, mouseOver, mouseOut, toggleVisibility);
+        var ulEdges = unorderedListFromArray(edges, mouseOver, mouseOut, toggleVisibility);
+
         div.setAttribute('id', "elements-content");
-        div.innerHTML = content.data;
+        div.appendChild(mockFilter);
+        div.appendChild(hdNodes);
+        div.appendChild(ulNodes);
+        div.appendChild(hdEdges);
+        div.appendChild(ulEdges);
 
         return div;
     }
 
-    function testRenderElementsContent(testState){
+    function testRenderElementsContent(testState) {
         // set context for tests
         console.group("testRenderStylesContent()");
         setProps(testState, 'all');
@@ -128,19 +299,19 @@ var panel = (function (gwClient) {
          * Implement style tab rendering here
          *
          *  styles: {
-                label: "Styles",
-                active: false,
-                styles: [
-                    {
-                        categoryName: "category 1",
-                        data: "data for 1"
-                    },
-                    {
-                        categoryName: "category 2",
-                        data: "data for 2"
-                    }
-                ]
-            }
+         label: "Styles",
+         active: false,
+         styles: [
+         {
+         categoryName: "category 1",
+         data: "data for 1"
+         },
+         {
+         categoryName: "category 2",
+         data: "data for 2"
+         }
+         ]
+         }
          * */
 
         var styles = props.tabs.styles.styles;
@@ -160,7 +331,7 @@ var panel = (function (gwClient) {
         return div;
     }
 
-    function testRenderStylesContent(testState){
+    function testRenderStylesContent(testState) {
         // set context for tests
         console.group("testRenderStylesContent()");
         setProps(testState, 'all');
@@ -185,7 +356,7 @@ var panel = (function (gwClient) {
         updatePanel();
     }
 
-    function testHandleNavClick(testState){
+    function testHandleNavClick(testState) {
         setProps(testState, 'all');
         var result = handleNavClick('elements');
         console.group('testHandleNavClick()');
@@ -201,7 +372,7 @@ var panel = (function (gwClient) {
         console.groupEnd();
         var secondTestsNotPassed = !(conditionA && conditionB && conditionC);
 
-        if (firstTestsNotPassed && secondTestsNotPassed){
+        if (firstTestsNotPassed && secondTestsNotPassed) {
             alert("Virhe korjaa bugi ennen ko jatkat");
             throw Error('testHandleNavClick() failed');
         }
@@ -210,7 +381,13 @@ var panel = (function (gwClient) {
     function renderNavigation() {
 
         var tabs = props.tabs;
+
+        // css classes
+        var classes = classNames.tab.nav;
+
         var divNav = document.createElement('div');
+        divNav.classList.add(classes.container);
+
         divNav.id = "panel-nav";
 
         var links = Object.keys(tabs);
@@ -221,10 +398,10 @@ var panel = (function (gwClient) {
             var divLink = d.createElement('div');
 
             if (link.active) {
-                divLink.classList.add("browser-nav__item--active");
+                divLink.classList.add(classes.item.active);
 
             } else {
-                divLink.classList.add("browser-nav__item--inactive");
+                divLink.classList.add(classes.item.inactive);
                 divLink.addEventListener('click', function (event) {
                     handleNavClick(key);
                 });
@@ -234,7 +411,7 @@ var panel = (function (gwClient) {
             divNav.appendChild(divLink);
         });
 
-        divNav.classList.add("browser-nav");
+
 
         return divNav;
     }
@@ -246,9 +423,9 @@ var panel = (function (gwClient) {
         var childsToRemove = divNav.childNodes;
 
         /*
-        console.log(childsToRemove);
-        console.log(typeof childsToRemove);
-        */
+         console.log(childsToRemove);
+         console.log(typeof childsToRemove);
+         */
 
         childsToRemove.forEach(function (child) {
             divNav.remove(child);
@@ -313,36 +490,16 @@ var panel = (function (gwClient) {
         container.appendChild(renderContent(content));
     }
 
-    function testHandleNavClick(testState){
-        setProps(testState, 'all');
-        var result = handleNavClick('elements');
-        console.group('testHandleNavClick()');
-        var conditionA = assert(props.tabs.elements.active == true, 'handleNavClick(key) activates the tab correctly');
-        var conditionB = assert(props.tabs.graphs.active == false, 'handleNavClick(key) deactivates the tab correctly');
-        var conditionC = assert(props.tabs.styles.active == false, 'handleNavClick(key) deactivates the tab correctly');
-        var firstTestsNotPassed = !(conditionA && conditionB && conditionC);
-
-        var result = handleNavClick('styles');
-        var conditionA = assert(props.tabs.elements.active == false, 'handleNavClick(key) activates the tab correctly');
-        var conditionB = assert(props.tabs.graphs.active == false, 'handleNavClick(key) deactivates the tab correctly');
-        var conditionC = assert(props.tabs.styles.active == true, 'handleNavClick(key) deactivates the tab correctly');
-        console.groupEnd();
-        var secondTestsNotPassed = !(conditionA && conditionB && conditionC);
-
-        if (firstTestsNotPassed && secondTestsNotPassed){
-            alert("Virhe korjaa bugi ennen ko jatkat");
-            throw Error('testHandleNavClick() failed');
-        }
-    }
-
-    function tests(){
+    function tests() {
         var stateForTests = testState;
         console.group("Panel tests!");
+        testCytoscapeIntegrationInit(stateForTests);
+        testGraphingWikiClientInit(stateForTests);
         testHandleNavClick(stateForTests);
         testRenderElementsContent(stateForTests);
         testRenderGraphsContent(stateForTests);
         testRenderStylesContent(stateForTests);
-        testGraphingWikiClientInit(stateForTests);
+
 
         console.groupEnd();
     }
@@ -376,17 +533,10 @@ var panel = (function (gwClient) {
         }
     }
 
-})(gwClient);
+})(gwClient, cy);
 
 
-function assert(outcome, description) {
-    if (outcome){
-        console.log("%cPASS: " + "%c" + description, "color: green; font-size:15px;", "color: blac; font-size:14px;");
-    } else {
-        console.log("%cFAIL: " + "%c" + description, "color: red; font-size:15px;", "color: blac; font-size:14px;");
-    }
-    return outcome
-}
+
 
 
 

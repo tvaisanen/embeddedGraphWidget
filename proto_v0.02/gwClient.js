@@ -111,10 +111,7 @@ var gwClient = (function () {
             }),
             method: 'get'
         });
-        var promise = fetch(loadGraphsRequest);
-        promise.then(function (response) {
-            return validateResponse(response);
-        });
+        return fetch(loadGraphsRequest);
     }
 
     function getGraph(graphId) {
