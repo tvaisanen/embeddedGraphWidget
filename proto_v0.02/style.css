@@ -32,6 +32,14 @@
     background-color: #E3F2FD;
 }
 
+.graph-view-full {
+    padding: 0;
+    width: 95vw;
+    height: 80vh;
+    background-color: #E3F2FD;
+}
+
+
 .footer {
     display: flex;
     width: 95vw;
@@ -47,6 +55,12 @@
     word-wrap: break-word;
     overflow: auto;
     font-family: "Lucida Console", Monaco, monospace;
+}
+
+.panel-hidden {
+    visibility: hidden;
+    width: 0;
+
 }
 
 .tab-nav {
@@ -116,7 +130,13 @@ li {
     border-bottom: groove;
 } li:hover {
     background-color: #cacaca;
+    border-left: outset;
+    border-right: outset;
   }
+
+.list-header {
+    padding: 0;
+}
 
 ::-webkit-scrollbar {
     width: 4px; /* for vertical scrollbars */

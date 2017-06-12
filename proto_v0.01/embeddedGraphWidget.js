@@ -6,6 +6,7 @@ console.info('Initializing cytoscape element..');
 var state = {
     containerId: "panel-container",
     content: {
+        categories: [],
         graphs: {
             label: "Graphs",
             active: true,
@@ -29,7 +30,8 @@ var state = {
 var configs = {
 
     // This is a proxy server for development
-    API_PATH: 'http://127.0.0.1:5000/'
+    API_PATH: 'http://127.0.0.1:5000/',
+    API_GET_NODE: 'http://localhost/?action=getGraphJSON&pagename='
 };
 
 
@@ -240,14 +242,6 @@ function updateCategories(newCategories) {
 
 }
 
-
-/* If graph_json hasn't been initialized correctly
- *  Initialize it by loading the nodes
- */
-if (typeof graph_json === 'undefined') {
-    // window.alert("This feature is still under development. Unfortunately this page isn't yet supported.");
-}
-
 var cy = cytoscape({
     container: document.getElementById('cy'),
     elements: [{group: 'nodes', data: {id: 'personA'}}],
@@ -373,11 +367,15 @@ cy.on('tap', 'node', function (evt) {
             // update existing categories with new ones
             var newCategoriesIn = [];
 
-
-
+            console.group("Category info!");
+            console.info("FUUCK");
+            // this is stupid.. todo: Do it better!
+            node.data.out.forEach(function (c) {
+                console.log(c);
+            });
             for (var k in node.data.out) newCategoriesIn.push(k);
             updateCategories(newCategoriesIn);
-
+            console.groupEnd();
 
             newCategoriesIn.forEach(function (category) {
                 /*

@@ -32,8 +32,10 @@ def get_graph_from_db(graphId):
         graph = d[graphId]
         print(graph)
         d.close()
+        print("get_graph_from_db() : SUCCESS")
         return {'status': 'ok', 'data': graph}
     except Exception as ex:
+        print("get_graph_from_db() : SUCCESS")
         print(str(ex))
         return {'status': 'error', 'data': str(ex)}
 
@@ -43,11 +45,38 @@ def get_graph_list_from_db():
         d = shelve.open(DATABASE, 'r')
         keys = [key for key in d.keys()]
         d.close()
+        print("get_graph_list_from_db() : SUCCESS")
         return {'status': 'ok', 'data': keys}
     except Exception as ex:
+        print("get_graph_list_from_db() : FAILED")
         return {'status': 'error', 'data': str(ex)}
 
+@app.route("/graphs", methods=['GET'])
+def graphlist():
+    print("getting graphlist")
+    if request.method == 'GET':
+        response = get_graph_list_from_db()
+        print(response)
+        return jsonify(response)
+    return 'whaaat?'
 
+@app.route("/log", methods=['GET', 'POST'])
+def log():
+    print(request)
+
+    if request.method == 'GET':
+        print("getting log")
+        return "log"
+
+    if request.method == 'POST':
+        data = request.data.decode('utf-8')
+        print("")
+        print(data)
+        print("")
+
+        return "log"
+
+    return 'whaaat?'
 
 @app.route("/<node>", methods=['GET'])
 def get_node(node):
@@ -85,13 +114,7 @@ def grapdetail(graphId):
         return jsonify(response)
     return 'whaaat?'
 
-@app.route("/graphs", methods=['GET'])
-def graphlist():
-    print("getting graphlist")
-    if request.method == 'GET':
-        response = get_graph_list_from_db()
-        return jsonify(response)
-    return 'whaaat?'
+
 
 
 if __name__ == "__main__":

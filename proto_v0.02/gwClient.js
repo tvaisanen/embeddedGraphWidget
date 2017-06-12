@@ -115,7 +115,7 @@ var gwClient = (function () {
     }
 
     function getGraph(graphId) {
-        var requestUrl = configs.API_PATH + "graph/" + graphId;
+        var requestUrl = configs.API_PATH + graphId;
         console.log("GRAPHID: " + graphId);
         var loadGraphRequest = new Request(requestUrl, {
             headers: new Headers({
@@ -124,8 +124,8 @@ var gwClient = (function () {
             method: 'get'
         });
         console.debug(loadGraphRequest);
-        var promise = fetch(loadGraphRequest);
-        promise.then(function (response) { return validateResponse(response); });
+        return fetch(loadGraphRequest);
+
     }
 
 
@@ -134,6 +134,10 @@ var gwClient = (function () {
 
         setConfigs: function(configs){
             setConfiguration(configs);
+        },
+
+        getGraph: function(graphId){
+            return getGraph(graphId);
         },
 
         getNodeData: function (pagename) {

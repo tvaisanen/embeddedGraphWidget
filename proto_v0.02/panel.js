@@ -4,7 +4,7 @@
 var d = document;
 
 var configs = {
-    // This is a proxy server for development
+// This is a proxy server for development
     API_PATH: 'http://127.0.0.1:5000/'
 };
 
@@ -50,16 +50,16 @@ var testState = {
 console.log("%cTodo:", "color: green; font-size:15px;");
 console.log("%cLoad graphs from the server to the view", "color: blue; font-size:13px;");
 
-function unorderedListFromArray(array, mouseOver, mouseOut, toggleVisibility){
+function unorderedListFromArray(array, mouseOver, mouseOut, toggleVisibility) {
     /*
-    * Todo: add support for the array containing evenListener -methods
-    * array: array of string items
-    * return: unordered html element with list items
-    * from the array
-    * */
+     * Todo: add support for the array containing evenListener -methods
+     * array: array of string items
+     * return: unordered html element with list items
+     * from the array
+     * */
 
     var ul = d.createElement('ul');
-    array.forEach(function (item){
+    array.forEach(function (item) {
         var li = d.createElement('li');
 
         var checkBox = d.createElement('input');
@@ -67,13 +67,13 @@ function unorderedListFromArray(array, mouseOver, mouseOut, toggleVisibility){
         checkBox.setAttribute('type', 'checkbox');
         checkBox.setAttribute('checked', 'true');
         checkBox.checked = true;
-        console.log(checkBox);
-        checkBox.addEventListener('change', function(event){
-            console.log(event.target);
+//console.log(checkBox);
+        checkBox.addEventListener('change', function (event) {
+//console.log(event.target);
             toggleVisibility(event.target);
-            console.log(event.target.id);
+//console.log(event.target.id);
         });
-        console.log(checkBox);
+//console.log(checkBox);
 
         li.appendChild(checkBox);
 
@@ -81,12 +81,12 @@ function unorderedListFromArray(array, mouseOver, mouseOut, toggleVisibility){
 
         li.setAttribute('id', item);
 
-        li.addEventListener('mouseover', function(evt){
-           mouseOver(evt.target.id);
+        li.addEventListener('mouseover', function (evt) {
+            mouseOver(evt.target.id);
         });
 
-        li.addEventListener('mouseout', function(evt){
-           mouseOut(evt.target.id);
+        li.addEventListener('mouseout', function (evt) {
+            mouseOut(evt.target.id);
         });
 
         ul.appendChild(li);
@@ -97,8 +97,52 @@ function unorderedListFromArray(array, mouseOver, mouseOut, toggleVisibility){
 
 var panel = (function (gwClient, cy) {
 
-
     var props;
+
+    var elementIds = {
+        container: 'panel',
+        tab: {
+            nav: {
+                container: 'tab-nav',
+                item: {
+                    active: 'tab-nav__nav-item--active',
+                    inactive: 'tab-nav__nav-item--inactive'
+                }
+            },
+            graph: {
+                container: 'tab-graph',
+                listHeader: 'tab-graph__list-header',
+                listItem: {
+                    active: 'tab-graph__list-item--active',
+                    inactive: 'tab-graph__list-item--inactive'
+                },
+                filter: "tab-graph__filter",
+                filterClasses: {
+                    input: "tab-elements__filter-input"
+                }
+            },
+            elements: {
+                container: 'tab-elements',
+                listHeader: 'tab-elements__list-header',
+                listItem: {
+                    active: 'tab-elements__list-item--active',
+                    inactive: 'tab-elements__list-item--inactive'
+                },
+                filter: "tab-elements__filter",
+                filterClasses: {
+                    input: "tab-elements__filter-input"
+                }
+            },
+            styles: {
+                container: 'tab-styles',
+                listHeader: 'tab-styles__list-header',
+                listItem: {
+                    active: 'tab-styles__list-item--active',
+                    inactive: 'tab-styles__list-item--inactive'
+                }
+            }
+        }
+    };
 
     var classNames = {
         container: 'panel',
@@ -150,21 +194,24 @@ var panel = (function (gwClient, cy) {
          * Implement graphs tab rendering here
          *
          * */
-
+        console.group('Debug GraphsContent()');
         var content = props.tabs.graphs;
         var classes = classNames.tab.graph;
 
         var div = document.createElement('div');
         var ul = document.createElement('ul');
 
-        div.setAttribute('id', classNames.tab.graph.container);
+        div.setAttribute('id', classes.container);
 
-        graphListPromise = props.gw.getGraphList();
+        var graphListPromise = props.gw.getGraphList();
+        console.debug(graphListPromise);
         graphListPromise.then(function (response) {
+            console.debug(response);
             return response.json();
 
         }).then(function (json) {
             var graphs = json.data;
+            console.debug(json);
             graphs.forEach(function (graph) {
                 var li = document.createElement('li');
                 li.classList.add(classes.listItem.inactive);
@@ -178,17 +225,18 @@ var panel = (function (gwClient, cy) {
 
 
         div.appendChild(ul);
+        console.groupEnd();
         return div;
     }
 
     function testRenderGraphsContent(testState) {
-        // set context for tests
+// set context for tests
         console.group("testRenderGraphsContent()");
         setProps(testState, 'all');
         handleNavClick('styles');
-        var stylesGraphs = renderGraphsContent();
-        var firstChild = stylesGraphs.childNodes[0];
-        assert(stylesGraphs.id == "graphs-content", "renderGraphsContent() returns div with proper id");
+        var graphsContent = renderGraphsContent();
+        var firstChild = graphsContent.childNodes[0];
+        assert(graphsContent.id == "graphs-content", "renderGraphsContent() returns div with proper id");
         assert(firstChild.tagName == "UL", "renderGraphsContent() returns with correct html element");
         console.groupEnd();
     }
@@ -207,7 +255,6 @@ var panel = (function (gwClient, cy) {
         console.log("props.cy: ");
         console.log(props.cy.id);
         cyId = props.cy.id;
-        console.debug(props.cy.elements());
         assert(cyId == "cy", "Cytoscape initialized correctly?");
         console.groupEnd();
     }
@@ -220,8 +267,8 @@ var panel = (function (gwClient, cy) {
         var content = props.tabs.elements;
         var cy = props.cy;
 
-        // which are meant to be used with
-        function getElementIDsToArray(selector){
+// which are meant to be used with
+        function getElementIDsToArray(selector) {
             /*
              * param eles: cy.elements
              * return: array of element id strings
@@ -239,21 +286,39 @@ var panel = (function (gwClient, cy) {
             return idArray;
         }
 
-        function mouseOver(param){
-            cy.getElementById(param).toggleClass('highlight');
+        function toggleNeighbourhood(node) {
+            var neighborhood = node.neighborhood('node');
+            var edges = node.neighborhood('edge');
+
+            try {
+                neighborhood.forEach(function (e) {
+                    e.toggleClass('highlight');
+                });
+                edges.forEach(function (e) {
+                    e.toggleClass('highlight');
+                });
+            } catch (e) {
+                console.error("Something went wrong with 'toggleNeighbourhood()'");
+            }
+        }
+
+        function mouseOver(param) {
+            var node = cy.getElementById(param);
+            node.toggleClass('hover-on');
+            toggleNeighbourhood(node);
         }
 
         function mouseOut(param) {
-            cy.getElementById(param).toggleClass('highlight');
+            var node = cy.getElementById(param);
+            node.toggleClass('hover-on');
+            toggleNeighbourhood(node);
         }
 
-        function toggleVisibility(param){
-            console.log("toggleVisibility()");
-            console.log(param);
+        function toggleVisibility(param) {
             cy.getElementById(param).hidden();
         }
 
-        // extract the ids from aforementioned elements
+// extract the ids from aforementioned elements
         var nodes = getElementIDsToArray("node");
         var edges = getElementIDsToArray("edge");
 
@@ -285,7 +350,7 @@ var panel = (function (gwClient, cy) {
     }
 
     function testRenderElementsContent(testState) {
-        // set context for tests
+// set context for tests
         console.group("testRenderStylesContent()");
         setProps(testState, 'all');
         handleNavClick('styles');
@@ -314,25 +379,161 @@ var panel = (function (gwClient, cy) {
          }
          * */
 
-        var styles = props.tabs.styles.styles;
+        var styles = props.tabs.styles;
         var div = document.createElement('div');
         div.setAttribute('id', "styles-content");
         var ul = document.createElement('ul');
+        var cy = props.cy;
 
-        styles.forEach(function (style) {
-            var li = document.createElement('li');
-            li.innerHTML = style.name + " : " + style.data;
-            ul.appendChild(li);
 
+        styles.categories.forEach(function (category) {
+            var divCategory = d.createElement('div');
+            var hCategory = d.createElement('h4');
+            hCategory.classList.add('list-header');
+            hCategory.innerHTML = category;
+
+            divCategory.appendChild(hCategory);
+
+            var params = ['line style', 'arrow shape', 'line color', 'line width'];
+            var lineStyleOptions = {
+                'width': Array.from(Array(20).keys()),
+                'line-color': 'rgb',
+                'line-style': [],
+                'target-arrow-color': 'rgb',
+                'target-arrow-shape': [],
+                'curve-style': []
+            };
+
+            var lines = ['solid', 'dotted', 'dashed'];
+            var arrows = ['tee', 'triangle', 'triangle-tee', 'triangle-cross', 'triangle-backcurve', 'square', 'circle', 'diamond', 'none'];
+            var colors = ['red', 'green', 'orange', 'yellow', 'cyan', 'blue'];
+
+            function styleSelectionDropdown(attributeId, selectionId, values) {
+                var selection = d.createElement('select');
+                selection.setAttribute('id', selectionId);
+
+                selection.addEventListener('change', function () {
+                    var categoryElements = cy.elements('edge.' + category);
+                    categoryElements.forEach(function (e) {
+                        console.debug(e);
+                        e.toggleClass('line-style-' + selection.value);
+                        console.debug(e);
+                    });
+                });
+
+
+                values.forEach(function (lineStyle) {
+                    var option = d.createElement('option');
+                    option.setAttribute('id', attributeId + "-" + lineStyle);
+                    option.innerHTML = lineStyle;
+                    selLineStyle.appendChild(option);
+                });
+                liParam.appendChild(selLineStyle);
+                return liParam;
+            }
+
+            var ulCategory = document.createElement('ul');
+            params.forEach(function (parameter) {
+                var liParam = document.createElement('li');
+                liParam.innerHTML = parameter;
+
+                // generate line style selection
+                if (parameter == 'line style') {
+                    var selLineStyle = d.createElement('select');
+                    selLineStyle.setAttribute('id', 'select-line-style');
+
+                    selLineStyle.addEventListener('change', function () {
+                        var categoryElements = cy.elements('edge.' + category);
+                        categoryElements.forEach(function (e) {
+                            console.debug(e);
+                            e.toggleClass('line-style-' + selLineStyle.value);
+                            console.debug(e);
+                        });
+                    });
+
+
+                    lines.forEach(function (lineStyle) {
+                        var optLine = d.createElement('option');
+                        optLine.setAttribute('id', 'option-line-style' + lineStyle);
+                        optLine.innerHTML = lineStyle;
+                        selLineStyle.appendChild(optLine);
+                    });
+                    liParam.appendChild(selLineStyle);
+                }
+                ulCategory.appendChild(liParam);
+
+                // generate arrow selection
+                if (parameter == 'arrow shape') {
+                    var selArrow = d.createElement('select');
+                    selArrow.setAttribute('id', 'select-arrow-shape');
+                    selArrow.addEventListener('change', function () {
+                        var categoryElements = cy.elements('edge.' + category);
+                        categoryElements.forEach(function (e) {
+
+                            e.toggleClass('arrow-shape-' + selArrow.value);
+                            console.log(e.id() + ".toggleClass(arrow-shape-" + selArrow.value + ")");
+                            console.debug(e);
+                        });
+                    });
+                    arrows.forEach(function (arrowShape) {
+                        var optArrow = d.createElement('option');
+                        optArrow.setAttribute('id', 'option-arrow-shape' + arrowShape);
+                        optArrow.innerHTML = arrowShape;
+                        selArrow.appendChild(optArrow);
+                    });
+                    liParam.appendChild(selArrow);
+                }
+                ulCategory.appendChild(liParam);
+
+                // generate color selection
+                if (parameter == 'line color') {
+                    var selColor = d.createElement('select');
+                    selColor.setAttribute('id', 'select-line-color');
+
+                    selColor.addEventListener('change', function () {
+                        var categoryElements = cy.elements('edge.' + category);
+                        categoryElements.forEach(function (e) {
+                            console.debug(e);
+                            e.toggleClass('line-color-' + selColor.value);
+                            console.debug(e);
+                        });
+                    });
+
+                    colors.forEach(function (color) {
+                        var optColor = d.createElement('option');
+                        optColor.setAttribute('id', 'option-line-color');
+                        optColor.innerHTML = color;
+                        selColor.appendChild(optColor);
+                    });
+                    liParam.appendChild(selColor);
+                }
+                ulCategory.appendChild(liParam);
+
+                // generate linewidth selection
+                if (parameter == 'line width') {
+                    var selLineWidth = d.createElement('select');
+                    selLineWidth.setAttribute('id', 'select-line-width');
+                    Array.from(Array(11).keys()).forEach(function (lineWidth) {
+                        var optLineWidth = d.createElement('option');
+                        optLineWidth.setAttribute('id', 'option-line-width');
+                        optLineWidth.innerHTML = lineWidth;
+                        selLineWidth.appendChild(optLineWidth);
+                    });
+
+                    liParam.appendChild(selLineWidth);
+
+                }
+                ulCategory.appendChild(liParam);
+
+            });
+            divCategory.appendChild(ulCategory);
+            div.appendChild(divCategory);
         });
-        div.appendChild(ul);
-
-
         return div;
     }
 
     function testRenderStylesContent(testState) {
-        // set context for tests
+// set context for tests
         console.group("testRenderStylesContent()");
         setProps(testState, 'all');
         handleNavClick('styles');
@@ -344,13 +545,13 @@ var panel = (function (gwClient, cy) {
     function handleNavClick(keyToActivate) {
 
         var tabs = props.tabs;
-        // toggle all navlink classes to inactive
+// toggle all navlink classes to inactive
         var links = Object.keys(tabs);
         links.forEach(function (key) {
             tabs[key].active = false;
         });
 
-        // activate clicked navlink
+// activate clicked navlink
         tabs[keyToActivate].active = true;
 
         updatePanel();
@@ -382,7 +583,7 @@ var panel = (function (gwClient, cy) {
 
         var tabs = props.tabs;
 
-        // css classes
+// css classes
         var classes = classNames.tab.nav;
 
         var divNav = document.createElement('div');
@@ -410,7 +611,6 @@ var panel = (function (gwClient, cy) {
             divLink.innerHTML = link.label;
             divNav.appendChild(divLink);
         });
-
 
 
         return divNav;
@@ -452,7 +652,7 @@ var panel = (function (gwClient, cy) {
         var divContent = d.createElement('div');
         divContent.id = "panel-content";
 
-        // render content
+// render content
 
 
         if (tabs.graphs.active) {
@@ -488,11 +688,26 @@ var panel = (function (gwClient, cy) {
         var container = document.getElementById(props.containerId);
         container.appendChild(renderNavigation(content));
         container.appendChild(renderContent(content));
+
+    }
+
+    function toggleMode() {
+        props.editMode = !props.editMode;
+        var cyContainer = d.getElementById('cy');
+        var panelContainer = d.getElementById('panel');
+        if (props.editMode) {
+            panelContainer.classList.remove('panel-hidden');
+            cyContainer.classList.remove('graph-view-full');
+        } else {
+            panelContainer.classList.add('panel-hidden');
+            cyContainer.classList.add('graph-view-full');
+        }
     }
 
     function tests() {
         var stateForTests = testState;
         console.group("Panel tests!");
+// todo return true/false -> push to array -> check if all passed!
         testCytoscapeIntegrationInit(stateForTests);
         testGraphingWikiClientInit(stateForTests);
         testHandleNavClick(stateForTests);
@@ -512,6 +727,7 @@ var panel = (function (gwClient, cy) {
         },
 
         updateStylesContent: function (newCategories, styles) {
+            setProps(styleProps, 'styles');
             renderStylesContent(newCategories, styles);
         },
 
@@ -520,12 +736,23 @@ var panel = (function (gwClient, cy) {
             renderElementsContent()
         },
 
-        changeView: function () {
-
+        updateProps: function (newProps, selector) {
+            setProps(newProps, selector);
+            console.debug(props);
         },
 
-        updateProps: function () {
+        getEdgeCategories: function () {
+            var categories = props.tabs.styles.categories;
+            if (categories == 'undefined') {
+                return []
+            } else {
+                return categories;
+            }
+        },
 
+        toggleEditMode: function () {
+            toggleMode();
+            console.log("toggle!");
         },
 
         runTests: function (containerId) {

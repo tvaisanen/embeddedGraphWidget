@@ -49,6 +49,7 @@ def get_graph_list_from_db():
 
 
 
+
 @app.route("/<node>", methods=['GET'])
 def get_node(node):
     """
@@ -85,6 +86,7 @@ def grapdetail(graphId):
         return jsonify(response)
     return 'whaaat?'
 
+
 @app.route("/graphs", methods=['GET'])
 def graphlist():
     print("getting graphlist")
@@ -93,6 +95,20 @@ def graphlist():
         return jsonify(response)
     return 'whaaat?'
 
+
+@app.route("/log", methods=['GET', 'POST'])
+def log():
+    print(request)
+
+    if request.method == 'GET':
+        print("getting log")
+        return "log"
+
+    if request.method == 'POST':
+        req = request.get_json()
+        print(req)
+        return "Hello"
+    return 'whaaat?'
 
 if __name__ == "__main__":
     app.run()
