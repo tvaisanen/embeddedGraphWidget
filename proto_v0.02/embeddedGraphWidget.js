@@ -30,7 +30,7 @@ var cy = cytoscape({
         {
             selector: 'node.hover-on',
             style: {
-                'background-color': '#02a6ff',
+                'background-color': '#00ff14',
             }
         },
 
@@ -152,10 +152,7 @@ var cy = cytoscape({
     ],
 });
 
-cy.on('tap', 'node', function (evt) {
-
-    var node = evt.target;
-    var nodeId = node.id();
+function expandNode(nodeId){
 
     function createNewNode(id) {
 
@@ -324,6 +321,13 @@ cy.on('tap', 'node', function (evt) {
             panel.updateStatusMessage("");
         }
     );
+}
+
+cy.on('tap', 'node', function (evt) {
+    var node = evt.target;
+    var nodeId = node.id();
+    expandNode(nodeId);
+
 });
 
 /*
@@ -376,6 +380,7 @@ var state = {
     editMode: false,
     gw: gwClient,
     cy: cy,
+    elementStyles: {},
     tabs: {
         graphs: {
             label: "Graphs",
@@ -430,20 +435,20 @@ function updateCategories(newCategories) {
      CategoryStyles is the function, which handles the updating.
      */
 
-// get current categories from the panel
+    // get current categories from the panel
     var categoriesToUpdate = panel.getEdgeCategories();
 
-// this could be written with reducer Todo ?
+    // this could be written with reducer Todo ?
     newCategories.forEach(function (category) {
         if (categoriesToUpdate.indexOf(category) === -1) {
             categoriesToUpdate.push(category);
         }
     });
 
-    var styleProps = state.tabs.styles;
-    styleProps.categories = categoriesToUpdate;
+    var tabStylesProps = state.tabs.styles;
+    tabStylesProps.categories = categoriesToUpdate;
 
-    panel.updateProps(styleProps, 'styles');
+    panel.updateProps(tabStylesProps, 'styles');
 }
 
 

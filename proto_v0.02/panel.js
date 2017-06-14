@@ -50,7 +50,7 @@ var testState = {
 console.log("%cTodo:", "color: green; font-size:15px;");
 console.log("%cLoad graphs from the server to the view", "color: blue; font-size:13px;");
 
-function unorderedListFromArray(array, mouseOver, mouseOut, toggleVisibility) {
+function unorderedListFromArray(array, mouseOver, mouseOut, toggleVisibility, doubleClick) {
     /*
      * Todo: add support for the array containing evenListener -methods
      * array: array of string items
@@ -83,6 +83,10 @@ function unorderedListFromArray(array, mouseOver, mouseOut, toggleVisibility) {
 
         li.addEventListener('mouseover', function (evt) {
             mouseOver(evt.target.id);
+        });
+
+        li.addEventListener('doubleclick', function (evt) {
+            doubleClick(evt.target.id);
         });
 
         li.addEventListener('mouseout', function (evt) {
@@ -146,16 +150,16 @@ var panel = (function (gwClient, cy) {
         }
     };
 
-    function setStatusMessage(text){
+    function setStatusMessage(text) {
         var statusMessage = d.getElementById("status-message");
         statusMessage.innerHTML = text;
     }
 
-    function toggleStatusActivity(){
+    function toggleStatusActivity() {
         var infoPanel = d.getElementById("info-panel");
         var active = infoPanel.classList.contains('info-messages__ready');
 
-        if (active){
+        if (active) {
             infoPanel.classList.remove('info-messages__ready');
             infoPanel.classList.add('info-messages__loading');
         } else {
@@ -338,6 +342,12 @@ var panel = (function (gwClient, cy) {
             }
         }
 
+        function doubleClick(param) {
+            if (cy.getElementById(param).isNode()) {
+                expandNode(param);
+            }
+        }
+
         function mouseOver(param) {
             var node = cy.getElementById(param);
             node.toggleClass('hover-on');
@@ -372,7 +382,7 @@ var panel = (function (gwClient, cy) {
         var hdEdges = d.createElement('h2');
         hdEdges.innerHTML = "Edges";
 
-        var ulNodes = unorderedListFromArray(nodes, mouseOver, mouseOut, toggleVisibility);
+        var ulNodes = unorderedListFromArray(nodes, mouseOver, mouseOut, toggleVisibility, doubleClick);
         var ulEdges = unorderedListFromArray(edges, mouseOver, mouseOut, toggleVisibility);
 
         div.setAttribute('id', "elements-list");
@@ -393,6 +403,7 @@ var panel = (function (gwClient, cy) {
         console.groupEnd();
     }
 
+    // Todo: Refactor!
     function renderStylesContent() {
         /*
          * Implement style tab rendering here
@@ -419,7 +430,75 @@ var panel = (function (gwClient, cy) {
         var ul = document.createElement('ul');
         var cy = props.cy;
 
+        // Todo: create configs object where to store the following..
+        var params = ['line style', 'arrow shape', 'line color', 'line width'];
+        var lineStyleOptions = {
+            'width': Array.from(Array(20).keys()),
+            'line-color': 'rgb',
+            'line-style': [],
+            'target-arrow-color': 'rgb',
+            'target-arrow-shape': [],
+            'curve-style': []
+        };
 
+        var lines = ['solid', 'dotted', 'dashed'];
+        var arrows = ['tee', 'triangle', 'triangle-tee', 'triangle-cross', 'triangle-backcurve', 'square', 'circle', 'diamond', 'none'];
+        var colors = ['red', 'green', 'orange', 'yellow', 'cyan', 'blue'];
+
+        function styleSelectionEventListener(baseClass, category, parameter, selector, value) {
+
+            var categoryElements = cy.elements(baseClass + '.' + category);
+            categoryElements.forEach(function (e) {
+                console.debug(e);
+                e.toggleClass(parameter + '-' + value);
+                console.debug(e);
+
+                try {
+                    props.elementStyles[category][selector] = value;
+
+                } catch (e) {
+                    props.elementStyles[category] = {};
+                    props.elementStyles[category][selector] = value;
+
+                }
+                console.groupCollapsed("StyleSelection log");
+                console.log("props.elementStyles["+category+"]["+selector+"] = "+value);
+                console.log(props.elementStyles[category][selector]);
+                console.log("Category: " + category);
+                console.log("Parameter: " + parameter);
+                console.log("State!");
+                console.log(props);
+                console.groupEnd();
+            });
+        }
+
+        // Todo: make this generic version to work for all of the following use cases
+        function styleSelectionDropdown(attributeId, selectionId, values) {
+            var selection = d.createElement('select');
+            selection.setAttribute('id', selectionId);
+
+            selection.addEventListener('change', function () {
+                var categoryElements = cy.elements('edge.' + category);
+                categoryElements.forEach(function (e) {
+                    console.debug(e);
+                    e.toggleClass('line-style-' + selection.value);
+                    console.debug(e);
+                });
+            });
+
+
+            values.forEach(function (lineStyle) {
+                var option = d.createElement('option');
+                option.setAttribute('id', attributeId + "-" + lineStyle);
+                option.innerHTML = lineStyle;
+                selLineStyle.appendChild(option);
+            });
+
+            liParam.appendChild(selLineStyle);
+            return liParam;
+        }
+
+        // Create the style option selection list
         styles.categories.forEach(function (category) {
             var divCategory = d.createElement('div');
             var hCategory = d.createElement('h4');
@@ -428,43 +507,6 @@ var panel = (function (gwClient, cy) {
 
             divCategory.appendChild(hCategory);
 
-            var params = ['line style', 'arrow shape', 'line color', 'line width'];
-            var lineStyleOptions = {
-                'width': Array.from(Array(20).keys()),
-                'line-color': 'rgb',
-                'line-style': [],
-                'target-arrow-color': 'rgb',
-                'target-arrow-shape': [],
-                'curve-style': []
-            };
-
-            var lines = ['solid', 'dotted', 'dashed'];
-            var arrows = ['tee', 'triangle', 'triangle-tee', 'triangle-cross', 'triangle-backcurve', 'square', 'circle', 'diamond', 'none'];
-            var colors = ['red', 'green', 'orange', 'yellow', 'cyan', 'blue'];
-
-            function styleSelectionDropdown(attributeId, selectionId, values) {
-                var selection = d.createElement('select');
-                selection.setAttribute('id', selectionId);
-
-                selection.addEventListener('change', function () {
-                    var categoryElements = cy.elements('edge.' + category);
-                    categoryElements.forEach(function (e) {
-                        console.debug(e);
-                        e.toggleClass('line-style-' + selection.value);
-                        console.debug(e);
-                    });
-                });
-
-
-                values.forEach(function (lineStyle) {
-                    var option = d.createElement('option');
-                    option.setAttribute('id', attributeId + "-" + lineStyle);
-                    option.innerHTML = lineStyle;
-                    selLineStyle.appendChild(option);
-                });
-                liParam.appendChild(selLineStyle);
-                return liParam;
-            }
 
             var ulCategory = document.createElement('ul');
             params.forEach(function (parameter) {
@@ -484,13 +526,9 @@ var panel = (function (gwClient, cy) {
                     var selLineStyle = d.createElement('select');
                     selLineStyle.setAttribute('id', 'select-line-style');
 
-                    selLineStyle.addEventListener('change', function () {
-                        var categoryElements = cy.elements('edge.' + category);
-                        categoryElements.forEach(function (e) {
-                            console.debug(e);
-                            e.toggleClass('line-style-' + selLineStyle.value);
-                            console.debug(e);
-                        });
+                    selLineStyle.addEventListener('change', function(){
+                        styleSelectionEventListener(
+                            'edge', category, parameter, 'line-style', selLineStyle.value);
                     });
 
 
@@ -510,13 +548,8 @@ var panel = (function (gwClient, cy) {
                     var selArrow = d.createElement('select');
                     selArrow.setAttribute('id', 'select-arrow-shape');
                     selArrow.addEventListener('change', function () {
-                        var categoryElements = cy.elements('edge.' + category);
-                        categoryElements.forEach(function (e) {
-
-                            e.toggleClass('arrow-shape-' + selArrow.value);
-                            console.log(e.id() + ".toggleClass(arrow-shape-" + selArrow.value + ")");
-                            console.debug(e);
-                        });
+                        styleSelectionEventListener(
+                            'edge', category, 'arrow-shape', 'arrow-shape', selArrow.value);
                     });
                     arrows.forEach(function (arrowShape) {
                         var optArrow = d.createElement('option');
@@ -534,12 +567,8 @@ var panel = (function (gwClient, cy) {
                     selColor.setAttribute('id', 'select-line-color');
 
                     selColor.addEventListener('change', function () {
-                        var categoryElements = cy.elements('edge.' + category);
-                        categoryElements.forEach(function (e) {
-                            console.debug(e);
-                            e.toggleClass('line-color-' + selColor.value);
-                            console.debug(e);
-                        });
+                        styleSelectionEventListener(
+                            'edge', category, parameter, 'line-color', selColor.value);
                     });
 
                     colors.forEach(function (color) {
@@ -558,12 +587,8 @@ var panel = (function (gwClient, cy) {
                     selLineWidth.setAttribute('id', 'select-line-width');
 
                     selLineWidth.addEventListener('change', function () {
-                        var categoryElements = cy.elements('edge.' + category);
-                        categoryElements.forEach(function (e) {
-                            console.debug(e);
-                            e.toggleClass('width-' + selLineWidth.value);
-                            console.debug(e);
-                        });
+                        styleSelectionEventListener(
+                            'edge', category, 'width', 'line-width',  selLineWidth.value);
                     });
 
 
@@ -635,9 +660,12 @@ var panel = (function (gwClient, cy) {
 
     function renderNavigation() {
 
+        // Create the div which contains panel navigation tabs.
+
+
         var tabs = props.tabs;
 
-// css classes
+        // css classes
         var classes = classNames.tab.nav;
 
         var divNav = document.createElement('div');
@@ -771,6 +799,7 @@ var panel = (function (gwClient, cy) {
         console.groupEnd();
     }
 
+
     return {
 
         render: function (props) {
@@ -802,8 +831,8 @@ var panel = (function (gwClient, cy) {
             }
         },
 
-        elementHasOneOfCategories: function (element){
-            var values = []
+        elementHasOneOfCategories: function (element) {
+            var values = [];
             props.styles.categories.forEach(function (category) {
                 values.push(element.hasClass(category))
             });
@@ -821,6 +850,10 @@ var panel = (function (gwClient, cy) {
         updateStatusMessage: function (text) {
             setStatusMessage(text);
             toggleStatusActivity();
+        },
+
+        props: function () {
+            return props;
         },
 
         runTests: function (containerId) {
