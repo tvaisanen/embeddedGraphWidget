@@ -5,8 +5,6 @@
 var gwClient = (function () {
     /*
     * Client for requesting and posting data to graphingwiki
-    *
-    *
     * */
 
     // private methods
@@ -123,6 +121,7 @@ var gwClient = (function () {
             }),
             method: 'get'
         });
+
         console.debug(loadGraphRequest);
         return fetch(loadGraphRequest);
 

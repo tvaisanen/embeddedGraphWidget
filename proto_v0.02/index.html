@@ -10,47 +10,45 @@
 <div class="app-container">
 
     <div class="header-container" id="header">
-        GraphID: 23GJ3SJ5K, Modified by: J.Doe, Date: 2.6.2017
-    </div>
+        <div class="header-status">
+            <h3>GraphingWikiBrowser</h3>
+        </div>
+        <div class="toolbar-container" id="tool-panel">
+            <input class="input-graph-name" id="graph-name" type="text" name="firstname">
+            <button class="btn-toggle-edit" id="toggle-edit-button">Edit!</button>
+            <button class="btn-load-graphs" id="load-graphs-button">Load Graphs</button>
 
-    <div class="tool-panel" id="tool-panel">
-        <button id="toggle-edit-button">Edit!</button>
-        Status: <span id="graph-state">Initial state</span>
-        <select id="layout-options">
-            <option value="cola">cola</option>
-            <option value="breadthfirst">breadth first</option>
-            <option value="circle">circle</option>
-            <option value="concentric">concentric</option>
-            <option value="cose">cose</option>
-            <option value="grid">grid</option>
-            <option value="random">random</option>
-        </select>
-        <button id="run-layout-button">Set Layout</button>
-        <button id="download-graph-button">Save Image</button>
+
+            <button class="btn-download-graph" id="download-graph-button">Download Image</button>
+
+            <button class="btn-save-graph" id="save-graph-button">Save</button>
+
+            <button class="btn-run-layout" id="run-layout-button">Reset Layout: </button>
+            <select class="select-header" id="layout-options">
+                <option value="cola">cola</option>
+                <option value="breadthfirst">breadth first</option>
+                <option value="circle">circle</option>
+                <option value="concentric">concentric</option>
+                <option value="cose">cose</option>
+                <option value="grid">grid</option>
+                <option value="random">random</option>
+            </select>
+        </div>
     </div>
 
     <div class="content-block">
 
-        <div class="panel" id="panel">
-
+        <div class="panel" id="panel"></div>
+        <div class="graph-col">
+            <div class="info-messages__ready" id="info-panel">
+                <span class="status-text" id="status-message"></span>
             </div>
 
-        <div class="graph" id="cy" style=""></div>
+            <div class="graph" id="cy"></div>
+        </div>
     </div>
 
 
-    <div class="footer" id="footer">
-        <button id="load-graphs-button">Load Graphs</button>
-
-        <span>name:</span>
-        <input id="graph-query" type="text" name="graphquery"><br>
-        <button id="load-graph-button">Load Graph</button>
-
-        <span>name:</span>
-        <input id="graph-name" type="text" name="firstname"><br>
-
-        <button id="save-graph-button">Save Graph</button>
-    </div>
 </div>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.0.0/cytoscape.js'></script>
 <script src='https://rawgit.com/cytoscape/cytoscape.js-cola/master/cola.js'></script>

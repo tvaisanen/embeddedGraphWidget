@@ -99,50 +99,7 @@ var panel = (function (gwClient, cy) {
 
     var props;
 
-    var elementIds = {
-        container: 'panel',
-        tab: {
-            nav: {
-                container: 'tab-nav',
-                item: {
-                    active: 'tab-nav__nav-item--active',
-                    inactive: 'tab-nav__nav-item--inactive'
-                }
-            },
-            graph: {
-                container: 'tab-graph',
-                listHeader: 'tab-graph__list-header',
-                listItem: {
-                    active: 'tab-graph__list-item--active',
-                    inactive: 'tab-graph__list-item--inactive'
-                },
-                filter: "tab-graph__filter",
-                filterClasses: {
-                    input: "tab-elements__filter-input"
-                }
-            },
-            elements: {
-                container: 'tab-elements',
-                listHeader: 'tab-elements__list-header',
-                listItem: {
-                    active: 'tab-elements__list-item--active',
-                    inactive: 'tab-elements__list-item--inactive'
-                },
-                filter: "tab-elements__filter",
-                filterClasses: {
-                    input: "tab-elements__filter-input"
-                }
-            },
-            styles: {
-                container: 'tab-styles',
-                listHeader: 'tab-styles__list-header',
-                listItem: {
-                    active: 'tab-styles__list-item--active',
-                    inactive: 'tab-styles__list-item--inactive'
-                }
-            }
-        }
-    };
+    var statusMessage = d.getElementById("status-message");
 
     var classNames = {
         container: 'panel',
@@ -188,6 +145,26 @@ var panel = (function (gwClient, cy) {
             }
         }
     };
+
+    function setStatusMessage(text){
+        var statusMessage = d.getElementById("status-message");
+        statusMessage.innerHTML = text;
+    }
+
+    function toggleStatusActivity(){
+        var infoPanel = d.getElementById("info-panel");
+        var active = infoPanel.classList.contains('info-messages__ready');
+
+        if (active){
+            infoPanel.classList.remove('info-messages__ready');
+            infoPanel.classList.add('info-messages__loading');
+        } else {
+            infoPanel.classList.add('info-messages__ready');
+            infoPanel.classList.remove('info-messages__loading');
+        }
+
+
+    }
 
     function renderGraphsContent() {
         /*
@@ -267,6 +244,56 @@ var panel = (function (gwClient, cy) {
         var content = props.tabs.elements;
         var cy = props.cy;
 
+        var div = d.createElement('div');
+        div.setAttribute('id', "elements-content");
+
+        div.appendChild(renderElementsFilter());
+        div.appendChild(renderElementsList());
+
+        return div;
+    }
+
+    function renderElementsFilter() {
+        var div = d.createElement('div');
+        var spanFilter = d.createElement('span');
+        var btnClearFilter = d.createElement("button");
+
+        div.classList.add("element-filter");
+
+        btnClearFilter.innerHTML = "ClearFilter";
+        btnClearFilter.addEventListener('click', function () {
+            props.tabs.elements.filter = '';
+            updatePanel();
+        });
+        var mockFilter = d.createElement("input");
+
+
+        mockFilter.type = "text";
+        mockFilter.setAttribute('id', 'filter');
+        // mockFilter.setAttribute('placeholder', 'Filter Elements');
+
+
+        mockFilter.addEventListener('keypress', function (event) {
+            var divList = d.getElementById('elements-list');
+            props.tabs.elements.filter = mockFilter.value;
+            spanFilter.innerHTML = ": filter :" + mockFilter.value;
+            console.log("prop.filter: " + props.tabs.elements.filter);
+            var elesContent = d.getElementById('elements-content');
+            var oldContent = elesContent.childNodes[1];
+            var newContent = renderElementsList();
+            elesContent.replaceChild(newContent, oldContent);
+        });
+
+        div.appendChild(mockFilter);
+        div.appendChild(btnClearFilter);
+        div.appendChild(spanFilter);
+        return div;
+    }
+
+    function renderElementsList() {
+        var content = props.tabs.elements;
+        var cy = props.cy;
+
 // which are meant to be used with
         function getElementIDsToArray(selector) {
             /*
@@ -276,9 +303,18 @@ var panel = (function (gwClient, cy) {
 
             var idArray = [];
             try {
+                console.log("Applying filter: " + props.tabs.elements.filter);
                 cy.elements(selector).forEach(function (el) {
                     var id = el.id();
-                    idArray.push(id);
+                    var filterIncludes = id.toLowerCase().includes(content.filter.toLowerCase());
+
+                    if (content.filter == '' || content.filter == 'undefined') {
+                        idArray.push(id);
+                    } else {
+                        if (filterIncludes) {
+                            idArray.push(id);
+                        }
+                    }
                 });
             } catch (e) {
                 console.error(e);
@@ -318,12 +354,12 @@ var panel = (function (gwClient, cy) {
             cy.getElementById(param).hidden();
         }
 
+
 // extract the ids from aforementioned elements
+
         var nodes = getElementIDsToArray("node");
         var edges = getElementIDsToArray("edge");
 
-        var mockFilter = d.createElement("input");
-        mockFilter.type = "text";
 
         var div = document.createElement('div');
 
@@ -339,13 +375,11 @@ var panel = (function (gwClient, cy) {
         var ulNodes = unorderedListFromArray(nodes, mouseOver, mouseOut, toggleVisibility);
         var ulEdges = unorderedListFromArray(edges, mouseOver, mouseOut, toggleVisibility);
 
-        div.setAttribute('id', "elements-content");
-        div.appendChild(mockFilter);
+        div.setAttribute('id', "elements-list");
         div.appendChild(hdNodes);
         div.appendChild(ulNodes);
         div.appendChild(hdEdges);
         div.appendChild(ulEdges);
-
         return div;
     }
 
@@ -435,10 +469,18 @@ var panel = (function (gwClient, cy) {
             var ulCategory = document.createElement('ul');
             params.forEach(function (parameter) {
                 var liParam = document.createElement('li');
-                liParam.innerHTML = parameter;
+                var div = d.createElement('div');
+                var spanLabel = d.createElement('span');
+                div.classList.add('style-selection-div');
+
+                spanLabel.innerHTML = parameter;
+                div.appendChild(spanLabel);
+
+                liParam.appendChild(div);
 
                 // generate line style selection
                 if (parameter == 'line style') {
+                    var div = d.createElement('div');
                     var selLineStyle = d.createElement('select');
                     selLineStyle.setAttribute('id', 'select-line-style');
 
@@ -458,7 +500,8 @@ var panel = (function (gwClient, cy) {
                         optLine.innerHTML = lineStyle;
                         selLineStyle.appendChild(optLine);
                     });
-                    liParam.appendChild(selLineStyle);
+                    div.appendChild(selLineStyle);
+                    liParam.appendChild(div);
                 }
                 ulCategory.appendChild(liParam);
 
@@ -513,7 +556,18 @@ var panel = (function (gwClient, cy) {
                 if (parameter == 'line width') {
                     var selLineWidth = d.createElement('select');
                     selLineWidth.setAttribute('id', 'select-line-width');
-                    Array.from(Array(11).keys()).forEach(function (lineWidth) {
+
+                    selLineWidth.addEventListener('change', function () {
+                        var categoryElements = cy.elements('edge.' + category);
+                        categoryElements.forEach(function (e) {
+                            console.debug(e);
+                            e.toggleClass('width-' + selLineWidth.value);
+                            console.debug(e);
+                        });
+                    });
+
+
+                    Array.from(Array(31).keys()).forEach(function (lineWidth) {
                         var optLineWidth = d.createElement('option');
                         optLineWidth.setAttribute('id', 'option-line-width');
                         optLineWidth.innerHTML = lineWidth;
@@ -653,8 +707,6 @@ var panel = (function (gwClient, cy) {
         divContent.id = "panel-content";
 
 // render content
-
-
         if (tabs.graphs.active) {
             divContent.appendChild(renderGraphsContent());
 
@@ -750,9 +802,25 @@ var panel = (function (gwClient, cy) {
             }
         },
 
+        elementHasOneOfCategories: function (element){
+            var values = []
+            props.styles.categories.forEach(function (category) {
+                values.push(element.hasClass(category))
+            });
+            return values;
+        },
+
+        refreshPanel: function () {
+            updatePanel();
+        },
+
         toggleEditMode: function () {
             toggleMode();
-            console.log("toggle!");
+        },
+
+        updateStatusMessage: function (text) {
+            setStatusMessage(text);
+            toggleStatusActivity();
         },
 
         runTests: function (containerId) {

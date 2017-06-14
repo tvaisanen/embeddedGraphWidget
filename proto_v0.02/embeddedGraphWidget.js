@@ -1,6 +1,8 @@
 /**
  * Created by toni on 31.5.2017.
  */
+
+// <button class="btn-toggle-edit" id="toggle-edit-button">Edit!</button>
 console.info('Initializing cytoscape element..');
 
 
@@ -11,9 +13,9 @@ var cy = cytoscape({
         {
             selector: 'node',
             style: {
-                'background-color': '#666',
+                'background-color': '#6490af',
                 'size': '40',
-                'label': 'data(id)'
+                'label': 'data(id)',
             }
         },
 
@@ -21,14 +23,14 @@ var cy = cytoscape({
         {
             selector: 'node.highlight',
             style: {
-                'background-color': '#dd0013',
+                'background-color': '#c50004',
             }
         },
 
         {
             selector: 'node.hover-on',
             style: {
-                'background-color': '#00dd10',
+                'background-color': '#02a6ff',
             }
         },
 
@@ -36,7 +38,7 @@ var cy = cytoscape({
             selector: 'edge',
             style: {
                 'line-color': '#ccc',
-                'target-arrow-color': '#ccc',
+                'target-arrow-color': '#000000',
                 'target-arrow-shape': 'triangle',
                 'curve-style': 'bezier',
                 'overlay-padding': 1
@@ -64,6 +66,26 @@ var cy = cytoscape({
         {selector: 'edge.width-8', style: {'width': 8}},
         {selector: 'edge.width-9', style: {'width': 9}},
         {selector: 'edge.width-9', style: {'width': 10}},
+        {selector: 'edge.width-10', style: {'width': 11}},
+        {selector: 'edge.width-12', style: {'width': 12}},
+        {selector: 'edge.width-13', style: {'width': 13}},
+        {selector: 'edge.width-14', style: {'width': 14}},
+        {selector: 'edge.width-15', style: {'width': 15}},
+        {selector: 'edge.width-16', style: {'width': 16}},
+        {selector: 'edge.width-17', style: {'width': 17}},
+        {selector: 'edge.width-18', style: {'width': 18}},
+        {selector: 'edge.width-19', style: {'width': 19}},
+        {selector: 'edge.width-20', style: {'width': 20}},
+        {selector: 'edge.width-21', style: {'width': 21}},
+        {selector: 'edge.width-22', style: {'width': 22}},
+        {selector: 'edge.width-23', style: {'width': 23}},
+        {selector: 'edge.width-24', style: {'width': 24}},
+        {selector: 'edge.width-25', style: {'width': 25}},
+        {selector: 'edge.width-26', style: {'width': 26}},
+        {selector: 'edge.width-27', style: {'width': 27}},
+        {selector: 'edge.width-28', style: {'width': 28}},
+        {selector: 'edge.width-29', style: {'width': 29}},
+        {selector: 'edge.width-30', style: {'width': 30}},
 
         {selector: 'edge.arrow-shape-tee', style: {'target-arrow-shape': 'tee'}},
         {selector: 'edge.arrow-shape-triangle', style: {'target-arrow-shape': 'triangle'}},
@@ -75,26 +97,17 @@ var cy = cytoscape({
         {selector: 'edge.arrow-shape-diamond', style: {'target-arrow-shape': 'diamond'}},
         {selector: 'edge.arrow-shape-none', style: {'target-arrow-shape': 'none'}},
 
-        {selector: 'edge.line-color-red', style: {'line-color': 'red'}},
-        {selector: 'edge.line-color-green', style: {'line-color': 'green'}},
-        {selector: 'edge.line-color-orange', style: {'line-color': 'orange'}},
-        {selector: 'edge.line-color-yellow', style: {'line-color': 'yellow'}},
-        {selector: 'edge.line-color-cyan', style: {'line-color': 'cyan'}},
-        {selector: 'edge.line-color-blue', style: {'line-color': 'blue'}},
-
-        {selector: 'edge.arrow-color-red', style: {'arrow-color': 'red'}},
-        {selector: 'edge.arrow-color-green', style: {'arrow-color': 'green'}},
-        {selector: 'edge.arrow-color-orange', style: {'arrow-color': 'orange'}},
-        {selector: 'edge.arrow-color-yellow', style: {'arrow-color': 'yellow'}},
-        {selector: 'edge.arrow-color-cyan', style: {'arrow-color': 'cyan'}},
-        {selector: 'edge.arrow-color-blue', style: {'arrow-color': 'blue'}},
+        {selector: 'edge.line-color-red', style: {'line-color': 'red', 'arrow-color': 'red'}},
+        {selector: 'edge.line-color-green', style: {'line-color': 'green', 'arrow-color': 'green'}},
+        {selector: 'edge.line-color-orange', style: {'line-color': 'orange', 'arrow-color': 'orange'}},
+        {selector: 'edge.line-color-yellow', style: {'line-color': 'yellow', 'arrow-color': 'yellow'}},
+        {selector: 'edge.line-color-cyan', style: {'line-color': 'cyan', 'arrow-color': 'cyan'}},
+        {selector: 'edge.line-color-blue', style: {'line-color': 'blue', 'arrow-color': 'blue'}},
 
 
         {
             selector: 'edge.foo',
             style: {
-
-                'target-arrow-color': '#000000',
                 'curve-style': 'bezier',
             }
         },
@@ -102,8 +115,6 @@ var cy = cytoscape({
         {
             selector: 'edge._notype',
             style: {
-
-                'target-arrow-color': '#ffffff',
                 'curve-style': 'bezier',
             }
         },
@@ -111,9 +122,6 @@ var cy = cytoscape({
         {
             selector: 'edge.gwikicategory',
             style: {
-
-                'target-arrow-color': '#ffffff',
-
                 'curve-style': 'bezier',
             }
         },
@@ -147,178 +155,177 @@ var cy = cytoscape({
 cy.on('tap', 'node', function (evt) {
 
     var node = evt.target;
-
-    var posX = node.position().x;
-    var posY = node.position().y;
-
     var nodeId = node.id();
-    var newNodes = [];
 
-    // var nodePromise = fetchNode('', nodeId);
-    console.debug('Clicked: ' + nodeId);
-    var nodePromise = gwClient.getNodeData(nodeId);
-    console.debug("Got the node!");
-    console.debug(nodePromise);
+    function createNewNode(id) {
 
-    nodePromise.then(function (node) {
+        // Create new node.
+        var newNode = {
+            group: 'nodes',
+            data: {
+                id: id
+            }
+        };
 
-        console.info('Inside promises THEN');
-        console.info(nodePromise);
-        console.info(node);
+        // Add the new node to cy.elements.
+        cy.add(newNode);
+    }
 
+    function createNewEdge(sourceId, targetId) {
 
-        try {
+        // Create new edge.
+        var newEdge = {
+            group: 'edges',
+            data: {
+                id: sourceId + "_to_" + targetId,
+                source: sourceId,
+                target: targetId
+            }
+        };
 
-            console.debug('node.data: ' + JSON.stringify(node.data.out));
-            console.debug(node.data.out);
-            // update existing categories with new ones
-            var newCategoriesIn = [];
+        // Add the new edge to cy.elements.
+        cy.add(newEdge);
+    }
 
-            console.group("%cCategory info!", "color:green;size:15px");
+    function addClassToEdge(edgeId, classToAdd) {
 
-            // this is stupid.. todo: Do it better!
-            console.info(node.data.out);
-            console.info(Object.keys(node.data.out));
+        // Get element reference to the edge with edgeId.
+        var edge = cy.getElementById(edgeId);
 
-            var newCategoriesIn = Object.keys(node.data.out);
-            updateCategories(newCategoriesIn);
-            console.groupEnd();
+        // Check if the edge does not have a category set.
+        var edgeDoesNotHaveAnyCategory = false;
+        var vals = panel.elementHasOneOfCategories(edge);
 
-
-            newCategoriesIn.forEach(function (category) {
-                /*
-                 *  Iterate the outgoing connections for each category
-                 *
-                 * */
-                var nodesConnectedTo = node.data.out[category];
-                console.groupCollapsed('Iterating outgoing edges');
-                console.info('category: ' + category);
-                console.info('connected to: ' + nodesConnectedTo);
-                console.groupEnd();
-                nodesConnectedTo.forEach(function (node) {
-                    console.groupCollapsed('Creating new node with connection');
-                    try {
-                        var exists = cy.getElementById(node).isNode();
-                        console.info(node + " is already in the graph: " + exists);
-                    } catch (error) {
-                        console.error(error);
-                    }
-
-                    console.groupEnd();
-                    // Create new node if the node does not exist yet
-                    if (!cy.getElementById(node).isNode()) {
-                        console.info()
-                        var newNode = {
-                            group: 'nodes',
-                            data: {
-                                id: node,
-                                position: {
-                                    x: posX + Math.floor((Math.random() * 100) + 1) - 50,
-                                    y: posY + Math.floor((Math.random() * 100) + 1) - 50
-                                }
-                            }
-                        };
-                        cy.add(newNode);
-                        //cy.getElementById(node).toggleClass('highlight');
-                    }
-                    var edgeId = nodeId + "_to_" + node;
-                    var newEdge = {
-                        group: 'edges',
-                        data: {
-                            id: nodeId + "_to_" + node,
-                            category: category,
-                            source: nodeId,
-                            target: node
-                        }
-                    };
-
-                    cy.add(newEdge);
-                    var e = cy.getElementById(edgeId);
-                    //e.toggleClass('highlight');
-                    console.group("Debugging edge classes");
-                    console.info(e.id() + " gets class: " + category);
-                    console.info("classes: ");
-                    console.info(e.classes());
-                    e.addClass(category);
-                    console.info(e.id() + "HAS CLASS " + category + ": " + e.hasClass(category));
-                    console.groupEnd();
-                })
-            });
-
-            var newCategoriesOut = [];
-            for (var k in node.data.in) newCategoriesOut.push(k);
-            updateCategories(newCategoriesOut);
-
-            newCategoriesOut.forEach(function (category) {
-
-                var nodesConnectedInto = node.data.in[category];
-                console.groupCollapsed('Iterating outgoing edges');
-                console.info('category: ' + category);
-                console.info('connected to: ' + nodesConnectedInto);
-                console.groupEnd();
-                nodesConnectedInto.forEach(function (node) {
-                    console.groupCollapsed('Creating new node with connection');
-                    console.info(node + " is already in the graph: " + cy.getElementById(node).isNode());
-                    console.groupEnd();
-                    // Create new node if the node does not exist yet
-                    if (!cy.getElementById(node).isNode()) {
-                        console.info()
-                        var newNode = {
-                            group: 'nodes',
-                            data: {
-                                id: node,
-                                position: {
-                                    x: posX + Math.floor((Math.random() * 100) + 1) - 50,
-                                    y: posY + Math.floor((Math.random() * 100) + 1) - 50
-                                }
-                            }
-                        };
-                        cy.add(newNode);
-                    }
-                    var edgeId = node + "_to_" + nodeId;
-                    if (!cy.getElementById(edgeId).isEdge()) {
-                        var newEdge = {
-                            group: 'edges',
-                            data: {
-                                id: node + "_to_" + nodeId,
-                                category: category,
-                                source: node,
-                                target: nodeId
-                            }
-                        };
-
-                        cy.add(newEdge);
-                    }
-
-                    // Todo: make it so that, edge will have only one category
-                    var e = cy.getElementById(edgeId);
-
-                    console.log(e.id() + " has class '_notype': " + e.hasClass('_notype'));
-
-                    console.log(e.id() + " has class "+ category + ": " + e.hasClass('_notype'));
-                    if (e.hasClass('_notype') && category != '_notype'){
-                        e.removeClass('_notype');
-                    }
-
-                    e.addClass(category);
-
-                    console.info(e.id() + " gets class: " + category);
-                    console.info("classes: ");
-                    console.info(e.classes());
-                    console.info(e.id() + " has class " + category + ": " + e.hasClass(category));
-                })
-            });
+        // Todo: Learn to use reducers!
+        vals.forEach(function(b){
+            edgeDoesNotHaveAnyCategory = edgeDoesNotHaveAnyCategory || b;
+        });
 
 
-            setAndRunLayout();
-        } catch (error) {
-            console.error(error);
-            console.info('no outgoing edges');
+
+        /* If element edgeId has class '_notype' (= edgeDoesNotHaveCategory)
+         * and current class classToAdd is not '_notype'. Remove the '_notype'
+         * and replace it with the classToAdd. If the edge does not have class
+         * defined yet, set class as classToAdd. Even if it is '_notype'
+         */
+
+        // Todo: simplify
+
+
+        if (classToAdd != '_notype') {
+            // Therefore, the '_notype' class is removed.
+            if (edge.hasClass('_notype')) {
+                edge.removeClass('_notype');
+            }
+            edge.addClass(classToAdd);
+        } else if (!edgeDoesNotHaveAnyCategory) {
+            edge.addClass(classToAdd);
+        }
+        // Add the class for the edge.
+    }
+
+    function createNodesAndEdgesBetween(sourceNodeId, targetNodeId, classForEdge) {
+
+        // Check if the source node already exists.
+        var sourceNodeDoNotExist = !cy.getElementById(sourceNodeId).isNode();
+
+        // Create new node if the node does not exist yet.
+        if (sourceNodeDoNotExist) {
+            createNewNode(sourceNodeId);
         }
 
+        // Check if the target node already exists.
+        var targetNodeDoNotExist = !cy.getElementById(targetNodeId).isNode();
 
-    });
+        // Create new node if the node does not exist yet.
+        if (targetNodeDoNotExist) {
+            createNewNode(targetNodeId);
+        }
+
+        // Create edge id. Use format 'sourceId_to_targetId'.
+        var edgeId = sourceNodeId + "_to_" + targetNodeId;
+
+        // Check if the edge already exist.
+        var edgeBetweenDoNotExist = !cy.getElementById(edgeId).isEdge();
+
+        // Create new edge if the edge does not exist yet.
+        if (edgeBetweenDoNotExist) {
+            createNewEdge(sourceNodeId, targetNodeId);
+        }
+
+        addClassToEdge(edgeId, classForEdge);
+
+    }
+
+    function createEdgesToNodes(sourceNodeId, nodesToCreateEdges, category) {
+
+        /*
+         * Iterate through the nodesToCreateEdges array and add
+         * edges between the source node and target nodes.
+         * If the target node does not exist yet, create and add
+         * the node to cy.elements.
+         */
+        nodesToCreateEdges.forEach(function (targetNodeId) {
+
+            createNodesAndEdgesBetween(sourceNodeId, targetNodeId, category);
+
+        });
+    }
+
+    function createEdgesFromNodes(targetNodeId, nodesFromCreateEdges, category) {
+        nodesFromCreateEdges.forEach(function (sourceNodeId) {
+            createNodesAndEdgesBetween(sourceNodeId, targetNodeId, category);
+        });
+    }
+
+    // set panel status message
+    panel.updateStatusMessage("");
+
+    // Get data for the clicked node.
+    var nodePromise = gwClient.getNodeData(nodeId);
+
+    // When the requested data is ready to be used.
+    nodePromise.then(function (node) {
+
+            try {
+                // If node has outgoing edges refresh the categories
+                var nodeHasOutgoingEdges = (node.data.out != 'undefined');
+                var newCategoriesOut = [];
+
+                if (nodeHasOutgoingEdges) {
+                    newCategoriesOut = Object.keys(node.data.out);
+                    updateCategories(newCategoriesOut);
+                }
+
+                // Iterate the outgoing edge categories.
+                newCategoriesOut.forEach(function (category) {
+
+                    // get list of nodes where the clicked node is connected to
+                    var nodesConnectedTo = node.data.out[category];
+
+                    // for each connected node create a new edge
+                    createEdgesToNodes(nodeId, nodesConnectedTo, category);
+
+                });
+
+                var newCategoriesIn = Object.keys(node.data.in);
+                updateCategories(newCategoriesIn);
+
+                // Iterate the incoming edge categories.
+                newCategoriesIn.forEach(function (category) {
+                    var nodesConnectedTo = node.data.in[category];
+                    createEdgesFromNodes(nodeId, nodesConnectedTo, category);
+                });
+            } catch (e) {
+
+            }
+            setAndRunLayout();
+            panel.refreshPanel();
+            panel.updateStatusMessage("");
+        }
+    );
 });
+
 /*
  cy.on('mouseover', 'node', function (evt) {
  var node = evt.target;
@@ -379,6 +386,7 @@ var state = {
             ]
         },
         elements: {
+            filter: "",
             label: "Elements",
             active: false,
             data: "Data for elements"
@@ -403,7 +411,7 @@ var state = {
 
 
 var configs = {
-    // This is a proxy server for development
+// This is a proxy server for development
     API_PATH: 'http://127.0.0.1:5000/'
 };
 
@@ -422,10 +430,10 @@ function updateCategories(newCategories) {
      CategoryStyles is the function, which handles the updating.
      */
 
-    // get current categories from the panel
+// get current categories from the panel
     var categoriesToUpdate = panel.getEdgeCategories();
 
-    // this could be written with reducer Todo ?
+// this could be written with reducer Todo ?
     newCategories.forEach(function (category) {
         if (categoriesToUpdate.indexOf(category) === -1) {
             categoriesToUpdate.push(category);
@@ -440,10 +448,9 @@ function updateCategories(newCategories) {
 
 
 // initialize download image link
-
 function downloadGraphPNG() {
     console.info('running downloadGraphPNG() -function')
-    var png = cy.png();
+    var png = cy.png({bg: 'white'});
     var a = document.createElement('a');
 
     a.href = png;
@@ -500,8 +507,7 @@ function handleSaveGraph() {
 var saveGraphButton = document.querySelector('#save-graph-button');
 saveGraphButton.addEventListener('click', handleSaveGraph);
 
-function handleLoadGraph() {
-    var graphId = document.getElementById('graph-query').value;
+function handleLoadGraph(graphId) {
     var developmentPath = 'http://127.0.0.1:5000/graph/' + graphId;
     console.log("GRAPHID: " + graphId);
     var loadGraphRequest = new Request(developmentPath, {
@@ -523,23 +529,20 @@ function handleLoadGraph() {
         }
     }).then(function (response) {
         console.log(response);
-        var newGraphData = response.data;
+        panel.cy = response.data;
     });
 }
-
-var loadGraphButton = document.querySelector('#load-graph-button');
-loadGraphButton.addEventListener('click', handleLoadGraph);
 
 // Dynamic CSS: cy.style().selector('edge.foo').style('line-color', 'magenta').update()
 
 
 function loadNewGraph(graphId) {
     var graphPromise = gwClient.getGraph(graphId);
-    var graph = graphPromise.then(function(response){
+    var graph = graphPromise.then(function (response) {
         var json = response.json;
         console.log("response ok biby: " + JSON.stringify(json));
         return json;
-    }).then(function (json){
+    }).then(function (json) {
         console.log('ok biby ' + JSON.stringify(json));
         return json;
     });
@@ -578,9 +581,11 @@ loadGraphsButton.addEventListener('click', loadGraphList);
 var loadGraphsButton = document.querySelector('#toggle-edit-button');
 loadGraphsButton.addEventListener('click', panel.toggleEditMode);
 
-console.log(panel);
-console.log(typeof state);
-console.log(state);
+var divSearch = document.getElementById('header-search');
+var inSearch = document.createElement('input');
+
+inSearch.setAttribute('type', 'input');
+
 panel.render(state);
 
 
