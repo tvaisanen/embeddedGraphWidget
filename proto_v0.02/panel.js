@@ -8,8 +8,6 @@ var configs = {
     API_PATH: 'http://127.0.0.1:5000/'
 };
 
-console.log("%cTEST CY INIT OK BIBY?", "color:red;");
-
 gwClient.setConfigs(configs);
 
 var testState = {
