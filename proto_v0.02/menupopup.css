@@ -1,0 +1,42 @@
+.btn-menu-item {
+    display: flex;
+    justify-content: flex-end;
+    background-color: inherit;
+    color: white;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-menu-item :hover, .dropbtn:focus {
+    background-color: inherit;
+}
+
+.popup {
+    position: relative;
+    display: inline-block;
+}
+
+.popup-content {
+    font-family: "Bookman Old Style", Helvetica, sans-serif;
+    color: white;
+    display: none;
+    position: absolute;
+    background-color: #0277bd;
+
+    overflow: auto;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.popup-content a {
+    color: white;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.popup a:hover {background-color: #0290e2}
+
+.show {display:block;}

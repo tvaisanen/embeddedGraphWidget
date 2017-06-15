@@ -50,6 +50,19 @@ var testState = {
 console.log("%cTodo:", "color: green; font-size:15px;");
 console.log("%cLoad graphs from the server to the view", "color: blue; font-size:13px;");
 
+// initialize download image link
+function downloadGraphPNG() {
+    console.info('running downloadGraphPNG() -function')
+    var png = cy.png({bg: 'white'});
+    var a = document.createElement('a');
+
+    a.href = png;
+    a.download = 'graph.png';
+    console.debug(a);
+    a.click()
+}
+
+
 function unorderedListFromArray(array, mouseOver, mouseOut, toggleVisibility, doubleClick) {
     /*
      * Todo: add support for the array containing evenListener -methods
@@ -98,6 +111,75 @@ function unorderedListFromArray(array, mouseOver, mouseOut, toggleVisibility, do
     return ul;
 }
 
+var layoutOptions = ['cola', 'breadthfirst', 'circle', 'concentric', 'cose', 'grid', 'random'];
+
+var params = ['line-style', 'arrow-shape', 'line-color', 'line-width'];
+var lineStyleOptions = {
+    'width': Array.from(Array(20).keys()),
+    'line-color': 'rgb',
+    'line-style': [],
+    'target-arrow-color': 'rgb',
+    'target-arrow-shape': [],
+    'curve-style': []
+};
+
+var lines = ['solid', 'dotted', 'dashed'];
+var arrows = ['tee', 'triangle', 'triangle-tee', 'triangle-cross', 'triangle-backcurve', 'square', 'circle', 'diamond', 'none'];
+var colors = ['red', 'green', 'orange', 'yellow', 'cyan', 'blue'];
+
+function debugAlert(message) {
+    alert(message);
+}
+
+function generateContent() {
+    "use strict";
+    var div = d.createElement('div');
+    div.innerHTML = this.content + "Generated content!";
+    return div;
+}
+
+function saveMenuForm(){
+    "use strict";
+    var div = d.createElement('div');
+    var inName = d.createElement('input');
+    inName.setAttribute('type', 'text');
+    div.appendChild(inName);
+    div.innerHTML = this.content + "Generated content!";
+    return div;
+}
+
+var menuItems = {
+    download: {
+        label: "Download",
+        content: "Click to download image.",
+        onClick: downloadGraphPNG,
+        generateContent: generateContent
+    },
+    layout: {
+        label: "Layout",
+        content: "here you can change the layout",
+        onClick: debugAlert,
+        generateContent: generateContent
+    },
+    save: {
+        label: "Save",
+        content: "form to input graph name",
+        onClick: debugAlert,
+        generateContent: saveMenuForm
+    },
+    settings: {
+        label: "Settings",
+        content: "here might be some options to choose from",
+        onClick: debugAlert,
+        generateContent: generateContent
+    },
+    moin: {
+        label: "Moin pages",
+        content: "list moin pages here",
+        onClick: debugAlert,
+        generateContent: generateContent
+    }
+};
 
 var panel = (function (gwClient, cy) {
 
@@ -108,6 +190,13 @@ var panel = (function (gwClient, cy) {
     var classNames = {
         container: 'panel',
         tab: {
+            menu: {
+                container: 'tab-menu',
+                item: {
+                    active: 'tab-menu__menu-item--active',
+                    inactive: 'tab-menu__menu-item--inactive'
+                }
+            },
             nav: {
                 container: 'tab-nav',
                 item: {
@@ -149,6 +238,89 @@ var panel = (function (gwClient, cy) {
             }
         }
     };
+
+    function renderMenu() {
+
+        // Create the div which contains panel navigation tabs.
+        var tabs = props.tabs;
+
+        // css classes
+        var classes = classNames.tab.menu;
+
+        var divMenu = document.createElement('div');
+        divMenu.classList.add(classes.container);
+        divMenu.id = "panel-menu";
+        divMenu.classList.add(classes.container);
+        var divToggleMenu = d.createElement('div');
+        divToggleMenu.innerHTML = '#'
+        //divMenu.appendChild(divToggleMenu);
+        var menus = Object.keys(menuItems);
+        console.log(menus);
+
+        function createPopup(buttonLabel) {
+            var divPopup = d.createElement('div');
+            divPopup.classList.add("popup");
+
+            var btnMenu = d.createElement('button');
+            btnMenu.classList.add("btn-menu-item");
+            //btnMenu.setAttribute('id', buttonLabel);
+            btnMenu.innerHTML = buttonLabel;
+            btnMenu.addEventListener('click', function () {
+                document.getElementById(buttonLabel).classList.toggle("show");
+                console.log('clicked toggle menu popup');
+            });
+            var divPopupContent = d.createElement('div');
+            divPopupContent.setAttribute('id', buttonLabel);
+            divPopupContent.classList.add("popup-content");
+
+            var mockContent = d.createElement('div');
+            mockContent.innerHTML = "hidden";
+
+            divPopupContent.appendChild(mockContent);
+            divPopup.appendChild(btnMenu);
+            divPopup.appendChild(divPopupContent);
+            return divPopup;
+
+        }
+
+        menus.forEach(function (itemKey) {
+            var item = menuItems[itemKey];
+            var div = d.createElement('div');
+            var divContent = d.createElement('div');
+            divContent.setAttribute('id', 'panel-menu-content-' + item.label.toLowerCase());
+
+            // Bind an action to the click of the label.
+            div.addEventListener('click', function () {
+                item.onClick(item.label + " clicked");
+            });
+
+            // Show the content.
+            div.addEventListener('mouseover', function () {
+                divContent.classList.add('show');
+            });
+
+            // Hide the content.
+            div.addEventListener('mouseout', function () {
+                divContent.classList.remove('show');
+            });
+            div.classList.add('panel-menu-item');
+            divContent.classList.add('panel-menu-content');
+            div.innerHTML = item.label;
+
+            // Put the item content in to the html element.
+            console.log(item);
+            divContent.appendChild(item.generateContent());
+            div.appendChild(divContent);
+            // divMenu.appendChild(createPopup(item.label));
+            divMenu.appendChild(div);
+        });
+        var divSpacer = d.createElement('div');
+        divSpacer.innerHTML = '---------';
+
+        //divMenu.appendChild(divSpacer);
+
+        return divMenu;
+    }
 
     function setStatusMessage(text) {
         var statusMessage = d.getElementById("status-message");
@@ -374,13 +546,13 @@ var panel = (function (gwClient, cy) {
         var div = document.createElement('div');
 
         var hdNodes = d.createElement('h2');
-        hdNodes.innerHTML = "Nodes";
+        hdNodes.innerHTML = "Pages";
 
         var pNodeNotes = d.createElement('p');
         pNodeNotes.innerHTML = "order by degree?";
 
         var hdEdges = d.createElement('h2');
-        hdEdges.innerHTML = "Edges";
+        hdEdges.innerHTML = "Links";
 
         var ulNodes = unorderedListFromArray(nodes, mouseOver, mouseOut, toggleVisibility, doubleClick);
         var ulEdges = unorderedListFromArray(edges, mouseOver, mouseOut, toggleVisibility);
@@ -431,19 +603,7 @@ var panel = (function (gwClient, cy) {
         var cy = props.cy;
 
         // Todo: create configs object where to store the following..
-        var params = ['line style', 'arrow shape', 'line color', 'line width'];
-        var lineStyleOptions = {
-            'width': Array.from(Array(20).keys()),
-            'line-color': 'rgb',
-            'line-style': [],
-            'target-arrow-color': 'rgb',
-            'target-arrow-shape': [],
-            'curve-style': []
-        };
 
-        var lines = ['solid', 'dotted', 'dashed'];
-        var arrows = ['tee', 'triangle', 'triangle-tee', 'triangle-cross', 'triangle-backcurve', 'square', 'circle', 'diamond', 'none'];
-        var colors = ['red', 'green', 'orange', 'yellow', 'cyan', 'blue'];
 
         function styleSelectionEventListener(baseClass, category, parameter, selector, value) {
 
@@ -462,7 +622,7 @@ var panel = (function (gwClient, cy) {
 
                 }
                 console.groupCollapsed("StyleSelection log");
-                console.log("props.elementStyles["+category+"]["+selector+"] = "+value);
+                console.log("props.elementStyles[" + category + "][" + selector + "] = " + value);
                 console.log(props.elementStyles[category][selector]);
                 console.log("Category: " + category);
                 console.log("Parameter: " + parameter);
@@ -521,14 +681,14 @@ var panel = (function (gwClient, cy) {
                 liParam.appendChild(div);
 
                 // generate line style selection
-                if (parameter == 'line style') {
+                if (parameter === 'line-style') {
                     var div = d.createElement('div');
                     var selLineStyle = d.createElement('select');
                     selLineStyle.setAttribute('id', 'select-line-style');
 
-                    selLineStyle.addEventListener('change', function(){
+                    selLineStyle.addEventListener('change', function () {
                         styleSelectionEventListener(
-                            'edge', category, parameter, 'line-style', selLineStyle.value);
+                            'edge', category, "line-style", 'line-style', selLineStyle.value);
                     });
 
 
@@ -544,7 +704,7 @@ var panel = (function (gwClient, cy) {
                 ulCategory.appendChild(liParam);
 
                 // generate arrow selection
-                if (parameter == 'arrow shape') {
+                if (parameter === 'arrow-shape') {
                     var selArrow = d.createElement('select');
                     selArrow.setAttribute('id', 'select-arrow-shape');
                     selArrow.addEventListener('change', function () {
@@ -562,13 +722,13 @@ var panel = (function (gwClient, cy) {
                 ulCategory.appendChild(liParam);
 
                 // generate color selection
-                if (parameter == 'line color') {
+                if (parameter === 'line-color') {
                     var selColor = d.createElement('select');
                     selColor.setAttribute('id', 'select-line-color');
 
                     selColor.addEventListener('change', function () {
                         styleSelectionEventListener(
-                            'edge', category, parameter, 'line-color', selColor.value);
+                            'edge', category, "line-color", 'line-color', selColor.value);
                     });
 
                     colors.forEach(function (color) {
@@ -582,13 +742,13 @@ var panel = (function (gwClient, cy) {
                 ulCategory.appendChild(liParam);
 
                 // generate linewidth selection
-                if (parameter == 'line width') {
+                if (parameter === 'line-width') {
                     var selLineWidth = d.createElement('select');
                     selLineWidth.setAttribute('id', 'select-line-width');
 
                     selLineWidth.addEventListener('change', function () {
                         styleSelectionEventListener(
-                            'edge', category, 'width', 'line-width',  selLineWidth.value);
+                            'edge', category, 'width', 'line-width', selLineWidth.value);
                     });
 
 
@@ -617,7 +777,7 @@ var panel = (function (gwClient, cy) {
         setProps(testState, 'all');
         handleNavClick('styles');
         var stylesContent = renderStylesContent();
-        assert(stylesContent.id == "styles-content", "renderStylesContent() returns div with proper id");
+        assert(stylesContent.id === "styles-content", "renderStylesContent() returns div with proper id");
         console.groupEnd();
     }
 
@@ -700,15 +860,20 @@ var panel = (function (gwClient, cy) {
 
     function updatePanel() {
 
+        var divMenu = d.getElementById('panel-menu');
         var divNav = d.getElementById('panel-nav');
         var divContent = d.getElementById('panel-content');
-        var childsToRemove = divNav.childNodes;
+        var childsToRemove = divMenu.childNodes;
 
         /*
          console.log(childsToRemove);
          console.log(typeof childsToRemove);
          */
+        childsToRemove.forEach(function (child) {
+            divMenu.remove(child);
+        });
 
+        childsToRemove = divNav.childNodes;
         childsToRemove.forEach(function (child) {
             divNav.remove(child);
         });
@@ -766,6 +931,7 @@ var panel = (function (gwClient, cy) {
     function renderPanel() {
         var content = props.tabs;
         var container = document.getElementById(props.containerId);
+        container.appendChild(renderMenu(content));
         container.appendChild(renderNavigation(content));
         container.appendChild(renderContent(content));
 

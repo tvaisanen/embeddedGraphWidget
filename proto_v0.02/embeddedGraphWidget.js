@@ -152,7 +152,7 @@ var cy = cytoscape({
     ],
 });
 
-function expandNode(nodeId){
+function expandNode(nodeId) {
 
     function createNewNode(id) {
 
@@ -194,10 +194,9 @@ function expandNode(nodeId){
         var vals = panel.elementHasOneOfCategories(edge);
 
         // Todo: Learn to use reducers!
-        vals.forEach(function(b){
+        vals.forEach(function (b) {
             edgeDoesNotHaveAnyCategory = edgeDoesNotHaveAnyCategory || b;
         });
-
 
 
         /* If element edgeId has class '_notype' (= edgeDoesNotHaveCategory)
@@ -464,9 +463,17 @@ function downloadGraphPNG() {
     a.click()
 }
 
-var downloadGraphButton = document.querySelector('#download-graph-button');
-downloadGraphButton.addEventListener('click', downloadGraphPNG);
 
+var downloadGraphButton = document.getElementById('btn-download-graph');
+downloadGraphButton.addEventListener('click', downloadGraphPNG);
+/*
+ <option value="opt-save-graph">
+ <button class="btn-save-graph" id="save-graph-button">Save</button>
+ </option>
+ <option value="opt-download-graph">
+ <button class="btn-download-graph" id="download-graph-button">Download Image</button>
+ </option>
+ * */
 
 // initialize run layout button action
 
@@ -477,8 +484,10 @@ function setAndRunLayout() {
     layout.run();
 }
 
+/*
 var runLayoutButton = document.querySelector('#run-layout-button');
 runLayoutButton.addEventListener('click', setAndRunLayout);
+/*
 
 function addNode(node) {
     cy.add(node);
@@ -509,7 +518,7 @@ function handleSaveGraph() {
     })
 }
 
-var saveGraphButton = document.querySelector('#save-graph-button');
+var saveGraphButton = document.getElementById('btn-save-graph');
 saveGraphButton.addEventListener('click', handleSaveGraph);
 
 function handleLoadGraph(graphId) {
@@ -579,24 +588,51 @@ function loadGraphList() {
         newGraphData = response.data;
     });
 }
+/*
+ <button class="btn-load-graphs" id="load-graphs-button">Load Graphs</button>
+ var loadGraphsButton = document.querySelector('#load-graphs-button');
+ loadGraphsButton.addEventListener('click', loadGraphList);
 
-var loadGraphsButton = document.querySelector('#load-graphs-button');
-loadGraphsButton.addEventListener('click', loadGraphList);
-
-var loadGraphsButton = document.querySelector('#toggle-edit-button');
-loadGraphsButton.addEventListener('click', panel.toggleEditMode);
-
+ var btnToggleEdit = document.querySelector('#toggle-edit-button');
+ btnToggleEdit.addEventListener('click', panel.toggleEditMode);
+ */
 var divSearch = document.getElementById('header-search');
 var inSearch = document.createElement('input');
 
 inSearch.setAttribute('type', 'input');
 
+// Todo: refactor!
+/* When the user clicks on the button,
+ toggle between hiding and showing the dropdown content */
+function toggleDropdown() {
+    document.getElementById("myDropdown").classList.toggle("show");
+}
+
+// Close the dropdown if the user clicks outside of it
+window.onclick = function (event) {
+    if (!event.target.matches('.dropbtn')) {
+
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        var i;
+        for (i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
+    }
+}
+
+
 panel.render(state);
 
 
-
-
-
+/*
+ <div class="toolbar-container" id="tool-panel">
+ <input class="input-graph-name" id="graph-name" type="text" name="firstname">
+ <button class="btn-toggle-edit" id="toggle-edit-button">Edit!</button>
+ <button class="btn-run-layout" id="run-layout-button">Reset Layout: </button>
+ */
 
 
 

@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>GraphingWiki browser prototype</title>
     <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="dropdown.css">
 </head>
 <body>
 
@@ -13,26 +14,30 @@
         <div class="header-status">
             <h3>GraphingWikiBrowser</h3>
         </div>
-        <div class="toolbar-container" id="tool-panel">
-            <input class="input-graph-name" id="graph-name" type="text" name="firstname">
-            <button class="btn-toggle-edit" id="toggle-edit-button">Edit!</button>
-            <button class="btn-load-graphs" id="load-graphs-button">Load Graphs</button>
+
+        <div>
+
+            <div class="dropdown" style="visibility: hidden">
+                <button onclick="toggleDropdown()" class="dropbtn">Actions</button>
+                <input onfocus="toggleDropdown()" class="search-bar"></div>
+                <div id="myDropdown" class="dropdown-content">
+                    <a id="btn-save-graph">Save</a>
+                    <a id="btn-download-graph">Download</a>
+                    <a href="#contact">Settings</a>
 
 
-            <button class="btn-download-graph" id="download-graph-button">Download Image</button>
+                    <select class="select-header" id="layout-options">
+                        <option value="cola">cola</option>
+                        <option value="breadthfirst">breadth first</option>
+                        <option value="circle">circle</option>
+                        <option value="concentric">concentric</option>
+                        <option value="cose">cose</option>
+                        <option value="grid">grid</option>
+                        <option value="random">random</option>
+                    </select>
+                </div>
+            </div>
 
-            <button class="btn-save-graph" id="save-graph-button">Save</button>
-
-            <button class="btn-run-layout" id="run-layout-button">Reset Layout: </button>
-            <select class="select-header" id="layout-options">
-                <option value="cola">cola</option>
-                <option value="breadthfirst">breadth first</option>
-                <option value="circle">circle</option>
-                <option value="concentric">concentric</option>
-                <option value="cose">cose</option>
-                <option value="grid">grid</option>
-                <option value="random">random</option>
-            </select>
         </div>
     </div>
 

@@ -39,11 +39,12 @@
 }
 
 .header-container {
+    font-family: "Bookman Old Style", Helvetica, sans-serif;
     display: flex;
     flex-direction: row;
     width: 99vw;
     height: 5vh;
-    background-color: #0277bd;
+    background-color: #0270b6;
     color: #ffffff;
     text-indent: 10px;
     padding-top: 0px;
@@ -53,11 +54,16 @@
 
 .header-status {
     height: auto;
+    width: 25vw;
 }
 
 .toolbar-container {
-    display: flex;
-    justify-content: flex-end;
+   display: -webkit-flex;
+   display: flex;
+   -webkit-flex-direction: row;
+   flex-direction: row;
+   -webkit-justify-content: flex-end;
+   justify-content: flex-end;
     width: auto;
     color: #000000;
     text-indent: 10px;
@@ -87,6 +93,7 @@
 
 
 .info-messages__loading {
+    padding-top: 2px;
     animation: loading 1s;
 }
 
@@ -131,6 +138,35 @@
     border-color: #5f89af;
 }
 
+.tab-menu {
+    padding-bottom: 2px;
+}
+
+.panel-menu-item {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    color: white;
+    border-top-style: solid;
+    border-right-style: solid;
+    border-left-style: solid;
+    border-width: 1px;
+    border-color: #9b9b9b;
+    background-color: #0270b6;
+    font-size: small;
+    padding: 2px;
+    cursor: pointer;
+}
+
+[class^="panel-menu-content"] {
+    visibility: hidden;
+    background-color: #9b000a;
+}
+
+.show {
+    visibility: visible;
+}
+
 .panel-hidden {
     visibility: hidden;
     width: 0;
@@ -150,12 +186,13 @@
 [class^="tab-nav__nav-item"] {
     display: flex;
     flex-grow: 1;
-    letter-spacing: 2px;
+    font-size: small;
+    letter-spacing: 0;
     flex-grow: 1;
     justify-content: center;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-    background-color: rgba(128, 160, 219, 0.15);
+    background-color: rgba(145, 145, 145, 0.15);
     border-width: 1px;
     border-color: #5f89af;
 
@@ -209,7 +246,7 @@ li {
     background-color: #ffffff;
     margin: 0;
     border-radius: 2px;
-
+    font-size: small;
     border-color: rgba(155, 155, 155, 0.51);
     border-width: 1px;
 }
