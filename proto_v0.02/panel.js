@@ -132,7 +132,7 @@ function debugAlert(message) {
 function generateContent() {
     "use strict";
     var div = d.createElement('div');
-    div.innerHTML = this.content + "Generated content!";
+    div.innerHTML = this.content;
     return div;
 }
 
@@ -141,8 +141,14 @@ function saveMenuForm(){
     var div = d.createElement('div');
     var inName = d.createElement('input');
     inName.setAttribute('type', 'text');
+    var btnSave = d.createElement('button');
+    var label = d.createElement('span');
+    label.innerHTML = 'Graph ID:';
+    btnSave.innerHTML = 'save';
+    div.appendChild(label);
     div.appendChild(inName);
-    div.innerHTML = this.content + "Generated content!";
+    div.appendChild(btnSave);
+    //div.innerHTML = this.content + "Generated content!";
     return div;
 }
 
