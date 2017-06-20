@@ -3,9 +3,7 @@
 
 # GraphingWikiBrowser  v0.02
 
-GraphingWikiBrowser is an extension for [GraphingWiki ](https://github.com/graphingwiki/graphingwiki). Providing visual tool for browsing the wiki. The browser can also input data to MoinMoin and store graphs to be viewed later.
-
-## Initialization
+GraphingWikiBrowser is an extension for [GraphingWiki ](https://github.com/graphingwiki/graphingwiki). Providing visual tool for browsing the wiki. 
 
 ### Client
 
@@ -22,7 +20,7 @@ Make sure you have [MoinMoin](https://moinmo.in/MoinMoinDownload) and [GraphingW
 * GraphingWikiBrowser uses GraphingWiki backend for querying graph data.
 * getGraphJSON action has to be installed
 
-Current development version needs the proxy server `devProxyServer.py`,  which uses [Flask](http://flask.pocoo.org/) to create proxy for accessing the MoinMoin and storing the graphs to a shelve database. Please refer to [development](development.md) to further instructions on how to set up the development environment.
+Current development version needs the proxy server `devProxyServer.py`,  which uses [Flask](http://flask.pocoo.org/) to create proxy for accessing the MoinMoin and storing the graphs to a shelve database. Please refer to [docs/development](development.md) to further instructions on how to set up the development environment.
 
 ## Testing
 
