@@ -11,7 +11,7 @@ var configs = {
 gwClient.setConfigs(configs);
 
 var testState = {
-    containerId: "panel-container",
+    containerId: "panel",
     gw: gwClient,
     cy: cy,
     tabs: {
@@ -60,6 +60,21 @@ function downloadGraphPNG() {
     a.click()
 }
 
+
+function initNewGraph(data) {
+    cy = cytoscape({
+        container: document.getElementById('cy'),
+        elements: data.elements,
+        style: data.style,
+        layout: {name: 'preset'},
+    });
+    cy.on('tap', 'node', function (evt) {
+        var node = evt.target;
+        var nodeId = node.id();
+        expandNode(cy, nodeId);
+    });
+    return cy;
+}
 
 function unorderedListFromArray(array, mouseOver, mouseOut, toggleVisibility, doubleClick) {
     /*
@@ -136,18 +151,53 @@ function generateContent() {
     return div;
 }
 
-function saveMenuForm(){
+function menuItemSave() {
     "use strict";
     var div = d.createElement('div');
     var inName = d.createElement('input');
+    inName.setAttribute('id', 'input-graph-name');
     inName.setAttribute('type', 'text');
     var btnSave = d.createElement('button');
+    btnSave.addEventListener('click', function (event) {
+        console.log("Clicked save graph button.");
+        console.log("Current value: " + inName.value);
+        gwClient.postGraph(inName.value, cy.json());
+    });
     var label = d.createElement('span');
     label.innerHTML = 'Graph ID:';
     btnSave.innerHTML = 'save';
     div.appendChild(label);
     div.appendChild(inName);
     div.appendChild(btnSave);
+    //div.innerHTML = this.content + "Generated content!";
+    return div;
+}
+
+function menuItemLayout() {
+    "use strict";
+    var div = d.createElement('div');
+    var selLayout = d.createElement('select');
+    selLayout.setAttribute('id', 'layout-options');
+
+    layoutOptions.forEach(function (option) {
+        var opt = d.createElement('option');
+        opt.setAttribute('value', option);
+        opt.innerHTML = option;
+        selLayout.appendChild(opt);
+    });
+
+    var btnResetLayout = d.createElement('button');
+    btnResetLayout.addEventListener('click', function (event) {
+        console.log("Clicked reset layout.");
+        console.log("Current value: " + selLayout.value);
+        setAndRunLayout();
+    });
+    var label = d.createElement('span');
+    label.innerHTML = 'selected:';
+    btnResetLayout.innerHTML = 'reset';
+    div.appendChild(label);
+    div.appendChild(selLayout);
+    div.appendChild(btnResetLayout);
     //div.innerHTML = this.content + "Generated content!";
     return div;
 }
@@ -162,25 +212,33 @@ var menuItems = {
     layout: {
         label: "Layout",
         content: "here you can change the layout",
-        onClick: debugAlert,
-        generateContent: generateContent
+        onClick: function () {
+            console.log('clicked: ' + this.label);
+        },
+        generateContent: menuItemLayout
     },
     save: {
         label: "Save",
         content: "form to input graph name",
-        onClick: debugAlert,
-        generateContent: saveMenuForm
+        onClick: function () {
+            console.log('clicked: ' + this.label);
+        },
+        generateContent: menuItemSave
     },
     settings: {
         label: "Settings",
         content: "here might be some options to choose from",
-        onClick: debugAlert,
+        onClick: function () {
+            console.log('clicked: ' + this.label);
+        },
         generateContent: generateContent
     },
     moin: {
         label: "Moin pages",
         content: "list moin pages here",
-        onClick: debugAlert,
+        onClick: function () {
+            console.log('clicked: ' + this.label);
+        },
         generateContent: generateContent
     }
 };
@@ -259,7 +317,7 @@ var panel = (function (gwClient, cy) {
         divToggleMenu.innerHTML = '#'
         //divMenu.appendChild(divToggleMenu);
         var menus = Object.keys(menuItems);
-        console.log(menus);
+        // console.log(menus);
 
         function createPopup(buttonLabel) {
             var divPopup = d.createElement('div');
@@ -312,7 +370,7 @@ var panel = (function (gwClient, cy) {
             div.innerHTML = item.label;
 
             // Put the item content in to the html element.
-            console.log(item);
+            // console.log(item);
             divContent.appendChild(item.generateContent());
             div.appendChild(divContent);
             // divMenu.appendChild(createPopup(item.label));
@@ -351,8 +409,9 @@ var panel = (function (gwClient, cy) {
          * Implement graphs tab rendering here
          *
          * */
-        console.group('Debug GraphsContent()');
+        console.groupCollapsed('Debug GraphsContent()');
         var content = props.tabs.graphs;
+        var cy = props.cy;
         var classes = classNames.tab.graph;
 
         var div = document.createElement('div');
@@ -373,11 +432,25 @@ var panel = (function (gwClient, cy) {
                 var li = document.createElement('li');
                 li.classList.add(classes.listItem.inactive);
                 li.innerHTML = graph;
-
+                li.addEventListener('click', function () {
+                    console.log("clicked: " + graph);
+                    if (confirm('Are you sure that you want to change the graph?')) {
+                        var graphPromise = gwClient.getGraph('graph/' + graph);
+                        graphPromise.then(function (response) {
+                            var json = response.json();
+                            console.log(json);
+                            return json;
+                        }).then(function (json) {
+                            console.log(json.data);
+                            cy.destroy();
+                            props.cy = initNewGraph(json.data);
+                        });
+                    } else {
+                        // Do nothing!
+                    }
+                });
                 ul.appendChild(li);
-
             });
-
         });
 
 
@@ -400,19 +473,25 @@ var panel = (function (gwClient, cy) {
 
     function testGraphingWikiClientInit(testState) {
         setProps(testState, 'all');
-        console.group("test that the graphingwiki reference is included in props");
         var moduleName = props.gw.getModuleName();
-        assert(moduleName == "GraphingWiki client", "GraphingWiki client is callable");
-        console.groupEnd();
+        QUnit.test("Test GraphingWikiClientInit", function (assert){
+            assert.equal(moduleName, "GraphingWiki client");
+        });
+
     }
 
     function testCytoscapeIntegrationInit(testState) {
         setProps(testState, 'all');
         console.group("test that the cytoscape is integrated correctly");
-        console.log("props.cy: ");
-        console.log(props.cy.id);
+        console.log(props);
+        console.log("props.cy: " + props.cy.id);
+
         cyId = props.cy.id;
-        assert(cyId == "cy", "Cytoscape initialized correctly?");
+        QUnit.test("Cytoscape div can be found.", function(assert){
+            assert.equal(cyId, "cy");
+        });
+
+        // assert(cyId == "cy", "Cytoscape initialized correctly?");
         console.groupEnd();
     }
 
@@ -484,6 +563,7 @@ var panel = (function (gwClient, cy) {
             var idArray = [];
             try {
                 console.log("Applying filter: " + props.tabs.elements.filter);
+                console.log(cy);
                 cy.elements(selector).forEach(function (el) {
                     var id = el.id();
                     var filterIncludes = id.toLowerCase().includes(content.filter.toLowerCase());
@@ -575,7 +655,10 @@ var panel = (function (gwClient, cy) {
         setProps(testState, 'all');
         handleNavClick('styles');
         var stylesContent = renderElementsContent();
-        assert(stylesContent.id == "elements-content", "renderElementsContent() returns div with proper id");
+        QUnit.test("Rendering the elements tab", function(assert){
+            assert.equal(stylesContent.id, "elements-content", "renderElementsContent() returns div with proper id");
+        });
+
         console.groupEnd();
     }
 
@@ -663,115 +746,119 @@ var panel = (function (gwClient, cy) {
         }
 
         // Create the style option selection list
-        styles.categories.forEach(function (category) {
-            var divCategory = d.createElement('div');
-            var hCategory = d.createElement('h4');
-            hCategory.classList.add('list-header');
-            hCategory.innerHTML = category;
+        try {
+            styles.categories.forEach(function (category) {
+                var divCategory = d.createElement('div');
+                var hCategory = d.createElement('h4');
+                hCategory.classList.add('list-header');
+                hCategory.innerHTML = category;
 
-            divCategory.appendChild(hCategory);
+                divCategory.appendChild(hCategory);
 
 
-            var ulCategory = document.createElement('ul');
-            params.forEach(function (parameter) {
-                var liParam = document.createElement('li');
-                var div = d.createElement('div');
-                var spanLabel = d.createElement('span');
-                div.classList.add('style-selection-div');
-
-                spanLabel.innerHTML = parameter;
-                div.appendChild(spanLabel);
-
-                liParam.appendChild(div);
-
-                // generate line style selection
-                if (parameter === 'line-style') {
+                var ulCategory = document.createElement('ul');
+                params.forEach(function (parameter) {
+                    var liParam = document.createElement('li');
                     var div = d.createElement('div');
-                    var selLineStyle = d.createElement('select');
-                    selLineStyle.setAttribute('id', 'select-line-style');
+                    var spanLabel = d.createElement('span');
+                    div.classList.add('style-selection-div');
 
-                    selLineStyle.addEventListener('change', function () {
-                        styleSelectionEventListener(
-                            'edge', category, "line-style", 'line-style', selLineStyle.value);
-                    });
+                    spanLabel.innerHTML = parameter;
+                    div.appendChild(spanLabel);
 
-
-                    lines.forEach(function (lineStyle) {
-                        var optLine = d.createElement('option');
-                        optLine.setAttribute('id', 'option-line-style' + lineStyle);
-                        optLine.innerHTML = lineStyle;
-                        selLineStyle.appendChild(optLine);
-                    });
-                    div.appendChild(selLineStyle);
                     liParam.appendChild(div);
-                }
-                ulCategory.appendChild(liParam);
 
-                // generate arrow selection
-                if (parameter === 'arrow-shape') {
-                    var selArrow = d.createElement('select');
-                    selArrow.setAttribute('id', 'select-arrow-shape');
-                    selArrow.addEventListener('change', function () {
-                        styleSelectionEventListener(
-                            'edge', category, 'arrow-shape', 'arrow-shape', selArrow.value);
-                    });
-                    arrows.forEach(function (arrowShape) {
-                        var optArrow = d.createElement('option');
-                        optArrow.setAttribute('id', 'option-arrow-shape' + arrowShape);
-                        optArrow.innerHTML = arrowShape;
-                        selArrow.appendChild(optArrow);
-                    });
-                    liParam.appendChild(selArrow);
-                }
-                ulCategory.appendChild(liParam);
+                    // generate line style selection
+                    if (parameter === 'line-style') {
+                        var div = d.createElement('div');
+                        var selLineStyle = d.createElement('select');
+                        selLineStyle.setAttribute('id', 'select-line-style');
 
-                // generate color selection
-                if (parameter === 'line-color') {
-                    var selColor = d.createElement('select');
-                    selColor.setAttribute('id', 'select-line-color');
-
-                    selColor.addEventListener('change', function () {
-                        styleSelectionEventListener(
-                            'edge', category, "line-color", 'line-color', selColor.value);
-                    });
-
-                    colors.forEach(function (color) {
-                        var optColor = d.createElement('option');
-                        optColor.setAttribute('id', 'option-line-color');
-                        optColor.innerHTML = color;
-                        selColor.appendChild(optColor);
-                    });
-                    liParam.appendChild(selColor);
-                }
-                ulCategory.appendChild(liParam);
-
-                // generate linewidth selection
-                if (parameter === 'line-width') {
-                    var selLineWidth = d.createElement('select');
-                    selLineWidth.setAttribute('id', 'select-line-width');
-
-                    selLineWidth.addEventListener('change', function () {
-                        styleSelectionEventListener(
-                            'edge', category, 'width', 'line-width', selLineWidth.value);
-                    });
+                        selLineStyle.addEventListener('change', function () {
+                            styleSelectionEventListener(
+                                'edge', category, "line-style", 'line-style', selLineStyle.value);
+                        });
 
 
-                    Array.from(Array(31).keys()).forEach(function (lineWidth) {
-                        var optLineWidth = d.createElement('option');
-                        optLineWidth.setAttribute('id', 'option-line-width');
-                        optLineWidth.innerHTML = lineWidth;
-                        selLineWidth.appendChild(optLineWidth);
-                    });
+                        lines.forEach(function (lineStyle) {
+                            var optLine = d.createElement('option');
+                            optLine.setAttribute('id', 'option-line-style' + lineStyle);
+                            optLine.innerHTML = lineStyle;
+                            selLineStyle.appendChild(optLine);
+                        });
+                        div.appendChild(selLineStyle);
+                        liParam.appendChild(div);
+                    }
+                    ulCategory.appendChild(liParam);
 
-                    liParam.appendChild(selLineWidth);
+                    // generate arrow selection
+                    if (parameter === 'arrow-shape') {
+                        var selArrow = d.createElement('select');
+                        selArrow.setAttribute('id', 'select-arrow-shape');
+                        selArrow.addEventListener('change', function () {
+                            styleSelectionEventListener(
+                                'edge', category, 'arrow-shape', 'arrow-shape', selArrow.value);
+                        });
+                        arrows.forEach(function (arrowShape) {
+                            var optArrow = d.createElement('option');
+                            optArrow.setAttribute('id', 'option-arrow-shape' + arrowShape);
+                            optArrow.innerHTML = arrowShape;
+                            selArrow.appendChild(optArrow);
+                        });
+                        liParam.appendChild(selArrow);
+                    }
+                    ulCategory.appendChild(liParam);
 
-                }
-                ulCategory.appendChild(liParam);
+                    // generate color selection
+                    if (parameter === 'line-color') {
+                        var selColor = d.createElement('select');
+                        selColor.setAttribute('id', 'select-line-color');
 
+                        selColor.addEventListener('change', function () {
+                            styleSelectionEventListener(
+                                'edge', category, "line-color", 'line-color', selColor.value);
+                        });
+
+                        colors.forEach(function (color) {
+                            var optColor = d.createElement('option');
+                            optColor.setAttribute('id', 'option-line-color');
+                            optColor.innerHTML = color;
+                            selColor.appendChild(optColor);
+                        });
+                        liParam.appendChild(selColor);
+                    }
+                    ulCategory.appendChild(liParam);
+
+                    // generate linewidth selection
+                    if (parameter === 'line-width') {
+                        var selLineWidth = d.createElement('select');
+                        selLineWidth.setAttribute('id', 'select-line-width');
+
+                        selLineWidth.addEventListener('change', function () {
+                            styleSelectionEventListener(
+                                'edge', category, 'width', 'line-width', selLineWidth.value);
+                        });
+
+
+                        Array.from(Array(31).keys()).forEach(function (lineWidth) {
+                            var optLineWidth = d.createElement('option');
+                            optLineWidth.setAttribute('id', 'option-line-width');
+                            optLineWidth.innerHTML = lineWidth;
+                            selLineWidth.appendChild(optLineWidth);
+                        });
+
+                        liParam.appendChild(selLineWidth);
+
+                    }
+                    ulCategory.appendChild(liParam);
+
+                });
+                divCategory.appendChild(ulCategory);
+                div.appendChild(divCategory);
             });
-            divCategory.appendChild(ulCategory);
-            div.appendChild(divCategory);
-        });
+        } catch (e){
+            div.innerHTML = "no edge categories";
+        }
         return div;
     }
 
@@ -802,24 +889,25 @@ var panel = (function (gwClient, cy) {
 
     function testHandleNavClick(testState) {
         setProps(testState, 'all');
-        var result = handleNavClick('elements');
-        console.group('testHandleNavClick()');
-        var conditionA = assert(props.tabs.elements.active == true, 'handleNavClick(key) activates the tab correctly');
-        var conditionB = assert(props.tabs.graphs.active == false, 'handleNavClick(key) deactivates the tab correctly');
-        var conditionC = assert(props.tabs.styles.active == false, 'handleNavClick(key) deactivates the tab correctly');
-        var firstTestsNotPassed = !(conditionA && conditionB && conditionC);
 
-        var result = handleNavClick('styles');
-        var conditionA = assert(props.tabs.elements.active == false, 'handleNavClick(key) activates the tab correctly');
-        var conditionB = assert(props.tabs.graphs.active == false, 'handleNavClick(key) deactivates the tab correctly');
-        var conditionC = assert(props.tabs.styles.active == true, 'handleNavClick(key) deactivates the tab correctly');
-        console.groupEnd();
-        var secondTestsNotPassed = !(conditionA && conditionB && conditionC);
-
-        if (firstTestsNotPassed && secondTestsNotPassed) {
-            alert("Virhe korjaa bugi ennen ko jatkat");
-            throw Error('testHandleNavClick() failed');
+        function printTabs(){
+            var elements = props.tabs.elements.active;
+            var graphs = props.tabs.graphs.active;
+            var styles = props.tabs.styles.active;
+            console.log("Activity status");
+            console.log("Elements: " + elements);
+            console.log("Graphs: " + graphs);
+            console.log("Styles: " + styles);
         }
+
+        printTabs();
+
+        QUnit.test("Initial states of panel activity is ok.", function(assert){
+            assert.deepEqual(props.tabs.elements.active, false);
+            assert.deepEqual(props.tabs.graphs.active, false);
+            assert.deepEqual(props.tabs.styles.active, true);
+        });
+
     }
 
     function renderNavigation() {
@@ -938,7 +1026,6 @@ var panel = (function (gwClient, cy) {
         container.appendChild(renderMenu(content));
         container.appendChild(renderNavigation(content));
         container.appendChild(renderContent(content));
-
     }
 
     function toggleMode() {
@@ -954,19 +1041,29 @@ var panel = (function (gwClient, cy) {
         }
     }
 
-    function tests() {
+    function tests(assert) {
         var stateForTests = testState;
+        console.log(stateForTests);
         console.group("Panel tests!");
-// todo return true/false -> push to array -> check if all passed!
+        // todo return true/false -> push to array -> check if all passed!
+        testAppContainerInit(stateForTests);
         testCytoscapeIntegrationInit(stateForTests);
         testGraphingWikiClientInit(stateForTests);
         testHandleNavClick(stateForTests);
         testRenderElementsContent(stateForTests);
         testRenderGraphsContent(stateForTests);
         testRenderStylesContent(stateForTests);
-
-
         console.groupEnd();
+    }
+
+    function testAppContainerInit(stateForTests){
+        setProps(testState, 'all');
+        var container = d.getElementById(props.containerId);
+        console.log("container: " + container);
+        QUnit.test("App container initialized correctly", function(assert){
+            var notUndefined = (container != 'undefined' && container != null);
+            assert.equal(notUndefined, true);
+        })
     }
 
 
@@ -994,7 +1091,7 @@ var panel = (function (gwClient, cy) {
 
         getEdgeCategories: function () {
             var categories = props.tabs.styles.categories;
-            if (categories == 'undefined') {
+            if (categories === 'undefined') {
                 return []
             } else {
                 return categories;
@@ -1002,6 +1099,9 @@ var panel = (function (gwClient, cy) {
         },
 
         elementHasOneOfCategories: function (element) {
+            /*
+            *
+            * */
             var values = [];
             props.styles.categories.forEach(function (category) {
                 values.push(element.hasClass(category))
@@ -1026,8 +1126,9 @@ var panel = (function (gwClient, cy) {
             return props;
         },
 
-        runTests: function (containerId) {
-            tests(containerId);
+        runTests: function (assert) {
+            // pass QUnit.assert
+            tests(assert);
         }
     }
 

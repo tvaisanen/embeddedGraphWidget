@@ -16,16 +16,10 @@ var gwClient = (function () {
     }
 
     function validateResponse(response) {
-        console.groupCollapsed('Debugging gwClient.handlePromise()');
-        console.debug(response);
         if (response.status >= 200 && response.status < 300) {
-            console.debug("response status [200, 300[");
+
             var json = response.json(); // there's always a body
-            var responseData = json.data;
-            console.debug('Json:');
-            console.debug(json);
-            console.debug(responseData);
-            console.groupEnd();
+
             return json;
         }
     }
@@ -100,9 +94,9 @@ var gwClient = (function () {
         return fetch(nodeRequest).then(function (response) { return validateResponse(response); });
     }
 
-    function loadGraphList() {
+    function fetchGraphList() {
         var requestUrl = configs.API_PATH + "graphs";
-        console.log("Loading graphs");
+        // console.log("Loading graphs");
         var loadGraphsRequest = new Request(requestUrl, {
             headers: new Headers({
                 'Content-Type': 'application/json'
@@ -112,7 +106,7 @@ var gwClient = (function () {
         return fetch(loadGraphsRequest);
     }
 
-    function getGraph(graphId) {
+    function fetchGraph(graphId) {
         var requestUrl = configs.API_PATH + graphId;
         console.log("GRAPHID: " + graphId);
         var loadGraphRequest = new Request(requestUrl, {
@@ -127,6 +121,25 @@ var gwClient = (function () {
 
     }
 
+    function postGraph(graphId, graphToSave) {
+        var developmentPath = configs.API_PATH + 'save/';
+        var payload = {
+            id: graphId,
+            data: graphToSave
+        };
+        console.log("GRAPHID: " + graphId);
+        console.debug(graphToSave);
+        var saveGraphRequest = new Request(developmentPath, {
+            headers: new Headers({
+                'Content-Type': 'application/json'
+            }),
+            method: 'post',
+            body: JSON.stringify(payload)
+        });
+        console.debug(saveGraphRequest);
+        return fetch(saveGraphRequest);
+    }
+
 
     // public methods
     return {
@@ -136,7 +149,7 @@ var gwClient = (function () {
         },
 
         getGraph: function(graphId){
-            return getGraph(graphId);
+            return fetchGraph(graphId);
         },
 
         getNodeData: function (pagename) {
@@ -145,11 +158,15 @@ var gwClient = (function () {
         },
 
         getGraphList: function(){
-            return loadGraphList();
+            return fetchGraphList();
         },
 
         getModuleName: function () {
             return moduleName;
+        },
+
+        postGraph: function(graphId, graphData) {
+            return postGraph(graphId, graphData);
         }
     }
 

@@ -152,7 +152,9 @@ var cy = cytoscape({
     ],
 });
 
-function expandNode(nodeId) {
+function expandNode(cyContext, nodeId) {
+
+    cy = cyContext;
 
     function createNewNode(id) {
 
@@ -325,7 +327,7 @@ function expandNode(nodeId) {
 cy.on('tap', 'node', function (evt) {
     var node = evt.target;
     var nodeId = node.id();
-    expandNode(nodeId);
+    expandNode(cy, nodeId);
 
 });
 

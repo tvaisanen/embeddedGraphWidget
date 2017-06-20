@@ -1,14 +1,15 @@
 
 import requests
 import json
-from flask import Flask, g, jsonify, request, send_from_directory
-from flask_cors import CORS, cross_origin
+from flask import Flask, jsonify, request
+from flask_cors import CORS
 import shelve
 
 app = Flask(__name__)
 CORS(app)
 
 DATABASE = 'development.db'
+MOIN_PATH = 'http://localhost/'
 
 
 def save_to_db(graph):
@@ -51,6 +52,7 @@ def get_graph_list_from_db():
         print("get_graph_list_from_db() : FAILED")
         return {'status': 'error', 'data': str(ex)}
 
+
 @app.route("/graphs", methods=['GET'])
 def graphlist():
     print("getting graphlist")
@@ -60,23 +62,6 @@ def graphlist():
         return jsonify(response)
     return 'whaaat?'
 
-@app.route("/log", methods=['GET', 'POST'])
-def log():
-    print(request)
-
-    if request.method == 'GET':
-        print("getting log")
-        return "log"
-
-    if request.method == 'POST':
-        data = request.data.decode('utf-8')
-        print("")
-        print(data)
-        print("")
-
-        return "log"
-
-    return 'whaaat?'
 
 @app.route("/<node>", methods=['GET'])
 def get_node(node):
@@ -84,12 +69,12 @@ def get_node(node):
     :param node: pagename to query
     :return: Json representation of the connections of MoinMoin wikipage
     """
-    r = requests.get('http://localhost/?action=getGraphJSON&pagename={pagename}'.format(pagename=node))
+    r = requests.get('{moinpath}?action=getGraphJSON&pagename={pagename}'.format(moinpath=MOIN_PATH, pagename=node))
     print(r)
     json_response = json.dumps(r.json())
     for k, v in r.json()['data'].items():
         print('%s: %s' %(k,v))
-    return json_response
+    return jsonify(r.json())
 
 
 @app.route("/save/", methods=['GET', 'POST'])
@@ -113,8 +98,6 @@ def grapdetail(graphId):
         response = get_graph_from_db(graphId)
         return jsonify(response)
     return 'whaaat?'
-
-
 
 
 if __name__ == "__main__":
