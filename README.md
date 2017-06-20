@@ -20,7 +20,7 @@ Make sure you have [MoinMoin](https://moinmo.in/MoinMoinDownload) and [GraphingW
 * GraphingWikiBrowser uses GraphingWiki backend for querying graph data.
 * getGraphJSON action has to be installed
 
-Current development version needs the proxy server `devProxyServer.py`,  which uses [Flask](http://flask.pocoo.org/) to create proxy for accessing the MoinMoin and storing the graphs to a shelve database. Please refer to [docs/development](development.md) to further instructions on how to set up the development environment.
+Current development version needs the proxy server `devProxyServer.py`,  which uses [Flask](http://flask.pocoo.org/) to create proxy for accessing the MoinMoin and storing the graphs to a shelve database. Please refer to [development](docs/development.md) to further instructions on how to set up the development environment.
 
 ## Testing
 
