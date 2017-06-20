@@ -1,0 +1,7 @@
+site_name: GraphingWikiBrowser
+pages:
+  - Home: index.md
+  - Development: development.md
+  - Usage: usage.md
+  - About: about.md
+theme: readthedocs
