@@ -194,16 +194,7 @@ var testState = {
 };
 
 // initialize download image link
-function downloadGraphPNG() {
-    console.info('running downloadGraphPNG() -function')
-    var png = cy.png({bg: 'white'});
-    var a = document.createElement('a');
 
-    a.href = png;
-    a.download = 'graph.png';
-    console.debug(a);
-    a.click()
-}
 
 
 function initNewGraph(data) {
@@ -289,104 +280,9 @@ function debugAlert(message) {
     alert(message);
 }
 
-function generateContent() {
-    "use strict";
-    var div = d.createElement('div');
-    div.innerHTML = this.content;
-    return div;
-}
 
-function menuItemSave() {
-    "use strict";
-    var div = d.createElement('div');
-    var inName = d.createElement('input');
-    inName.setAttribute('id', 'input-graph-name');
-    inName.setAttribute('type', 'text');
-    var btnSave = d.createElement('button');
-    btnSave.addEventListener('click', function (event) {
-        console.log("Clicked save graph button.");
-        console.log("Current value: " + inName.value);
-        gwClient.postGraph(inName.value, cy.json());
-    });
-    var label = d.createElement('span');
-    label.innerHTML = 'Graph ID:';
-    btnSave.innerHTML = 'save';
-    div.appendChild(label);
-    div.appendChild(inName);
-    div.appendChild(btnSave);
-    //div.innerHTML = this.content + "Generated content!";
-    return div;
-}
 
-function menuItemLayout() {
-    "use strict";
-    var div = d.createElement('div');
-    var selLayout = d.createElement('select');
-    selLayout.setAttribute('id', 'layout-options');
 
-    layoutOptions.forEach(function (option) {
-        var opt = d.createElement('option');
-        opt.setAttribute('value', option);
-        opt.innerHTML = option;
-        selLayout.appendChild(opt);
-    });
-
-    var btnResetLayout = d.createElement('button');
-    btnResetLayout.addEventListener('click', function (event) {
-        console.log("Clicked reset layout.");
-        console.log("Current value: " + selLayout.value);
-        setAndRunLayout();
-    });
-    var label = d.createElement('span');
-    label.innerHTML = 'selected:';
-    btnResetLayout.innerHTML = 'reset';
-    div.appendChild(label);
-    div.appendChild(selLayout);
-    div.appendChild(btnResetLayout);
-    //div.innerHTML = this.content + "Generated content!";
-    return div;
-}
-
-var menuItems = {
-    download: {
-        label: "Download",
-        content: "Click to download image.",
-        onClick: downloadGraphPNG,
-        generateContent: generateContent
-    },
-    layout: {
-        label: "Layout",
-        content: "here you can change the layout",
-        onClick: function () {
-            console.log('clicked: ' + this.label);
-        },
-        generateContent: menuItemLayout
-    },
-    save: {
-        label: "Save",
-        content: "form to input graph name",
-        onClick: function () {
-            console.log('clicked: ' + this.label);
-        },
-        generateContent: menuItemSave
-    },
-    settings: {
-        label: "Settings",
-        content: "here might be some options to choose from",
-        onClick: function () {
-            console.log('clicked: ' + this.label);
-        },
-        generateContent: generateContent
-    },
-    moin: {
-        label: "Moin pages",
-        content: "list moin pages here",
-        onClick: function () {
-            console.log('clicked: ' + this.label);
-        },
-        generateContent: generateContent
-    }
-};
 
 var panel = (function (gwClient, cy) {
 
@@ -445,6 +341,123 @@ var panel = (function (gwClient, cy) {
             }
         }
     };
+
+    var menuItems = {
+    download: {
+        label: "Download",
+        content: "Click to download image.",
+        onClick: downloadGraphPNG,
+        generateContent: generateContent
+    },
+    layout: {
+        label: "Layout",
+        content: "here you can change the layout",
+        onClick: function () {
+            console.log('clicked: ' + this.label);
+        },
+        generateContent: menuItemLayout
+    },
+    save: {
+        label: "Save",
+        content: "form to input graph name",
+        onClick: function () {
+            console.log('clicked: ' + this.label);
+        },
+        generateContent: menuItemSave
+    },
+    settings: {
+        label: "Settings",
+        content: "here might be some options to choose from",
+        onClick: function () {
+            console.log('clicked: ' + this.label);
+        },
+        generateContent: generateContent
+    },
+    moin: {
+        label: "Moin pages",
+        content: "list moin pages here",
+        onClick: function () {
+            console.log('clicked: ' + this.label);
+        },
+        generateContent: generateContent
+    }
+};
+
+    /*
+    *   Functions for generating the content for
+    *   menu items inside the panel.
+    * */
+
+    function generateContent() {
+    "use strict";
+    var div = d.createElement('div');
+    div.innerHTML = this.content;
+    return div;
+}
+
+    function menuItemSave() {
+        "use strict";
+        var div = d.createElement('div');
+        var inName = d.createElement('input');
+        inName.setAttribute('id', 'input-graph-name');
+        inName.setAttribute('type', 'text');
+        var btnSave = d.createElement('button');
+        btnSave.addEventListener('click', function (event) {
+            console.log("Clicked save graph button.");
+            console.log("Current value: " + inName.value);
+            gwClient.postGraph(inName.value, cy.json());
+        });
+        var label = d.createElement('span');
+        label.innerHTML = 'Graph ID:';
+        btnSave.innerHTML = 'save';
+        div.appendChild(label);
+        div.appendChild(inName);
+        div.appendChild(btnSave);
+        //div.innerHTML = this.content + "Generated content!";
+        return div;
+    }
+
+    function menuItemLayout() {
+        "use strict";
+        var div = d.createElement('div');
+        var selLayout = d.createElement('select');
+        selLayout.setAttribute('id', 'layout-options');
+
+        layoutOptions.forEach(function (option) {
+            var opt = d.createElement('option');
+            opt.setAttribute('value', option);
+            opt.innerHTML = option;
+            selLayout.appendChild(opt);
+        });
+
+        var btnResetLayout = d.createElement('button');
+        btnResetLayout.addEventListener('click', function (event) {
+            console.log("Clicked reset layout.");
+            console.log("Current value: " + selLayout.value);
+            setAndRunLayout();
+        });
+        var label = d.createElement('span');
+        label.innerHTML = 'selected:';
+        btnResetLayout.innerHTML = 'reset';
+        div.appendChild(label);
+        div.appendChild(selLayout);
+        div.appendChild(btnResetLayout);
+        //div.innerHTML = this.content + "Generated content!";
+        return div;
+    }
+
+    /* ########################################### */
+
+    function downloadGraphPNG() {
+    console.info('running downloadGraphPNG() -function')
+    var png = props.cy.png({bg: 'white'});
+    var a = document.createElement('a');
+
+    a.href = png;
+    a.download = 'graph.png';
+    console.debug(a);
+    a.click()
+}
 
     function renderMenu() {
 

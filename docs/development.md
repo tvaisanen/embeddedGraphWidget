@@ -1,3 +1,8 @@
+## Todos
+
+* Implement graph storing at GraphingWiki backend
+* Serve the GraphingWikiBrowser within MoinMoin
+
 ## Development Server
 
 The proxy used in development uses the following actions.
@@ -6,7 +11,6 @@ The proxy used in development uses the following actions.
 
 * `requests` - For interacting with MoinMoin and GraphingWiki.
 * `flask` - Serving the proxy.
-* `flask_cors` - Allowing all origins in development context.
 
 ### API
 

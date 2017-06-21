@@ -24,11 +24,19 @@ Current development version needs the proxy server `devProxyServer.py`,  which u
 ## Testing
 
 Open the file: `test.html` in a browser to run unit tests.
-
+GraphingWikiBrowser has unit tests embedded inside the module. These can be 
+run manually by calling `panel.test()`. The test state is currently embedded as a global variable inside `panel.js`. 
 
 ## Project layout
 
-    mkdocs.yml    # The configuration file.
+    proto_v0.01/
+        ...                 # Contains files for the first prototype.
+    proto_v0.02/
+        Planning/           # Design etc.
+        devProxyServer.py   # Development proxy server.
+        development.db      # Python shelve db for development.
+        ...                 # Contains files for the first prototype.
+    mkdocs.yml              # The configuration file for running mkdocs.
     docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+        index.md            # The documentation homepage.
+        ...                 # Other markdown pages, images and other files.
