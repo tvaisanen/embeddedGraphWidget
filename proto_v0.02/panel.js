@@ -179,7 +179,7 @@ var testState = {
         styles: {
             label: "Styles",
             active: false,
-            styles: [
+            categories: [
                 {
                     name: "category 1",
                     data: "data for 1"
@@ -342,51 +342,74 @@ var panel = (function (gwClient, cy) {
         }
     };
 
-    var menuItems = {
-    download: {
-        label: "Download",
-        content: "Click to download image.",
-        onClick: downloadGraphPNG,
-        generateContent: generateContent
-    },
-    layout: {
-        label: "Layout",
-        content: "here you can change the layout",
-        onClick: function () {
-            console.log('clicked: ' + this.label);
-        },
-        generateContent: menuItemLayout
-    },
-    save: {
-        label: "Save",
-        content: "form to input graph name",
-        onClick: function () {
-            console.log('clicked: ' + this.label);
-        },
-        generateContent: menuItemSave
-    },
-    settings: {
-        label: "Settings",
-        content: "here might be some options to choose from",
-        onClick: function () {
-            console.log('clicked: ' + this.label);
-        },
-        generateContent: generateContent
-    },
-    moin: {
-        label: "Moin pages",
-        content: "list moin pages here",
-        onClick: function () {
-            console.log('clicked: ' + this.label);
-        },
-        generateContent: generateContent
-    }
-};
-
     /*
     *   Functions for generating the content for
     *   menu items inside the panel.
     * */
+
+    function createNewNode(id) {
+
+        // Create new node.
+        var newNode = {
+            group: 'nodes',
+            data: {
+                id: id
+            }
+        };
+
+        // Add the new node to cy.elements.
+        props.cy.add(newNode);
+    }
+
+    var menuItems = {
+        create: {
+            label: "Create new node/edge",
+            content: "Create new things here",
+            onClick: function () {
+                console.log('clicked: ' + this.label);
+            },
+            generateContent: menuItemCreate
+
+        },
+        download: {
+            label: "Download",
+            content: "Click to download image.",
+            onClick: downloadGraphPNG,
+            generateContent: generateContent
+        },
+        layout: {
+            label: "Layout",
+            content: "here you can change the layout",
+            onClick: function () {
+                console.log('clicked: ' + this.label);
+            },
+            generateContent: menuItemLayout
+        },
+        save: {
+            label: "Save",
+            content: "form to input graph name",
+            onClick: function () {
+                console.log('clicked: ' + this.label);
+            },
+            generateContent: menuItemSave
+        },
+        settings: {
+            label: "Settings",
+            content: "here might be some options to choose from",
+            onClick: function () {
+                console.log('clicked: ' + this.label);
+            },
+            generateContent: generateContent
+        },
+        moin: {
+            label: "Moin pages",
+            content: "list moin pages here",
+            onClick: function () {
+                console.log('clicked: ' + this.label);
+            },
+            generateContent: generateContent
+        }
+    };
 
     function generateContent() {
     "use strict";
@@ -394,6 +417,36 @@ var panel = (function (gwClient, cy) {
     div.innerHTML = this.content;
     return div;
 }
+
+    function menuItemCreate() {
+        "use strict";
+        var div = d.createElement('div');
+        var inName = d.createElement('input');
+        inName.setAttribute('id', 'input-graph-name');
+        inName.setAttribute('type', 'text');
+        var btnSave = d.createElement('button');
+        btnSave.addEventListener('click', function (event) {
+            console.log("Clicked create node button.");
+            console.log("Current value: " + inName.value);
+            var promise = gwClient.savePageToMoin(inName.value, 'hello');
+            promise.then(function (response){
+                var j = response.json();
+                console.log(j);
+                return j;
+            }).then(function (obj) {
+               console.log(obj);
+               createNewNode(inName.value);
+            });
+        });
+        var label = d.createElement('span');
+        label.innerHTML = 'Node ID:';
+        btnSave.innerHTML = 'create';
+        div.appendChild(label);
+        div.appendChild(inName);
+        div.appendChild(btnSave);
+        //div.innerHTML = this.content + "Generated content!";
+        return div;
+    }
 
     function menuItemSave() {
         "use strict";
@@ -445,19 +498,6 @@ var panel = (function (gwClient, cy) {
         //div.innerHTML = this.content + "Generated content!";
         return div;
     }
-
-    /* ########################################### */
-
-    function downloadGraphPNG() {
-    console.info('running downloadGraphPNG() -function')
-    var png = props.cy.png({bg: 'white'});
-    var a = document.createElement('a');
-
-    a.href = png;
-    a.download = 'graph.png';
-    console.debug(a);
-    a.click()
-}
 
     function renderMenu() {
 
@@ -541,6 +581,19 @@ var panel = (function (gwClient, cy) {
 
         return divMenu;
     }
+
+    /* ########################################### */
+
+    function downloadGraphPNG() {
+    console.info('running downloadGraphPNG() -function')
+    var png = props.cy.png({bg: 'white'});
+    var a = document.createElement('a');
+
+    a.href = png;
+    a.download = 'graph.png';
+    console.debug(a);
+    a.click()
+}
 
     function setStatusMessage(text) {
         var statusMessage = d.getElementById("status-message");

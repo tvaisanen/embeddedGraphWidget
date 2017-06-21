@@ -107,23 +107,36 @@ def add_to_moin():
     if request.method == 'POST':
         json = request.get_json()
         data = request.get_data()
-        print(request.data)
         print(json)
-        print(data)
-        pagename = 'temp'
+        pagename = json['pagename']
         print(pagename)
 
         content = 'mock content'
-        response = add_page_to_moin(pagename, content)
-        print(response.json())
-        return response.json()
+        r = add_page_to_moin(pagename, content)
+        print("response: ")
+        print(r.json())
+
+        # if the page exists allready
+        if r.json()['errmsg']:
+            url = '{moinpath}?action=getGraphJSON&pagename={pagename}'.format(moinpath=MOIN_PATH, pagename=pagename)
+            print("after error url: %s" % url)
+            r = requests.get(url)
+            print(r.text)
+            return jsonify(r.json())
+
+        return jsonify(r.json())
     return 'whaaat?'
 
 
 def add_page_to_moin(pagename, content):
     print('add_page_to_moin({page},{content})'.format(page=pagename, content=content))
-    payload = ('content', content)
-    return requests.post('http://localhost/{pagename}?action=putPageJSON', data=payload)
+    r = requests.post(
+        'http://localhost/{page}?action=putPageJSON'.format(page=pagename),
+        data={'content': content})
+
+    print(r.json())
+
+    return r
 
 if __name__ == "__main__":
     app.run()
