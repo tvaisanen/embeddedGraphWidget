@@ -100,5 +100,30 @@ def grapdetail(graphId):
     return 'whaaat?'
 
 
+@app.route("/add-to-wiki/", methods=['POST'])
+def add_to_moin():
+    print(request)
+
+    if request.method == 'POST':
+        json = request.get_json()
+        data = request.get_data()
+        print(request.data)
+        print(json)
+        print(data)
+        pagename = 'temp'
+        print(pagename)
+
+        content = 'mock content'
+        response = add_page_to_moin(pagename, content)
+        print(response.json())
+        return response.json()
+    return 'whaaat?'
+
+
+def add_page_to_moin(pagename, content):
+    print('add_page_to_moin({page},{content})'.format(page=pagename, content=content))
+    payload = ('content', content)
+    return requests.post('http://localhost/{pagename}?action=putPageJSON', data=payload)
+
 if __name__ == "__main__":
     app.run()

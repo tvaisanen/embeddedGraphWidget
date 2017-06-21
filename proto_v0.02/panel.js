@@ -5,15 +5,162 @@ var d = document;
 
 var configs = {
 // This is a proxy server for development
-    API_PATH: 'http://127.0.0.1:5000/'
+    API_PATH: 'http://127.0.0.1:5000/',
+    API_CREATE_NEW_NODE: this.API_PATH + 'add-to-wiki/'
 };
 
 gwClient.setConfigs(configs);
 
+// Use these for tests
+var initialCy = cytoscape({
+    container: document.getElementById('cy'),
+    elements: [{group: 'nodes', data: {id: 'personA'}}],
+    style: [ // the stylesheet for the graph
+        {
+            selector: 'node',
+            style: {
+                'background-color': '#6490af',
+                'size': '40',
+                'label': 'data(id)',
+            }
+        },
+
+
+        {
+            selector: 'node.highlight',
+            style: {
+                'background-color': '#c50004',
+            }
+        },
+
+        {
+            selector: 'node.hover-on',
+            style: {
+                'background-color': '#00ff14',
+            }
+        },
+
+        {
+            selector: 'edge',
+            style: {
+                'line-color': '#ccc',
+                'target-arrow-color': '#000000',
+                'target-arrow-shape': 'triangle',
+                'curve-style': 'bezier',
+                'overlay-padding': 1
+            }
+        },
+        {
+            selector: 'edge.mouse-over',
+            style: {label: 'category'}
+        },
+
+        // Todo: generate these from config!
+
+        {selector: 'edge.line-style-solid', style: {'line-style': 'solid'}},
+        {selector: 'edge.line-style-dotted', style: {'line-style': 'dotted'}},
+        {selector: 'edge.line-style-dashed', style: {'line-style': 'dashed'}},
+
+        {selector: 'edge.width-0', style: {'width': 0}},
+        {selector: 'edge.width-1', style: {'width': 1}},
+        {selector: 'edge.width-2', style: {'width': 2}},
+        {selector: 'edge.width-3', style: {'width': 3}},
+        {selector: 'edge.width-4', style: {'width': 4}},
+        {selector: 'edge.width-5', style: {'width': 5}},
+        {selector: 'edge.width-6', style: {'width': 6}},
+        {selector: 'edge.width-7', style: {'width': 7}},
+        {selector: 'edge.width-8', style: {'width': 8}},
+        {selector: 'edge.width-9', style: {'width': 9}},
+        {selector: 'edge.width-9', style: {'width': 10}},
+        {selector: 'edge.width-10', style: {'width': 11}},
+        {selector: 'edge.width-12', style: {'width': 12}},
+        {selector: 'edge.width-13', style: {'width': 13}},
+        {selector: 'edge.width-14', style: {'width': 14}},
+        {selector: 'edge.width-15', style: {'width': 15}},
+        {selector: 'edge.width-16', style: {'width': 16}},
+        {selector: 'edge.width-17', style: {'width': 17}},
+        {selector: 'edge.width-18', style: {'width': 18}},
+        {selector: 'edge.width-19', style: {'width': 19}},
+        {selector: 'edge.width-20', style: {'width': 20}},
+        {selector: 'edge.width-21', style: {'width': 21}},
+        {selector: 'edge.width-22', style: {'width': 22}},
+        {selector: 'edge.width-23', style: {'width': 23}},
+        {selector: 'edge.width-24', style: {'width': 24}},
+        {selector: 'edge.width-25', style: {'width': 25}},
+        {selector: 'edge.width-26', style: {'width': 26}},
+        {selector: 'edge.width-27', style: {'width': 27}},
+        {selector: 'edge.width-28', style: {'width': 28}},
+        {selector: 'edge.width-29', style: {'width': 29}},
+        {selector: 'edge.width-30', style: {'width': 30}},
+
+        {selector: 'edge.arrow-shape-tee', style: {'target-arrow-shape': 'tee'}},
+        {selector: 'edge.arrow-shape-triangle', style: {'target-arrow-shape': 'triangle'}},
+        {selector: 'edge.arrow-shape-triangle-tee', style: {'target-arrow-shape': 'triangle-tee'}},
+        {selector: 'edge.arrow-shape-triangle-cross', style: {'target-arrow-shape': 'triangle-cross'}},
+        {selector: 'edge.arrow-shape-triangle-backcurve', style: {'target-arrow-shape': 'triangle-backcurve'}},
+        {selector: 'edge.arrow-shape-square', style: {'target-arrow-shape': 'square'}},
+        {selector: 'edge.arrow-shape-circle', style: {'target-arrow-shape': 'circle'}},
+        {selector: 'edge.arrow-shape-diamond', style: {'target-arrow-shape': 'diamond'}},
+        {selector: 'edge.arrow-shape-none', style: {'target-arrow-shape': 'none'}},
+
+        {selector: 'edge.line-color-red', style: {'line-color': 'red', 'arrow-color': 'red'}},
+        {selector: 'edge.line-color-green', style: {'line-color': 'green', 'arrow-color': 'green'}},
+        {selector: 'edge.line-color-orange', style: {'line-color': 'orange', 'arrow-color': 'orange'}},
+        {selector: 'edge.line-color-yellow', style: {'line-color': 'yellow', 'arrow-color': 'yellow'}},
+        {selector: 'edge.line-color-cyan', style: {'line-color': 'cyan', 'arrow-color': 'cyan'}},
+        {selector: 'edge.line-color-blue', style: {'line-color': 'blue', 'arrow-color': 'blue'}},
+
+
+        {
+            selector: 'edge.foo',
+            style: {
+                'curve-style': 'bezier',
+            }
+        },
+
+        {
+            selector: 'edge._notype',
+            style: {
+                'curve-style': 'bezier',
+            }
+        },
+
+        {
+            selector: 'edge.gwikicategory',
+            style: {
+                'curve-style': 'bezier',
+            }
+        },
+
+        {
+            selector: 'edge.hover-on',
+            style: {
+                'width': 5,
+                'line-color': '#cc7500',
+                'line-style': 'dashed',
+                'target-arrow-color': '#000000',
+                'target-arrow-shape': 'triangle',
+                'curve-style': 'bezier',
+            }
+        },
+
+        {
+            selector: 'edge.highlight',
+            style: {
+                'width': 5,
+                'line-color': '#cc7500',
+                'line-style': 'dashed',
+                'target-arrow-color': '#000000',
+                'target-arrow-shape': 'triangle',
+                'curve-style': 'bezier',
+            }
+        },
+    ],
+});
 var testState = {
     containerId: "panel",
     gw: gwClient,
-    cy: cy,
+    cy: initialCy,
     tabs: {
         graphs: {
             label: "Graphs",
@@ -24,6 +171,7 @@ var testState = {
             ]
         },
         elements: {
+            filter: "",
             label: "Elements",
             active: false,
             data: "Data for elements"
@@ -44,9 +192,6 @@ var testState = {
         }
     }
 };
-
-console.log("%cTodo:", "color: green; font-size:15px;");
-console.log("%cLoad graphs from the server to the view", "color: blue; font-size:13px;");
 
 // initialize download image link
 function downloadGraphPNG() {
@@ -463,11 +608,15 @@ var panel = (function (gwClient, cy) {
 // set context for tests
         console.group("testRenderGraphsContent()");
         setProps(testState, 'all');
-        handleNavClick('styles');
+        var classes = classNames.tab.graph;
         var graphsContent = renderGraphsContent();
         var firstChild = graphsContent.childNodes[0];
-        assert(graphsContent.id == "graphs-content", "renderGraphsContent() returns div with proper id");
-        assert(firstChild.tagName == "UL", "renderGraphsContent() returns with correct html element");
+        QUnit.test("Rendering the graphs tab", function(assert){
+            assert.equal(graphsContent.id, classes.container, "renderGraphsContent() returns div with proper id");
+            assert.equal(firstChild.tagName, "UL", "renderGraphsContent() first child is a list element");
+        });
+
+
         console.groupEnd();
     }
 
@@ -475,7 +624,7 @@ var panel = (function (gwClient, cy) {
         setProps(testState, 'all');
         var moduleName = props.gw.getModuleName();
         QUnit.test("Test GraphingWikiClientInit", function (assert){
-            assert.equal(moduleName, "GraphingWiki client");
+            assert.equal(moduleName, "GraphingWiki client", "gwClient is initialized correctly.");
         });
 
     }
@@ -485,11 +634,13 @@ var panel = (function (gwClient, cy) {
         console.group("test that the cytoscape is integrated correctly");
         console.log(props);
         console.log("props.cy: " + props.cy.id);
+        cyContainer = props.cy.container();
 
-        cyId = props.cy.id;
-        QUnit.test("Cytoscape div can be found.", function(assert){
-            assert.equal(cyId, "cy");
+        QUnit.test("Cytoscape container initialised", function(assert){
+            assert.deepEqual(cyContainer.id, "cy", "cy container id = 'cy'");
+            assert.ok(cyContainer.classList.contains("graph"), "cy container has class 'graph'");
         });
+
 
         // assert(cyId == "cy", "Cytoscape initialized correctly?");
         console.groupEnd();
@@ -653,10 +804,9 @@ var panel = (function (gwClient, cy) {
 // set context for tests
         console.group("testRenderStylesContent()");
         setProps(testState, 'all');
-        handleNavClick('styles');
-        var stylesContent = renderElementsContent();
+        var elementsContent = renderElementsContent();
         QUnit.test("Rendering the elements tab", function(assert){
-            assert.equal(stylesContent.id, "elements-content", "renderElementsContent() returns div with proper id");
+            assert.equal(elementsContent.id, "elements-content", "renderElementsContent() returns div with proper id");
         });
 
         console.groupEnd();
@@ -868,7 +1018,9 @@ var panel = (function (gwClient, cy) {
         setProps(testState, 'all');
         handleNavClick('styles');
         var stylesContent = renderStylesContent();
-        assert(stylesContent.id === "styles-content", "renderStylesContent() returns div with proper id");
+        QUnit.test("Rendering the graphs tab", function(assert){
+            assert.equal(stylesContent.id, "styles-content", "renderStylesContent() returns div with proper id");
+        });
         console.groupEnd();
     }
 
@@ -1041,11 +1193,10 @@ var panel = (function (gwClient, cy) {
         }
     }
 
-    function tests(assert) {
+    function tests() {
         var stateForTests = testState;
         console.log(stateForTests);
         console.group("Panel tests!");
-        // todo return true/false -> push to array -> check if all passed!
         testAppContainerInit(stateForTests);
         testCytoscapeIntegrationInit(stateForTests);
         testGraphingWikiClientInit(stateForTests);
@@ -1056,13 +1207,13 @@ var panel = (function (gwClient, cy) {
         console.groupEnd();
     }
 
-    function testAppContainerInit(stateForTests){
+    function testAppContainerInit(testState){
         setProps(testState, 'all');
         var container = d.getElementById(props.containerId);
         console.log("container: " + container);
         QUnit.test("App container initialized correctly", function(assert){
             var notUndefined = (container != 'undefined' && container != null);
-            assert.equal(notUndefined, true);
+            assert.equal(notUndefined, true, "App container is defined");
         })
     }
 

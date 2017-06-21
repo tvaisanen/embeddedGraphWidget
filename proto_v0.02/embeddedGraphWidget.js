@@ -418,7 +418,8 @@ var state = {
 
 var configs = {
 // This is a proxy server for development
-    API_PATH: 'http://127.0.0.1:5000/'
+    API_PATH: 'http://127.0.0.1:5000/',
+    API_CREATE_NEW_NODE: 'http://127.0.0.1:5000/add-to-wiki/'
 };
 
 
@@ -625,7 +626,7 @@ window.onclick = function (event) {
     }
 }
 
-
+console.log(state.cy);
 panel.render(state);
 
 

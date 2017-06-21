@@ -140,6 +140,24 @@ var gwClient = (function () {
         return fetch(saveGraphRequest);
     }
 
+    function postNode(nodeId, content){
+        var payload = {
+            pagename: nodeId,
+            content: "This is page is created by GraphingWikiBrowser" + content
+        };
+        console.log(configs);
+        var developmentPath = configs.API_CREATE_NEW_NODE;
+        var postNodeRequest = new Request(developmentPath, {
+            headers: new Headers({
+                'Content-Type': 'application/json'
+            }),
+            method: 'post',
+            body: JSON.stringify(payload)
+        });
+        console.debug(postNodeRequest);
+        return fetch(postNodeRequest);
+    }
+
 
     // public methods
     return {
@@ -167,6 +185,10 @@ var gwClient = (function () {
 
         postGraph: function(graphId, graphData) {
             return postGraph(graphId, graphData);
+        },
+
+        savePageToMoin: function(nodeId, content){
+            return postNode(nodeId, content);
         }
     }
 

@@ -1,6 +1,6 @@
 # GraphingWikiBrowser  v0.02
 
-GraphingWikiBrowser is an extension for [GraphingWiki ](https://github.com/graphingwiki/graphingwiki). Providing visual tool for browsing the wiki. The browser can also input data to MoinMoin and store graphs to be viewed later.
+GraphingWikiBrowser is an extension for [GraphingWiki ](https://github.com/graphingwiki/graphingwiki). Providing visual tool for browsing the wiki. The browser can also input data to MoinMoin and store graphs to be viewed later or embedded to a wiki page.
 
 ## Initialization
 
