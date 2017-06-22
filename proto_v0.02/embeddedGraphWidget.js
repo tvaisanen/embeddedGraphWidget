@@ -170,20 +170,34 @@ function expandNode(cyContext, nodeId) {
         cy.add(newNode);
     }
 
-    function createNewEdge(sourceId, targetId) {
+    function createNewEdge(sourceId, targetId, classToEdge) {
 
+        var edgeId = sourceId + "_to_" + targetId;
         // Create new edge.
         var newEdge = {
             group: 'edges',
             data: {
-                id: sourceId + "_to_" + targetId,
+                id: edgeId,
                 source: sourceId,
                 target: targetId
-            }
+            },
         };
 
-        // Add the new edge to cy.elements.
-        cy.add(newEdge);
+        var classesToAdd = panel.props().elementStyles[classToEdge];
+        console.log("class of edge: " + classToEdge);
+        try {
+            console.log(classesToAdd);
+            // Add the new edge to cy.elements.
+            cy.add(newEdge);
+            var e = cy.getElementById(edgeId);
+            Object.keys(classesToAdd).forEach(function (key) {
+                e.addClass(classesToAdd[key]);
+            });
+        } catch (e) {
+            console.log(e);
+        }
+
+
     }
 
     function addClassToEdge(edgeId, classToAdd) {
@@ -248,7 +262,7 @@ function expandNode(cyContext, nodeId) {
 
         // Create new edge if the edge does not exist yet.
         if (edgeBetweenDoNotExist) {
-            createNewEdge(sourceNodeId, targetNodeId);
+            createNewEdge(sourceNodeId, targetNodeId, classForEdge);
         }
 
         addClassToEdge(edgeId, classForEdge);
@@ -488,110 +502,110 @@ function setAndRunLayout() {
 }
 
 /*
-var runLayoutButton = document.querySelector('#run-layout-button');
-runLayoutButton.addEventListener('click', setAndRunLayout);
-/*
+ var runLayoutButton = document.querySelector('#run-layout-button');
+ runLayoutButton.addEventListener('click', setAndRunLayout);
+ /*
 
-function addNode(node) {
-    cy.add(node);
-}
-
-
-function handleSaveGraph() {
-    var developmentPath = 'http://127.0.0.1:5000/save/';
-    var graphToSave = cy.json();
-    var graphId = document.getElementById('graph-name').value;
-    var payload = {
-        id: graphId,
-        data: graphToSave
-    };
-    console.log("GRAPHID: " + graphId);
-    console.debug(graphToSave);
-    var saveGraphRequest = new Request(developmentPath, {
-        headers: new Headers({
-            'Content-Type': 'application/json'
-        }),
-        method: 'post',
-        body: JSON.stringify(payload)
-    });
-    console.debug(saveGraphRequest);
-    var promise = fetch(saveGraphRequest);
-    promise.then(function (response) {
-        console.log(response);
-    })
-}
-
-var saveGraphButton = document.getElementById('btn-save-graph');
-saveGraphButton.addEventListener('click', handleSaveGraph);
-
-function handleLoadGraph(graphId) {
-    var developmentPath = 'http://127.0.0.1:5000/graph/' + graphId;
-    console.log("GRAPHID: " + graphId);
-    var loadGraphRequest = new Request(developmentPath, {
-        headers: new Headers({
-            'Content-Type': 'application/json'
-        }),
-        method: 'get'
-    });
-    console.debug(loadGraphRequest);
-    var promise = fetch(loadGraphRequest);
-    promise.then(function (response) {
-        if (response.status >= 200 && response.status < 300) {
-            var json = response.json(); // there's always a body
-            console.debug(json);
-            console.debug(response.ok);
-            return json;
-        } else {
-            return json.then(Promise.reject.bind(Promise));
-        }
-    }).then(function (response) {
-        console.log(response);
-        panel.cy = response.data;
-    });
-}
-
-// Dynamic CSS: cy.style().selector('edge.foo').style('line-color', 'magenta').update()
+ function addNode(node) {
+ cy.add(node);
+ }
 
 
-function loadNewGraph(graphId) {
-    var graphPromise = gwClient.getGraph(graphId);
-    var graph = graphPromise.then(function (response) {
-        var json = response.json;
-        console.log("response ok biby: " + JSON.stringify(json));
-        return json;
-    }).then(function (json) {
-        console.log('ok biby ' + JSON.stringify(json));
-        return json;
-    });
-}
+ function handleSaveGraph() {
+ var developmentPath = 'http://127.0.0.1:5000/save/';
+ var graphToSave = cy.json();
+ var graphId = document.getElementById('graph-name').value;
+ var payload = {
+ id: graphId,
+ data: graphToSave
+ };
+ console.log("GRAPHID: " + graphId);
+ console.debug(graphToSave);
+ var saveGraphRequest = new Request(developmentPath, {
+ headers: new Headers({
+ 'Content-Type': 'application/json'
+ }),
+ method: 'post',
+ body: JSON.stringify(payload)
+ });
+ console.debug(saveGraphRequest);
+ var promise = fetch(saveGraphRequest);
+ promise.then(function (response) {
+ console.log(response);
+ })
+ }
 
-var newGraphData
+ var saveGraphButton = document.getElementById('btn-save-graph');
+ saveGraphButton.addEventListener('click', handleSaveGraph);
 
-function loadGraphList() {
-    var developmentPath = 'http://127.0.0.1:5000/graphs';
-    console.log("Loading graphs");
-    var loadGraphsRequest = new Request(developmentPath, {
-        headers: new Headers({
-            'Content-Type': 'application/json'
-        }),
-        method: 'get'
-    });
-    var promise = fetch(loadGraphsRequest);
-    promise.then(function (response) {
-        if (response.status >= 200 && response.status < 300) {
-            var json = response.json(); // there's always a body
-            console.debug(json);
-            console.debug(response.ok);
-            return json;
-        } else {
-            return json.then(Promise.reject.bind(Promise));
-        }
-    }).then(function (response) {
-        console.log(response);
-        newGraphData = response.data;
-    });
-}
-/*
+ function handleLoadGraph(graphId) {
+ var developmentPath = 'http://127.0.0.1:5000/graph/' + graphId;
+ console.log("GRAPHID: " + graphId);
+ var loadGraphRequest = new Request(developmentPath, {
+ headers: new Headers({
+ 'Content-Type': 'application/json'
+ }),
+ method: 'get'
+ });
+ console.debug(loadGraphRequest);
+ var promise = fetch(loadGraphRequest);
+ promise.then(function (response) {
+ if (response.status >= 200 && response.status < 300) {
+ var json = response.json(); // there's always a body
+ console.debug(json);
+ console.debug(response.ok);
+ return json;
+ } else {
+ return json.then(Promise.reject.bind(Promise));
+ }
+ }).then(function (response) {
+ console.log(response);
+ panel.cy = response.data;
+ });
+ }
+
+ // Dynamic CSS: cy.style().selector('edge.foo').style('line-color', 'magenta').update()
+
+
+ function loadNewGraph(graphId) {
+ var graphPromise = gwClient.getGraph(graphId);
+ var graph = graphPromise.then(function (response) {
+ var json = response.json;
+ console.log("response ok biby: " + JSON.stringify(json));
+ return json;
+ }).then(function (json) {
+ console.log('ok biby ' + JSON.stringify(json));
+ return json;
+ });
+ }
+
+ var newGraphData
+
+ function loadGraphList() {
+ var developmentPath = 'http://127.0.0.1:5000/graphs';
+ console.log("Loading graphs");
+ var loadGraphsRequest = new Request(developmentPath, {
+ headers: new Headers({
+ 'Content-Type': 'application/json'
+ }),
+ method: 'get'
+ });
+ var promise = fetch(loadGraphsRequest);
+ promise.then(function (response) {
+ if (response.status >= 200 && response.status < 300) {
+ var json = response.json(); // there's always a body
+ console.debug(json);
+ console.debug(response.ok);
+ return json;
+ } else {
+ return json.then(Promise.reject.bind(Promise));
+ }
+ }).then(function (response) {
+ console.log(response);
+ newGraphData = response.data;
+ });
+ }
+ /*
  <button class="btn-load-graphs" id="load-graphs-button">Load Graphs</button>
  var loadGraphsButton = document.querySelector('#load-graphs-button');
  loadGraphsButton.addEventListener('click', loadGraphList);

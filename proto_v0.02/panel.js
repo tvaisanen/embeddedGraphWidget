@@ -212,7 +212,7 @@ function initNewGraph(data) {
     return cy;
 }
 
-function unorderedListFromArray(array, mouseOver, mouseOut, toggleVisibility, doubleClick) {
+function unorderedListFromArray(array, mouseOver, mouseOut, toggleVisibility, onClick, doubleClick) {
     /*
      * Todo: add support for the array containing evenListener -methods
      * array: array of string items
@@ -229,13 +229,13 @@ function unorderedListFromArray(array, mouseOver, mouseOut, toggleVisibility, do
         checkBox.setAttribute('type', 'checkbox');
         checkBox.setAttribute('checked', 'true');
         checkBox.checked = true;
-//console.log(checkBox);
+        //console.log(checkBox);
         checkBox.addEventListener('change', function (event) {
-//console.log(event.target);
+        //console.log(event.target);
             toggleVisibility(event.target);
-//console.log(event.target.id);
+        //console.log(event.target.id);
         });
-//console.log(checkBox);
+        //console.log(checkBox);
 
         li.appendChild(checkBox);
 
@@ -253,6 +253,10 @@ function unorderedListFromArray(array, mouseOver, mouseOut, toggleVisibility, do
 
         li.addEventListener('mouseout', function (evt) {
             mouseOut(evt.target.id);
+        });
+
+        li.addEventListener('click', function (evt) {
+            onClick(evt.target.id);
         });
 
         ul.appendChild(li);
@@ -276,13 +280,16 @@ var lines = ['solid', 'dotted', 'dashed'];
 var arrows = ['tee', 'triangle', 'triangle-tee', 'triangle-cross', 'triangle-backcurve', 'square', 'circle', 'diamond', 'none'];
 var colors = ['red', 'green', 'orange', 'yellow', 'cyan', 'blue'];
 
-function debugAlert(message) {
-    alert(message);
-}
 
+var categoryStyles = {
+    default: {
+        'line-style': 'solid',
+        'line-color': 'black',
+        'line-width': '8px',
+        'arrow-shape': 'triangle'
+    }
 
-
-
+};
 
 var panel = (function (gwClient, cy) {
 
@@ -345,6 +352,7 @@ var panel = (function (gwClient, cy) {
     /*
     *   Functions for generating the content for
     *   menu items inside the panel.
+    *
     * */
 
     function createNewNode(id) {
@@ -769,6 +777,7 @@ var panel = (function (gwClient, cy) {
     function renderElementsList() {
         var content = props.tabs.elements;
         var cy = props.cy;
+        var gw = props.gw;
 
 // which are meant to be used with
         function getElementIDsToArray(selector) {
@@ -779,11 +788,10 @@ var panel = (function (gwClient, cy) {
 
             var idArray = [];
             try {
-                console.log("Applying filter: " + props.tabs.elements.filter);
-                console.log(cy);
                 cy.elements(selector).forEach(function (el) {
                     var id = el.id();
-                    var filterIncludes = id.toLowerCase().includes(content.filter.toLowerCase());
+                    var filter = content.filter.toLowerCase();
+                    var filterIncludes = id.toLowerCase().includes(filter);
 
                     if (content.filter == '' || content.filter == 'undefined') {
                         idArray.push(id);
@@ -821,6 +829,18 @@ var panel = (function (gwClient, cy) {
             }
         }
 
+        function loadPageText(param){
+            console.log("load page text");
+            var textPromise = gw.getPageText(param);
+            textPromise.then(function(response){
+                return response.json();
+            }).then(function(json){
+                var text = json.data;
+                var textBox = d.getElementById('node-text');
+                textBox.innerHTML = text;
+            });
+        }
+
         function mouseOver(param) {
             var node = cy.getElementById(param);
             node.toggleClass('hover-on');
@@ -855,7 +875,7 @@ var panel = (function (gwClient, cy) {
         var hdEdges = d.createElement('h2');
         hdEdges.innerHTML = "Links";
 
-        var ulNodes = unorderedListFromArray(nodes, mouseOver, mouseOut, toggleVisibility, doubleClick);
+        var ulNodes = unorderedListFromArray(nodes, mouseOver, mouseOut, toggleVisibility, loadPageText, doubleClick);
         var ulEdges = unorderedListFromArray(edges, mouseOver, mouseOut, toggleVisibility);
 
         div.setAttribute('id', "elements-list");
@@ -922,8 +942,8 @@ var panel = (function (gwClient, cy) {
                 } catch (e) {
                     props.elementStyles[category] = {};
                     props.elementStyles[category][selector] = value;
-
                 }
+                /*
                 console.groupCollapsed("StyleSelection log");
                 console.log("props.elementStyles[" + category + "][" + selector + "] = " + value);
                 console.log(props.elementStyles[category][selector]);
@@ -932,6 +952,7 @@ var panel = (function (gwClient, cy) {
                 console.log("State!");
                 console.log(props);
                 console.groupEnd();
+                */
             });
         }
 
@@ -964,6 +985,8 @@ var panel = (function (gwClient, cy) {
         // Create the style option selection list
         try {
             styles.categories.forEach(function (category) {
+                console.log(category);
+
                 var divCategory = d.createElement('div');
                 var hCategory = d.createElement('h4');
                 hCategory.classList.add('list-header');

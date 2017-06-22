@@ -5,6 +5,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 import shelve
 
+
 app = Flask(__name__)
 CORS(app)
 
@@ -75,6 +76,19 @@ def get_node(node):
     for k, v in r.json()['data'].items():
         print('%s: %s' %(k,v))
     return jsonify(r.json())
+
+@app.route("/<node>/text", methods=['GET'])
+def get_page_text(node):
+    """
+    :param node: pagename to query
+    :return: Json representation of the connections of MoinMoin wikipage
+    """
+    r = requests.get('{moinpath}?action=getPageText&pagename={pagename}'.format(moinpath=MOIN_PATH, pagename=node))
+    print(r)
+
+    return jsonify(r.json())
+
+
 
 
 @app.route("/save/", methods=['GET', 'POST'])

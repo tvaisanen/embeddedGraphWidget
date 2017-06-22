@@ -291,6 +291,14 @@ select {
     font-size: 14px;
 }
 
+.text-info {
+    height: 20vh;
+    width: 74vw;
+    font-size: large;
+    overflow-scrolling: auto;
+    background-color: #8cc0e1;
+}
+
 @keyframes loading {
     0% {
         background: #0277bd;

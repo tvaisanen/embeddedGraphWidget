@@ -106,6 +106,18 @@ var gwClient = (function () {
         return fetch(loadGraphsRequest);
     }
 
+    function fetchPageText(pagename) {
+        var requestUrl = configs.API_PATH + pagename + "/text";
+        console.log(requestUrl);
+        var loadGraphsRequest = new Request(requestUrl, {
+            headers: new Headers({
+                'Content-Type': 'application/json'
+            }),
+            method: 'get'
+        });
+        return fetch(loadGraphsRequest);
+    }
+
     function fetchGraph(graphId) {
         var requestUrl = configs.API_PATH + graphId;
         console.log("GRAPHID: " + graphId);
@@ -181,6 +193,10 @@ var gwClient = (function () {
 
         getModuleName: function () {
             return moduleName;
+        },
+
+        getPageText: function (pagename) {
+            return fetchPageText(pagename);
         },
 
         postGraph: function(graphId, graphData) {
