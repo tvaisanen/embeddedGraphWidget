@@ -12,155 +12,160 @@ var configs = {
 gwClient.setConfigs(configs);
 
 // Use these for tests
-var initialCy = cytoscape({
-    container: document.getElementById('cy'),
-    elements: [{group: 'nodes', data: {id: 'personA'}}],
-    style: [ // the stylesheet for the graph
-        {
-            selector: 'node',
-            style: {
-                'background-color': '#6490af',
-                'size': '40',
-                'label': 'data(id)',
-            }
-        },
+/*
+ var initialCy = cytoscape({
+ container: document.getElementById('cy'),
+ elements: [{group: 'nodes', data: {id: 'personA'}}],
+ style: [ // the stylesheet for the graph
+ {
+ selector: 'node',
+ style: {
+ 'background-color': '#6490af',
+ 'size': '40',
+ 'label': 'data(id)',
+ }
+ },
 
 
-        {
-            selector: 'node.highlight',
-            style: {
-                'background-color': '#c50004',
-            }
-        },
+ {
+ selector: 'node.highlight',
+ style: {
+ 'background-color': '#c50004',
+ }
+ },
 
-        {
-            selector: 'node.hover-on',
-            style: {
-                'background-color': '#00ff14',
-            }
-        },
+ {
+ selector: 'node.hover-on',
+ style: {
+ 'background-color': '#00ff14',
+ }
+ },
 
-        {
-            selector: 'edge',
-            style: {
-                'line-color': '#ccc',
-                'target-arrow-color': '#000000',
-                'target-arrow-shape': 'triangle',
-                'curve-style': 'bezier',
-                'overlay-padding': 1
-            }
-        },
-        {
-            selector: 'edge.mouse-over',
-            style: {label: 'category'}
-        },
+ {
+ selector: 'edge',
+ style: {
+ 'line-color': '#ccc',
+ 'target-arrow-color': '#000000',
+ 'target-arrow-shape': 'triangle',
+ 'curve-style': 'bezier',
+ 'overlay-padding': 1
+ }
+ },
+ {
+ selector: 'edge.mouse-over',
+ style: {label: 'category'}
+ },
 
-        // Todo: generate these from config!
+ // Todo: generate these from config!
 
-        {selector: 'edge.line-style-solid', style: {'line-style': 'solid'}},
-        {selector: 'edge.line-style-dotted', style: {'line-style': 'dotted'}},
-        {selector: 'edge.line-style-dashed', style: {'line-style': 'dashed'}},
+ {selector: 'edge.line-style-solid', style: {'line-style': 'solid'}},
+ {selector: 'edge.line-style-dotted', style: {'line-style': 'dotted'}},
+ {selector: 'edge.line-style-dashed', style: {'line-style': 'dashed'}},
 
-        {selector: 'edge.width-0', style: {'width': 0}},
-        {selector: 'edge.width-1', style: {'width': 1}},
-        {selector: 'edge.width-2', style: {'width': 2}},
-        {selector: 'edge.width-3', style: {'width': 3}},
-        {selector: 'edge.width-4', style: {'width': 4}},
-        {selector: 'edge.width-5', style: {'width': 5}},
-        {selector: 'edge.width-6', style: {'width': 6}},
-        {selector: 'edge.width-7', style: {'width': 7}},
-        {selector: 'edge.width-8', style: {'width': 8}},
-        {selector: 'edge.width-9', style: {'width': 9}},
-        {selector: 'edge.width-9', style: {'width': 10}},
-        {selector: 'edge.width-10', style: {'width': 11}},
-        {selector: 'edge.width-12', style: {'width': 12}},
-        {selector: 'edge.width-13', style: {'width': 13}},
-        {selector: 'edge.width-14', style: {'width': 14}},
-        {selector: 'edge.width-15', style: {'width': 15}},
-        {selector: 'edge.width-16', style: {'width': 16}},
-        {selector: 'edge.width-17', style: {'width': 17}},
-        {selector: 'edge.width-18', style: {'width': 18}},
-        {selector: 'edge.width-19', style: {'width': 19}},
-        {selector: 'edge.width-20', style: {'width': 20}},
-        {selector: 'edge.width-21', style: {'width': 21}},
-        {selector: 'edge.width-22', style: {'width': 22}},
-        {selector: 'edge.width-23', style: {'width': 23}},
-        {selector: 'edge.width-24', style: {'width': 24}},
-        {selector: 'edge.width-25', style: {'width': 25}},
-        {selector: 'edge.width-26', style: {'width': 26}},
-        {selector: 'edge.width-27', style: {'width': 27}},
-        {selector: 'edge.width-28', style: {'width': 28}},
-        {selector: 'edge.width-29', style: {'width': 29}},
-        {selector: 'edge.width-30', style: {'width': 30}},
+ {selector: 'edge.width-0', style: {'width': 0}},
+ {selector: 'edge.width-1', style: {'width': 1}},
+ {selector: 'edge.width-2', style: {'width': 2}},
+ {selector: 'edge.width-3', style: {'width': 3}},
+ {selector: 'edge.width-4', style: {'width': 4}},
+ {selector: 'edge.width-5', style: {'width': 5}},
+ {selector: 'edge.width-6', style: {'width': 6}},
+ {selector: 'edge.width-7', style: {'width': 7}},
+ {selector: 'edge.width-8', style: {'width': 8}},
+ {selector: 'edge.width-9', style: {'width': 9}},
+ {selector: 'edge.width-9', style: {'width': 10}},
+ {selector: 'edge.width-10', style: {'width': 11}},
+ {selector: 'edge.width-12', style: {'width': 12}},
+ {selector: 'edge.width-13', style: {'width': 13}},
+ {selector: 'edge.width-14', style: {'width': 14}},
+ {selector: 'edge.width-15', style: {'width': 15}},
+ {selector: 'edge.width-16', style: {'width': 16}},
+ {selector: 'edge.width-17', style: {'width': 17}},
+ {selector: 'edge.width-18', style: {'width': 18}},
+ {selector: 'edge.width-19', style: {'width': 19}},
+ {selector: 'edge.width-20', style: {'width': 20}},
+ {selector: 'edge.width-21', style: {'width': 21}},
+ {selector: 'edge.width-22', style: {'width': 22}},
+ {selector: 'edge.width-23', style: {'width': 23}},
+ {selector: 'edge.width-24', style: {'width': 24}},
+ {selector: 'edge.width-25', style: {'width': 25}},
+ {selector: 'edge.width-26', style: {'width': 26}},
+ {selector: 'edge.width-27', style: {'width': 27}},
+ {selector: 'edge.width-28', style: {'width': 28}},
+ {selector: 'edge.width-29', style: {'width': 29}},
+ {selector: 'edge.width-30', style: {'width': 30}},
 
-        {selector: 'edge.arrow-shape-tee', style: {'target-arrow-shape': 'tee'}},
-        {selector: 'edge.arrow-shape-triangle', style: {'target-arrow-shape': 'triangle'}},
-        {selector: 'edge.arrow-shape-triangle-tee', style: {'target-arrow-shape': 'triangle-tee'}},
-        {selector: 'edge.arrow-shape-triangle-cross', style: {'target-arrow-shape': 'triangle-cross'}},
-        {selector: 'edge.arrow-shape-triangle-backcurve', style: {'target-arrow-shape': 'triangle-backcurve'}},
-        {selector: 'edge.arrow-shape-square', style: {'target-arrow-shape': 'square'}},
-        {selector: 'edge.arrow-shape-circle', style: {'target-arrow-shape': 'circle'}},
-        {selector: 'edge.arrow-shape-diamond', style: {'target-arrow-shape': 'diamond'}},
-        {selector: 'edge.arrow-shape-none', style: {'target-arrow-shape': 'none'}},
+ {selector: 'edge.arrow-shape-tee', style: {'target-arrow-shape': 'tee'}},
+ {selector: 'edge.arrow-shape-triangle', style: {'target-arrow-shape': 'triangle'}},
+ {selector: 'edge.arrow-shape-triangle-tee', style: {'target-arrow-shape': 'triangle-tee'}},
+ {selector: 'edge.arrow-shape-triangle-cross', style: {'target-arrow-shape': 'triangle-cross'}},
+ {selector: 'edge.arrow-shape-triangle-backcurve', style: {'target-arrow-shape': 'triangle-backcurve'}},
+ {selector: 'edge.arrow-shape-square', style: {'target-arrow-shape': 'square'}},
+ {selector: 'edge.arrow-shape-circle', style: {'target-arrow-shape': 'circle'}},
+ {selector: 'edge.arrow-shape-diamond', style: {'target-arrow-shape': 'diamond'}},
+ {selector: 'edge.arrow-shape-none', style: {'target-arrow-shape': 'none'}},
 
-        {selector: 'edge.line-color-red', style: {'line-color': 'red', 'arrow-color': 'red'}},
-        {selector: 'edge.line-color-green', style: {'line-color': 'green', 'arrow-color': 'green'}},
-        {selector: 'edge.line-color-orange', style: {'line-color': 'orange', 'arrow-color': 'orange'}},
-        {selector: 'edge.line-color-yellow', style: {'line-color': 'yellow', 'arrow-color': 'yellow'}},
-        {selector: 'edge.line-color-cyan', style: {'line-color': 'cyan', 'arrow-color': 'cyan'}},
-        {selector: 'edge.line-color-blue', style: {'line-color': 'blue', 'arrow-color': 'blue'}},
+ {selector: 'edge.line-color-red', style: {'line-color': 'red', 'arrow-color': 'red'}},
+ {selector: 'edge.line-color-green', style: {'line-color': 'green', 'arrow-color': 'green'}},
+ {selector: 'edge.line-color-orange', style: {'line-color': 'orange', 'arrow-color': 'orange'}},
+ {selector: 'edge.line-color-yellow', style: {'line-color': 'yellow', 'arrow-color': 'yellow'}},
+ {selector: 'edge.line-color-cyan', style: {'line-color': 'cyan', 'arrow-color': 'cyan'}},
+ {selector: 'edge.line-color-blue', style: {'line-color': 'blue', 'arrow-color': 'blue'}},
 
 
-        {
-            selector: 'edge.foo',
-            style: {
-                'curve-style': 'bezier',
-            }
-        },
+ {
+ selector: 'edge.foo',
+ style: {
+ 'curve-style': 'bezier',
+ }
+ },
 
-        {
-            selector: 'edge._notype',
-            style: {
-                'curve-style': 'bezier',
-            }
-        },
+ {
+ selector: 'edge._notype',
+ style: {
+ 'curve-style': 'bezier',
+ }
+ },
 
-        {
-            selector: 'edge.gwikicategory',
-            style: {
-                'curve-style': 'bezier',
-            }
-        },
+ {
+ selector: 'edge.gwikicategory',
+ style: {
+ 'curve-style': 'bezier',
+ }
+ },
 
-        {
-            selector: 'edge.hover-on',
-            style: {
-                'width': 5,
-                'line-color': '#cc7500',
-                'line-style': 'dashed',
-                'target-arrow-color': '#000000',
-                'target-arrow-shape': 'triangle',
-                'curve-style': 'bezier',
-            }
-        },
+ {
+ selector: 'edge.hover-on',
+ style: {
+ 'width': 5,
+ 'line-color': '#cc7500',
+ 'line-style': 'dashed',
+ 'target-arrow-color': '#000000',
+ 'target-arrow-shape': 'triangle',
+ 'curve-style': 'bezier',
+ }
+ },
 
-        {
-            selector: 'edge.highlight',
-            style: {
-                'width': 5,
-                'line-color': '#cc7500',
-                'line-style': 'dashed',
-                'target-arrow-color': '#000000',
-                'target-arrow-shape': 'triangle',
-                'curve-style': 'bezier',
-            }
-        },
-    ],
-});
+ {
+ selector: 'edge.highlight',
+ style: {
+ 'width': 5,
+ 'line-color': '#cc7500',
+ 'line-style': 'dashed',
+ 'target-arrow-color': '#000000',
+ 'target-arrow-shape': 'triangle',
+ 'curve-style': 'bezier',
+ }
+ },
+ ],
+ });
+ */
+
 var testState = {
-    containerId: "panel",
+    header: "GraphingWikiBrowser Prototype v0.03",
+    appContainerId: "app-container",
+    contentContainerId: "content-container",
+    graphContainerId: "cy",
     gw: gwClient,
-    cy: initialCy,
     tabs: {
         graphs: {
             label: "Graphs",
@@ -194,7 +199,6 @@ var testState = {
 };
 
 // initialize download image link
-
 
 
 function initNewGraph(data) {
@@ -231,9 +235,9 @@ function unorderedListFromArray(array, mouseOver, mouseOut, toggleVisibility, on
         checkBox.checked = true;
         //console.log(checkBox);
         checkBox.addEventListener('change', function (event) {
-        //console.log(event.target);
+            //console.log(event.target);
             toggleVisibility(event.target);
-        //console.log(event.target.id);
+            //console.log(event.target.id);
         });
         //console.log(checkBox);
 
@@ -288,27 +292,36 @@ var categoryStyles = {
 
 };
 
-var panel = (function (gwClient, cy) {
+var graphingwikiBrowser = (function (gwClient, cy) {
 
     var props;
 
     var statusMessage = d.getElementById("status-message");
 
     var classNames = {
-        container: 'panel',
+        container: 'CONTAINER',
+        graph: {
+            container: 'graph-container'
+        },
+        panel: {
+            container: 'panel-container'
+        },
         menu: {
             container: 'panel-menu',
             item: {
+
                 active: 'panel-menu__menu-item--active',
                 inactive: 'panel-menu__menu-item--inactive'
             }
         },
         tab: {
+            container: 'panel-tabs',
             nav: {
-                container: 'tab-nav',
+                container: 'panel-tab-nav',
                 item: {
-                    active: 'tab-nav__nav-item--active',
-                    inactive: 'tab-nav__nav-item--inactive'
+                    item: 'panel-tab-nav__nav-item',
+                    active: 'panel-tab-nav__nav-item--active',
+                    inactive: 'panel-tab-nav__nav-item--inactive'
                 }
             },
             graph: {
@@ -347,10 +360,10 @@ var panel = (function (gwClient, cy) {
     };
 
     /*
-    *   Functions for generating the content for
-    *   menu items inside the panel.
-    *
-    * */
+     *   Functions for generating the content for
+     *   menu items inside the graphingwikiBrowser.
+     *
+     * */
 
     function createNewNode(id) {
 
@@ -417,11 +430,11 @@ var panel = (function (gwClient, cy) {
     };
 
     function generateContent() {
-    "use strict";
-    var div = d.createElement('div');
-    div.innerHTML = this.content;
-    return div;
-}
+        "use strict";
+        var div = d.createElement('div');
+        div.innerHTML = this.content;
+        return div;
+    }
 
     function menuItemCreate() {
         "use strict";
@@ -434,13 +447,13 @@ var panel = (function (gwClient, cy) {
             console.log("Clicked create node button.");
             console.log("Current value: " + inName.value);
             var promise = gwClient.savePageToMoin(inName.value, 'hello');
-            promise.then(function (response){
+            promise.then(function (response) {
                 var j = response.json();
                 console.log(j);
                 return j;
             }).then(function (obj) {
-               console.log(obj);
-               createNewNode(inName.value);
+                console.log(obj);
+                createNewNode(inName.value);
             });
         });
         var label = d.createElement('span');
@@ -507,7 +520,7 @@ var panel = (function (gwClient, cy) {
 
     function renderMenu() {
 
-        // Create the div which contains panel navigation tabs.
+        // Create the div which contains graphingwikiBrowser navigation tabs.
         var tabs = props.tabs;
 
         // css classes
@@ -559,24 +572,24 @@ var panel = (function (gwClient, cy) {
         return divMenu;
     }
 
-    function testRenderMenu(testState){
+    function testRenderMenu(testState) {
         setProps(testState, 'all');
         var classes = classNames.menu;
         var menuContainer = renderMenu();
         var childs = menuContainer.childNodes;
         var childsHaveCorrectIds = true;
-        console.group("writing renderMenu() tests");
-        console.log(childs);
-        console.groupEnd();
-        childs.forEach(function(element){
-           var starts = element.id.startsWith("panel-menu__item__");
-           childsHaveCorrectIds = childsHaveCorrectIds && starts;
-           console.log(element.id);
-           console.log(starts);
+
+
+        childs.forEach(function (element) {
+            var starts = element.id.startsWith("panel-menu__item__");
+            childsHaveCorrectIds = childsHaveCorrectIds && starts;
         });
-        QUnit.test("renderMenu() tests", function(assert){
+
+        QUnit.test("renderMenu() tests", function (assert) {
             assert.ok(true, "Executes");
-            assert.equal(menuContainer.id, classes.container, "Returns div container with correct id.");
+            assert.equal(
+                menuContainer.id, classes.container,
+                "Returns div container with correct id.");
             assert.ok(childsHaveCorrectIds, "Container childs have correct ids.");
         });
     }
@@ -584,15 +597,15 @@ var panel = (function (gwClient, cy) {
     /* ########################################### */
 
     function downloadGraphPNG() {
-    console.info('running downloadGraphPNG() -function')
-    var png = props.cy.png({bg: 'white'});
-    var a = document.createElement('a');
+        console.info('running downloadGraphPNG() -function')
+        var png = props.cy.png({bg: 'white'});
+        var a = document.createElement('a');
 
-    a.href = png;
-    a.download = 'graph.png';
-    console.debug(a);
-    a.click()
-}
+        a.href = png;
+        a.download = 'graph.png';
+        console.debug(a);
+        a.click()
+    }
 
     function setStatusMessage(text) {
         var statusMessage = d.getElementById("status-message");
@@ -619,8 +632,6 @@ var panel = (function (gwClient, cy) {
          * Implement graphs tab rendering here
          *
          * */
-        console.groupCollapsed('Debug GraphsContent()');
-        var content = props.tabs.graphs;
         var cy = props.cy;
         var classes = classNames.tab.graph;
 
@@ -630,14 +641,13 @@ var panel = (function (gwClient, cy) {
         div.setAttribute('id', classes.container);
 
         var graphListPromise = props.gw.getGraphList();
-        console.debug(graphListPromise);
+
         graphListPromise.then(function (response) {
-            console.debug(response);
             return response.json();
 
         }).then(function (json) {
             var graphs = json.data;
-            console.debug(json);
+
             graphs.forEach(function (graph) {
                 var li = document.createElement('li');
                 li.classList.add(classes.listItem.inactive);
@@ -677,7 +687,7 @@ var panel = (function (gwClient, cy) {
         var classes = classNames.tab.graph;
         var graphsContent = renderGraphsContent();
         var firstChild = graphsContent.childNodes[0];
-        QUnit.test("Rendering the graphs tab", function(assert){
+        QUnit.test("Rendering the graphs tab", function (assert) {
             assert.equal(graphsContent.id, classes.container, "renderGraphsContent() returns div with proper id");
             assert.equal(firstChild.tagName, "UL", "renderGraphsContent() first child is a list element");
         });
@@ -689,27 +699,41 @@ var panel = (function (gwClient, cy) {
     function testGraphingWikiClientInit(testState) {
         setProps(testState, 'all');
         var moduleName = props.gw.getModuleName();
-        QUnit.test("Test GraphingWikiClientInit", function (assert){
+        QUnit.test("Test GraphingWikiClientInit", function (assert) {
             assert.equal(moduleName, "GraphingWiki client", "gwClient is initialized correctly.");
         });
 
     }
 
-    function testCytoscapeIntegrationInit(testState) {
-        setProps(testState, 'all');
-        console.group("test that the cytoscape is integrated correctly");
-        console.log(props);
-        console.log("props.cy: " + props.cy.id);
-        cyContainer = props.cy.container();
 
-        QUnit.test("Cytoscape container initialised", function(assert){
-            assert.deepEqual(cyContainer.id, "cy", "cy container id = 'cy'");
-            assert.ok(cyContainer.classList.contains("graph"), "cy container has class 'graph'");
+    function initCytoscape() {
+        /*
+         *   Return <div id="cy">
+         *   Initialize empty Cytoscape graph
+         *
+         * */
+        var cyContainer = d.getElementById('cy');
+        cy = cytoscape({
+            container: cyContainer,
+            elements: [{group: 'nodes', data: {id: 'introduction'}}],
+            style: [],
+            layout: {name: 'preset'},
+        });
+        cy.on('tap', 'node', function (evt) {
+            var node = evt.target;
+            var nodeId = node.id();
+            expandNode(cy, nodeId);
         });
 
+        return cy;
+    }
 
-        // assert(cyId == "cy", "Cytoscape initialized correctly?");
-        console.groupEnd();
+    function testCytoscapeIntegrationInit(testState) {
+        setProps(testState, 'all');
+        QUnit.test("Cytoscape container initialised", function (assert) {
+            assert.deepEqual(props.cy.container().id, "cy", "cy container id = 'cy'");
+            assert.ok(props.cy.container().classList.contains("graph-container"), "cy container has class 'graph-container'");
+        });
     }
 
     function renderElementsContent() {
@@ -739,7 +763,7 @@ var panel = (function (gwClient, cy) {
         btnClearFilter.innerHTML = "ClearFilter";
         btnClearFilter.addEventListener('click', function () {
             props.tabs.elements.filter = '';
-            updatePanel();
+            updateTabs();
         });
         var mockFilter = d.createElement("input");
 
@@ -821,7 +845,7 @@ var panel = (function (gwClient, cy) {
             }
         }
 
-        function loadPageText(param){
+        function loadPageText(param) {
             console.log("load page text");
             var textPromise = gw.getPageText(param);
             var textPrevievContainer = d.getElementById("text-preview");
@@ -830,9 +854,9 @@ var panel = (function (gwClient, cy) {
             var linkToSite = d.createElement('a');
             linkToSite.innerHTML = param;
             linkToSite.setAttribute('href', "http://localhost/" + param);
-            textPromise.then(function(response){
+            textPromise.then(function (response) {
                 return response.json();
-            }).then(function(json){
+            }).then(function (json) {
                 var text = json.data;
                 textContent.innerHTML = text;
             });
@@ -890,7 +914,7 @@ var panel = (function (gwClient, cy) {
         console.group("testRenderStylesContent()");
         setProps(testState, 'all');
         var elementsContent = renderElementsContent();
-        QUnit.test("Rendering the elements tab", function(assert){
+        QUnit.test("Rendering the elements tab", function (assert) {
             assert.equal(elementsContent.id, "elements-content", "renderElementsContent() returns div with proper id");
         });
 
@@ -943,15 +967,15 @@ var panel = (function (gwClient, cy) {
                     props.elementStyles[category][selector] = value;
                 }
                 /*
-                console.groupCollapsed("StyleSelection log");
-                console.log("props.elementStyles[" + category + "][" + selector + "] = " + value);
-                console.log(props.elementStyles[category][selector]);
-                console.log("Category: " + category);
-                console.log("Parameter: " + parameter);
-                console.log("State!");
-                console.log(props);
-                console.groupEnd();
-                */
+                 console.groupCollapsed("StyleSelection log");
+                 console.log("props.elementStyles[" + category + "][" + selector + "] = " + value);
+                 console.log(props.elementStyles[category][selector]);
+                 console.log("Category: " + category);
+                 console.log("Parameter: " + parameter);
+                 console.log("State!");
+                 console.log(props);
+                 console.groupEnd();
+                 */
             });
         }
 
@@ -984,7 +1008,6 @@ var panel = (function (gwClient, cy) {
         // Create the style option selection list
         try {
             styles.categories.forEach(function (category) {
-                console.log(category);
 
                 var divCategory = d.createElement('div');
                 var hCategory = d.createElement('h4');
@@ -1094,7 +1117,7 @@ var panel = (function (gwClient, cy) {
                 divCategory.appendChild(ulCategory);
                 div.appendChild(divCategory);
             });
-        } catch (e){
+        } catch (e) {
             div.innerHTML = "no edge categories";
         }
         return div;
@@ -1102,35 +1125,38 @@ var panel = (function (gwClient, cy) {
 
     function testRenderStylesContent(testState) {
 // set context for tests
-        console.group("testRenderStylesContent()");
+
         setProps(testState, 'all');
         handleNavClick('styles');
         var stylesContent = renderStylesContent();
-        QUnit.test("Rendering the graphs tab", function(assert){
+        QUnit.test("Rendering the graphs tab", function (assert) {
             assert.equal(stylesContent.id, "styles-content", "renderStylesContent() returns div with proper id");
         });
-        console.groupEnd();
     }
 
     function handleNavClick(keyToActivate) {
 
         var tabs = props.tabs;
-// toggle all navlink classes to inactive
+        var navItemClasses = classNames.tab.nav.item;
+        // toggle all navlink classes to inactive
         var links = Object.keys(tabs);
         links.forEach(function (key) {
             tabs[key].active = false;
+            d.getElementById("nav-item-" + key).classList.remove(navItemClasses.active);
         });
 
-// activate clicked navlink
+        // activate clicked navlink
         tabs[keyToActivate].active = true;
-
-        updatePanel();
+        d.getElementById("nav-item-" + keyToActivate).classList.add(navItemClasses.active);
+        var divTabContainer = d.getElementById(classNames.tab.container);
+        console.log(divTabContainer);
+        updateTabs();
     }
 
     function testHandleNavClick(testState) {
         setProps(testState, 'all');
 
-        function printTabs(){
+        function printTabs() {
             var elements = props.tabs.elements.active;
             var graphs = props.tabs.graphs.active;
             var styles = props.tabs.styles.active;
@@ -1142,7 +1168,7 @@ var panel = (function (gwClient, cy) {
 
         printTabs();
 
-        QUnit.test("Initial states of panel activity is ok.", function(assert){
+        QUnit.test("Initial states of graphingwikiBrowser activity is ok.", function (assert) {
             assert.deepEqual(props.tabs.elements.active, false);
             assert.deepEqual(props.tabs.graphs.active, false);
             assert.deepEqual(props.tabs.styles.active, true);
@@ -1152,7 +1178,7 @@ var panel = (function (gwClient, cy) {
 
     function renderNavigation() {
 
-        // Create the div which contains panel navigation tabs.
+        // Create the div which contains graphingwikiBrowser navigation tabs.
 
 
         var tabs = props.tabs;
@@ -1163,7 +1189,7 @@ var panel = (function (gwClient, cy) {
         var divNav = document.createElement('div');
         divNav.classList.add(classes.container);
 
-        divNav.id = "panel-nav";
+        divNav.id = classes.container;
 
         var links = Object.keys(tabs);
 
@@ -1171,18 +1197,21 @@ var panel = (function (gwClient, cy) {
 
             var link = tabs[key];
             var divLink = d.createElement('div');
+            divLink.addEventListener('click', function (event) {
+                handleNavClick(key);
+            });
 
             if (link.active) {
+                divLink.classList.add(classes.item.item);
                 divLink.classList.add(classes.item.active);
 
             } else {
-                divLink.classList.add(classes.item.inactive);
-                divLink.addEventListener('click', function (event) {
-                    handleNavClick(key);
-                });
+                divLink.classList.add(classes.item.item);
+
             }
 
             divLink.innerHTML = link.label;
+            divLink.setAttribute('id', "nav-item-" + link.label.toLowerCase());
             divNav.appendChild(divLink);
         });
 
@@ -1190,48 +1219,59 @@ var panel = (function (gwClient, cy) {
         return divNav;
     }
 
-    function updatePanel() {
+    function updateTabs() {
 
-        var divMenu = d.getElementById('panel-menu');
-        var divNav = d.getElementById('panel-nav');
-        var divContent = d.getElementById('panel-content');
-        var childsToRemove = divMenu.childNodes;
+        var divTabContainer = d.getElementById(classNames.tab.container);
+        console.log(divTabContainer);
 
-        /*
-         console.log(childsToRemove);
-         console.log(typeof childsToRemove);
-         */
+        var panelContainer = d.getElementById('panel-container');
+        console.log(panelContainer);
+
+        var childsToRemove = divTabContainer.childNodes;
+
         childsToRemove.forEach(function (child) {
-            divMenu.remove(child);
+            divTabContainer.remove(child);
         });
 
-        childsToRemove = divNav.childNodes;
-        childsToRemove.forEach(function (child) {
-            divNav.remove(child);
-        });
-
-        childsToRemove = divContent.childNodes;
-        childsToRemove.forEach(function (child) {
-            divContent.remove(child);
-        });
-
-
-        renderPanel();
-        renderContent();
+        var tabsContent = renderTabs();
+        panelContainer.appendChild(tabsContent);
     }
 
-    function changeContentView() {
+    function renderPanel() {
+        var divTabContainer = d.getElementById(classNames.tab.container);
 
+        console.log(divTabContainer);
+
+        var divPanel = d.createElement('div');
+
+        divPanel.setAttribute('id', classNames.panel.container);
+        divPanel.classList.add(classNames.panel.container);
+
+        var menu = renderMenu();
+        var tabNav = renderNavigation();
+        var tabs = renderTabs();
+
+        console.debug(menu);
+        console.debug(tabNav);
+        console.debug(tabs);
+
+
+        divPanel.appendChild(menu);
+        divPanel.appendChild(tabNav);
+        divPanel.appendChild(tabs);
+
+        return divPanel;
     }
 
-    function renderContent() {
+    function renderTabs() {
 
         var tabs = props.tabs;
 
         var divContent = d.createElement('div');
-        divContent.id = "panel-content";
+        divContent.classList.add(classNames.tab.container);
+        divContent.id = classNames.tab.container;
 
-// render content
+        // render content
         if (tabs.graphs.active) {
             divContent.appendChild(renderGraphsContent());
 
@@ -1242,9 +1282,17 @@ var panel = (function (gwClient, cy) {
             divContent.appendChild(renderStylesContent());
         }
 
-
+        console.log(divContent);
         return divContent;
+    }
 
+    function testRenderTabs() {
+        setProps(testState, 'all');
+        var tabs = renderTabs();
+        console.log(tabs);
+        QUnit.test("RenderTabs()", function (assert) {
+            assert.ok(tabs, "happening");
+        });
     }
 
     function setProps(updatedProps, selector) {
@@ -1260,31 +1308,45 @@ var panel = (function (gwClient, cy) {
         }
     }
 
-    function renderPanel() {
-        var content = props.tabs;
-        var container = document.getElementById(props.containerId);
-        container.appendChild(renderMenu(content));
-        container.appendChild(renderNavigation(content));
-        container.appendChild(renderContent(content));
+    function renderHeader() {
+        var header = d.createElement('h2');
+        header.innerHTML = props.header;
+        return header;
     }
 
-    function toggleMode() {
-        props.editMode = !props.editMode;
-        var cyContainer = d.getElementById('cy');
-        var panelContainer = d.getElementById('panel');
-        if (props.editMode) {
-            panelContainer.classList.remove('panel-hidden');
-            cyContainer.classList.remove('graph-view-full');
-        } else {
-            panelContainer.classList.add('panel-hidden');
-            cyContainer.classList.add('graph-view-full');
-        }
+    function render() {
+        var content = props.tabs;
+
+        var appContainer = d.getElementById(props.appContainerId);
+
+        var headerContainer = d.createElement('div');
+        headerContainer.setAttribute('id', "header-container");
+        headerContainer.classList.add("header-container");
+
+        var contentContainer = d.createElement('div');
+        contentContainer.setAttribute('id', props.contentContainerId);
+        contentContainer.classList.add("content-container");
+
+        var graphContainer = d.createElement('div');
+        graphContainer.setAttribute('id', props.graphContainerId);
+        graphContainer.classList.add("graph-container");
+
+        headerContainer.appendChild(renderHeader());
+        contentContainer.appendChild(renderPanel());
+        contentContainer.appendChild(graphContainer);
+
+        appContainer.appendChild(headerContainer);
+        appContainer.appendChild(contentContainer);
+
+        // Init cytoscape and assign the initial instance to props
+        props.cy = initCytoscape();
     }
+
 
     function tests() {
         var stateForTests = testState;
         console.log(stateForTests);
-        console.group("Panel tests!");
+        console.groupCollapsed("Panel tests!");
         testAppContainerInit(stateForTests);
         testCytoscapeIntegrationInit(stateForTests);
         testGraphingWikiClientInit(stateForTests);
@@ -1292,17 +1354,18 @@ var panel = (function (gwClient, cy) {
         testRenderElementsContent(stateForTests);
         testRenderGraphsContent(stateForTests);
         testRenderStylesContent(stateForTests);
+        testRenderTabs(stateForTests);
         testRenderMenu(stateForTests);
         console.groupEnd();
     }
 
-    function testAppContainerInit(testState){
+    function testAppContainerInit(testState) {
         setProps(testState, 'all');
-        var container = d.getElementById(props.containerId);
+        var container = d.getElementById(props.appContainerId);
         console.log("container: " + container);
-        QUnit.test("App container initialized correctly", function(assert){
+        QUnit.test("App container initialized correctly", function (assert) {
             var notUndefined = (container != 'undefined' && container != null);
-            assert.equal(notUndefined, true, "App container is defined");
+            assert.ok(notUndefined, "App container is defined");
         })
     }
 
@@ -1311,7 +1374,8 @@ var panel = (function (gwClient, cy) {
 
         render: function (props) {
             setProps(props, "all");
-            renderPanel();
+            render();
+            initCytoscape();
         },
 
         updateStylesContent: function (newCategories, styles) {
@@ -1340,8 +1404,8 @@ var panel = (function (gwClient, cy) {
 
         elementHasOneOfCategories: function (element) {
             /*
-            *
-            * */
+             *
+             * */
             var values = [];
             props.styles.categories.forEach(function (category) {
                 values.push(element.hasClass(category))
@@ -1362,13 +1426,14 @@ var panel = (function (gwClient, cy) {
             return props;
         },
 
-        runTests: function (assert) {
-            // pass QUnit.assert
-            tests(assert);
+        runTests: function () {
+            tests();
         }
     }
 
-})(gwClient, cy);
+})();
+
+graphingwikiBrowser.render(testState);
 
 
 

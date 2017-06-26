@@ -5,7 +5,7 @@
 // <button class="btn-toggle-edit" id="toggle-edit-button">Edit!</button>
 console.info('Initializing cytoscape element..');
 
-
+/*
 var cy = cytoscape({
     container: document.getElementById('cy'),
     elements: [{group: 'nodes', data: {id: 'introduction'}}],
@@ -184,7 +184,7 @@ function expandNode(cyContext, nodeId) {
             },
         };
 
-        var classesToAdd = panel.props().elementStyles[classToEdge];
+        var classesToAdd = graphingwikiBrowser.props().elementStyles[classToEdge];
         console.log("class of edge: " + classToEdge);
         try {
             console.log(classesToAdd);
@@ -208,7 +208,7 @@ function expandNode(cyContext, nodeId) {
 
         // Check if the edge does not have a category set.
         var edgeDoesNotHaveAnyCategory = false;
-        var vals = panel.elementHasOneOfCategories(edge);
+        var vals = graphingwikiBrowser.elementHasOneOfCategories(edge);
 
         // Todo: Learn to use reducers!
         vals.forEach(function (b) {
@@ -216,15 +216,15 @@ function expandNode(cyContext, nodeId) {
         });
 
 
-        /* If element edgeId has class '_notype' (= edgeDoesNotHaveCategory)
+         If element edgeId has class '_notype' (= edgeDoesNotHaveCategory)
          * and current class classToAdd is not '_notype'. Remove the '_notype'
          * and replace it with the classToAdd. If the edge does not have class
          * defined yet, set class as classToAdd. Even if it is '_notype'
          *
-         * Get classes from panel.props.categoryStyles.
+         * Get classes from graphingwikiBrowser.props.categoryStyles.
          * -> assign each appropriate style for edge
          *
-         */
+
 
         // Todo: simplify
 
@@ -276,12 +276,12 @@ function expandNode(cyContext, nodeId) {
 
     function createEdgesToNodes(sourceNodeId, nodesToCreateEdges, category) {
 
-        /*
+
          * Iterate through the nodesToCreateEdges array and add
          * edges between the source node and target nodes.
          * If the target node does not exist yet, create and add
          * the node to cy.elements.
-         */
+
         nodesToCreateEdges.forEach(function (targetNodeId) {
 
             createNodesAndEdgesBetween(sourceNodeId, targetNodeId, category);
@@ -295,13 +295,13 @@ function expandNode(cyContext, nodeId) {
         });
     }
 
-    // set panel status message
-    panel.updateStatusMessage("");
+    set graphingwikiBrowser status message
+    graphingwikiBrowser.updateStatusMessage("");
 
-    // Get data for the clicked node.
+    Get data for the clicked node.
     var nodePromise = gwClient.getNodeData(nodeId);
 
-    // When the requested data is ready to be used.
+    When the requested data is ready to be used.
     nodePromise.then(function (node) {
 
             try {
@@ -337,19 +337,21 @@ function expandNode(cyContext, nodeId) {
 
             }
             setAndRunLayout();
-            panel.refreshPanel();
-            panel.updateStatusMessage("");
+            graphingwikiBrowser.refreshPanel();
+            graphingwikiBrowser.updateStatusMessage("");
         }
     );
 }
 
+*/
+/*
 cy.on('tap', 'node', function (evt) {
     var node = evt.target;
     var nodeId = node.id();
     expandNode(cy, nodeId);
 
 });
-
+*/
 /*
  cy.on('mouseover', 'node', function (evt) {
  var node = evt.target;
@@ -396,7 +398,8 @@ cy.on('tap', 'node', function (evt) {
 
 
 var state = {
-    containerId: "panel",
+    appContainerId: "app-container",
+    contentContainerId: "content-container",
     editMode: false,
     gw: gwClient,
     cy: cy,
@@ -452,12 +455,12 @@ function updateCategories(newCategories) {
     /*
      when: A new node is loaded.
      why: To add new possible categories.
-     how: [( the category is already listed ) ? do nothing : add new category to panel props list]
+     how: [( the category is already listed ) ? do nothing : add new category to graphingwikiBrowser props list]
      CategoryStyles is the function, which handles the updating.
      */
 
-    // get current categories from the panel
-    var categoriesToUpdate = panel.getEdgeCategories();
+    // get current categories from the graphingwikiBrowser
+    var categoriesToUpdate = graphingwikiBrowser.getEdgeCategories();
 
     // this could be written with reducer Todo ?
     newCategories.forEach(function (category) {
@@ -469,7 +472,7 @@ function updateCategories(newCategories) {
     var tabStylesProps = state.tabs.styles;
     tabStylesProps.categories = categoriesToUpdate;
 
-    panel.updateProps(tabStylesProps, 'styles');
+    graphingwikiBrowser.updateProps(tabStylesProps, 'styles');
 }
 
 
@@ -485,137 +488,6 @@ function downloadGraphPNG() {
     a.click()
 }
 
-
-/*
- <option value="opt-save-graph">
- <button class="btn-save-graph" id="save-graph-button">Save</button>
- </option>
- <option value="opt-download-graph">
- <button class="btn-download-graph" id="download-graph-button">Download Image</button>
- </option>
- * */
-
-// initialize run layout button action
-
-function setAndRunLayout() {
-    console.info("running 'setAndRunLayout()'-function")
-    var layoutOption = document.querySelector('#layout-options').value;
-    var layout = cy.makeLayout({name: layoutOption})
-    layout.run();
-}
-
-/*
- var runLayoutButton = document.querySelector('#run-layout-button');
- runLayoutButton.addEventListener('click', setAndRunLayout);
- /*
-
- function addNode(node) {
- cy.add(node);
- }
-
-
- function handleSaveGraph() {
- var developmentPath = 'http://127.0.0.1:5000/save/';
- var graphToSave = cy.json();
- var graphId = document.getElementById('graph-name').value;
- var payload = {
- id: graphId,
- data: graphToSave
- };
- console.log("GRAPHID: " + graphId);
- console.debug(graphToSave);
- var saveGraphRequest = new Request(developmentPath, {
- headers: new Headers({
- 'Content-Type': 'application/json'
- }),
- method: 'post',
- body: JSON.stringify(payload)
- });
- console.debug(saveGraphRequest);
- var promise = fetch(saveGraphRequest);
- promise.then(function (response) {
- console.log(response);
- })
- }
-
- var saveGraphButton = document.getElementById('btn-save-graph');
- saveGraphButton.addEventListener('click', handleSaveGraph);
-
- function handleLoadGraph(graphId) {
- var developmentPath = 'http://127.0.0.1:5000/graph/' + graphId;
- console.log("GRAPHID: " + graphId);
- var loadGraphRequest = new Request(developmentPath, {
- headers: new Headers({
- 'Content-Type': 'application/json'
- }),
- method: 'get'
- });
- console.debug(loadGraphRequest);
- var promise = fetch(loadGraphRequest);
- promise.then(function (response) {
- if (response.status >= 200 && response.status < 300) {
- var json = response.json(); // there's always a body
- console.debug(json);
- console.debug(response.ok);
- return json;
- } else {
- return json.then(Promise.reject.bind(Promise));
- }
- }).then(function (response) {
- console.log(response);
- panel.cy = response.data;
- });
- }
-
- // Dynamic CSS: cy.style().selector('edge.foo').style('line-color', 'magenta').update()
-
-
- function loadNewGraph(graphId) {
- var graphPromise = gwClient.getGraph(graphId);
- var graph = graphPromise.then(function (response) {
- var json = response.json;
- console.log("response ok biby: " + JSON.stringify(json));
- return json;
- }).then(function (json) {
- console.log('ok biby ' + JSON.stringify(json));
- return json;
- });
- }
-
- var newGraphData
-
- function loadGraphList() {
- var developmentPath = 'http://127.0.0.1:5000/graphs';
- console.log("Loading graphs");
- var loadGraphsRequest = new Request(developmentPath, {
- headers: new Headers({
- 'Content-Type': 'application/json'
- }),
- method: 'get'
- });
- var promise = fetch(loadGraphsRequest);
- promise.then(function (response) {
- if (response.status >= 200 && response.status < 300) {
- var json = response.json(); // there's always a body
- console.debug(json);
- console.debug(response.ok);
- return json;
- } else {
- return json.then(Promise.reject.bind(Promise));
- }
- }).then(function (response) {
- console.log(response);
- newGraphData = response.data;
- });
- }
- /*
- <button class="btn-load-graphs" id="load-graphs-button">Load Graphs</button>
- var loadGraphsButton = document.querySelector('#load-graphs-button');
- loadGraphsButton.addEventListener('click', loadGraphList);
-
- var btnToggleEdit = document.querySelector('#toggle-edit-button');
- btnToggleEdit.addEventListener('click', panel.toggleEditMode);
- */
 var divSearch = document.getElementById('header-search');
 var inSearch = document.createElement('input');
 
@@ -644,15 +516,7 @@ window.onclick = function (event) {
 }
 
 console.log(state.cy);
-panel.render(state);
 
-
-/*
- <div class="toolbar-container" id="tool-panel">
- <input class="input-graph-name" id="graph-name" type="text" name="firstname">
- <button class="btn-toggle-edit" id="toggle-edit-button">Edit!</button>
- <button class="btn-run-layout" id="run-layout-button">Reset Layout: </button>
- */
 
 
 

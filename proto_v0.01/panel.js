@@ -102,7 +102,7 @@ var panel = (function () {
     function renderNavigation(navLinks) {
 
         var divNav = document.createElement('div');
-        divNav.id = "panel-nav";
+        divNav.id = "graphingwikiBrowser-nav";
         var links = Object.keys(navLinks);
 
         links.forEach(function (key) {
@@ -131,8 +131,8 @@ var panel = (function () {
 
     function updatePanel() {
 
-        var divNav = d.getElementById('panel-nav');
-        var divContent = d.getElementById('panel-content');
+        var divNav = d.getElementById('graphingwikiBrowser-nav');
+        var divContent = d.getElementById('graphingwikiBrowser-content');
 
         var childsToRemove = divNav.childNodes;
         console.log(childsToRemove);
@@ -160,7 +160,7 @@ var panel = (function () {
         var content = props.content;
 
         var divContent = d.createElement('div');
-        divContent.id = "panel-content";
+        divContent.id = "graphingwikiBrowser-content";
 
         // render content
 

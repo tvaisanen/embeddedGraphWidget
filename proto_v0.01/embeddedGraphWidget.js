@@ -4,7 +4,7 @@
 console.info('Initializing cytoscape element..');
 
 var state = {
-    containerId: "panel-container",
+    containerId: "graphingwikiBrowser-container",
     content: {
         categories: [],
         graphs: {
@@ -238,7 +238,7 @@ function updateCategories(newCategories) {
         }
     });
 
-    panel.updateStylesContent(newUniqueCategories, cy.style().json());
+    graphingwikiBrowser.updateStylesContent(newUniqueCategories, cy.style().json());
 
 }
 
@@ -597,7 +597,7 @@ loadGraphsButton.addEventListener('click', loadGraphList);
 
 
 
-panel.render(state);
+graphingwikiBrowser.render(state);
 
 
 

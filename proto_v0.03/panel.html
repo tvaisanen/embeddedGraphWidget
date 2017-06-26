@@ -46,7 +46,7 @@
         ]
 });
 var testState = {
-    containerId: "panel",
+    containerId: "graphingwikiBrowser",
     gw: gwClient,
     cy: testCy,
     tabs: {
@@ -83,10 +83,10 @@ var testState = {
 </script>
 <script src="assert.js"></script>
 <script src="gwClient.js"></script>
-<script src="panel.js"></script>
+<script src="graphingwiki-browser.js"></script>
 <script>
-    panel.render(testState);
-    panel.runTests();
+    graphingwikiBrowser.render(testState);
+    graphingwikiBrowser.runTests();
 </script>
 </body>
 </html>

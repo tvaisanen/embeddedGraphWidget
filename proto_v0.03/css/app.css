@@ -37,7 +37,6 @@
 }
 
 .panel-container {
-    padding-top: 2px;
     width: 25vw;
     height: auto;
     background-color: #f7fcfe;
@@ -47,4 +46,17 @@
     border-right-style: solid;
     border-width: 1px;
     border-color: #5f89af;
+}
+
+::-webkit-scrollbar {
+    width: 4px; /* for vertical scrollbars */
+    height: 4px; /* for horizontal scrollbars */
+}
+
+::-webkit-scrollbar-track {
+    background: #BBDEFB;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #0D47A1;
 }
