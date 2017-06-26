@@ -644,7 +644,7 @@ window.onclick = function (event) {
 }
 
 console.log(state.cy);
-graphingwikiBrowser.render(state);
+panel.render(state);
 
 
 /*
