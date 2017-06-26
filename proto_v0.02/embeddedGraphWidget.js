@@ -184,7 +184,7 @@ function expandNode(cyContext, nodeId) {
             },
         };
 
-        var classesToAdd = panel.props().elementStyles[classToEdge];
+        var classesToAdd = graphingwikiBrowser.props().elementStyles[classToEdge];
         console.log("class of edge: " + classToEdge);
         try {
             console.log(classesToAdd);
@@ -208,7 +208,7 @@ function expandNode(cyContext, nodeId) {
 
         // Check if the edge does not have a category set.
         var edgeDoesNotHaveAnyCategory = false;
-        var vals = panel.elementHasOneOfCategories(edge);
+        var vals = graphingwikiBrowser.elementHasOneOfCategories(edge);
 
         // Todo: Learn to use reducers!
         vals.forEach(function (b) {
@@ -221,7 +221,7 @@ function expandNode(cyContext, nodeId) {
          * and replace it with the classToAdd. If the edge does not have class
          * defined yet, set class as classToAdd. Even if it is '_notype'
          *
-         * Get classes from panel.props.categoryStyles.
+         * Get classes from graphingwikiBrowser.props.categoryStyles.
          * -> assign each appropriate style for edge
          *
          */
@@ -295,8 +295,8 @@ function expandNode(cyContext, nodeId) {
         });
     }
 
-    // set panel status message
-    panel.updateStatusMessage("");
+    // set graphingwikiBrowser status message
+    graphingwikiBrowser.updateStatusMessage("");
 
     // Get data for the clicked node.
     var nodePromise = gwClient.getNodeData(nodeId);
@@ -337,8 +337,8 @@ function expandNode(cyContext, nodeId) {
 
             }
             setAndRunLayout();
-            panel.refreshPanel();
-            panel.updateStatusMessage("");
+            graphingwikiBrowser.refreshPanel();
+            graphingwikiBrowser.updateStatusMessage("");
         }
     );
 }
@@ -396,7 +396,7 @@ cy.on('tap', 'node', function (evt) {
 
 
 var state = {
-    containerId: "panel",
+    containerId: "graphingwikiBrowser",
     editMode: false,
     gw: gwClient,
     cy: cy,
@@ -452,12 +452,12 @@ function updateCategories(newCategories) {
     /*
      when: A new node is loaded.
      why: To add new possible categories.
-     how: [( the category is already listed ) ? do nothing : add new category to panel props list]
+     how: [( the category is already listed ) ? do nothing : add new category to graphingwikiBrowser props list]
      CategoryStyles is the function, which handles the updating.
      */
 
-    // get current categories from the panel
-    var categoriesToUpdate = panel.getEdgeCategories();
+    // get current categories from the graphingwikiBrowser
+    var categoriesToUpdate = graphingwikiBrowser.getEdgeCategories();
 
     // this could be written with reducer Todo ?
     newCategories.forEach(function (category) {
@@ -469,7 +469,7 @@ function updateCategories(newCategories) {
     var tabStylesProps = state.tabs.styles;
     tabStylesProps.categories = categoriesToUpdate;
 
-    panel.updateProps(tabStylesProps, 'styles');
+    graphingwikiBrowser.updateProps(tabStylesProps, 'styles');
 }
 
 
@@ -563,7 +563,7 @@ function setAndRunLayout() {
  }
  }).then(function (response) {
  console.log(response);
- panel.cy = response.data;
+ graphingwikiBrowser.cy = response.data;
  });
  }
 
@@ -614,7 +614,7 @@ function setAndRunLayout() {
  loadGraphsButton.addEventListener('click', loadGraphList);
 
  var btnToggleEdit = document.querySelector('#toggle-edit-button');
- btnToggleEdit.addEventListener('click', panel.toggleEditMode);
+ btnToggleEdit.addEventListener('click', graphingwikiBrowser.toggleEditMode);
  */
 var divSearch = document.getElementById('header-search');
 var inSearch = document.createElement('input');
@@ -644,11 +644,11 @@ window.onclick = function (event) {
 }
 
 console.log(state.cy);
-panel.render(state);
+graphingwikiBrowser.render(state);
 
 
 /*
- <div class="toolbar-container" id="tool-panel">
+ <div class="toolbar-container" id="tool-graphingwikiBrowser">
  <input class="input-graph-name" id="graph-name" type="text" name="firstname">
  <button class="btn-toggle-edit" id="toggle-edit-button">Edit!</button>
  <button class="btn-run-layout" id="run-layout-button">Reset Layout: </button>

@@ -158,7 +158,7 @@ var initialCy = cytoscape({
     ],
 });
 var testState = {
-    containerId: "panel",
+    containerId: "graphingwikiBrowser",
     gw: gwClient,
     cy: initialCy,
     tabs: {
@@ -297,10 +297,10 @@ var panel = (function (gwClient, cy) {
     var classNames = {
         container: 'panel',
         menu: {
-            container: 'panel-menu',
+            container: 'graphingwikiBrowser-menu',
             item: {
-                active: 'panel-menu__menu-item--active',
-                inactive: 'panel-menu__menu-item--inactive'
+                active: 'graphingwikiBrowser-menu__menu-item--active',
+                inactive: 'graphingwikiBrowser-menu__menu-item--inactive'
             }
         },
         tab: {
@@ -348,7 +348,7 @@ var panel = (function (gwClient, cy) {
 
     /*
     *   Functions for generating the content for
-    *   menu items inside the panel.
+    *   menu items inside the graphingwikiBrowser.
     *
     * */
 
@@ -507,7 +507,7 @@ var panel = (function (gwClient, cy) {
 
     function renderMenu() {
 
-        // Create the div which contains panel navigation tabs.
+        // Create the div which contains graphingwikiBrowser navigation tabs.
         var tabs = props.tabs;
 
         // css classes
@@ -526,9 +526,9 @@ var panel = (function (gwClient, cy) {
         menus.forEach(function (itemKey) {
             var item = menuItems[itemKey];
             var div = d.createElement('div');
-            div.setAttribute('id', "panel-menu__item__" + itemKey);
+            div.setAttribute('id', "graphingwikiBrowser-menu__item__" + itemKey);
             var divContent = d.createElement('div');
-            divContent.setAttribute('id', 'panel-menu__item__' + item.label.toLowerCase() + '-content');
+            divContent.setAttribute('id', 'graphingwikiBrowser-menu__item__' + item.label.toLowerCase() + '-content');
 
             // Bind an action to the click of the label.
             div.addEventListener('click', function () {
@@ -544,8 +544,8 @@ var panel = (function (gwClient, cy) {
             div.addEventListener('mouseout', function () {
                 divContent.classList.remove('show');
             });
-            div.classList.add('panel-menu-item');
-            divContent.classList.add('panel-menu-content');
+            div.classList.add('graphingwikiBrowser-menu-item');
+            divContent.classList.add('graphingwikiBrowser-menu-content');
             div.innerHTML = item.label;
 
             // Put the item content in to the html element.
@@ -569,7 +569,7 @@ var panel = (function (gwClient, cy) {
         console.log(childs);
         console.groupEnd();
         childs.forEach(function(element){
-           var starts = element.id.startsWith("panel-menu__item__");
+           var starts = element.id.startsWith("graphingwikiBrowser-menu__item__");
            childsHaveCorrectIds = childsHaveCorrectIds && starts;
            console.log(element.id);
            console.log(starts);
@@ -600,7 +600,7 @@ var panel = (function (gwClient, cy) {
     }
 
     function toggleStatusActivity() {
-        var infoPanel = d.getElementById("info-panel");
+        var infoPanel = d.getElementById("info-graphingwikiBrowser");
         var active = infoPanel.classList.contains('info-messages__ready');
 
         if (active) {
@@ -1142,7 +1142,7 @@ var panel = (function (gwClient, cy) {
 
         printTabs();
 
-        QUnit.test("Initial states of panel activity is ok.", function(assert){
+        QUnit.test("Initial states of graphingwikiBrowser activity is ok.", function(assert){
             assert.deepEqual(props.tabs.elements.active, false);
             assert.deepEqual(props.tabs.graphs.active, false);
             assert.deepEqual(props.tabs.styles.active, true);
@@ -1152,7 +1152,7 @@ var panel = (function (gwClient, cy) {
 
     function renderNavigation() {
 
-        // Create the div which contains panel navigation tabs.
+        // Create the div which contains graphingwikiBrowser navigation tabs.
 
 
         var tabs = props.tabs;
@@ -1163,7 +1163,7 @@ var panel = (function (gwClient, cy) {
         var divNav = document.createElement('div');
         divNav.classList.add(classes.container);
 
-        divNav.id = "panel-nav";
+        divNav.id = "graphingwikiBrowser-nav";
 
         var links = Object.keys(tabs);
 
@@ -1192,9 +1192,9 @@ var panel = (function (gwClient, cy) {
 
     function updatePanel() {
 
-        var divMenu = d.getElementById('panel-menu');
-        var divNav = d.getElementById('panel-nav');
-        var divContent = d.getElementById('panel-content');
+        var divMenu = d.getElementById('graphingwikiBrowser-menu');
+        var divNav = d.getElementById('graphingwikiBrowser-nav');
+        var divContent = d.getElementById('graphingwikiBrowser-content');
         var childsToRemove = divMenu.childNodes;
 
         /*
@@ -1229,7 +1229,7 @@ var panel = (function (gwClient, cy) {
         var tabs = props.tabs;
 
         var divContent = d.createElement('div');
-        divContent.id = "panel-content";
+        divContent.id = "graphingwikiBrowser-content";
 
 // render content
         if (tabs.graphs.active) {
@@ -1271,12 +1271,12 @@ var panel = (function (gwClient, cy) {
     function toggleMode() {
         props.editMode = !props.editMode;
         var cyContainer = d.getElementById('cy');
-        var panelContainer = d.getElementById('panel');
+        var panelContainer = d.getElementById('graphingwikiBrowser');
         if (props.editMode) {
-            panelContainer.classList.remove('panel-hidden');
+            panelContainer.classList.remove('graphingwikiBrowser-hidden');
             cyContainer.classList.remove('graph-view-full');
         } else {
-            panelContainer.classList.add('panel-hidden');
+            panelContainer.classList.add('graphingwikiBrowser-hidden');
             cyContainer.classList.add('graph-view-full');
         }
     }
