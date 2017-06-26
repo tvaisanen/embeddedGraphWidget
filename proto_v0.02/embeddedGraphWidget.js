@@ -8,7 +8,7 @@ console.info('Initializing cytoscape element..');
 
 var cy = cytoscape({
     container: document.getElementById('cy'),
-    elements: [{group: 'nodes', data: {id: 'personA'}}],
+    elements: [{group: 'nodes', data: {id: 'introduction'}}],
     style: [ // the stylesheet for the graph
         {
             selector: 'node',
@@ -156,6 +156,7 @@ function expandNode(cyContext, nodeId) {
 
     cy = cyContext;
 
+
     function createNewNode(id) {
 
         // Create new node.
@@ -219,6 +220,10 @@ function expandNode(cyContext, nodeId) {
          * and current class classToAdd is not '_notype'. Remove the '_notype'
          * and replace it with the classToAdd. If the edge does not have class
          * defined yet, set class as classToAdd. Even if it is '_notype'
+         *
+         * Get classes from panel.props.categoryStyles.
+         * -> assign each appropriate style for edge
+         *
          */
 
         // Todo: simplify
@@ -481,8 +486,6 @@ function downloadGraphPNG() {
 }
 
 
-var downloadGraphButton = document.getElementById('btn-download-graph');
-downloadGraphButton.addEventListener('click', downloadGraphPNG);
 /*
  <option value="opt-save-graph">
  <button class="btn-save-graph" id="save-graph-button">Save</button>

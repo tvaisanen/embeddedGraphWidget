@@ -291,12 +291,28 @@ select {
     font-size: 14px;
 }
 
-.text-info {
+.text-preview {
     height: 20vh;
     width: 74vw;
+    margin: 10px;
     font-size: large;
-    overflow-scrolling: auto;
-    background-color: #8cc0e1;
+    overflow: auto;
+    background-color: #ffffff;
+}
+
+.text-preview__header {
+    font-family: "Bookman Old Style", Helvetica, sans-serif;
+    background-color: #0277bd;
+    color: white;
+    font-size: large;
+    border-radius: 5px;
+}
+
+.text-preview__content {
+    font-family: "Bookman Old Style", Helvetica, sans-serif;
+    font-size: large;
+
+
 }
 
 @keyframes loading {

@@ -264,8 +264,8 @@ function unorderedListFromArray(array, mouseOver, mouseOut, toggleVisibility, on
     return ul;
 }
 
+// Todo: Make configs object for all of these
 var layoutOptions = ['cola', 'breadthfirst', 'circle', 'concentric', 'cose', 'grid', 'random'];
-
 var params = ['line-style', 'arrow-shape', 'line-color', 'line-width'];
 var lineStyleOptions = {
     'width': Array.from(Array(20).keys()),
@@ -275,12 +275,9 @@ var lineStyleOptions = {
     'target-arrow-shape': [],
     'curve-style': []
 };
-
 var lines = ['solid', 'dotted', 'dashed'];
 var arrows = ['tee', 'triangle', 'triangle-tee', 'triangle-cross', 'triangle-backcurve', 'square', 'circle', 'diamond', 'none'];
 var colors = ['red', 'green', 'orange', 'yellow', 'cyan', 'blue'];
-
-
 var categoryStyles = {
     default: {
         'line-style': 'solid',
@@ -299,14 +296,14 @@ var panel = (function (gwClient, cy) {
 
     var classNames = {
         container: 'panel',
+        menu: {
+            container: 'panel-menu',
+            item: {
+                active: 'panel-menu__menu-item--active',
+                inactive: 'panel-menu__menu-item--inactive'
+            }
+        },
         tab: {
-            menu: {
-                container: 'tab-menu',
-                item: {
-                    active: 'tab-menu__menu-item--active',
-                    inactive: 'tab-menu__menu-item--inactive'
-                }
-            },
             nav: {
                 container: 'tab-nav',
                 item: {
@@ -458,6 +455,7 @@ var panel = (function (gwClient, cy) {
 
     function menuItemSave() {
         "use strict";
+        var cy = props.cy;
         var div = d.createElement('div');
         var inName = d.createElement('input');
         inName.setAttribute('id', 'input-graph-name');
@@ -513,49 +511,24 @@ var panel = (function (gwClient, cy) {
         var tabs = props.tabs;
 
         // css classes
-        var classes = classNames.tab.menu;
+        var classes = classNames.menu;
 
         var divMenu = document.createElement('div');
         divMenu.classList.add(classes.container);
-        divMenu.id = "panel-menu";
+        divMenu.id = classes.container;
         divMenu.classList.add(classes.container);
         var divToggleMenu = d.createElement('div');
-        divToggleMenu.innerHTML = '#'
+        divToggleMenu.innerHTML = '#';
         //divMenu.appendChild(divToggleMenu);
         var menus = Object.keys(menuItems);
         // console.log(menus);
 
-        function createPopup(buttonLabel) {
-            var divPopup = d.createElement('div');
-            divPopup.classList.add("popup");
-
-            var btnMenu = d.createElement('button');
-            btnMenu.classList.add("btn-menu-item");
-            //btnMenu.setAttribute('id', buttonLabel);
-            btnMenu.innerHTML = buttonLabel;
-            btnMenu.addEventListener('click', function () {
-                document.getElementById(buttonLabel).classList.toggle("show");
-                console.log('clicked toggle menu popup');
-            });
-            var divPopupContent = d.createElement('div');
-            divPopupContent.setAttribute('id', buttonLabel);
-            divPopupContent.classList.add("popup-content");
-
-            var mockContent = d.createElement('div');
-            mockContent.innerHTML = "hidden";
-
-            divPopupContent.appendChild(mockContent);
-            divPopup.appendChild(btnMenu);
-            divPopup.appendChild(divPopupContent);
-            return divPopup;
-
-        }
-
         menus.forEach(function (itemKey) {
             var item = menuItems[itemKey];
             var div = d.createElement('div');
+            div.setAttribute('id', "panel-menu__item__" + itemKey);
             var divContent = d.createElement('div');
-            divContent.setAttribute('id', 'panel-menu-content-' + item.label.toLowerCase());
+            divContent.setAttribute('id', 'panel-menu__item__' + item.label.toLowerCase() + '-content');
 
             // Bind an action to the click of the label.
             div.addEventListener('click', function () {
@@ -582,12 +555,30 @@ var panel = (function (gwClient, cy) {
             // divMenu.appendChild(createPopup(item.label));
             divMenu.appendChild(div);
         });
-        var divSpacer = d.createElement('div');
-        divSpacer.innerHTML = '---------';
-
-        //divMenu.appendChild(divSpacer);
 
         return divMenu;
+    }
+
+    function testRenderMenu(testState){
+        setProps(testState, 'all');
+        var classes = classNames.menu;
+        var menuContainer = renderMenu();
+        var childs = menuContainer.childNodes;
+        var childsHaveCorrectIds = true;
+        console.group("writing renderMenu() tests");
+        console.log(childs);
+        console.groupEnd();
+        childs.forEach(function(element){
+           var starts = element.id.startsWith("panel-menu__item__");
+           childsHaveCorrectIds = childsHaveCorrectIds && starts;
+           console.log(element.id);
+           console.log(starts);
+        });
+        QUnit.test("renderMenu() tests", function(assert){
+            assert.ok(true, "Executes");
+            assert.equal(menuContainer.id, classes.container, "Returns div container with correct id.");
+            assert.ok(childsHaveCorrectIds, "Container childs have correct ids.");
+        });
     }
 
     /* ########################################### */
@@ -651,9 +642,10 @@ var panel = (function (gwClient, cy) {
                 var li = document.createElement('li');
                 li.classList.add(classes.listItem.inactive);
                 li.innerHTML = graph;
+
                 li.addEventListener('click', function () {
                     console.log("clicked: " + graph);
-                    if (confirm('Are you sure that you want to change the graph?')) {
+                    if (true /*confirm('Are you sure that you want to change the graph?')*/) {
                         var graphPromise = gwClient.getGraph('graph/' + graph);
                         graphPromise.then(function (response) {
                             var json = response.json();
@@ -832,13 +824,17 @@ var panel = (function (gwClient, cy) {
         function loadPageText(param){
             console.log("load page text");
             var textPromise = gw.getPageText(param);
+            var textPrevievContainer = d.getElementById("text-preview");
+            var textContainerHeader = d.getElementById("text-preview__header");
+            var textContent = d.getElementById("text-preview__content");
             textPromise.then(function(response){
                 return response.json();
             }).then(function(json){
                 var text = json.data;
-                var textBox = d.getElementById('node-text');
-                textBox.innerHTML = text;
+                textContent.innerHTML = text;
             });
+            textContainerHeader.innerHTML = param;
+            textContent.innerHTML = param;
         }
 
         function mouseOver(param) {
@@ -1293,6 +1289,7 @@ var panel = (function (gwClient, cy) {
         testRenderElementsContent(stateForTests);
         testRenderGraphsContent(stateForTests);
         testRenderStylesContent(stateForTests);
+        testRenderMenu(stateForTests);
         console.groupEnd();
     }
 
@@ -1351,10 +1348,6 @@ var panel = (function (gwClient, cy) {
 
         refreshPanel: function () {
             updatePanel();
-        },
-
-        toggleEditMode: function () {
-            toggleMode();
         },
 
         updateStatusMessage: function (text) {
