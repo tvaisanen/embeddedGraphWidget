@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GraphingWiki browser prototype</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="dropdown.css">
+</head>
+<body>
+
+<div class="app-container">
+
+    <div class="header-container" id="header">
+        <div class="header-status">
+            <h3>GraphingWikiBrowser</h3>
+        </div>
+    </div>
+
+    <div class="content-block">
+        <div class="panel" id="panel"></div>
+        <div class="graph-col">
+            <div class="info-messages__ready" id="info-panel">
+                <span class="status-text" id="status-message"></span>
+            </div>
+            <div class="graph" id="cy"></div>
+            <div class="text-preview" id="text-preview">
+                <div class="text-preview__header" id="text-preview__header">
+
+                </div>
+                <div class="text-preview__content" id="text-preview__content">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.0.0/cytoscape.js'></script>
+<script src='https://rawgit.com/cytoscape/cytoscape.js-cola/master/cola.js'></script>
+<script type='text/javascript' src='https://rawgit.com/cytoscape/cytoscape.js-cola/master/cytoscape-cola.js'></script>
+
+<script src="gwClient.js"></script>
+<script src="panel.js"></script>
+<script src='embeddedGraphWidget.js'></script>
+
+
+</body>
+</html>
