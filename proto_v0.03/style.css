@@ -75,10 +75,7 @@
     flex-direction: row;
 }
 
-.graph-col {
-    display: flex;
-    flex-direction: column;
-}
+
 
 [class^="info-messages"] {
     display: flex;
@@ -260,29 +257,7 @@ select {
     font-size: 14px;
 }
 
-.text-preview {
-    height: 20vh;
-    width: 74vw;
-    margin: 10px;
-    font-size: large;
-    overflow: auto;
-    background-color: #ffffff;
-}
 
-.text-preview__header {
-    font-family: "Bookman Old Style", Helvetica, sans-serif;
-    background-color: #0277bd;
-    color: white;
-    font-size: large;
-    border-radius: 5px;
-}
-
-.text-preview__content {
-    font-family: "Bookman Old Style", Helvetica, sans-serif;
-    font-size: large;
-
-
-}
 
 @keyframes loading {
     0% {

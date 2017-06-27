@@ -73,8 +73,8 @@ function testCy(containerElement) {
             {selector: 'edge.width-7', style: {'width': 7}},
             {selector: 'edge.width-8', style: {'width': 8}},
             {selector: 'edge.width-9', style: {'width': 9}},
-            {selector: 'edge.width-9', style: {'width': 10}},
-            {selector: 'edge.width-10', style: {'width': 11}},
+            {selector: 'edge.width-10', style: {'width': 10}},
+            {selector: 'edge.width-11', style: {'width': 11}},
             {selector: 'edge.width-12', style: {'width': 12}},
             {selector: 'edge.width-13', style: {'width': 13}},
             {selector: 'edge.width-14', style: {'width': 14}},
@@ -167,6 +167,12 @@ var testState = {
     contentContainerId: "content-container",
     graphContainerId: "cy",
     gw: gwClient,
+    elementStyles: {
+        generic: [
+            'width-8',
+        ]
+
+    },
     tabs: {
         graphs: {
             label: "Graphs",
@@ -348,6 +354,11 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                     inactive: 'tab-styles__list-item--inactive'
                 }
             }
+        },
+        text: {
+            container: "text-preview",
+            header: "text-preview__header",
+            content: "text-preview__content"
         }
     };
     var menuItems = {
@@ -415,12 +426,37 @@ var graphingwikiBrowser = (function (gwClient, cy) {
     }
 
     function getEdgeCategories() {
-            var categories = props.tabs.styles.categories;
-            if (categories === 'undefined') {
-                return []
-            } else {
-                return categories;
-            }
+        var categories = props.tabs.styles.categories;
+        if (categories === 'undefined') {
+            return []
+        } else {
+            return categories;
+        }
+    }
+
+    function elementHasOneOfCategories(element) {
+        /*
+         *
+         * */
+        try {
+            var values = [];
+            var edgeDoesNotHaveAnyCategory = false;
+            props.tabs.styles.categories.forEach(function (category) {
+                values.push(element.hasClass(category))
+            });
+
+            values.forEach(function (b) {
+                edgeDoesNotHaveAnyCategory = edgeDoesNotHaveAnyCategory || b;
+            });
+            return edgeDoesNotHaveAnyCategory;
+        } catch (e) {
+            console.groupCollapsed("Exception with elementHasOneOfCategories()");
+            console.info("Parameters passed:");
+            console.info("element: " + element);
+            console.info(element);
+            console.warn(e);
+            console.groupEnd();
+        }
     }
 
     function expandNode(nodeId) {
@@ -431,119 +467,155 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
         function createNewNode(id) {
 
-            // Create new node.
-            var newNode = {
-                group: 'nodes',
-                data: {
-                    id: id
-                }
-            };
+             var cy = props.cy;
 
-            // Add the new node to cy.elements.
-            cy.add(newNode);
+            try {
+                // Create new node.
+                var newNode = {
+                    group: 'nodes',
+                    data: {
+                        id: id
+                    }
+                };
+
+                // Add the new node to cy.elements.
+                cy.add(newNode);
+            } catch (e) {
+                console.groupCollapsed("Exception with createNewNode()");
+                console.warn(e);
+                console.info("Parameter passed:");
+                console.info("id: " + id);
+                console.groupEnd();
+            }
         }
 
-        function createNewEdge(sourceId, targetId, classToEdge) {
+        function createNewEdge(sourceId, targetId, classForEdge) {
 
-            var edgeId = sourceId + "_to_" + targetId;
-            // Create new edge.
-            var newEdge = {
-                group: 'edges',
-                data: {
-                    id: edgeId,
-                    source: sourceId,
-                    target: targetId
-                }
-            };
+            var cy = props.cy;
 
-            var classesToAdd = graphingwikiBrowser.props().elementStyles[classToEdge];
-            console.log("class of edge: " + classToEdge);
             try {
-                console.log(classesToAdd);
-                // Add the new edge to cy.elements.
+                var edgeId = sourceId + "_to_" + targetId;
+                // Create new edge.
+                var newEdge = {
+                    group: 'edges',
+                    data: {
+                        id: edgeId,
+                        source: sourceId,
+                        target: targetId
+                    }
+                };
                 cy.add(newEdge);
                 var e = cy.getElementById(edgeId);
-                Object.keys(classesToAdd).forEach(function (key) {
-                    e.addClass(classesToAdd[key]);
-                });
-            } catch (e) {
-                console.log(e);
-            }
 
+
+                var classesToAdd = props.elementStyles[classForEdge];
+                if (!classesToAdd) {
+                    classesToAdd = props.elementStyles.generic;
+                }
+
+                // Add the new edge to cy.elements.
+
+                classesToAdd.forEach(function (styleClass) {
+                    e.addClass(styleClass);
+                });
+                /*
+                 Object.keys(classesToAdd).forEach(function (key) {
+                 e.addClass(classesToAdd[key]);
+                 });*/
+
+            } catch (e) {
+                console.info(e.type);
+                console.groupCollapsed("Exception with createNewEdge()");
+                console.info("Parameters passed:");
+                console.info("sourceId: " + sourceId);
+                console.info("targetId: " + targetId);
+                console.info("classForEdge: " + classForEdge);
+                console.warn(e);
+                console.groupEnd();
+            }
 
         }
 
         function addClassToEdge(edgeId, classToAdd) {
+            try {
+                // Get element reference to the edge with edgeId.
+                var edge = cy.getElementById(edgeId);
 
-            // Get element reference to the edge with edgeId.
-            var edge = cy.getElementById(edgeId);
-
-            // Check if the edge does not have a category set.
-            var edgeDoesNotHaveAnyCategory = false;
-            var vals = graphingwikiBrowser.elementHasOneOfCategories(edge);
-
-            // Todo: Learn to use reducers!
-            vals.forEach(function (b) {
-                edgeDoesNotHaveAnyCategory = edgeDoesNotHaveAnyCategory || b;
-            });
+                // Check if the edge does not have a category set.
+                var edgeDoesNotHaveAnyCategory = elementHasOneOfCategories(edge);
 
 
-            /*
-             * If element edgeId has class '_notype' (= edgeDoesNotHaveCategory)
-             * and current class classToAdd is not '_notype'. Remove the '_notype'
-             * and replace it with the classToAdd. If the edge does not have class
-             * defined yet, set class as classToAdd. Even if it is '_notype'
-             *
-             * Get classes from graphingwikiBrowser.props.categoryStyles.
-             * -> assign each appropriate style for edge
-             */
+                /*
+                 * If element edgeId has class '_notype' (= edgeDoesNotHaveCategory)
+                 * and current class classToAdd is not '_notype'. Remove the '_notype'
+                 * and replace it with the classToAdd. If the edge does not have class
+                 * defined yet, set class as classToAdd. Even if it is '_notype'
+                 *
+                 * Get classes from graphingwikiBrowser.props.categoryStyles.
+                 * -> assign each appropriate style for edge
+                 */
 
 
-            // Todo: simplify
-
-
-            if (classToAdd != '_notype') {
-                // Therefore, the '_notype' class is removed.
-                if (edge.hasClass('_notype')) {
-                    edge.removeClass('_notype');
+                if (classToAdd != '_notype') {
+                    // Therefore, the '_notype' class is removed.
+                    if (edge.hasClass('_notype')) {
+                        edge.removeClass('_notype');
+                    }
+                    edge.addClass(classToAdd);
+                } else if (!edgeDoesNotHaveAnyCategory) {
+                    edge.addClass(classToAdd);
                 }
-                edge.addClass(classToAdd);
-            } else if (!edgeDoesNotHaveAnyCategory) {
-                edge.addClass(classToAdd);
+                // Add the class for the edge.
+            } catch (e) {
+                console.groupCollapsed("Exception with addClassToEdge()");
+                console.info("Parameters passed:");
+                console.info("edgeId: " + edgeId);
+                console.info("classToAdd: " + classToAdd);
+                console.warn(e);
+                console.groupEnd();
             }
-            // Add the class for the edge.
         }
 
         function createNodesAndEdgesBetween(sourceNodeId, targetNodeId, classForEdge) {
+            try {
+                // Check if the source node already exists.
+                // boolean
+                var sourceNodeDoNotExist = !cy.getElementById(sourceNodeId).isNode();
 
-            // Check if the source node already exists.
-            var sourceNodeDoNotExist = !cy.getElementById(sourceNodeId).isNode();
+                // Create new node if the node does not exist yet.
+                if (sourceNodeDoNotExist) {
+                    createNewNode(sourceNodeId);
+                }
 
-            // Create new node if the node does not exist yet.
-            if (sourceNodeDoNotExist) {
-                createNewNode(sourceNodeId);
+                // Check if the target node already exists.
+                var targetNodeDoNotExist = !cy.getElementById(targetNodeId).isNode();
+
+                // Create new node if the node does not exist yet.
+                if (targetNodeDoNotExist) {
+                    createNewNode(targetNodeId);
+                }
+
+                // Create edge id. Use format 'sourceId_to_targetId'.
+                var edgeId = sourceNodeId + "_to_" + targetNodeId;
+
+                // Check if the edge already exist.
+                var edgeBetweenDoNotExist = !cy.getElementById(edgeId).isEdge();
+
+                // Create new edge if the edge does not exist yet.
+                if (edgeBetweenDoNotExist) {
+                    createNewEdge(sourceNodeId, targetNodeId, classForEdge);
+                }
+
+                addClassToEdge(edgeId, classForEdge);
+            } catch (e) {
+                console.groupCollapsed("Exception with createNodesAndEdgesBetween()");
+                console.info("Parameters passed:");
+                console.info("sourceNodeId: " + sourceNodeId);
+                console.info("targetNodeId: " + targetNodeId);
+                console.info("classForEdge: " + classForEdge);
+                console.warn(e);
+                console.groupEnd();
             }
-
-            // Check if the target node already exists.
-            var targetNodeDoNotExist = !cy.getElementById(targetNodeId).isNode();
-
-            // Create new node if the node does not exist yet.
-            if (targetNodeDoNotExist) {
-                createNewNode(targetNodeId);
-            }
-
-            // Create edge id. Use format 'sourceId_to_targetId'.
-            var edgeId = sourceNodeId + "_to_" + targetNodeId;
-
-            // Check if the edge already exist.
-            var edgeBetweenDoNotExist = !cy.getElementById(edgeId).isEdge();
-
-            // Create new edge if the edge does not exist yet.
-            if (edgeBetweenDoNotExist) {
-                createNewEdge(sourceNodeId, targetNodeId, classForEdge);
-            }
-
-            addClassToEdge(edgeId, classForEdge);
 
         }
 
@@ -555,11 +627,18 @@ var graphingwikiBrowser = (function (gwClient, cy) {
              * If the target node does not exist yet, create and add
              * the node to cy.elements.
              */
-
             nodesToCreateEdges.forEach(function (targetNodeId) {
-
-                createNodesAndEdgesBetween(sourceNodeId, targetNodeId, category);
-
+                try {
+                    createNodesAndEdgesBetween(sourceNodeId, targetNodeId, category);
+                } catch (e) {
+                    console.groupCollapsed("Exception with createEdgesToNodes()");
+                    console.info("Parameters passed:")
+                    console.info("sourceNodeId: " + sourceNodeId);
+                    console.info("nodesToCreateEdges: " + nodesToCreateEdges);
+                    console.info("category: " + category);
+                    console.warn(e);
+                    console.groupEnd();
+                }
             });
         }
 
@@ -576,11 +655,9 @@ var graphingwikiBrowser = (function (gwClient, cy) {
              how: [( the category is already listed ) ? do nothing : add new category to graphingwikiBrowser props list]
              CategoryStyles is the function, which handles the updating.
              */
-            console.debug("Inside updateCategories.");
 
             // get current categories from the graphingwikiBrowser
             var categoriesToUpdate = getEdgeCategories();
-            console.debug(categoriesToUpdate);
 
             try {
                 // this could be written with reducer Todo ?
@@ -589,23 +666,16 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                         categoriesToUpdate.push(category);
                     }
                 });
-            } catch (e){
-                console.warn("Problem while updating categories!");
-                console.warn(e);
-            }
 
-            try {
                 var tabStylesProps = props.tabs.styles;
                 tabStylesProps.categories = categoriesToUpdate;
-            } catch (e){
+
+            } catch (e) {
                 console.warn("Problem while updating categories!");
                 console.warn(e);
             }
 
-
-            console.debug("updateCategories updating tabs");
             updateTabs();
-            console.debug("End of updateCategories");
         }
 
         //Get data for the clicked node.
@@ -624,43 +694,43 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                  *  }
                  * */
 
-                console.debug(node);
                 try {
-                    console.debug("Starting to try");
                     // If node has outgoing edges refresh the categories
                     var nodeHasOutgoingEdges = (node.out != 'undefined');
                     var newCategoriesOut = [];
 
-                    console.debug("First conditional");
                     if (nodeHasOutgoingEdges) {
-                        // this executes
                         newCategoriesOut = Object.keys(node.out);
                         updateCategories(newCategoriesOut);
-                        console.debug("Categories updated.");
                     }
 
-                    console.log(newCategoriesOut);
                     // Iterate the outgoing edge categories.
-                    newCategoriesOut.forEach(function (category) {
-                        console.debug(category);
-                        // get list of nodes where the clicked node is connected to
-                        var nodesConnectedTo = node.data.out[category];
 
-                        // for each connected node create a new edge
-                        createEdgesToNodes(nodeId, nodesConnectedTo, category);
+                    try {
+                        newCategoriesOut.forEach(function (category) {
+                            // get list of nodes where the clicked node is connected t
+                            var nodesConnectedTo = node.out[category];
 
-                    });
+                            // for each connected node create a new edge
+                            createEdgesToNodes(nodeId, nodesConnectedTo, category);
 
-                    var newCategoriesIn = Object.keys(node.data.in);
+                        });
+                    } catch (e) {
+                        console.warn("Something went wrong while creating outgoing edges.");
+                        console.warn(e);
+                    }
+                    var newCategoriesIn = Object.keys(node.in);
                     updateCategories(newCategoriesIn);
 
                     // Iterate the incoming edge categories.
                     newCategoriesIn.forEach(function (category) {
-                        var nodesConnectedTo = node.data.in[category];
+                        var nodesConnectedTo = node.in[category];
                         createEdgesFromNodes(nodeId, nodesConnectedTo, category);
                     });
                 } catch (e) {
-
+                    console.groupCollapsed("Expanding node raised exception");
+                    console.warn(e);
+                    console.groupEnd();
                 }
                 setAndRunLayout();
                 updateTabs();
@@ -778,26 +848,6 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         a.click()
     }
 
-    function setStatusMessage(text) {
-        var statusMessage = d.getElementById("status-message");
-        statusMessage.innerHTML = text;
-    }
-
-    function toggleStatusActivity() {
-        var infoPanel = d.getElementById("info-panel");
-        var active = infoPanel.classList.contains('info-messages__ready');
-
-        if (active) {
-            infoPanel.classList.remove('info-messages__ready');
-            infoPanel.classList.add('info-messages__loading');
-        } else {
-            infoPanel.classList.add('info-messages__ready');
-            infoPanel.classList.remove('info-messages__loading');
-        }
-
-
-    }
-
     function initCytoscape() {
         /*
          *   Return <div id="cy">
@@ -848,7 +898,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
          */
         var divTabContainer = d.getElementById(classNames.tab.container);
 
-        var panelContainer = d.getElementById('panel-container');
+        var panelContainer = d.getElementById(classNames.panel.container);
 
         var childsToRemove = divTabContainer.childNodes;
 
@@ -886,13 +936,23 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         contentContainer.setAttribute('id', props.contentContainerId);
         contentContainer.classList.add("content-container");
 
+        var graphColumnContainer = d.createElement('div');
+        contentContainer.setAttribute('id', 'graph-column-container');
+        contentContainer.classList.add("graph-column");
+
         var graphContainer = d.createElement('div');
+
         graphContainer.setAttribute('id', props.graphContainerId);
         graphContainer.classList.add("graph-container");
 
+        var textPrevievContainer = renderTextPreview();
+
+        graphColumnContainer.appendChild(graphContainer);
+        graphColumnContainer.appendChild(textPrevievContainer);
+
         headerContainer.appendChild(renderHeader());
         contentContainer.appendChild(renderPanel());
-        contentContainer.appendChild(graphContainer);
+        contentContainer.appendChild(graphColumnContainer);
 
         appContainer.appendChild(headerContainer);
         appContainer.appendChild(contentContainer);
@@ -1080,6 +1140,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
          *
          * */
         var cy = props.cy;
+        var gw = props.gw;
         var classes = classNames.tab.graph;
 
         var div = document.createElement('div');
@@ -1103,14 +1164,12 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                 li.addEventListener('click', function () {
                     console.log("clicked: " + graph);
                     if (true /*confirm('Are you sure that you want to change the graph?')*/) {
-                        var graphPromise = gwClient.getGraph('graph/' + graph);
+                        var graphPromise = gw.getGraph('graph/' + graph);
                         graphPromise.then(function (response) {
                             var json = response.json();
-                            console.log(json);
                             return json;
                         }).then(function (json) {
-                            console.log(json.data);
-                            cy.destroy();
+                            props.cy.destroy();
                             props.cy = initNewGraph(json.data);
                         });
                     } else {
@@ -1478,6 +1537,25 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         return divContent;
     }
 
+    function renderTextPreview() {
+        var divTextPreviewContainer = d.createElement('div');
+        divTextPreviewContainer.classList.add(classNames.text.container);
+        divTextPreviewContainer.setAttribute('id', classNames.text.container);
+
+        var textPreviewHeader = d.createElement('div');
+        textPreviewHeader.classList.add(classNames.text.header);
+        textPreviewHeader.setAttribute('id', classNames.text.header);
+
+        var textPreviewContent = d.createElement('div');
+        textPreviewContent.classList.add(classNames.text.content);
+        textPreviewContent.setAttribute('id', classNames.text.content);
+
+        divTextPreviewContainer.appendChild(textPreviewHeader);
+        divTextPreviewContainer.appendChild(textPreviewContent);
+
+        return divTextPreviewContainer;
+    }
+
     /* ---------- Tests ---------- */
 
     function tests() {
@@ -1654,27 +1732,8 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             }
         },
 
-        elementHasOneOfCategories: function (element) {
-            /*
-             *
-             * */
-            var values = [];
-            props.styles.categories.forEach(function (category) {
-                values.push(element.hasClass(category))
-            });
-            return values;
-        },
-
-        refreshPanel: function () {
-            updatePanel();
-        },
-
-        updateStatusMessage: function (text) {
-            setStatusMessage(text);
-            toggleStatusActivity();
-        },
-
-        props: function () {
+        state: function () {
+            // for debugging purposes in the console
             return props;
         },
 

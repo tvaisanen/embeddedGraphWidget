@@ -1,0 +1,39 @@
+.graph-container {
+    background-color: white;
+    border-bottom-right-radius: 5px;
+    display: inline-block;
+    width: 74vw;
+    height: 100%;
+}
+
+
+.graph-columns {
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+.text-preview {
+    height: 20vh;
+    width: 74vw;
+    margin: 10px;
+    font-size: large;
+    overflow: auto;
+    background-color: #ffffff;
+}
+
+.text-preview__header {
+    font-family: "Bookman Old Style", Helvetica, sans-serif;
+    background-color: #0277bd;
+    color: white;
+    font-size: large;
+    border-radius: 5px;
+}
+
+.text-preview__content {
+    font-family: "Bookman Old Style", Helvetica, sans-serif;
+    font-size: large;
+
+
+}
