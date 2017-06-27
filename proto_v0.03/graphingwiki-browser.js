@@ -12,153 +12,154 @@ var configs = {
 gwClient.setConfigs(configs);
 
 // Use these for tests
-/*
- var initialCy = cytoscape({
- container: document.getElementById('cy'),
- elements: [{group: 'nodes', data: {id: 'personA'}}],
- style: [ // the stylesheet for the graph
- {
- selector: 'node',
- style: {
- 'background-color': '#6490af',
- 'size': '40',
- 'label': 'data(id)',
- }
- },
+
+function testCy(containerElement) {
+    return cytoscape({
+        container: containerElement,
+        elements: [{group: 'nodes', data: {id: 'personA'}}],
+        style: [ // the stylesheet for the graph
+            {
+                selector: 'node',
+                style: {
+                    'background-color': '#6490af',
+                    'size': '40',
+                    'label': 'data(id)',
+                }
+            },
 
 
- {
- selector: 'node.highlight',
- style: {
- 'background-color': '#c50004',
- }
- },
+            {
+                selector: 'node.highlight',
+                style: {
+                    'background-color': '#c50004',
+                }
+            },
 
- {
- selector: 'node.hover-on',
- style: {
- 'background-color': '#00ff14',
- }
- },
+            {
+                selector: 'node.hover-on',
+                style: {
+                    'background-color': '#00ff14',
+                }
+            },
 
- {
- selector: 'edge',
- style: {
- 'line-color': '#ccc',
- 'target-arrow-color': '#000000',
- 'target-arrow-shape': 'triangle',
- 'curve-style': 'bezier',
- 'overlay-padding': 1
- }
- },
- {
- selector: 'edge.mouse-over',
- style: {label: 'category'}
- },
+            {
+                selector: 'edge',
+                style: {
+                    'line-color': '#ccc',
+                    'target-arrow-color': '#000000',
+                    'target-arrow-shape': 'triangle',
+                    'curve-style': 'bezier',
+                    'overlay-padding': 1
+                }
+            },
+            {
+                selector: 'edge.mouse-over',
+                style: {label: 'category'}
+            },
 
- // Todo: generate these from config!
+            // Todo: generate these from config!
 
- {selector: 'edge.line-style-solid', style: {'line-style': 'solid'}},
- {selector: 'edge.line-style-dotted', style: {'line-style': 'dotted'}},
- {selector: 'edge.line-style-dashed', style: {'line-style': 'dashed'}},
+            {selector: 'edge.line-style-solid', style: {'line-style': 'solid'}},
+            {selector: 'edge.line-style-dotted', style: {'line-style': 'dotted'}},
+            {selector: 'edge.line-style-dashed', style: {'line-style': 'dashed'}},
 
- {selector: 'edge.width-0', style: {'width': 0}},
- {selector: 'edge.width-1', style: {'width': 1}},
- {selector: 'edge.width-2', style: {'width': 2}},
- {selector: 'edge.width-3', style: {'width': 3}},
- {selector: 'edge.width-4', style: {'width': 4}},
- {selector: 'edge.width-5', style: {'width': 5}},
- {selector: 'edge.width-6', style: {'width': 6}},
- {selector: 'edge.width-7', style: {'width': 7}},
- {selector: 'edge.width-8', style: {'width': 8}},
- {selector: 'edge.width-9', style: {'width': 9}},
- {selector: 'edge.width-9', style: {'width': 10}},
- {selector: 'edge.width-10', style: {'width': 11}},
- {selector: 'edge.width-12', style: {'width': 12}},
- {selector: 'edge.width-13', style: {'width': 13}},
- {selector: 'edge.width-14', style: {'width': 14}},
- {selector: 'edge.width-15', style: {'width': 15}},
- {selector: 'edge.width-16', style: {'width': 16}},
- {selector: 'edge.width-17', style: {'width': 17}},
- {selector: 'edge.width-18', style: {'width': 18}},
- {selector: 'edge.width-19', style: {'width': 19}},
- {selector: 'edge.width-20', style: {'width': 20}},
- {selector: 'edge.width-21', style: {'width': 21}},
- {selector: 'edge.width-22', style: {'width': 22}},
- {selector: 'edge.width-23', style: {'width': 23}},
- {selector: 'edge.width-24', style: {'width': 24}},
- {selector: 'edge.width-25', style: {'width': 25}},
- {selector: 'edge.width-26', style: {'width': 26}},
- {selector: 'edge.width-27', style: {'width': 27}},
- {selector: 'edge.width-28', style: {'width': 28}},
- {selector: 'edge.width-29', style: {'width': 29}},
- {selector: 'edge.width-30', style: {'width': 30}},
+            {selector: 'edge.width-0', style: {'width': 0}},
+            {selector: 'edge.width-1', style: {'width': 1}},
+            {selector: 'edge.width-2', style: {'width': 2}},
+            {selector: 'edge.width-3', style: {'width': 3}},
+            {selector: 'edge.width-4', style: {'width': 4}},
+            {selector: 'edge.width-5', style: {'width': 5}},
+            {selector: 'edge.width-6', style: {'width': 6}},
+            {selector: 'edge.width-7', style: {'width': 7}},
+            {selector: 'edge.width-8', style: {'width': 8}},
+            {selector: 'edge.width-9', style: {'width': 9}},
+            {selector: 'edge.width-9', style: {'width': 10}},
+            {selector: 'edge.width-10', style: {'width': 11}},
+            {selector: 'edge.width-12', style: {'width': 12}},
+            {selector: 'edge.width-13', style: {'width': 13}},
+            {selector: 'edge.width-14', style: {'width': 14}},
+            {selector: 'edge.width-15', style: {'width': 15}},
+            {selector: 'edge.width-16', style: {'width': 16}},
+            {selector: 'edge.width-17', style: {'width': 17}},
+            {selector: 'edge.width-18', style: {'width': 18}},
+            {selector: 'edge.width-19', style: {'width': 19}},
+            {selector: 'edge.width-20', style: {'width': 20}},
+            {selector: 'edge.width-21', style: {'width': 21}},
+            {selector: 'edge.width-22', style: {'width': 22}},
+            {selector: 'edge.width-23', style: {'width': 23}},
+            {selector: 'edge.width-24', style: {'width': 24}},
+            {selector: 'edge.width-25', style: {'width': 25}},
+            {selector: 'edge.width-26', style: {'width': 26}},
+            {selector: 'edge.width-27', style: {'width': 27}},
+            {selector: 'edge.width-28', style: {'width': 28}},
+            {selector: 'edge.width-29', style: {'width': 29}},
+            {selector: 'edge.width-30', style: {'width': 30}},
 
- {selector: 'edge.arrow-shape-tee', style: {'target-arrow-shape': 'tee'}},
- {selector: 'edge.arrow-shape-triangle', style: {'target-arrow-shape': 'triangle'}},
- {selector: 'edge.arrow-shape-triangle-tee', style: {'target-arrow-shape': 'triangle-tee'}},
- {selector: 'edge.arrow-shape-triangle-cross', style: {'target-arrow-shape': 'triangle-cross'}},
- {selector: 'edge.arrow-shape-triangle-backcurve', style: {'target-arrow-shape': 'triangle-backcurve'}},
- {selector: 'edge.arrow-shape-square', style: {'target-arrow-shape': 'square'}},
- {selector: 'edge.arrow-shape-circle', style: {'target-arrow-shape': 'circle'}},
- {selector: 'edge.arrow-shape-diamond', style: {'target-arrow-shape': 'diamond'}},
- {selector: 'edge.arrow-shape-none', style: {'target-arrow-shape': 'none'}},
+            {selector: 'edge.arrow-shape-tee', style: {'target-arrow-shape': 'tee'}},
+            {selector: 'edge.arrow-shape-triangle', style: {'target-arrow-shape': 'triangle'}},
+            {selector: 'edge.arrow-shape-triangle-tee', style: {'target-arrow-shape': 'triangle-tee'}},
+            {selector: 'edge.arrow-shape-triangle-cross', style: {'target-arrow-shape': 'triangle-cross'}},
+            {selector: 'edge.arrow-shape-triangle-backcurve', style: {'target-arrow-shape': 'triangle-backcurve'}},
+            {selector: 'edge.arrow-shape-square', style: {'target-arrow-shape': 'square'}},
+            {selector: 'edge.arrow-shape-circle', style: {'target-arrow-shape': 'circle'}},
+            {selector: 'edge.arrow-shape-diamond', style: {'target-arrow-shape': 'diamond'}},
+            {selector: 'edge.arrow-shape-none', style: {'target-arrow-shape': 'none'}},
 
- {selector: 'edge.line-color-red', style: {'line-color': 'red', 'arrow-color': 'red'}},
- {selector: 'edge.line-color-green', style: {'line-color': 'green', 'arrow-color': 'green'}},
- {selector: 'edge.line-color-orange', style: {'line-color': 'orange', 'arrow-color': 'orange'}},
- {selector: 'edge.line-color-yellow', style: {'line-color': 'yellow', 'arrow-color': 'yellow'}},
- {selector: 'edge.line-color-cyan', style: {'line-color': 'cyan', 'arrow-color': 'cyan'}},
- {selector: 'edge.line-color-blue', style: {'line-color': 'blue', 'arrow-color': 'blue'}},
+            {selector: 'edge.line-color-red', style: {'line-color': 'red', 'arrow-color': 'red'}},
+            {selector: 'edge.line-color-green', style: {'line-color': 'green', 'arrow-color': 'green'}},
+            {selector: 'edge.line-color-orange', style: {'line-color': 'orange', 'arrow-color': 'orange'}},
+            {selector: 'edge.line-color-yellow', style: {'line-color': 'yellow', 'arrow-color': 'yellow'}},
+            {selector: 'edge.line-color-cyan', style: {'line-color': 'cyan', 'arrow-color': 'cyan'}},
+            {selector: 'edge.line-color-blue', style: {'line-color': 'blue', 'arrow-color': 'blue'}},
 
 
- {
- selector: 'edge.foo',
- style: {
- 'curve-style': 'bezier',
- }
- },
+            {
+                selector: 'edge.foo',
+                style: {
+                    'curve-style': 'bezier',
+                }
+            },
 
- {
- selector: 'edge._notype',
- style: {
- 'curve-style': 'bezier',
- }
- },
+            {
+                selector: 'edge._notype',
+                style: {
+                    'curve-style': 'bezier',
+                }
+            },
 
- {
- selector: 'edge.gwikicategory',
- style: {
- 'curve-style': 'bezier',
- }
- },
+            {
+                selector: 'edge.gwikicategory',
+                style: {
+                    'curve-style': 'bezier',
+                }
+            },
 
- {
- selector: 'edge.hover-on',
- style: {
- 'width': 5,
- 'line-color': '#cc7500',
- 'line-style': 'dashed',
- 'target-arrow-color': '#000000',
- 'target-arrow-shape': 'triangle',
- 'curve-style': 'bezier',
- }
- },
+            {
+                selector: 'edge.hover-on',
+                style: {
+                    'width': 5,
+                    'line-color': '#cc7500',
+                    'line-style': 'dashed',
+                    'target-arrow-color': '#000000',
+                    'target-arrow-shape': 'triangle',
+                    'curve-style': 'bezier',
+                }
+            },
 
- {
- selector: 'edge.highlight',
- style: {
- 'width': 5,
- 'line-color': '#cc7500',
- 'line-style': 'dashed',
- 'target-arrow-color': '#000000',
- 'target-arrow-shape': 'triangle',
- 'curve-style': 'bezier',
- }
- },
- ],
- });
- */
+            {
+                selector: 'edge.highlight',
+                style: {
+                    'width': 5,
+                    'line-color': '#cc7500',
+                    'line-style': 'dashed',
+                    'target-arrow-color': '#000000',
+                    'target-arrow-shape': 'triangle',
+                    'curve-style': 'bezier',
+                }
+            },
+        ],
+    });
+}
 
 var testState = {
     header: "GraphingWikiBrowser Prototype v0.03",
@@ -184,16 +185,7 @@ var testState = {
         styles: {
             label: "Styles",
             active: false,
-            categories: [
-                {
-                    name: "category 1",
-                    data: "data for 1"
-                },
-                {
-                    name: "category 2",
-                    data: "data for 2"
-                }
-            ]
+            categories: []
         }
     }
 };
@@ -294,10 +286,10 @@ var categoryStyles = {
 
 var graphingwikiBrowser = (function (gwClient, cy) {
 
+    // Every variable needs to be accessed through props
+    // Todo: use redux pattern?
+
     var props;
-
-    var statusMessage = d.getElementById("status-message");
-
     var classNames = {
         container: 'CONTAINER',
         graph: {
@@ -358,27 +350,6 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             }
         }
     };
-
-    /*
-     *   Functions for generating the content for
-     *   menu items inside the graphingwikiBrowser.
-     *
-     * */
-
-    function createNewNode(id) {
-
-        // Create new node.
-        var newNode = {
-            group: 'nodes',
-            data: {
-                id: id
-            }
-        };
-
-        // Add the new node to cy.elements.
-        props.cy.add(newNode);
-    }
-
     var menuItems = {
         create: {
             label: "Create new node/edge",
@@ -428,6 +399,280 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             generateContent: generateContent
         }
     };
+
+    function createNewNode(id) {
+
+        // Create new node.
+        var newNode = {
+            group: 'nodes',
+            data: {
+                id: id
+            }
+        };
+
+        // Add the new node to cy.elements.
+        props.cy.add(newNode);
+    }
+
+    function getEdgeCategories() {
+            var categories = props.tabs.styles.categories;
+            if (categories === 'undefined') {
+                return []
+            } else {
+                return categories;
+            }
+    }
+
+    function expandNode(nodeId) {
+
+        cy = props.cy;
+        gw = props.gw;
+
+
+        function createNewNode(id) {
+
+            // Create new node.
+            var newNode = {
+                group: 'nodes',
+                data: {
+                    id: id
+                }
+            };
+
+            // Add the new node to cy.elements.
+            cy.add(newNode);
+        }
+
+        function createNewEdge(sourceId, targetId, classToEdge) {
+
+            var edgeId = sourceId + "_to_" + targetId;
+            // Create new edge.
+            var newEdge = {
+                group: 'edges',
+                data: {
+                    id: edgeId,
+                    source: sourceId,
+                    target: targetId
+                }
+            };
+
+            var classesToAdd = graphingwikiBrowser.props().elementStyles[classToEdge];
+            console.log("class of edge: " + classToEdge);
+            try {
+                console.log(classesToAdd);
+                // Add the new edge to cy.elements.
+                cy.add(newEdge);
+                var e = cy.getElementById(edgeId);
+                Object.keys(classesToAdd).forEach(function (key) {
+                    e.addClass(classesToAdd[key]);
+                });
+            } catch (e) {
+                console.log(e);
+            }
+
+
+        }
+
+        function addClassToEdge(edgeId, classToAdd) {
+
+            // Get element reference to the edge with edgeId.
+            var edge = cy.getElementById(edgeId);
+
+            // Check if the edge does not have a category set.
+            var edgeDoesNotHaveAnyCategory = false;
+            var vals = graphingwikiBrowser.elementHasOneOfCategories(edge);
+
+            // Todo: Learn to use reducers!
+            vals.forEach(function (b) {
+                edgeDoesNotHaveAnyCategory = edgeDoesNotHaveAnyCategory || b;
+            });
+
+
+            /*
+             * If element edgeId has class '_notype' (= edgeDoesNotHaveCategory)
+             * and current class classToAdd is not '_notype'. Remove the '_notype'
+             * and replace it with the classToAdd. If the edge does not have class
+             * defined yet, set class as classToAdd. Even if it is '_notype'
+             *
+             * Get classes from graphingwikiBrowser.props.categoryStyles.
+             * -> assign each appropriate style for edge
+             */
+
+
+            // Todo: simplify
+
+
+            if (classToAdd != '_notype') {
+                // Therefore, the '_notype' class is removed.
+                if (edge.hasClass('_notype')) {
+                    edge.removeClass('_notype');
+                }
+                edge.addClass(classToAdd);
+            } else if (!edgeDoesNotHaveAnyCategory) {
+                edge.addClass(classToAdd);
+            }
+            // Add the class for the edge.
+        }
+
+        function createNodesAndEdgesBetween(sourceNodeId, targetNodeId, classForEdge) {
+
+            // Check if the source node already exists.
+            var sourceNodeDoNotExist = !cy.getElementById(sourceNodeId).isNode();
+
+            // Create new node if the node does not exist yet.
+            if (sourceNodeDoNotExist) {
+                createNewNode(sourceNodeId);
+            }
+
+            // Check if the target node already exists.
+            var targetNodeDoNotExist = !cy.getElementById(targetNodeId).isNode();
+
+            // Create new node if the node does not exist yet.
+            if (targetNodeDoNotExist) {
+                createNewNode(targetNodeId);
+            }
+
+            // Create edge id. Use format 'sourceId_to_targetId'.
+            var edgeId = sourceNodeId + "_to_" + targetNodeId;
+
+            // Check if the edge already exist.
+            var edgeBetweenDoNotExist = !cy.getElementById(edgeId).isEdge();
+
+            // Create new edge if the edge does not exist yet.
+            if (edgeBetweenDoNotExist) {
+                createNewEdge(sourceNodeId, targetNodeId, classForEdge);
+            }
+
+            addClassToEdge(edgeId, classForEdge);
+
+        }
+
+        function createEdgesToNodes(sourceNodeId, nodesToCreateEdges, category) {
+
+            /*
+             * Iterate through the nodesToCreateEdges array and add
+             * edges between the source node and target nodes.
+             * If the target node does not exist yet, create and add
+             * the node to cy.elements.
+             */
+
+            nodesToCreateEdges.forEach(function (targetNodeId) {
+
+                createNodesAndEdgesBetween(sourceNodeId, targetNodeId, category);
+
+            });
+        }
+
+        function createEdgesFromNodes(targetNodeId, nodesFromCreateEdges, category) {
+            nodesFromCreateEdges.forEach(function (sourceNodeId) {
+                createNodesAndEdgesBetween(sourceNodeId, targetNodeId, category);
+            });
+        }
+
+        function updateCategories(newCategories) {
+            /*
+             when: A new node is loaded.
+             why: To add new possible categories.
+             how: [( the category is already listed ) ? do nothing : add new category to graphingwikiBrowser props list]
+             CategoryStyles is the function, which handles the updating.
+             */
+            console.debug("Inside updateCategories.");
+
+            // get current categories from the graphingwikiBrowser
+            var categoriesToUpdate = getEdgeCategories();
+            console.debug(categoriesToUpdate);
+
+            try {
+                // this could be written with reducer Todo ?
+                newCategories.forEach(function (category) {
+                    if (categoriesToUpdate.indexOf(category) === -1) {
+                        categoriesToUpdate.push(category);
+                    }
+                });
+            } catch (e){
+                console.warn("Problem while updating categories!");
+                console.warn(e);
+            }
+
+            try {
+                var tabStylesProps = props.tabs.styles;
+                tabStylesProps.categories = categoriesToUpdate;
+            } catch (e){
+                console.warn("Problem while updating categories!");
+                console.warn(e);
+            }
+
+
+            console.debug("updateCategories updating tabs");
+            updateTabs();
+            console.debug("End of updateCategories");
+        }
+
+        //Get data for the clicked node.
+        var nodePromise = gw.getNodeData(nodeId);
+
+        console.debug(nodePromise);
+        nodePromise.then(function (response) {
+            return response.json();
+        }).then(function (json) {
+                var node = json.data;
+                /*
+                 *  node = {
+                 *      in: Object,
+                 *      out: Object,
+                 *      meta: Object
+                 *  }
+                 * */
+
+                console.debug(node);
+                try {
+                    console.debug("Starting to try");
+                    // If node has outgoing edges refresh the categories
+                    var nodeHasOutgoingEdges = (node.out != 'undefined');
+                    var newCategoriesOut = [];
+
+                    console.debug("First conditional");
+                    if (nodeHasOutgoingEdges) {
+                        // this executes
+                        newCategoriesOut = Object.keys(node.out);
+                        updateCategories(newCategoriesOut);
+                        console.debug("Categories updated.");
+                    }
+
+                    console.log(newCategoriesOut);
+                    // Iterate the outgoing edge categories.
+                    newCategoriesOut.forEach(function (category) {
+                        console.debug(category);
+                        // get list of nodes where the clicked node is connected to
+                        var nodesConnectedTo = node.data.out[category];
+
+                        // for each connected node create a new edge
+                        createEdgesToNodes(nodeId, nodesConnectedTo, category);
+
+                    });
+
+                    var newCategoriesIn = Object.keys(node.data.in);
+                    updateCategories(newCategoriesIn);
+
+                    // Iterate the incoming edge categories.
+                    newCategoriesIn.forEach(function (category) {
+                        var nodesConnectedTo = node.data.in[category];
+                        createEdgesFromNodes(nodeId, nodesConnectedTo, category);
+                    });
+                } catch (e) {
+
+                }
+                setAndRunLayout();
+                updateTabs();
+
+            }
+        );
+    }
+
+    function setAndRunLayout() {
+        var layout = cy.makeLayout({name: "cola"});
+        layout.run();
+    }
 
     function generateContent() {
         "use strict";
@@ -518,90 +763,16 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         return div;
     }
 
-    function renderMenu() {
-
-        // Create the div which contains graphingwikiBrowser navigation tabs.
-        var tabs = props.tabs;
-
-        // css classes
-        var classes = classNames.menu;
-
-        var divMenu = document.createElement('div');
-        divMenu.classList.add(classes.container);
-        divMenu.id = classes.container;
-        divMenu.classList.add(classes.container);
-        var divToggleMenu = d.createElement('div');
-        divToggleMenu.innerHTML = '#';
-        //divMenu.appendChild(divToggleMenu);
-        var menus = Object.keys(menuItems);
-        // console.log(menus);
-
-        menus.forEach(function (itemKey) {
-            var item = menuItems[itemKey];
-            var div = d.createElement('div');
-            div.setAttribute('id', "panel-menu__item__" + itemKey);
-            var divContent = d.createElement('div');
-            divContent.setAttribute('id', 'panel-menu__item__' + item.label.toLowerCase() + '-content');
-
-            // Bind an action to the click of the label.
-            div.addEventListener('click', function () {
-                item.onClick(item.label + " clicked");
-            });
-
-            // Show the content.
-            div.addEventListener('mouseover', function () {
-                divContent.classList.add('show');
-            });
-
-            // Hide the content.
-            div.addEventListener('mouseout', function () {
-                divContent.classList.remove('show');
-            });
-            div.classList.add('panel-menu-item');
-            divContent.classList.add('panel-menu-content');
-            div.innerHTML = item.label;
-
-            // Put the item content in to the html element.
-            // console.log(item);
-            divContent.appendChild(item.generateContent());
-            div.appendChild(divContent);
-            // divMenu.appendChild(createPopup(item.label));
-            divMenu.appendChild(div);
-        });
-
-        return divMenu;
-    }
-
-    function testRenderMenu(testState) {
-        setProps(testState, 'all');
-        var classes = classNames.menu;
-        var menuContainer = renderMenu();
-        var childs = menuContainer.childNodes;
-        var childsHaveCorrectIds = true;
-
-
-        childs.forEach(function (element) {
-            var starts = element.id.startsWith("panel-menu__item__");
-            childsHaveCorrectIds = childsHaveCorrectIds && starts;
-        });
-
-        QUnit.test("renderMenu() tests", function (assert) {
-            assert.ok(true, "Executes");
-            assert.equal(
-                menuContainer.id, classes.container,
-                "Returns div container with correct id.");
-            assert.ok(childsHaveCorrectIds, "Container childs have correct ids.");
-        });
-    }
-
-    /* ########################################### */
-
     function downloadGraphPNG() {
-        console.info('running downloadGraphPNG() -function')
-        var png = props.cy.png({bg: 'white'});
+        var cy = props.cy;
+        console.info('running downloadGraphPNG() -function');
+        console.debug(cy);
+        console.debug(cy.json());
+        console.debug(cy.png);
+        var pngGraph = cy.png({bg: 'white'});
         var a = document.createElement('a');
 
-        a.href = png;
+        a.href = pngGraph;
         a.download = 'graph.png';
         console.debug(a);
         a.click()
@@ -627,85 +798,6 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
     }
 
-    function renderGraphsContent() {
-        /*
-         * Implement graphs tab rendering here
-         *
-         * */
-        var cy = props.cy;
-        var classes = classNames.tab.graph;
-
-        var div = document.createElement('div');
-        var ul = document.createElement('ul');
-
-        div.setAttribute('id', classes.container);
-
-        var graphListPromise = props.gw.getGraphList();
-
-        graphListPromise.then(function (response) {
-            return response.json();
-
-        }).then(function (json) {
-            var graphs = json.data;
-
-            graphs.forEach(function (graph) {
-                var li = document.createElement('li');
-                li.classList.add(classes.listItem.inactive);
-                li.innerHTML = graph;
-
-                li.addEventListener('click', function () {
-                    console.log("clicked: " + graph);
-                    if (true /*confirm('Are you sure that you want to change the graph?')*/) {
-                        var graphPromise = gwClient.getGraph('graph/' + graph);
-                        graphPromise.then(function (response) {
-                            var json = response.json();
-                            console.log(json);
-                            return json;
-                        }).then(function (json) {
-                            console.log(json.data);
-                            cy.destroy();
-                            props.cy = initNewGraph(json.data);
-                        });
-                    } else {
-                        // Do nothing!
-                    }
-                });
-                ul.appendChild(li);
-            });
-        });
-
-
-        div.appendChild(ul);
-        console.groupEnd();
-        return div;
-    }
-
-    function testRenderGraphsContent(testState) {
-// set context for tests
-        console.group("testRenderGraphsContent()");
-        setProps(testState, 'all');
-        var classes = classNames.tab.graph;
-        var graphsContent = renderGraphsContent();
-        var firstChild = graphsContent.childNodes[0];
-        QUnit.test("Rendering the graphs tab", function (assert) {
-            assert.equal(graphsContent.id, classes.container, "renderGraphsContent() returns div with proper id");
-            assert.equal(firstChild.tagName, "UL", "renderGraphsContent() first child is a list element");
-        });
-
-
-        console.groupEnd();
-    }
-
-    function testGraphingWikiClientInit(testState) {
-        setProps(testState, 'all');
-        var moduleName = props.gw.getModuleName();
-        QUnit.test("Test GraphingWikiClientInit", function (assert) {
-            assert.equal(moduleName, "GraphingWiki client", "gwClient is initialized correctly.");
-        });
-
-    }
-
-
     function initCytoscape() {
         /*
          *   Return <div id="cy">
@@ -713,27 +805,100 @@ var graphingwikiBrowser = (function (gwClient, cy) {
          *
          * */
         var cyContainer = d.getElementById('cy');
-        cy = cytoscape({
-            container: cyContainer,
-            elements: [{group: 'nodes', data: {id: 'introduction'}}],
-            style: [],
-            layout: {name: 'preset'},
-        });
+        cy = testCy(cyContainer);
+        /*cytoscape({
+         container: cyContainer,
+         elements: [{group: 'nodes', data: {id: 'introduction'}}],
+         style: [],
+         layout: {name: 'preset'},
+         });*/
         cy.on('tap', 'node', function (evt) {
             var node = evt.target;
             var nodeId = node.id();
-            expandNode(cy, nodeId);
+            expandNode(nodeId);
         });
 
         return cy;
     }
 
-    function testCytoscapeIntegrationInit(testState) {
-        setProps(testState, 'all');
-        QUnit.test("Cytoscape container initialised", function (assert) {
-            assert.deepEqual(props.cy.container().id, "cy", "cy container id = 'cy'");
-            assert.ok(props.cy.container().classList.contains("graph-container"), "cy container has class 'graph-container'");
+    function handleNavClick(keyToActivate) {
+
+        var tabs = props.tabs;
+        var navItemClasses = classNames.tab.nav.item;
+        // toggle all navlink classes to inactive
+        var links = Object.keys(tabs);
+        links.forEach(function (key) {
+            tabs[key].active = false;
+            d.getElementById("nav-item-" + key).classList.remove(navItemClasses.active);
         });
+
+        // activate clicked navlink
+        tabs[keyToActivate].active = true;
+        d.getElementById("nav-item-" + keyToActivate).classList.add(navItemClasses.active);
+        var divTabContainer = d.getElementById(classNames.tab.container);
+        console.log(divTabContainer);
+        updateTabs();
+    }
+
+    function updateTabs() {
+
+        /*
+         *   Clear the tabs container and re-render content.
+         *   Append the content to panelContainer.
+         */
+        var divTabContainer = d.getElementById(classNames.tab.container);
+
+        var panelContainer = d.getElementById('panel-container');
+
+        var childsToRemove = divTabContainer.childNodes;
+
+        childsToRemove.forEach(function (child) {
+            divTabContainer.remove(child);
+        });
+
+        var tabsContent = renderTabs();
+        panelContainer.appendChild(tabsContent);
+    }
+
+    function setProps(updatedProps, selector) {
+        /**
+         * Update props
+         *
+         */
+
+        if (selector === "all") {
+            props = updatedProps;
+        } else {
+            props[selector] = updatedProps;
+        }
+    }
+
+    function render() {
+        var content = props.tabs;
+
+        var appContainer = d.getElementById(props.appContainerId);
+
+        var headerContainer = d.createElement('div');
+        headerContainer.setAttribute('id', "header-container");
+        headerContainer.classList.add("header-container");
+
+        var contentContainer = d.createElement('div');
+        contentContainer.setAttribute('id', props.contentContainerId);
+        contentContainer.classList.add("content-container");
+
+        var graphContainer = d.createElement('div');
+        graphContainer.setAttribute('id', props.graphContainerId);
+        graphContainer.classList.add("graph-container");
+
+        headerContainer.appendChild(renderHeader());
+        contentContainer.appendChild(renderPanel());
+        contentContainer.appendChild(graphContainer);
+
+        appContainer.appendChild(headerContainer);
+        appContainer.appendChild(contentContainer);
+
+        // Init cytoscape and assign the initial instance to props
+        props.cy = initCytoscape();
     }
 
     function renderElementsContent() {
@@ -909,19 +1074,182 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         return div;
     }
 
-    function testRenderElementsContent(testState) {
-// set context for tests
-        console.group("testRenderStylesContent()");
-        setProps(testState, 'all');
-        var elementsContent = renderElementsContent();
-        QUnit.test("Rendering the elements tab", function (assert) {
-            assert.equal(elementsContent.id, "elements-content", "renderElementsContent() returns div with proper id");
+    function renderGraphsContent() {
+        /*
+         * Implement graphs tab rendering here
+         *
+         * */
+        var cy = props.cy;
+        var classes = classNames.tab.graph;
+
+        var div = document.createElement('div');
+        var ul = document.createElement('ul');
+
+        div.setAttribute('id', classes.container);
+
+        var graphListPromise = props.gw.getGraphList();
+
+        graphListPromise.then(function (response) {
+            return response.json();
+
+        }).then(function (json) {
+            var graphs = json.data;
+
+            graphs.forEach(function (graph) {
+                var li = document.createElement('li');
+                li.classList.add(classes.listItem.inactive);
+                li.innerHTML = graph;
+
+                li.addEventListener('click', function () {
+                    console.log("clicked: " + graph);
+                    if (true /*confirm('Are you sure that you want to change the graph?')*/) {
+                        var graphPromise = gwClient.getGraph('graph/' + graph);
+                        graphPromise.then(function (response) {
+                            var json = response.json();
+                            console.log(json);
+                            return json;
+                        }).then(function (json) {
+                            console.log(json.data);
+                            cy.destroy();
+                            props.cy = initNewGraph(json.data);
+                        });
+                    } else {
+                        // Do nothing!
+                    }
+                });
+                ul.appendChild(li);
+            });
         });
 
+
+        div.appendChild(ul);
         console.groupEnd();
+        return div;
     }
 
-    // Todo: Refactor!
+    function renderHeader() {
+        var header = d.createElement('h2');
+        header.innerHTML = props.header;
+        return header;
+    }
+
+    function renderMenu() {
+
+        // Create the div which contains graphingwikiBrowser navigation tabs.
+        var tabs = props.tabs;
+
+        // css classes
+        var classes = classNames.menu;
+
+        var divMenu = document.createElement('div');
+        divMenu.classList.add(classes.container);
+        divMenu.id = classes.container;
+        divMenu.classList.add(classes.container);
+        var divToggleMenu = d.createElement('div');
+        divToggleMenu.innerHTML = '#';
+        //divMenu.appendChild(divToggleMenu);
+        var menus = Object.keys(menuItems);
+        // console.log(menus);
+
+        menus.forEach(function (itemKey) {
+            var item = menuItems[itemKey];
+            var div = d.createElement('div');
+            div.setAttribute('id', "panel-menu__item__" + itemKey);
+            var divContent = d.createElement('div');
+            divContent.setAttribute('id', 'panel-menu__item__' + item.label.toLowerCase() + '-content');
+
+            // Bind an action to the click of the label.
+            div.addEventListener('click', function () {
+                item.onClick(item.label + " clicked");
+            });
+
+            // Show the content.
+            div.addEventListener('mouseover', function () {
+                divContent.classList.add('show');
+            });
+
+            // Hide the content.
+            div.addEventListener('mouseout', function () {
+                divContent.classList.remove('show');
+            });
+            div.classList.add('panel-menu-item');
+            divContent.classList.add('panel-menu-content');
+            div.innerHTML = item.label;
+
+            // Put the item content in to the html element.
+            // console.log(item);
+            divContent.appendChild(item.generateContent());
+            div.appendChild(divContent);
+            // divMenu.appendChild(createPopup(item.label));
+            divMenu.appendChild(div);
+        });
+
+        return divMenu;
+    }
+
+    function renderNavigation() {
+
+        // Create the div which contains graphingwikiBrowser navigation tabs.
+
+        var tabs = props.tabs;
+
+        // css classes
+        var classes = classNames.tab.nav;
+
+        var divNav = document.createElement('div');
+        divNav.classList.add(classes.container);
+
+        divNav.id = classes.container;
+
+        var links = Object.keys(tabs);
+
+        links.forEach(function (key) {
+
+            var link = tabs[key];
+            var divLink = d.createElement('div');
+            divLink.addEventListener('click', function (event) {
+                handleNavClick(key);
+            });
+
+            if (link.active) {
+                divLink.classList.add(classes.item.item);
+                divLink.classList.add(classes.item.active);
+
+            } else {
+                divLink.classList.add(classes.item.item);
+
+            }
+
+            divLink.innerHTML = link.label;
+
+            // Fixme: clean the implementation!
+            divLink.setAttribute('id', "nav-item-" + link.label.toLowerCase());
+            divNav.appendChild(divLink);
+        });
+
+
+        return divNav;
+    }
+
+    function renderPanel() {
+        var divTabContainer = d.getElementById(classNames.tab.container);
+
+        var divPanel = d.createElement('div');
+
+        divPanel.setAttribute('id', classNames.panel.container);
+        divPanel.classList.add(classNames.panel.container);
+
+        var menu = renderMenu();
+        var tabNav = renderNavigation();
+        var tabs = renderTabs();
+
+        divPanel.appendChild(menu);
+        divPanel.appendChild(tabNav);
+        divPanel.appendChild(tabs);
+
+        return divPanel;
+    }
+
     function renderStylesContent() {
         /*
          * Implement style tab rendering here
@@ -931,6 +1259,8 @@ var graphingwikiBrowser = (function (gwClient, cy) {
          active: false,
          styles: [
          {
+
+
          categoryName: "category 1",
          data: "data for 1"
          },
@@ -1123,147 +1453,10 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         return div;
     }
 
-    function testRenderStylesContent(testState) {
-// set context for tests
-
-        setProps(testState, 'all');
-        handleNavClick('styles');
-        var stylesContent = renderStylesContent();
-        QUnit.test("Rendering the graphs tab", function (assert) {
-            assert.equal(stylesContent.id, "styles-content", "renderStylesContent() returns div with proper id");
-        });
-    }
-
-    function handleNavClick(keyToActivate) {
-
-        var tabs = props.tabs;
-        var navItemClasses = classNames.tab.nav.item;
-        // toggle all navlink classes to inactive
-        var links = Object.keys(tabs);
-        links.forEach(function (key) {
-            tabs[key].active = false;
-            d.getElementById("nav-item-" + key).classList.remove(navItemClasses.active);
-        });
-
-        // activate clicked navlink
-        tabs[keyToActivate].active = true;
-        d.getElementById("nav-item-" + keyToActivate).classList.add(navItemClasses.active);
-        var divTabContainer = d.getElementById(classNames.tab.container);
-        console.log(divTabContainer);
-        updateTabs();
-    }
-
-    function testHandleNavClick(testState) {
-        setProps(testState, 'all');
-
-        function printTabs() {
-            var elements = props.tabs.elements.active;
-            var graphs = props.tabs.graphs.active;
-            var styles = props.tabs.styles.active;
-            console.log("Activity status");
-            console.log("Elements: " + elements);
-            console.log("Graphs: " + graphs);
-            console.log("Styles: " + styles);
-        }
-
-        printTabs();
-
-        QUnit.test("Initial states of graphingwikiBrowser activity is ok.", function (assert) {
-            assert.deepEqual(props.tabs.elements.active, false);
-            assert.deepEqual(props.tabs.graphs.active, false);
-            assert.deepEqual(props.tabs.styles.active, true);
-        });
-
-    }
-
-    function renderNavigation() {
-
-        // Create the div which contains graphingwikiBrowser navigation tabs.
-
-
-        var tabs = props.tabs;
-
-        // css classes
-        var classes = classNames.tab.nav;
-
-        var divNav = document.createElement('div');
-        divNav.classList.add(classes.container);
-
-        divNav.id = classes.container;
-
-        var links = Object.keys(tabs);
-
-        links.forEach(function (key) {
-
-            var link = tabs[key];
-            var divLink = d.createElement('div');
-            divLink.addEventListener('click', function (event) {
-                handleNavClick(key);
-            });
-
-            if (link.active) {
-                divLink.classList.add(classes.item.item);
-                divLink.classList.add(classes.item.active);
-
-            } else {
-                divLink.classList.add(classes.item.item);
-
-            }
-
-            divLink.innerHTML = link.label;
-            divLink.setAttribute('id', "nav-item-" + link.label.toLowerCase());
-            divNav.appendChild(divLink);
-        });
-
-
-        return divNav;
-    }
-
-    function updateTabs() {
-
-        var divTabContainer = d.getElementById(classNames.tab.container);
-        console.log(divTabContainer);
-
-        var panelContainer = d.getElementById('panel-container');
-        console.log(panelContainer);
-
-        var childsToRemove = divTabContainer.childNodes;
-
-        childsToRemove.forEach(function (child) {
-            divTabContainer.remove(child);
-        });
-
-        var tabsContent = renderTabs();
-        panelContainer.appendChild(tabsContent);
-    }
-
-    function renderPanel() {
-        var divTabContainer = d.getElementById(classNames.tab.container);
-
-        console.log(divTabContainer);
-
-        var divPanel = d.createElement('div');
-
-        divPanel.setAttribute('id', classNames.panel.container);
-        divPanel.classList.add(classNames.panel.container);
-
-        var menu = renderMenu();
-        var tabNav = renderNavigation();
-        var tabs = renderTabs();
-
-        console.debug(menu);
-        console.debug(tabNav);
-        console.debug(tabs);
-
-
-        divPanel.appendChild(menu);
-        divPanel.appendChild(tabNav);
-        divPanel.appendChild(tabs);
-
-        return divPanel;
-    }
-
     function renderTabs() {
+        /*
+         * Returns the container for tabs in the side panel
+         */
 
         var tabs = props.tabs;
 
@@ -1282,66 +1475,10 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             divContent.appendChild(renderStylesContent());
         }
 
-        console.log(divContent);
         return divContent;
     }
 
-    function testRenderTabs() {
-        setProps(testState, 'all');
-        var tabs = renderTabs();
-        console.log(tabs);
-        QUnit.test("RenderTabs()", function (assert) {
-            assert.ok(tabs, "happening");
-        });
-    }
-
-    function setProps(updatedProps, selector) {
-        /**
-         * Update props
-         *
-         */
-
-        if (selector === "all") {
-            props = updatedProps;
-        } else {
-            props[selector] = updatedProps;
-        }
-    }
-
-    function renderHeader() {
-        var header = d.createElement('h2');
-        header.innerHTML = props.header;
-        return header;
-    }
-
-    function render() {
-        var content = props.tabs;
-
-        var appContainer = d.getElementById(props.appContainerId);
-
-        var headerContainer = d.createElement('div');
-        headerContainer.setAttribute('id', "header-container");
-        headerContainer.classList.add("header-container");
-
-        var contentContainer = d.createElement('div');
-        contentContainer.setAttribute('id', props.contentContainerId);
-        contentContainer.classList.add("content-container");
-
-        var graphContainer = d.createElement('div');
-        graphContainer.setAttribute('id', props.graphContainerId);
-        graphContainer.classList.add("graph-container");
-
-        headerContainer.appendChild(renderHeader());
-        contentContainer.appendChild(renderPanel());
-        contentContainer.appendChild(graphContainer);
-
-        appContainer.appendChild(headerContainer);
-        appContainer.appendChild(contentContainer);
-
-        // Init cytoscape and assign the initial instance to props
-        props.cy = initCytoscape();
-    }
-
+    /* ---------- Tests ---------- */
 
     function tests() {
         var stateForTests = testState;
@@ -1369,6 +1506,121 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         })
     }
 
+    function testCytoscapeIntegrationInit(testState) {
+        setProps(testState, 'all');
+        QUnit.test("Cytoscape container initialised", function (assert) {
+            assert.deepEqual(props.cy.container().id, "cy", "cy container id = 'cy'");
+            assert.ok(props.cy.container().classList.contains("graph-container"), "cy container has class 'graph-container'");
+        });
+    }
+
+    function testGraphingWikiClientInit(testState) {
+        setProps(testState, 'all');
+        var moduleName = props.gw.getModuleName();
+        QUnit.test("Test GraphingWikiClientInit", function (assert) {
+            assert.equal(moduleName, "GraphingWiki client", "gwClient is initialized correctly.");
+        });
+
+    }
+
+    function testHandleNavClick(testState) {
+        setProps(testState, 'all');
+
+        function printTabs() {
+            var elements = props.tabs.elements.active;
+            var graphs = props.tabs.graphs.active;
+            var styles = props.tabs.styles.active;
+            console.log("Activity status");
+            console.log("Elements: " + elements);
+            console.log("Graphs: " + graphs);
+            console.log("Styles: " + styles);
+        }
+
+        printTabs();
+
+        QUnit.test("Initial states of graphingwikiBrowser activity is ok.", function (assert) {
+            assert.deepEqual(props.tabs.elements.active, false);
+            assert.deepEqual(props.tabs.graphs.active, false);
+            assert.deepEqual(props.tabs.styles.active, true);
+        });
+
+    }
+
+    function testRenderElementsContent(testState) {
+// set context for tests
+        console.group("testRenderStylesContent()");
+        setProps(testState, 'all');
+        var elementsContent = renderElementsContent();
+        QUnit.test("Rendering the elements tab", function (assert) {
+            assert.equal(elementsContent.id, "elements-content", "renderElementsContent() returns div with proper id");
+        });
+
+        console.groupEnd();
+    }
+
+    function testRenderMenu(testState) {
+        setProps(testState, 'all');
+        var classes = classNames.menu;
+        var menuContainer = renderMenu();
+        var childs = menuContainer.childNodes;
+        var childsHaveCorrectIds = true;
+
+
+        childs.forEach(function (element) {
+            var starts = element.id.startsWith("panel-menu__item__");
+            childsHaveCorrectIds = childsHaveCorrectIds && starts;
+        });
+
+        QUnit.test("renderMenu() tests", function (assert) {
+            assert.ok(true, "Executes");
+            assert.equal(
+                menuContainer.id, classes.container,
+                "Returns div container with correct id.");
+            assert.ok(childsHaveCorrectIds, "Container childs have correct ids.");
+        });
+    }
+
+    function testRenderGraphsContent(testState) {
+// set context for tests
+        console.group("testRenderGraphsContent()");
+        setProps(testState, 'all');
+        var classes = classNames.tab.graph;
+        var graphsContent = renderGraphsContent();
+        var firstChild = graphsContent.childNodes[0];
+        QUnit.test("Rendering the graphs tab", function (assert) {
+            assert.equal(graphsContent.id, classes.container, "renderGraphsContent() returns div with proper id");
+            assert.equal(firstChild.tagName, "UL", "renderGraphsContent() first child is a list element");
+        });
+
+
+        console.groupEnd();
+    }
+
+    function testRenderStylesContent(testState) {
+// set context for tests
+
+        setProps(testState, 'all');
+        handleNavClick('styles');
+        var stylesContent = renderStylesContent();
+        QUnit.test("Rendering the graphs tab", function (assert) {
+            assert.equal(stylesContent.id, "styles-content", "renderStylesContent() returns div with proper id");
+        });
+    }
+
+    function testRenderTabs() {
+        setProps(testState, 'all');
+        var tabs = renderTabs();
+        QUnit.test("RenderTabs()", function (assert) {
+            assert.ok(tabs, "happening");
+        });
+    }
+
+
+    /* ---------- Public methods ---------- */
+
+    /*
+     *   Todo: do just start method?
+     */
 
     return {
 

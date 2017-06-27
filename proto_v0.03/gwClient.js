@@ -91,7 +91,7 @@ var gwClient = (function () {
         console.debug(requestUrl);
         console.debug(nodeRequest);
         console.groupEnd();
-        return fetch(nodeRequest).then(function (response) { return validateResponse(response); });
+        return fetch(nodeRequest);
     }
 
     function fetchGraphList() {

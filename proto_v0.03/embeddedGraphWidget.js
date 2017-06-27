@@ -447,10 +447,6 @@ var configs = {
 
 gwClient.setConfigs(configs);
 
-function categoryList(categories, styles) {
-
-}
-
 function updateCategories(newCategories) {
     /*
      when: A new node is loaded.
@@ -493,27 +489,8 @@ var inSearch = document.createElement('input');
 
 inSearch.setAttribute('type', 'input');
 
-// Todo: refactor!
-/* When the user clicks on the button,
- toggle between hiding and showing the dropdown content */
-function toggleDropdown() {
-    document.getElementById("myDropdown").classList.toggle("show");
-}
 
-// Close the dropdown if the user clicks outside of it
-window.onclick = function (event) {
-    if (!event.target.matches('.dropbtn')) {
 
-        var dropdowns = document.getElementsByClassName("dropdown-content");
-        var i;
-        for (i = 0; i < dropdowns.length; i++) {
-            var openDropdown = dropdowns[i];
-            if (openDropdown.classList.contains('show')) {
-                openDropdown.classList.remove('show');
-            }
-        }
-    }
-}
 
 console.log(state.cy);
 
