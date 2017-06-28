@@ -6,11 +6,12 @@ GraphingWikiBrowser is an extension for [GraphingWiki ](https://github.com/graph
 
 ### Client
 
-* `<div id="graph-browser"/>` - create div for the app.
-* `<script src="cytoscape.js"/>` - The graphing library used.
-* `<script src="cola.js"/>` - Cola provides the dynamic layout.
-* `<script src="cytoscape-cola.js"/>` - Cytoscape wrappings for cola.
-* `<script src="graphBrowser.js"/>` - Include the app into the page where to use it.
+* `<div id="app-container"/>` - create div for the app.
+* `<script src="js/cytoscape.js"/>` - The graphing library used.
+* `<script src="js/cola.js"/>` - Cola provides the dynamic layout.
+* `<script src="js/cytoscape-cola.js"/>` - Cytoscape wrappings for cola.
+* `<script src="js/gwClient.js"/>` - Cytoscape wrappings for cola.
+* `<script src="js/graphBrowser.js"/>` - Include the app into the page where to use it.
 
 ### Server
 
