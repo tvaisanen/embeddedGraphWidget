@@ -34,7 +34,7 @@
     height: auto;
     background-color: #f7fcfe;
     word-wrap: break-word;
-
+    overflow: auto;
     border-bottom-left-radius: 5px;
     border-right-style: solid;
     border-width: 1px;
@@ -43,8 +43,7 @@
 
 
 .panel-tabs{
-    overflow: auto;
-    height: inherit;
+
 
 }
 

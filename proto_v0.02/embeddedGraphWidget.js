@@ -396,7 +396,7 @@ cy.on('tap', 'node', function (evt) {
 
 
 var state = {
-    containerId: "graphingwikiBrowser",
+    containerId: "panel",
     editMode: false,
     gw: gwClient,
     cy: cy,

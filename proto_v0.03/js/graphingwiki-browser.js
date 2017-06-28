@@ -63,37 +63,37 @@ function testCy(containerElement) {
             {selector: 'edge.line-style-dotted', style: {'line-style': 'dotted'}},
             {selector: 'edge.line-style-dashed', style: {'line-style': 'dashed'}},
 
-            {selector: 'edge.width-0', style: {'width': 0}},
-            {selector: 'edge.width-1', style: {'width': 1}},
-            {selector: 'edge.width-2', style: {'width': 2}},
-            {selector: 'edge.width-3', style: {'width': 3}},
-            {selector: 'edge.width-4', style: {'width': 4}},
-            {selector: 'edge.width-5', style: {'width': 5}},
-            {selector: 'edge.width-6', style: {'width': 6}},
-            {selector: 'edge.width-7', style: {'width': 7}},
-            {selector: 'edge.width-8', style: {'width': 8}},
-            {selector: 'edge.width-9', style: {'width': 9}},
-            {selector: 'edge.width-10', style: {'width': 10}},
-            {selector: 'edge.width-11', style: {'width': 11}},
-            {selector: 'edge.width-12', style: {'width': 12}},
-            {selector: 'edge.width-13', style: {'width': 13}},
-            {selector: 'edge.width-14', style: {'width': 14}},
-            {selector: 'edge.width-15', style: {'width': 15}},
-            {selector: 'edge.width-16', style: {'width': 16}},
-            {selector: 'edge.width-17', style: {'width': 17}},
-            {selector: 'edge.width-18', style: {'width': 18}},
-            {selector: 'edge.width-19', style: {'width': 19}},
-            {selector: 'edge.width-20', style: {'width': 20}},
-            {selector: 'edge.width-21', style: {'width': 21}},
-            {selector: 'edge.width-22', style: {'width': 22}},
-            {selector: 'edge.width-23', style: {'width': 23}},
-            {selector: 'edge.width-24', style: {'width': 24}},
-            {selector: 'edge.width-25', style: {'width': 25}},
-            {selector: 'edge.width-26', style: {'width': 26}},
-            {selector: 'edge.width-27', style: {'width': 27}},
-            {selector: 'edge.width-28', style: {'width': 28}},
-            {selector: 'edge.width-29', style: {'width': 29}},
-            {selector: 'edge.width-30', style: {'width': 30}},
+            {selector: 'edge.line-width-0', style: {'line-width': 0}},
+            {selector: 'edge.line-width-1', style: {'line-width': 1}},
+            {selector: 'edge.line-width-2', style: {'line-width': 2}},
+            {selector: 'edge.line-width-3', style: {'line-width': 3}},
+            {selector: 'edge.line-width-4', style: {'line-width': 4}},
+            {selector: 'edge.line-width-5', style: {'line-width': 5}},
+            {selector: 'edge.line-width-6', style: {'line-width': 6}},
+            {selector: 'edge.line-width-7', style: {'line-width': 7}},
+            {selector: 'edge.line-width-8', style: {'line-width': 8}},
+            {selector: 'edge.line-width-9', style: {'line-width': 9}},
+            {selector: 'edge.line-width-10', style: {'line-width': 10}},
+            {selector: 'edge.line-width-11', style: {'line-width': 11}},
+            {selector: 'edge.line-width-12', style: {'line-width': 12}},
+            {selector: 'edge.line-width-13', style: {'line-width': 13}},
+            {selector: 'edge.line-width-14', style: {'line-width': 14}},
+            {selector: 'edge.line-width-15', style: {'line-width': 15}},
+            {selector: 'edge.line-width-16', style: {'line-width': 16}},
+            {selector: 'edge.line-width-17', style: {'line-width': 17}},
+            {selector: 'edge.line-width-18', style: {'line-width': 18}},
+            {selector: 'edge.line-width-19', style: {'line-width': 19}},
+            {selector: 'edge.line-width-20', style: {'line-width': 20}},
+            {selector: 'edge.line-width-21', style: {'line-width': 21}},
+            {selector: 'edge.line-width-22', style: {'line-width': 22}},
+            {selector: 'edge.line-width-23', style: {'line-width': 23}},
+            {selector: 'edge.line-width-24', style: {'line-width': 24}},
+            {selector: 'edge.line-width-25', style: {'line-width': 25}},
+            {selector: 'edge.line-width-26', style: {'line-width': 26}},
+            {selector: 'edge.line-width-27', style: {'line-width': 27}},
+            {selector: 'edge.line-width-28', style: {'line-width': 28}},
+            {selector: 'edge.line-width-29', style: {'line-width': 29}},
+            {selector: 'edge.line-width-30', style: {'width': 30}},
 
             {selector: 'edge.arrow-shape-tee', style: {'target-arrow-shape': 'tee'}},
             {selector: 'edge.arrow-shape-triangle', style: {'target-arrow-shape': 'triangle'}},
@@ -105,6 +105,8 @@ function testCy(containerElement) {
             {selector: 'edge.arrow-shape-diamond', style: {'target-arrow-shape': 'diamond'}},
             {selector: 'edge.arrow-shape-none', style: {'target-arrow-shape': 'none'}},
 
+            {selector: 'edge.line-color-grey', style: {'line-color': 'grey', 'arrow-color': 'grey'}},
+            {selector: 'edge.line-color-black', style: {'line-color': 'black', 'arrow-color': 'black'}},
             {selector: 'edge.line-color-red', style: {'line-color': 'red', 'arrow-color': 'red'}},
             {selector: 'edge.line-color-green', style: {'line-color': 'green', 'arrow-color': 'green'}},
             {selector: 'edge.line-color-orange', style: {'line-color': 'orange', 'arrow-color': 'orange'}},
@@ -112,27 +114,6 @@ function testCy(containerElement) {
             {selector: 'edge.line-color-cyan', style: {'line-color': 'cyan', 'arrow-color': 'cyan'}},
             {selector: 'edge.line-color-blue', style: {'line-color': 'blue', 'arrow-color': 'blue'}},
 
-
-            {
-                selector: 'edge.foo',
-                style: {
-                    'curve-style': 'bezier',
-                }
-            },
-
-            {
-                selector: 'edge._notype',
-                style: {
-                    'curve-style': 'bezier',
-                }
-            },
-
-            {
-                selector: 'edge.gwikicategory',
-                style: {
-                    'curve-style': 'bezier',
-                }
-            },
 
             {
                 selector: 'edge.hover-on',
@@ -169,9 +150,10 @@ var testState = {
     gw: gwClient,
     elementStyles: {
         generic: [
-            'width-8',
+            'line-width-10',
+            'arrow-shape-triangle',
+            'line-color-grey'
         ]
-
     },
     tabs: {
         graphs: {
@@ -280,15 +262,7 @@ var lineStyleOptions = {
 var lines = ['solid', 'dotted', 'dashed'];
 var arrows = ['tee', 'triangle', 'triangle-tee', 'triangle-cross', 'triangle-backcurve', 'square', 'circle', 'diamond', 'none'];
 var colors = ['red', 'green', 'orange', 'yellow', 'cyan', 'blue'];
-var categoryStyles = {
-    default: {
-        'line-style': 'solid',
-        'line-color': 'black',
-        'line-width': '8px',
-        'arrow-shape': 'triangle'
-    }
 
-};
 
 var graphingwikiBrowser = (function (gwClient, cy) {
 
@@ -297,7 +271,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
     var props;
     var classNames = {
-        container: 'CONTAINER',
+        container: 'app-container',
         graph: {
             container: 'graph-container'
         },
@@ -393,6 +367,8 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             },
             generateContent: menuItemSave
         },
+
+        /*
         settings: {
             label: "Settings",
             content: "here might be some options to choose from",
@@ -408,7 +384,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                 console.log('clicked: ' + this.label);
             },
             generateContent: generateContent
-        }
+        }*/
     };
 
     function createNewNode(id) {
@@ -467,7 +443,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
         function createNewNode(id) {
 
-             var cy = props.cy;
+            var cy = props.cy;
 
             try {
                 // Create new node.
@@ -681,11 +657,9 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         //Get data for the clicked node.
         var nodePromise = gw.getNodeData(nodeId);
 
-        console.debug(nodePromise);
         nodePromise.then(function (response) {
             return response.json();
         }).then(function (json) {
-                var node = json.data;
                 /*
                  *  node = {
                  *      in: Object,
@@ -693,6 +667,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                  *      meta: Object
                  *  }
                  * */
+                var node = json.data;
 
                 try {
                     // If node has outgoing edges refresh the categories
@@ -856,19 +831,13 @@ var graphingwikiBrowser = (function (gwClient, cy) {
          * */
         var cyContainer = d.getElementById('cy');
         cy = testCy(cyContainer);
-        /*cytoscape({
-         container: cyContainer,
-         elements: [{group: 'nodes', data: {id: 'introduction'}}],
-         style: [],
-         layout: {name: 'preset'},
-         });*/
         cy.on('tap', 'node', function (evt) {
             var node = evt.target;
             var nodeId = node.id();
             expandNode(nodeId);
         });
 
-        return cy;
+        props.cy = cy;
     }
 
     function handleNavClick(keyToActivate) {
@@ -923,22 +892,39 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         }
     }
 
-    function render() {
-        var content = props.tabs;
-
-        var appContainer = d.getElementById(props.appContainerId);
-
-        var headerContainer = d.createElement('div');
-        headerContainer.setAttribute('id', "header-container");
-        headerContainer.classList.add("header-container");
-
+    function renderContentContainer() {
         var contentContainer = d.createElement('div');
         contentContainer.setAttribute('id', props.contentContainerId);
         contentContainer.classList.add("content-container");
+        contentContainer.appendChild(renderPanel());
+        contentContainer.appendChild(renderGraphColumn());
+        return contentContainer;
+    }
 
+    function renderHeaderContainer() {
+        var headerContainer = d.createElement('div');
+        headerContainer.setAttribute('id', "header-container");
+        headerContainer.classList.add("header-container");
+        headerContainer.appendChild(renderHeader());
+        return headerContainer;
+    }
+
+    function render() {
+
+        var appContainer = d.getElementById(props.appContainerId);
+        console.log(props.appContainerId);
+        console.log(props);
+        console.log(window);
+        appContainer.appendChild(renderHeaderContainer());
+        appContainer.appendChild(renderContentContainer());
+
+    }
+
+
+    function renderGraphColumn() {
         var graphColumnContainer = d.createElement('div');
-        contentContainer.setAttribute('id', 'graph-column-container');
-        contentContainer.classList.add("graph-column");
+        graphColumnContainer.setAttribute('id', 'graph-column-container');
+        graphColumnContainer.classList.add("graph-column");
 
         var graphContainer = d.createElement('div');
 
@@ -950,15 +936,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         graphColumnContainer.appendChild(graphContainer);
         graphColumnContainer.appendChild(textPrevievContainer);
 
-        headerContainer.appendChild(renderHeader());
-        contentContainer.appendChild(renderPanel());
-        contentContainer.appendChild(graphColumnContainer);
-
-        appContainer.appendChild(headerContainer);
-        appContainer.appendChild(contentContainer);
-
-        // Init cytoscape and assign the initial instance to props
-        props.cy = initCytoscape();
+        return graphColumnContainer;
     }
 
     function renderElementsContent() {
@@ -1344,12 +1322,13 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
             var categoryElements = cy.elements(baseClass + '.' + category);
             categoryElements.forEach(function (e) {
-                console.debug(e);
                 e.toggleClass(parameter + '-' + value);
                 console.debug(e);
 
                 try {
+                    console.log(props.elementStyles[category]);
                     props.elementStyles[category][selector] = value;
+                    console.log(props.elementStyles[category]);
 
                 } catch (e) {
                     props.elementStyles[category] = {};
@@ -1598,7 +1577,6 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         QUnit.test("Test GraphingWikiClientInit", function (assert) {
             assert.equal(moduleName, "GraphingWiki client", "gwClient is initialized correctly.");
         });
-
     }
 
     function testHandleNavClick(testState) {
@@ -1609,6 +1587,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             var graphs = props.tabs.graphs.active;
             var styles = props.tabs.styles.active;
             console.log("Activity status");
+            console.log("Elements: " + elements);
             console.log("Elements: " + elements);
             console.log("Graphs: " + graphs);
             console.log("Styles: " + styles);
@@ -1621,7 +1600,6 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             assert.deepEqual(props.tabs.graphs.active, false);
             assert.deepEqual(props.tabs.styles.active, true);
         });
-
     }
 
     function testRenderElementsContent(testState) {
@@ -1702,7 +1680,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
     return {
 
-        render: function (props) {
+        start: function (props) {
             setProps(props, "all");
             render();
             initCytoscape();
@@ -1744,7 +1722,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
 })();
 
-graphingwikiBrowser.render(testState);
+graphingwikiBrowser.start(testState);
 
 
 
