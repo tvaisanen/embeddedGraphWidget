@@ -1,6 +1,12 @@
-# GraphingWikiBrowser  v0.02
+# GraphingWikiBrowser  v0.03
 
 GraphingWikiBrowser is an extension for [GraphingWiki ](https://github.com/graphingwiki/graphingwiki). Providing visual tool for browsing the wiki. The browser can also input data to MoinMoin and store graphs to be viewed later or embedded to a wiki page.
+
+### Features
+
+* browse visually
+* preview text
+* generate new pages and connections
 
 ## Initialization
 
@@ -31,8 +37,9 @@ run manually by calling `panel.test()`. The test state is currently embedded as 
 ## Project layout
 
     proto_v0.01/
-        ...                 # Contains files for the first prototype.
     proto_v0.02/
+        ...                 
+    proto_v0.03/
         Planning/           # Design etc.
         devProxyServer.py   # Development proxy server.
         development.db      # Python shelve db for development.

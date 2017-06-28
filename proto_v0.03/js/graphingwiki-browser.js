@@ -181,20 +181,7 @@ var testState = {
 // initialize download image link
 
 
-function initNewGraph(data) {
-    cy = cytoscape({
-        container: document.getElementById('cy'),
-        elements: data.elements,
-        style: data.style,
-        layout: {name: 'preset'},
-    });
-    cy.on('tap', 'node', function (evt) {
-        var node = evt.target;
-        var nodeId = node.id();
-        expandNode(cy, nodeId);
-    });
-    return cy;
-}
+
 
 function unorderedListFromArray(array, mouseOver, mouseOut, toggleVisibility, onClick, doubleClick) {
     /*
@@ -675,8 +662,16 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                     var newCategoriesOut = [];
 
                     if (nodeHasOutgoingEdges) {
-                        newCategoriesOut = Object.keys(node.out);
-                        updateCategories(newCategoriesOut);
+                        try {
+                            newCategoriesOut = Object.keys(node.out);
+                            updateCategories(newCategoriesOut);
+                        } catch (e) {
+                            console.groupCollapsed("Exception raised while updating categories in expandNode()");
+                            console.warn(e);
+                            console.info("%cNode", "color:red;");
+                            console.info(node);
+                            console.groupEnd();
+                        }
                     }
 
                     // Iterate the outgoing edge categories.
@@ -712,6 +707,22 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
             }
         );
+    }
+
+    function initNewGraph(data) {
+    cy = cytoscape({
+            container: document.getElementById('cy'),
+            elements: data.elements,
+            style: data.style,
+            layout: {name: 'preset'},
+        });
+        cy.on('tap', 'node', function (evt) {
+            var node = evt.target;
+            var nodeId = node.id();
+            expandNode(nodeId);
+        });
+        props.cy = cy;
+        return cy;
     }
 
     function setAndRunLayout() {
@@ -834,6 +845,10 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         cy.on('tap', 'node', function (evt) {
             var node = evt.target;
             var nodeId = node.id();
+            console.groupCollapsed('Debug expandNode parameter');
+            console.debug(node);
+            console.debug(nodeId);
+            console.groupEnd();
             expandNode(nodeId);
         });
 

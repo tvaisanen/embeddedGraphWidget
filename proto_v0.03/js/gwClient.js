@@ -87,12 +87,12 @@ var gwClient = (function () {
             }),
             method: 'GET'
         });
-        /*
+
         console.groupCollapsed('Debugging gwClient.fetchNode()');
         console.debug(requestUrl);
         console.debug(nodeRequest);
         console.groupEnd();
-        */
+
         return fetch(nodeRequest);
     }
 
