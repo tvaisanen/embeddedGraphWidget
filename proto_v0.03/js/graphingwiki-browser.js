@@ -935,7 +935,6 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
     }
 
-
     function renderGraphColumn() {
         var graphColumnContainer = d.createElement('div');
         graphColumnContainer.setAttribute('id', 'graph-column-container');
@@ -1063,23 +1062,35 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             }
         }
 
-        function loadPageText(param) {
+        function updateTextPreview(param) {
             console.log("load page text");
             var textPromise = gw.getPageText(param);
-            var textPrevievContainer = d.getElementById("text-preview");
-            var textContainerHeader = d.getElementById("text-preview__header");
-            var textContent = d.getElementById("text-preview__content");
+
+            updateTextPreviewHeader(param);
+            var textPreviewContent = d.getElementById(classNames.text.content);
             var linkToSite = d.createElement('a');
+
             linkToSite.innerHTML = param;
             linkToSite.setAttribute('href', "http://localhost/" + param);
             textPromise.then(function (response) {
                 return response.json();
             }).then(function (json) {
-                var text = json.data;
-                textContent.innerHTML = text;
+                textPreviewContent.innerHTML = json.data;
+                return json.data;
             });
-            textContainerHeader.appendChild(linkToSite);
-            textContent.innerHTML = param;
+        }
+
+        function updateTextPreviewHeader(pagename){
+            var textContainerHeader = d.getElementById(classNames.text.header);
+            console.log(textContainerHeader.childNodes[0]);
+            var spHeader = d.createElement('span');
+            spHeader.setAttribute('id', 'header-text');
+            spHeader.innerHTML = pagename;
+            textContainerHeader.appendChild(spHeader);
+            console.log(textContainerHeader.childNodes[0]);
+            console.log(textContainerHeader.childNodes[0]);
+            console.log(textContainerHeader.childElementCount);
+            textContainerHeader.childNodes['header-text']
         }
 
         function mouseOver(param) {
@@ -1116,7 +1127,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         var hdEdges = d.createElement('h2');
         hdEdges.innerHTML = "Links";
 
-        var ulNodes = unorderedListFromArray(nodes, mouseOver, mouseOut, toggleVisibility, loadPageText, doubleClick);
+        var ulNodes = unorderedListFromArray(nodes, mouseOver, mouseOut, toggleVisibility, updateTextPreview, doubleClick);
         var ulEdges = unorderedListFromArray(edges, mouseOver, mouseOut, toggleVisibility);
 
         div.setAttribute('id', "elements-list");
