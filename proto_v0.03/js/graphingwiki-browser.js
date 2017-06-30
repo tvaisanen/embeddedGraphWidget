@@ -181,8 +181,6 @@ var testState = {
 // initialize download image link
 
 
-
-
 function unorderedListFromArray(array, mouseOver, mouseOut, toggleVisibility, onClick, doubleClick) {
     /*
      * Todo: add support for the array containing evenListener -methods
@@ -356,51 +354,103 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         },
 
         /*
-        settings: {
-            label: "Settings",
-            content: "here might be some options to choose from",
-            onClick: function () {
-                console.log('clicked: ' + this.label);
-            },
-            generateContent: generateContent
-        },
-        moin: {
-            label: "Moin pages",
-            content: "list moin pages here",
-            onClick: function () {
-                console.log('clicked: ' + this.label);
-            },
-            generateContent: generateContent
-        }*/
+         settings: {
+         label: "Settings",
+         content: "here might be some options to choose from",
+         onClick: function () {
+         console.log('clicked: ' + this.label);
+         },
+         generateContent: generateContent
+         },
+         moin: {
+         label: "Moin pages",
+         content: "list moin pages here",
+         onClick: function () {
+         console.log('clicked: ' + this.label);
+         },
+         generateContent: generateContent
+         }*/
     };
 
-    function createNewNode(id) {
+    /** @function createNewNode
+     *  Create new node and add it to the given cytoscape instance.
+     *  @param {string} id - ID for the node.
+     *  @param {Object} cy - Cytoscape instance
+     * */
+    function createNewNode(id, cy) {
+        try {
+            var newNode = {
+                group: 'nodes',
+                data: {
+                    id: id
+                }
+            };
 
-        // Create new node.
-        var newNode = {
-            group: 'nodes',
-            data: {
-                id: id
+            try {
+                // Add the new node to cy.elements if node does not already exist.
+                if (cy.getElementById(newNode).isNode()) {
+                    console.log(newNode + 'is already node');
+                    return false;
+                } else {
+                    console.log('see MEE?');
+                    cy.add(newNode);
+                }
+
+            } catch (e) {
+                console.groupCollapsed("Exception raised by cy.add()");
+                console.warn(e);
+                console.info("If the node already exists there's no problem. This scenario needs to be taken into consideration.");
+                console.groupEnd();
+                return false;
             }
-        };
 
-        // Add the new node to cy.elements.
-        props.cy.add(newNode);
-    }
-
-    function getEdgeCategories() {
-        var categories = props.tabs.styles.categories;
-        if (categories === 'undefined') {
-            return []
-        } else {
-            return categories;
+        } catch (e) {
+            console.groupCollapsed("Exception raised by graphingwikiBrowser.createNewNode(id)");
+            console.warn(e);
+            console.debug("Parameters passed:");
+            console.debug("id:");
+            console.debug(id);
+            console.groupEnd();
+            return false;
         }
     }
 
-    function elementHasOneOfCategories(element) {
-        /*
-         *
-         * */
+    function testCreateNewNode() {
+        var cy = cytoscape({elements: [{group: 'nodes', data: {id: 'existingNode'}}]})
+        var existingNodeId = 'existingNode';
+        var newNodeId = 'newNode';
+        QUnit.test("Create new node.", function (assert) {
+            assert.ok(createNewNode(newNodeId, cy), "Return true upon creating new node");
+            assert.notOk(createNewNode(existingNodeId, cy), "Return false upon trying to creating new node with existing id.");
+        })
+    }
+
+    /** @function getEdgeCategories
+     *   Return an array of edge categories used in current graph.
+     */
+    function getEdgeCategories() {
+        try {
+            var categories = props.tabs.styles.categories;
+            if (categories === 'undefined') {
+                return []
+            } else {
+                return categories;
+            }
+        } catch (e) {
+            console.groupCollapsed("Exception raised by graphingwikiBrowser.getEdgeCategories()");
+            console.warn(e);
+            console.groupEnd();
+        }
+    }
+
+    /** @function elementHasOneOfCategories
+     *  Check if the given element has been assigned with existing
+     *  category style classes.
+     *  @param {Object} element - Cytoscape element
+     *  @param {Array} categories - Array of category names.
+     *  @return {Boolean} True if element have assigned classes.
+     */
+    function elementHasOneOfCategories(element, categories) {
         try {
             var values = [];
             var edgeDoesNotHaveAnyCategory = false;
@@ -412,46 +462,33 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                 edgeDoesNotHaveAnyCategory = edgeDoesNotHaveAnyCategory || b;
             });
             return edgeDoesNotHaveAnyCategory;
+
         } catch (e) {
-            console.groupCollapsed("Exception with elementHasOneOfCategories()");
-            console.info("Parameters passed:");
-            console.info("element: " + element);
-            console.info(element);
+            console.groupCollapsed("Exception raised by graphingwikiBrowser.elementHasOneOfCategories()");
             console.warn(e);
+            console.info("Parameters passed:");
+            console.info("element:");
+            console.info(element);
             console.groupEnd();
         }
     }
 
+    /** @function expandNode
+     *  Description
+     *  @param {String} nodeId - Id of the node to expand.
+     *
+     */
     function expandNode(nodeId) {
 
         cy = props.cy;
         gw = props.gw;
 
-
-        function createNewNode(id) {
-
-            var cy = props.cy;
-
-            try {
-                // Create new node.
-                var newNode = {
-                    group: 'nodes',
-                    data: {
-                        id: id
-                    }
-                };
-
-                // Add the new node to cy.elements.
-                cy.add(newNode);
-            } catch (e) {
-                console.groupCollapsed("Exception with createNewNode()");
-                console.warn(e);
-                console.info("Parameter passed:");
-                console.info("id: " + id);
-                console.groupEnd();
-            }
-        }
-
+        /** @function createNewEdge
+         *  Description
+         *  @param {String} sourceId- Id of the source node.
+         *  @param {String} targetId - Id of the target node.
+         *  @param {String} classForEdge - Style category for the edge.
+         */
         function createNewEdge(sourceId, targetId, classForEdge) {
 
             var cy = props.cy;
@@ -499,13 +536,21 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
         }
 
+        /** @function addClassToEdge
+         *  Description
+         *  @param {String} edgeId- Id of the edge.
+         *  @param {String} classForEdge - Style category for the edge.
+         */
         function addClassToEdge(edgeId, classToAdd) {
+
+            var categories = props.tabs.styles.categories;
+
             try {
                 // Get element reference to the edge with edgeId.
                 var edge = cy.getElementById(edgeId);
 
                 // Check if the edge does not have a category set.
-                var edgeDoesNotHaveAnyCategory = elementHasOneOfCategories(edge);
+                var edgeDoesNotHaveAnyCategory = elementHasOneOfCategories(edge, categories);
 
 
                 /*
@@ -539,6 +584,12 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             }
         }
 
+        /** @function createNodesAndEdgesBetween
+         *  Description
+         *  @param {String} sourceId- Id of the source node.
+         *  @param {String} targetId - Id of the target node.
+         *  @param {String} classForEdge - Style category for the edge.
+         */
         function createNodesAndEdgesBetween(sourceNodeId, targetNodeId, classForEdge) {
             try {
                 // Check if the source node already exists.
@@ -547,7 +598,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
                 // Create new node if the node does not exist yet.
                 if (sourceNodeDoNotExist) {
-                    createNewNode(sourceNodeId);
+                    createNewNode(sourceNodeId, cy);
                 }
 
                 // Check if the target node already exists.
@@ -555,7 +606,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
                 // Create new node if the node does not exist yet.
                 if (targetNodeDoNotExist) {
-                    createNewNode(targetNodeId);
+                    createNewNode(targetNodeId, cy);
                 }
 
                 // Create edge id. Use format 'sourceId_to_targetId'.
@@ -582,6 +633,12 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
         }
 
+        /** @function createNodesAndEdgesBetween
+         *  Description
+         *  @param {String} sourceNodeId- Id of the source node.
+         *  @param {Array} nodesToCreateEdges - Array of nodes?.
+         *  @param {String} category - Category for edges.
+         */
         function createEdgesToNodes(sourceNodeId, nodesToCreateEdges, category) {
 
             /*
@@ -605,12 +662,23 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             });
         }
 
+        /** @function createEdgesFromNodes
+         *  Description
+         *  @param {String} sourceNodeId- Id of the source node.
+         *  @param {Array} nodesToCreateEdges - Array of nodes?.
+         *  @param {String} category - Category for edges.
+         */
         function createEdgesFromNodes(targetNodeId, nodesFromCreateEdges, category) {
             nodesFromCreateEdges.forEach(function (sourceNodeId) {
                 createNodesAndEdgesBetween(sourceNodeId, targetNodeId, category);
             });
         }
 
+        /** @function updateCategories
+         *  Description
+         *  @param {Object} variable - Desc.
+         *  @return {Type} desc.
+         */
         function updateCategories(newCategories) {
             /*
              when: A new node is loaded.
@@ -709,8 +777,13 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         );
     }
 
+    /** @function initNewGraph
+     *  Description
+     *  @param {Object} variable - Desc.
+     *  @return {Type} desc.
+     */
     function initNewGraph(data) {
-    cy = cytoscape({
+        cy = cytoscape({
             container: document.getElementById('cy'),
             elements: data.elements,
             style: data.style,
@@ -725,11 +798,21 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         return cy;
     }
 
+    /** @function setAndRunLayout
+     *  Description
+     *  @param {Object} variable - Desc.
+     *  @return {Type} desc.
+     */
     function setAndRunLayout() {
         var layout = cy.makeLayout({name: "cola"});
         layout.run();
     }
 
+    /** @function generateContent
+     *  Description
+     *  @param {Object} variable - Desc.
+     *  @return {Type} desc.
+     */
     function generateContent() {
         "use strict";
         var div = d.createElement('div');
@@ -737,8 +820,14 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         return div;
     }
 
+    /** @function menuItemCreate
+     *  Description
+     *  @param {Object} variable - Desc.
+     *  @return {Type} desc.
+     */
     function menuItemCreate() {
         "use strict";
+        var cy = props.cy;
         var div = d.createElement('div');
         var inName = d.createElement('input');
         inName.setAttribute('id', 'input-graph-name');
@@ -754,7 +843,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                 return j;
             }).then(function (obj) {
                 console.log(obj);
-                createNewNode(inName.value);
+                createNewNode(inName.value, cy);
             });
         });
         var label = d.createElement('span');
@@ -767,6 +856,11 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         return div;
     }
 
+    /** @function menuItemSave
+     *  Description
+     *  @param {Object} variable - Desc.
+     *  @return {Type} desc.
+     */
     function menuItemSave() {
         "use strict";
         var cy = props.cy;
@@ -790,6 +884,11 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         return div;
     }
 
+    /** @function menuItemLayout
+     *  Description
+     *  @param {Object} variable - Desc.
+     *  @return {Type} desc.
+     */
     function menuItemLayout() {
         "use strict";
         var div = d.createElement('div');
@@ -819,6 +918,11 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         return div;
     }
 
+    /** @function downloadGraphPNG
+     *  Description
+     *  @param {Object} variable - Desc.
+     *  @return {Type} desc.
+     */
     function downloadGraphPNG() {
         var cy = props.cy;
         console.info('running downloadGraphPNG() -function');
@@ -834,6 +938,11 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         a.click()
     }
 
+    /** @function initCytoscape
+     *  Description
+     *  @param {Object} variable - Desc.
+     *  @return {Type} desc.
+     */
     function initCytoscape() {
         /*
          *   Return <div id="cy">
@@ -855,6 +964,11 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         props.cy = cy;
     }
 
+    /** @function handleNavClick
+     *  Description
+     *  @param {Object} variable - Desc.
+     *  @return {Type} desc.
+     */
     function handleNavClick(keyToActivate) {
 
         var tabs = props.tabs;
@@ -874,6 +988,11 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         updateTabs();
     }
 
+    /** @function updateTabs
+     *  Description
+     *  @param {Object} variable - Desc.
+     *  @return {Type} desc.
+     */
     function updateTabs() {
 
         /*
@@ -894,6 +1013,11 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         panelContainer.appendChild(tabsContent);
     }
 
+    /** @function setProps
+     *  Description
+     *  @param {Object} variable - Desc.
+     *  @return {Type} desc.
+     */
     function setProps(updatedProps, selector) {
         /**
          * Update props
@@ -907,6 +1031,11 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         }
     }
 
+    /** @function renderContentContainer
+     *  Description
+     *  @param {Object} variable - Desc.
+     *  @return {Type} desc.
+     */
     function renderContentContainer() {
         var contentContainer = d.createElement('div');
         contentContainer.setAttribute('id', props.contentContainerId);
@@ -916,6 +1045,11 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         return contentContainer;
     }
 
+    /** @function renderHeaderContainer
+     *  Description
+     *  @param {Object} variable - Desc.
+     *  @return {Type} desc.
+     */
     function renderHeaderContainer() {
         var headerContainer = d.createElement('div');
         headerContainer.setAttribute('id', "header-container");
@@ -924,6 +1058,11 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         return headerContainer;
     }
 
+    /** @function render
+     *  Description
+     *  @param {Object} variable - Desc.
+     *  @return {Type} desc.
+     */
     function render() {
 
         var appContainer = d.getElementById(props.appContainerId);
@@ -935,6 +1074,11 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
     }
 
+    /** @function renderGraphColumn
+     *  Description
+     *  @param {Object} variable - Desc.
+     *  @return {Type} desc.
+     */
     function renderGraphColumn() {
         var graphColumnContainer = d.createElement('div');
         graphColumnContainer.setAttribute('id', 'graph-column-container');
@@ -953,6 +1097,11 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         return graphColumnContainer;
     }
 
+    /** @function renderElementsContent
+     *  Description
+     *  @param {Object} variable - Desc.
+     *  @return {Type} desc.
+     */
     function renderElementsContent() {
         /*
          * Implement elements tab rendering here
@@ -970,6 +1119,11 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         return div;
     }
 
+    /** @function renderElementsfilter
+     *  Description
+     *  @param {Object} variable - Desc.
+     *  @return {Type} desc.
+     */
     function renderElementsFilter() {
         var div = d.createElement('div');
         var spanFilter = d.createElement('span');
@@ -1007,6 +1161,11 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         return div;
     }
 
+    /** @function renderElementsList
+     *  Description
+     *  @param {Object} variable - Desc.
+     *  @return {Type} desc.
+     */
     function renderElementsList() {
         var content = props.tabs.elements;
         var cy = props.cy;
@@ -1080,7 +1239,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             });
         }
 
-        function updateTextPreviewHeader(pagename){
+        function updateTextPreviewHeader(pagename) {
             var textContainerHeader = d.getElementById(classNames.text.header);
             console.log(textContainerHeader.childNodes[0]);
             var spHeader = d.createElement('span');
@@ -1138,6 +1297,11 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         return div;
     }
 
+    /** @function renderGraphsContent
+     *  Description
+     *  @param {Object} variable - Desc.
+     *  @return {Type} desc.
+     */
     function renderGraphsContent() {
         /*
          * Implement graphs tab rendering here
@@ -1190,12 +1354,22 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         return div;
     }
 
+    /** @function renderHeader
+     *  Description
+     *  @param {Object} variable - Desc.
+     *  @return {Type} desc.
+     */
     function renderHeader() {
         var header = d.createElement('h2');
         header.innerHTML = props.header;
         return header;
     }
 
+    /** @function renderMenu
+     *  Description
+     *  @param {Object} variable - Desc.
+     *  @return {Type} desc.
+     */
     function renderMenu() {
 
         // Create the div which contains graphingwikiBrowser navigation tabs.
@@ -1250,6 +1424,11 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         return divMenu;
     }
 
+    /** @function renderNavigation
+     *  Description
+     *  @param {Object} variable - Desc.
+     *  @return {Type} desc.
+     */
     function renderNavigation() {
 
         // Create the div which contains graphingwikiBrowser navigation tabs.
@@ -1294,6 +1473,11 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         return divNav;
     }
 
+    /** @function renderPanel
+     *  Description
+     *  @param {Object} variable - Desc.
+     *  @return {Type} desc.
+     */
     function renderPanel() {
         var divTabContainer = d.getElementById(classNames.tab.container);
 
@@ -1313,6 +1497,11 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         return divPanel;
     }
 
+    /** @function renderStylesContent
+     *  Description
+     *  @param {Object} variable - Desc.
+     *  @return {Type} desc.
+     */
     function renderStylesContent() {
         /*
          * Implement style tab rendering here
@@ -1517,6 +1706,11 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         return div;
     }
 
+    /** @function renderTabs
+     *  Description
+     *  @param {Object} variable - Desc.
+     *  @return {Type} desc.
+     */
     function renderTabs() {
         /*
          * Returns the container for tabs in the side panel
@@ -1542,6 +1736,11 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         return divContent;
     }
 
+    /** @function renderTextPreview
+     *  Description
+     *  @param {Object} variable - Desc.
+     *  @return {Type} desc.
+     */
     function renderTextPreview() {
         var divTextPreviewContainer = d.createElement('div');
         divTextPreviewContainer.classList.add(classNames.text.container);
@@ -1576,6 +1775,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         testRenderStylesContent(stateForTests);
         testRenderTabs(stateForTests);
         testRenderMenu(stateForTests);
+        testCreateNewNode();
         console.groupEnd();
     }
 
