@@ -584,6 +584,19 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             }
         }
 
+
+        /** @function nodeIdAvailable
+         *  Description
+         *  @param {String} sourceId- Id of the source node.
+         *  @param {String} targetId - Id of the target node.
+         *  @param {String} classForEdge - Style category for the edge.
+         */
+
+        function nodeIdAvailable(nodeId){
+            return !cy.getElementById(nodeId).isNode();
+        }
+
+
         /** @function createNodesAndEdgesBetween
          *  Description
          *  @param {String} sourceId- Id of the source node.
@@ -594,6 +607,10 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             try {
                 // Check if the source node already exists.
                 // boolean
+                // Todo: wrapper to take care this ( if ? do : unow )
+
+                // nodeIdAvailable(sourceNodeId) ? createNewNode(sourceNodeId, cy) : null;
+
                 var sourceNodeDoNotExist = !cy.getElementById(sourceNodeId).isNode();
 
                 // Create new node if the node does not exist yet.
