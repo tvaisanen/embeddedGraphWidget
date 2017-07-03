@@ -11,8 +11,6 @@ var configs = {
 
 gwClient.setConfigs(configs);
 
-// Use these for tests
-
 function testCy(containerElement) {
     return cytoscape({
         container: containerElement,
@@ -178,9 +176,9 @@ var testState = {
     }
 };
 
-// initialize download image link
 
 
+// Todo: clean up!
 function unorderedListFromArray(array, mouseOver, mouseOut, toggleVisibility, onClick, doubleClick) {
     /*
      * Todo: add support for the array containing evenListener -methods
@@ -598,6 +596,8 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             assert.deepEqual(edge.id(), edgeId, "Returned edgeId() matches with with intended Id");
         });
     }
+
+    // Todo: tests and docs for rests!
 
     /** @function expandNode
      *  Description
@@ -1837,6 +1837,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
     }
 
     /* ---------- Tests ---------- */
+    /*   Remove from deployment    */
 
     function tests() {
         var stateForTests = testState;
@@ -2016,7 +2017,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         },
 
         state: function () {
-            // for debugging purposes in the console
+            // for debugging in console
             return props;
         },
 
