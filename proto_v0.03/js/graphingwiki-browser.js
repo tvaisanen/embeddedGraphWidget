@@ -548,11 +548,9 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                     target: targetId
                 }
             };
+
             cy.add(newEdge);
             var edge = cy.getElementById(edgeId);
-            console.debug(edge);
-            console.debug(edge.id());
-
 
             var classesToAdd = props.elementStyles[classForEdge];
             if (!classesToAdd) {
@@ -565,10 +563,6 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                 edge.addClass(styleClass);
             });
             return edge;
-            /*
-             Object.keys(classesToAdd).forEach(function (key) {
-             e.addClass(classesToAdd[key]);
-             });*/
 
         } catch (e) {
             console.info(e.type);
@@ -586,7 +580,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
     function testCreateNewEdge() {
         var sourceId = 'source';
         var targetId = 'target';
-        var edgeId = sourceId + '_to_' + edgeId;
+        var edgeId = sourceId + '_to_' + targetId;
         var categoryClass = 'foo';
 
         var cy = cytoscape({
@@ -599,7 +593,9 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         console.debug(edge);
 
         QUnit.test("createNewEdge()", function (assert) {
-            assert.ok(edgeExists(edge.id(), cy), "Edge creation ok");
+            assert.ok(edgeExists(edge.id(), cy), "Returned edge can be found from cy");
+            assert.ok(edgeExists(edgeId, cy), "New edge can be found with getElementById");
+            assert.deepEqual(edge.id(), edgeId, "Returned edgeId() matches with with intended Id");
         });
     }
 
