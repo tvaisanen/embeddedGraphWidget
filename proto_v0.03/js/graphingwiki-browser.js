@@ -252,8 +252,6 @@ var colors = ['red', 'green', 'orange', 'yellow', 'cyan', 'blue'];
 var graphingwikiBrowser = (function (gwClient, cy) {
 
     // Every variable needs to be accessed through props
-    // Todo: use redux pattern?
-
     var props;
     var classNames = {
         container: 'app-container',
@@ -386,21 +384,10 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                 }
             };
 
-            try {
-                // Add the new node to cy.elements if node does not already exist.
-                if (cy.getElementById(newNode).isNode()) {
-                    console.log(newNode + 'is already node');
-                    return false;
-                } else {
-                    console.log('see MEE?');
-                    cy.add(newNode);
-                }
-
-            } catch (e) {
-                console.groupCollapsed("Exception raised by cy.add()");
-                console.warn(e);
-                console.info("If the node already exists there's no problem. This scenario needs to be taken into consideration.");
-                console.groupEnd();
+            if (nodeIdAvailable(id, cy)){
+                cy.add(newNode);
+                return true;
+            } else {
                 return false;
             }
 
@@ -411,6 +398,8 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             console.debug("id:");
             console.debug(id);
             console.groupEnd();
+            console.debug('returning false from second catch');
+
             return false;
         }
     }
@@ -421,10 +410,11 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         var newNodeId = 'newNode';
         QUnit.test("Create new node.", function (assert) {
             assert.ok(createNewNode(newNodeId, cy), "Return true upon creating new node");
-            assert.notOk(createNewNode(existingNodeId, cy), "Return false upon trying to creating new node with existing id.");
+            assert.notOk(createNewNode(existingNodeId, cy), "Return false if trying to create node with an existing id.");
         })
     }
 
+    // Todo: write tests when the datastructures are stable
     /** @function getEdgeCategories
      *   Return an array of edge categories used in current graph.
      */
@@ -443,34 +433,174 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         }
     }
 
-    /** @function elementHasOneOfCategories
+    /** @function elementHasCategoryClass
      *  Check if the given element has been assigned with existing
      *  category style classes.
      *  @param {Object} element - Cytoscape element
      *  @param {Array} categories - Array of category names.
      *  @return {Boolean} True if element have assigned classes.
      */
-    function elementHasOneOfCategories(element, categories) {
+    function elementHasCategoryClass(element, categories) {
         try {
-            var values = [];
-            var edgeDoesNotHaveAnyCategory = false;
-            props.tabs.styles.categories.forEach(function (category) {
-                values.push(element.hasClass(category))
+            var categoryClassFound = categories.some(function (c) {
+                return element.hasClass(c);
             });
-
-            values.forEach(function (b) {
-                edgeDoesNotHaveAnyCategory = edgeDoesNotHaveAnyCategory || b;
-            });
-            return edgeDoesNotHaveAnyCategory;
+            return categoryClassFound;
 
         } catch (e) {
-            console.groupCollapsed("Exception raised by graphingwikiBrowser.elementHasOneOfCategories()");
+            console.groupCollapsed("Exception raised by graphingwikiBrowser.elementHasCategoryClass()");
             console.warn(e);
             console.info("Parameters passed:");
             console.info("element:");
             console.info(element);
             console.groupEnd();
         }
+    }
+
+    function testElementHasCategoryClass() {
+        var idFoo = 'foo';
+        var idBar = 'bar';
+        var classname = 'class';
+        var categories = ['class', 'foo'];
+        var cy = cytoscape({
+            elements: [
+                {group: 'nodes', data: {id: idFoo}},
+                {group: 'nodes', data: {id: idBar}}
+            ]});
+        var elementFoo = cy.getElementById(idFoo);
+        var elementBar = cy.getElementById(idBar);
+
+        // add category class to foo
+        elementFoo.addClass(classname);
+
+        var fooHasCategoryClass = elementHasCategoryClass(elementFoo, categories);
+        var barHasCategoryClass = elementHasCategoryClass(elementBar, categories);
+
+        QUnit.test("testElementHasOneOfCategories()", function (assert) {
+            assert.ok(fooHasCategoryClass, "Return true when element has one of defined categories");
+            assert.notOk(barHasCategoryClass, "Return false when element does not have category defined.");
+        })
+    }
+
+    /** @function nodeIdAvailable
+     *  Check if a node of given id is already defined in the graph.
+     *  @param {String} nodeId- Id of node.
+     *  @return {Boolean} True if id is available for use, else False.
+     */
+    function nodeIdAvailable(nodeId, cy){
+        return !cy.getElementById(nodeId).isNode();
+    }
+
+    function testNodeIdAvailable() {
+        var cy = cytoscape({elements: [{group: 'nodes', data: {id: 'existingNode'}}]});
+        var existingNodeId = 'existingNode';
+        var nonExistingNodeId = 'nonExistingNode';
+        QUnit.test("nodeIdAvailable()", function (assert) {
+            assert.notOk(nodeIdAvailable(existingNodeId, cy), "Returns false, when id already in use.");
+            assert.ok(nodeIdAvailable(nonExistingNodeId, cy), "Returns true, when nodeId is available for use.");
+        })
+    }
+
+    /** @function edgeExists
+     *  Check if a node of given id is already defined in the graph.
+     *  @param {String} edgeId - Id of edge.
+     *  @return {Boolean} True if edge already defined, else False.
+     */
+    function edgeExists(edgeId, cy){
+        return cy.getElementById(edgeId).isEdge();
+    }
+
+    function testEdgeExists() {
+        var cy = cytoscape({
+            elements: [
+                {group: 'nodes', data: {id: 'source'}},
+                {group: 'nodes', data: {id: 'target'}},
+                {group: 'edges', data: {id: 'source_to_target', source: 'source', target: 'target'}},
+                ]
+        });
+
+        var existingEdgeId = 'source_to_target';
+        var nonExistingEdgeId = 'b_to_a';
+        QUnit.test("nodeIdAvailable()", function (assert) {
+            assert.ok(edgeExists(existingEdgeId, cy), "Returns true, when edge exists.");
+            assert.notOk(edgeExists(nonExistingEdgeId, cy), "Returns false, when edge does not exist yet.");
+        });
+    }
+
+    /** @function createNewEdge
+     *  Description
+     *  @param {String} sourceId - Id of the source node.
+     *  @param {String} targetId - Id of the target node.
+     *  @param {String} classForEdge - Selector for assigning style.
+     *  @param {Object} cy - Cytoscape instance.
+     *  @return {Object} The new edge element.
+     */
+    function createNewEdge(sourceId, targetId, classForEdge, cy) {
+
+        try {
+            var edgeId = sourceId + "_to_" + targetId;
+            // Create new edge.
+            var newEdge = {
+                group: 'edges',
+                data: {
+                    id: edgeId,
+                    source: sourceId,
+                    target: targetId
+                }
+            };
+            cy.add(newEdge);
+            var edge = cy.getElementById(edgeId);
+            console.debug(edge);
+            console.debug(edge.id());
+
+
+            var classesToAdd = props.elementStyles[classForEdge];
+            if (!classesToAdd) {
+                classesToAdd = props.elementStyles.generic;
+            }
+
+            // Add the new edge to cy.elements.
+
+            classesToAdd.forEach(function (styleClass) {
+                edge.addClass(styleClass);
+            });
+            return edge;
+            /*
+             Object.keys(classesToAdd).forEach(function (key) {
+             e.addClass(classesToAdd[key]);
+             });*/
+
+        } catch (e) {
+            console.info(e.type);
+            console.groupCollapsed("Exception with createNewEdge()");
+            console.info("Parameters passed:");
+            console.info("sourceId: " + sourceId);
+            console.info("targetId: " + targetId);
+            console.info("classForEdge: " + classForEdge);
+            console.warn(e);
+            console.groupEnd();
+        }
+
+    }
+
+    function testCreateNewEdge() {
+        var sourceId = 'source';
+        var targetId = 'target';
+        var edgeId = sourceId + '_to_' + edgeId;
+        var categoryClass = 'foo';
+
+        var cy = cytoscape({
+            elements: [
+                {group: 'nodes', data: {id: sourceId}},
+                {group: 'nodes', data: {id: targetId}}
+                ]
+        });
+        var edge = createNewEdge(sourceId, targetId, categoryClass, cy);
+        console.debug(edge);
+
+        QUnit.test("createNewEdge()", function (assert) {
+            assert.ok(edgeExists(edge.id(), cy), "Edge creation ok");
+        });
     }
 
     /** @function expandNode
@@ -483,58 +613,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         cy = props.cy;
         gw = props.gw;
 
-        /** @function createNewEdge
-         *  Description
-         *  @param {String} sourceId- Id of the source node.
-         *  @param {String} targetId - Id of the target node.
-         *  @param {String} classForEdge - Style category for the edge.
-         */
-        function createNewEdge(sourceId, targetId, classForEdge) {
 
-            var cy = props.cy;
-
-            try {
-                var edgeId = sourceId + "_to_" + targetId;
-                // Create new edge.
-                var newEdge = {
-                    group: 'edges',
-                    data: {
-                        id: edgeId,
-                        source: sourceId,
-                        target: targetId
-                    }
-                };
-                cy.add(newEdge);
-                var e = cy.getElementById(edgeId);
-
-
-                var classesToAdd = props.elementStyles[classForEdge];
-                if (!classesToAdd) {
-                    classesToAdd = props.elementStyles.generic;
-                }
-
-                // Add the new edge to cy.elements.
-
-                classesToAdd.forEach(function (styleClass) {
-                    e.addClass(styleClass);
-                });
-                /*
-                 Object.keys(classesToAdd).forEach(function (key) {
-                 e.addClass(classesToAdd[key]);
-                 });*/
-
-            } catch (e) {
-                console.info(e.type);
-                console.groupCollapsed("Exception with createNewEdge()");
-                console.info("Parameters passed:");
-                console.info("sourceId: " + sourceId);
-                console.info("targetId: " + targetId);
-                console.info("classForEdge: " + classForEdge);
-                console.warn(e);
-                console.groupEnd();
-            }
-
-        }
 
         /** @function addClassToEdge
          *  Description
@@ -550,7 +629,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                 var edge = cy.getElementById(edgeId);
 
                 // Check if the edge does not have a category set.
-                var edgeDoesNotHaveAnyCategory = elementHasOneOfCategories(edge, categories);
+                var edgeDoesNotHaveAnyCategory = elementHasCategoryClass(edge, categories);
 
 
                 /*
@@ -583,19 +662,6 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                 console.groupEnd();
             }
         }
-
-
-        /** @function nodeIdAvailable
-         *  Description
-         *  @param {String} sourceId- Id of the source node.
-         *  @param {String} targetId - Id of the target node.
-         *  @param {String} classForEdge - Style category for the edge.
-         */
-
-        function nodeIdAvailable(nodeId){
-            return !cy.getElementById(nodeId).isNode();
-        }
-
 
         /** @function createNodesAndEdgesBetween
          *  Description
@@ -634,7 +700,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
                 // Create new edge if the edge does not exist yet.
                 if (edgeBetweenDoNotExist) {
-                    createNewEdge(sourceNodeId, targetNodeId, classForEdge);
+                    createNewEdge(sourceNodeId, targetNodeId, classForEdge, cy);
                 }
 
                 addClassToEdge(edgeId, classForEdge);
@@ -1083,9 +1149,6 @@ var graphingwikiBrowser = (function (gwClient, cy) {
     function render() {
 
         var appContainer = d.getElementById(props.appContainerId);
-        console.log(props.appContainerId);
-        console.log(props);
-        console.log(window);
         appContainer.appendChild(renderHeaderContainer());
         appContainer.appendChild(renderContentContainer());
 
@@ -1781,7 +1844,6 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
     function tests() {
         var stateForTests = testState;
-        console.log(stateForTests);
         console.groupCollapsed("Panel tests!");
         testAppContainerInit(stateForTests);
         testCytoscapeIntegrationInit(stateForTests);
@@ -1793,6 +1855,10 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         testRenderTabs(stateForTests);
         testRenderMenu(stateForTests);
         testCreateNewNode();
+        testNodeIdAvailable();
+        testEdgeExists();
+        testElementHasCategoryClass();
+        testCreateNewEdge();
         console.groupEnd();
     }
 

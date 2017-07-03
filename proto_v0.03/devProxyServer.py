@@ -9,7 +9,7 @@ import shelve
 app = Flask(__name__)
 CORS(app)
 
-DATABASE = 'data/development.db'
+DATABASE = 'development.db'
 MOIN_PATH = 'http://localhost/'
 
 
