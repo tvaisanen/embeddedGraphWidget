@@ -448,7 +448,6 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             console.groupEnd();
         }
     }
-
     function testElementHasCategoryClass() {
         var idFoo = 'foo';
         var idBar = 'bar';
@@ -482,7 +481,6 @@ var graphingwikiBrowser = (function (gwClient, cy) {
     function nodeIdAvailable(nodeId, cy){
         return !cy.getElementById(nodeId).isNode();
     }
-
     function testNodeIdAvailable() {
         var cy = cytoscape({elements: [{group: 'nodes', data: {id: 'existingNode'}}]});
         var existingNodeId = 'existingNode';
@@ -501,7 +499,6 @@ var graphingwikiBrowser = (function (gwClient, cy) {
     function edgeExists(edgeId, cy){
         return cy.getElementById(edgeId).isEdge();
     }
-
     function testEdgeExists() {
         var cy = cytoscape({
             elements: [
@@ -575,7 +572,6 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         }
 
     }
-
     function testCreateNewEdge() {
         var sourceId = 'source';
         var targetId = 'target';
@@ -653,7 +649,6 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             console.groupEnd();
         }
     }
-
     function testAddClassToEdge(){
         var sourceId = 'source';
         var targetId = 'target';
@@ -675,8 +670,6 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             assert.deepEqual(edge.id(), edgeId, "Returned edgeId() matches with with intended Id");
         });
     }
-
-
 
     function createEdgeId(sourceNodeId, targetNodeId){
         return sourceNodeId + "_to_" + targetNodeId;
@@ -717,7 +710,6 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             }
 
         }
-
     function testCreateNodesAndEdgeBetween(){
         var idSource = 'source';
         var idTarget = 'target';
@@ -823,6 +815,59 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         });
     }
 
+    /** @function createEdgesFromNodes
+     *  Description
+     *  @param {String} sourceNodeId- Id of the source node.
+     *  @param {Array} nodesToCreateEdges - Array of nodes?.
+     *  @param {String} category - Category for edges.
+     */
+    function createEdgesFromNodes(targetNodeId, nodesFromCreateEdges, category, cy) {
+        /*
+         * Iterate through the nodesFromCreateEdges array and add
+         * edges between the source node and target nodes.
+         * If nodes do not exist, create them and add to cy.elements.
+         */
+        nodesFromCreateEdges.forEach(function (sourceNodeId) {
+            createNodesAndEdgeBetween(sourceNodeId, targetNodeId, category, cy);
+        });
+    }
+    function testCreateEdgesFromNodes(){
+        var idTarget = 'target';
+        var idOne = 'foo';
+        var idTwo = 'bar';
+        var idThree = 'hello';
+        var sourceIds = [idOne, idTwo, idThree];
+        var category = 'foo';
+
+        var cy = cytoscape({
+            elements: [
+                    {group: 'nodes', data: {id: idTarget}}
+                ]
+        });
+
+        createEdgesFromNodes(idTarget, sourceIds, category, cy);
+
+        var edgeOne = cy.getElementById(createEdgeId(idOne, idTarget));
+        var edgeTwo = cy.getElementById(createEdgeId(idTwo, idTarget));
+        var edgeThree = cy.getElementById(createEdgeId(idThree, idTarget));
+
+        console.debug(edgeOne.isEdge());
+        console.debug(edgeTwo.isEdge());
+        console.debug(edgeThree.isEdge());
+
+        var nodeOne = cy.getElementById(idOne);
+        var nodeTwo = cy.getElementById(idTwo);
+        var nodeThree = cy.getElementById(idThree);
+
+        var allEdgesCreatedIfNotExisting = edgeOne.isEdge() && edgeTwo.isEdge() && edgeThree.isEdge();
+        var allNodesCreatedIfNotExisting = nodeOne.isNode() && nodeTwo.isNode() && nodeThree.isNode();
+
+        QUnit.test("createEdgesFromNodes()", function (assert) {
+            assert.ok(allEdgesCreatedIfNotExisting, "creates all the edges if does not exist");
+            assert.ok(allNodesCreatedIfNotExisting, "creates all the nodes if does not exist");
+        });
+    }
+
         // Todo: tests and docs for remaining!
 
     /** @function expandNode
@@ -837,17 +882,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
 
 
-        /** @function createEdgesFromNodes
-         *  Description
-         *  @param {String} sourceNodeId- Id of the source node.
-         *  @param {Array} nodesToCreateEdges - Array of nodes?.
-         *  @param {String} category - Category for edges.
-         */
-        function createEdgesFromNodes(targetNodeId, nodesFromCreateEdges, category, cy) {
-            nodesFromCreateEdges.forEach(function (sourceNodeId) {
-                createNodesAndEdgeBetween(sourceNodeId, targetNodeId, category, cy);
-            });
-        }
+
 
         /** @function updateCategories
          *  Description
@@ -2017,6 +2052,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         testInitNewGraph();
         testCreateNodesAndEdgeBetween();
         testCreateEdgesToNodes();
+        testCreateEdgesFromNodes();
         console.groupEnd();
     }
 
