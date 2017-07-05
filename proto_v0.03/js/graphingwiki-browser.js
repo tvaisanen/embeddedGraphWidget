@@ -188,8 +188,6 @@ var testState = {
     }
 };
 
-
-
 // Todo: clean up!
 function unorderedListFromArray(array, mouseOver, mouseOut, toggleVisibility, onClick, doubleClick) {
     /*
@@ -242,8 +240,6 @@ function unorderedListFromArray(array, mouseOver, mouseOut, toggleVisibility, on
     });
     return ul;
 }
-
-
 
 var graphingwikiBrowser = (function (gwClient, cy) {
 
@@ -597,7 +593,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
 
     /** @function addClassToEdge
-     *  Description
+     *  Todo: Decide what to do with this.
      *  @param {String} edgeId- Id of the edge.
      *  @param {String} classForEdge - Style category for the edge.
      */
@@ -605,7 +601,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         /**
          * Is this really necessary? Seems like
          * unnecessary complexity...
-         * Todo: Decide what to do with this.
+         *
          * */
 
 
@@ -892,17 +888,72 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             container: document.getElementById('cy'),
             elements: data.elements,
             style: data.style,
-            layout: {name: 'preset'},
+            layout: {name: 'preset'}
         });
         cy.on('tap', 'node', function (evt) {
             var node = evt.target;
             var nodeId = node.id();
             var cy = this;
-            console.log(cy);
             expandNode(nodeId, cy);
         });
-        props.cy = cy;
         return cy;
+    }
+
+    function testInitNewGraph(){
+        var data = {
+            elements: {
+                nodes: [
+                    {
+                        data:{id:"personA"},
+                        position:{"x":420.97222900390625,"y":243.05557250976562},
+                        group:"nodes",
+                        removed:false,
+                        selected:true,
+                        selectable:true,
+                        locked:false,
+                        grabbable:true,
+                        classes:""
+                    }
+                ]},
+                style: [{
+                    selector:"node",
+                    style: {
+                        "background-color": "#6490af",
+                        "label":"data(id)"
+                    }
+                }]
+        };
+
+        // init should return element like this
+        var cyExpect = cytoscape({
+            container: document.getElementById('cy'),
+            elements: data.elements,
+            style: data.style,
+            layout: {name: 'preset'}
+        });
+        cyExpect.on('tap', 'node', function (evt) {
+            var node = evt.target;
+            var nodeId = node.id();
+            var cy = this;
+            expandNode(nodeId, cy);
+        });
+        /*----------------------------------------*/
+
+        var cy = initNewGraph(data);
+
+        var cyExEles = JSON.stringify(cyExpect.json().elements);
+        var cyEles = JSON.stringify(cy.json().elements);
+        var cyExStyle = JSON.stringify(cyExpect.json().style);
+        var cyStyle = JSON.stringify(cy.json().style);
+
+        console.debug(JSON.stringify(cyExEles));
+        console.debug(JSON.stringify(cyEles));
+        console.debug(JSON.stringify(cyExEles) === JSON.stringify(cyEles));
+        QUnit.test("initNewGraph()", function (assert) {
+            assert.ok(cy, "Function returns");
+            assert.deepEqual(cyEles, cyExEles, "Returns cytoscape instance with expected elements.");
+            assert.deepEqual(cyStyle, cyExStyle, "Returns cytoscape instance with expected style.");
+        });
     }
 
     /** @function setAndRunLayout
@@ -1884,6 +1935,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         testEdgeExists();
         testElementHasCategoryClass();
         testCreateNewEdge();
+        testInitNewGraph();
         console.groupEnd();
     }
 
@@ -2020,32 +2072,8 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             initCytoscape();
         },
 
-        updateStylesContent: function (newCategories, styles) {
-            setProps(styleProps, 'styles');
-            renderStylesContent(newCategories, styles);
-        },
-
-        updateElementsContent: function (elementsProps, styles) {
-            setProps(elementProps, 'elements');
-            renderElementsContent()
-        },
-
-        updateProps: function (newProps, selector) {
-            setProps(newProps, selector);
-            console.debug(props);
-        },
-
-        getEdgeCategories: function () {
-            var categories = props.tabs.styles.categories;
-            if (categories === 'undefined') {
-                return []
-            } else {
-                return categories;
-            }
-        },
-
         state: function () {
-            // for debugging in console
+            // return app state for debugging in console
             return props;
         },
 
