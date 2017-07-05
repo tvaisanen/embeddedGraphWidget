@@ -676,14 +676,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         });
     }
 
-    // Todo: tests and docs for rests!
 
-    /** @function expandNode
-     *  Description
-     *  @param {String} nodeId - Id of the node to expand.
-     *  @param {Object} cy - Cytoscape instance.
-     *
-     */
 
     function createEdgeId(sourceNodeId, targetNodeId){
         return sourceNodeId + "_to_" + targetNodeId;
@@ -761,48 +754,88 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             assert.ok(edgeTwo.isEdge(), "returns edge and is edge for existing source and created target");
             assert.ok(edgeThree.isEdge(), "returns edge and is edge for existing target and created source");
             assert.ok(edgeFour.isEdge(), "returns edge and is edge for created source and target");
-            assert.ok(nodeOne.isNode(), "creates the target node if not exist")
-            assert.ok(nodeTwo.isNode(), "creates the source node if not exist")
-            assert.ok(nodeThree.isNode() && nodeFour.isNode(), "creates the source node and target if not exist")
+            assert.ok(nodeOne.isNode(), "creates the target node if not exist");
+            assert.ok(nodeTwo.isNode(), "creates the source node if not exist");
+            assert.ok(nodeThree.isNode() && nodeFour.isNode(), "creates the source node and target if not exist");
 
         });
     }
 
+    /** @function createNodesAndEdgeBetween
+     *  Description
+     *  @param {String} sourceNodeId- Id of the source node.
+     *  @param {Array} nodesToCreateEdges - Array of nodes?.
+     *  @param {String} category - Category for edges.
+     *  @param {Object} cy - Cytoscape instance.
+     */
+    function createEdgesToNodes(sourceNodeId, nodesToCreateEdges, category, cy) {
+
+        /*
+         * Iterate through the nodesToCreateEdges array and add
+         * edges between the source node and target nodes.
+         * If nodes do not exist, create them and add to cy.elements.
+         */
+
+        nodesToCreateEdges.forEach(function (targetNodeId) {
+            try {
+                createNodesAndEdgeBetween(sourceNodeId, targetNodeId, category, cy);
+            } catch (e) {
+                console.groupCollapsed("Exception with createEdgesToNodes()");
+                console.info("Parameters passed:")
+                console.info("sourceNodeId: " + sourceNodeId);
+                console.info("nodesToCreateEdges: " + nodesToCreateEdges);
+                console.info("category: " + category);
+                console.warn(e);
+                console.groupEnd();
+            }
+        });
+    }
+    function testCreateEdgesToNodes(){
+        var idSource = 'source';
+        var idOne = 'foo';
+        var idTwo = 'bar';
+        var idThree = 'hello';
+        var targetIds = [idOne, idTwo, idThree];
+        var category = 'foo';
+
+        var cy = cytoscape({
+            elements: [
+                    {group: 'nodes', data: {id: idSource}}
+                ]
+        });
+
+        createEdgesToNodes(idSource, targetIds, category, cy);
+
+        var edgeOne = cy.getElementById(createEdgeId(idSource, idOne));
+        var edgeTwo = cy.getElementById(createEdgeId(idSource, idTwo));
+        var edgeThree = cy.getElementById(createEdgeId(idSource, idThree));
+
+        var nodeOne = cy.getElementById(idOne);
+        var nodeTwo = cy.getElementById(idTwo);
+        var nodeThree = cy.getElementById(idThree);
+
+        var allEdgesCreatedIfNotExisting = edgeOne.isEdge() && edgeTwo.isEdge() && edgeThree.isEdge();
+        var allNodesCreatedIfNotExisting = nodeOne.isNode() && nodeTwo.isNode() && nodeThree.isNode();
+
+        QUnit.test("createEdgesToNodes()", function (assert) {
+            assert.ok(allEdgesCreatedIfNotExisting, "creates all the edges if does not exist");
+            assert.ok(allNodesCreatedIfNotExisting, "creates all the nodes if does not exist");
+        });
+    }
+
+        // Todo: tests and docs for remaining!
+
+    /** @function expandNode
+     *  Description
+     *  @param {String} nodeId - Id of the node to expand.
+     *  @param {Object} cy - Cytoscape instance.
+     *
+     */
     function expandNode(nodeId) {
         gw = props.gw;
         cy = props.cy;
 
-        /** @function createNodesAndEdgeBetween
-         *  Description
-         *  @param {String} sourceNodeId- Id of the source node.
-         *  @param {Array} nodesToCreateEdges - Array of nodes?.
-         *  @param {String} category - Category for edges.
-         */
-        function createEdgesToNodes(sourceNodeId, nodesToCreateEdges, category, cy) {
 
-            /*
-             * Iterate through the nodesToCreateEdges array and add
-             * edges between the source node and target nodes.
-             * If the target node does not exist yet, create and add
-             * the node to cy.elements.
-             */
-
-
-
-            nodesToCreateEdges.forEach(function (targetNodeId) {
-                try {
-                    createNodesAndEdgeBetween(sourceNodeId, targetNodeId, category, cy);
-                } catch (e) {
-                    console.groupCollapsed("Exception with createEdgesToNodes()");
-                    console.info("Parameters passed:")
-                    console.info("sourceNodeId: " + sourceNodeId);
-                    console.info("nodesToCreateEdges: " + nodesToCreateEdges);
-                    console.info("category: " + category);
-                    console.warn(e);
-                    console.groupEnd();
-                }
-            });
-        }
 
         /** @function createEdgesFromNodes
          *  Description
@@ -1983,6 +2016,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         testCreateNewEdge();
         testInitNewGraph();
         testCreateNodesAndEdgeBetween();
+        testCreateEdgesToNodes();
         console.groupEnd();
     }
 
