@@ -377,6 +377,16 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                     console.info('I am ' + source.id() + ' and I want to connect!');
                     var targetId = prompt('Provide id of the node, which to connect.');
                     console.log(targetId);
+                    if (nodeIdAvailable(targetId, cy)){
+                        var confirmation = confirm("The node do not exist. Do you want to create it?");
+                        console.log(confirmation);
+                        if (confirmation){
+                            createNewNode(targetId, cy);
+                        } else {
+                            console.info('User replied no');
+                            return null;
+                        }
+                    }
                     var edge = {
                         group: 'edges',
                         data: {
@@ -412,6 +422,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                     };
 
                     var pos = event.position || event.cyPosition;
+                    // todo: refactor to be standalone function
                     var promise = props.gw.savePageToMoin(targetId, 'hello');
                     promise.then(function (response) {
                         var j = response.json();
