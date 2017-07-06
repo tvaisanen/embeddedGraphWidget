@@ -20,7 +20,7 @@ var d = document;
 
 var configs = {
     API_PATH: 'http://127.0.0.1:5000/',
-    API_CREATE_NEW_NODE: this.API_PATH + 'add-to-wiki/',
+    API_CREATE_NEW_NODE: 'http://127.0.0.1:5000/add-to-wiki/',
     lineStyleOptions: {
         'width': Array.from(Array(20).keys()),
         'line-color': 'rgb',
@@ -35,83 +35,6 @@ var configs = {
     params: ['line-style', 'arrow-shape', 'line-color', 'line-width'],
     layoutOptions: ['cola', 'breadthfirst', 'circle', 'concentric', 'cose', 'grid', 'random'],
 };
-
-function initCyContextMenu() {
-    return {
-        menuItems: [
-            {
-                id: 'remove',
-                content: 'remove',
-                tooltipText: 'remove',
-                selector: 'node, edge',
-                onClickFunction: function (event) {
-                    var target = event.target || event.cyTarget;
-                    target.remove();
-                },
-                hasTrailingDivider: true
-            },
-            {
-                id: 'hide',
-                content: 'hide',
-                tooltipText: 'hide',
-                selector: '*',
-                onClickFunction: function (event) {
-                    var target = event.target || event.cyTarget;
-                    target.hide();
-                },
-                disabled: false
-            },
-            {
-                id: 'add-node',
-                content: 'add node',
-                tooltipText: 'add node',
-                coreAsWell: true,
-                onClickFunction: function (event) {
-                    var data = {
-                        group: 'nodes'
-                    };
-
-                    var pos = event.position || event.cyPosition;
-
-                    cy.add({
-                        data: data,
-                        position: {
-                            x: pos.x,
-                            y: pos.y
-                        }
-                    });
-                }
-            },
-            {
-                id: 'remove-selected',
-                content: 'remove selected',
-                tooltipText: 'remove selected',
-                coreAsWell: true,
-                onClickFunction: function (event) {
-                    cy.$(':selected').remove();
-                }
-            },
-            {
-                id: 'select-all-nodes',
-                content: 'select all nodes',
-                tooltipText: 'select all nodes',
-                selector: 'node',
-                onClickFunction: function (event) {
-                    selectAllOfTheSameType(event.target || event.cyTarget);
-                }
-            },
-            {
-                id: 'select-all-edges',
-                content: 'select all edges',
-                tooltipText: 'select all edges',
-                selector: 'edge',
-                onClickFunction: function (event) {
-                    selectAllOfTheSameType(event.target || event.cyTarget);
-                }
-            }
-        ]
-    };
-}
 
 function testCy(containerElement) {
     return cytoscape({
@@ -407,56 +330,145 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         }
     };
     var menuItems = {
-        create: {
-            label: "Create new node/edge",
-            content: "Create new things here",
-            onClick: function () {
-                console.log('clicked: ' + this.label);
-            },
-            generateContent: menuItemCreate
-
-        },
         download: {
             label: "Download",
             content: "Click to download image.",
             onClick: downloadGraphPNG,
             generateContent: generateContent
         },
-        layout: {
-            label: "Layout",
-            content: "here you can change the layout",
-            onClick: function () {
-                console.log('clicked: ' + this.label);
-            },
-            generateContent: menuItemLayout
-        },
         save: {
             label: "Save",
             content: "form to input graph name",
-            onClick: function () {
-                console.log('clicked: ' + this.label);
-            },
-            generateContent: menuItemSave
-        },
+            onClick: function(event){
+                var graphName = prompt("Enter name for saving the graph:");
+                console.log("clicked " + this.label);
+                console.log("trying to save: " + graphName);
 
-        /*
-         settings: {
-         label: "Settings",
-         content: "here might be some options to choose from",
-         onClick: function () {
-         console.log('clicked: ' + this.label);
-         },
-         generateContent: generateContent
-         },
-         moin: {
-         label: "Moin pages",
-         content: "list moin pages here",
-         onClick: function () {
-         console.log('clicked: ' + this.label);
-         },
-         generateContent: generateContent
-         }*/
+            },
+            generateContent: generateContent
+        }
     };
+
+    /** @function cy context menu init*
+     * @param cy
+     * @returns {{menuItems: [*,*,*,*,*,*,*]}}
+     */
+    function initCyContextMenu(cy) {
+    return {
+        menuItems: [
+            {
+                id: 'remove',
+                content: 'remove',
+                tooltipText: 'remove',
+                selector: 'node, edge',
+                onClickFunction: function (event) {
+                    var target = event.target || event.cyTarget;
+                    target.remove();
+                },
+                hasTrailingDivider: true
+            },
+            {
+                id: 'add-edge',
+                content: 'connect',
+                tooltipText: 'add edge between this node and the chosen node',
+                selector: 'node',
+                onClickFunction: function (event) {
+                    var source = event.target || event.cyTarget;
+                    console.info('I am ' + source.id() + ' and I want to connect!');
+                    var targetId = prompt('Provide id of the node, which to connect.');
+                    console.log(targetId);
+                    var edge = {
+                        group: 'edges',
+                        data: {
+                            id: source.id() + "_to_" + targetId,
+                            source: source.id(),
+                            target: targetId
+                        }
+                    };
+                    cy.add(edge);
+                },
+            },
+            {
+                id: 'hide',
+                content: 'hide',
+                tooltipText: 'hide',
+                selector: '*',
+                onClickFunction: function (event) {
+                    var target = event.target || event.cyTarget;
+                    target.hide();
+                },
+                disabled: false
+            },
+            {
+                id: 'add-node',
+                content: 'add node',
+                tooltipText: 'add node',
+                coreAsWell: true,
+                onClickFunction: function (event) {
+                    var targetId = prompt('Provide id for the new node.');
+                    var data = {
+                        group: 'nodes',
+                        id: targetId
+                    };
+
+                    var pos = event.position || event.cyPosition;
+                    var promise = props.gw.savePageToMoin(targetId, 'hello');
+                    promise.then(function (response) {
+                        var j = response.json();
+                        console.log(j);
+                        return j;
+                    }).then(function (obj) {
+                        console.log(obj);
+                        createNewNode(targetId, cy);
+                    });
+                    /*
+                    cy.add({
+                        data: data,
+                        position: {
+                            x: pos.x,
+                            y: pos.y
+                        }
+                    });*/
+                }
+            },
+            {
+                id: 'remove-selected',
+                content: 'remove selected',
+                tooltipText: 'remove selected',
+                coreAsWell: true,
+                onClickFunction: function (event) {
+                    cy.$(':selected').remove();
+                }
+            },
+            {
+                id: 'select-all-nodes',
+                content: 'select all nodes',
+                tooltipText: 'select all nodes',
+                selector: 'node',
+                onClickFunction: function (event) {
+                    selectAllOfTheSameType(event.target || event.cyTarget);
+                }
+            },
+            {
+                id: 'select-all-edges',
+                content: 'select all edges',
+                tooltipText: 'select all edges',
+                selector: 'edge',
+                onClickFunction: function (event) {
+                    selectAllOfTheSameType(event.target || event.cyTarget);
+                }
+            }
+        ]
+    };
+}
+
+    /** @function toggleNodeVisibility
+     *  Todo: connect element list checkboxes to cy node visibility
+     */
+    function toggleNodeVisibility(){
+        // stubb
+
+    }
 
     /** @function createNewNode
      *  Create new node and add it to the given cytoscape instance.
@@ -1372,7 +1384,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             var nodeId = node.id();
             expandNode(nodeId);
         });
-        cy.contextMenus(initCyContextMenu());
+        cy.contextMenus(initCyContextMenu(cy));
 
         props.cy = cy;
     }
