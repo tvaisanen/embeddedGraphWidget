@@ -11,13 +11,13 @@ var configs = {
     API_PATH: 'http://127.0.0.1:5000/',
     API_CREATE_NEW_NODE: this.API_PATH + 'add-to-wiki/',
     lineStyleOptions: {
-    'width': Array.from(Array(20).keys()),
-    'line-color': 'rgb',
-    'line-style': [],
-    'target-arrow-color': 'rgb',
-    'target-arrow-shape': [],
-    'curve-style': []
-},
+        'width': Array.from(Array(20).keys()),
+        'line-color': 'rgb',
+        'line-style': [],
+        'target-arrow-color': 'rgb',
+        'target-arrow-shape': [],
+        'curve-style': []
+    },
     lines: ['solid', 'dotted', 'dashed'],
     arrows: ['tee', 'triangle', 'triangle-tee', 'triangle-cross', 'triangle-backcurve', 'square', 'circle', 'diamond', 'none'],
     colors: ['red', 'green', 'orange', 'yellow', 'cyan', 'blue'],
@@ -25,7 +25,6 @@ var configs = {
     layoutOptions: ['cola', 'breadthfirst', 'circle', 'concentric', 'cose', 'grid', 'random'],
 };
 
-gwClient.setConfigs(configs);
 
 function testCy(containerElement) {
     return cytoscape({
@@ -381,7 +380,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                 }
             };
 
-            if (nodeIdAvailable(id, cy)){
+            if (nodeIdAvailable(id, cy)) {
                 cy.add(newNode);
                 return true;
             } else {
@@ -453,6 +452,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             console.groupEnd();
         }
     }
+
     function testElementHasCategoryClass() {
         var idFoo = 'foo';
         var idBar = 'bar';
@@ -462,7 +462,8 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             elements: [
                 {group: 'nodes', data: {id: idFoo}},
                 {group: 'nodes', data: {id: idBar}}
-            ]});
+            ]
+        });
         var elementFoo = cy.getElementById(idFoo);
         var elementBar = cy.getElementById(idBar);
 
@@ -483,9 +484,10 @@ var graphingwikiBrowser = (function (gwClient, cy) {
      *  @param {String} nodeId- Id of node.
      *  @return {Boolean} True if id is available for use, else False.
      */
-    function nodeIdAvailable(nodeId, cy){
+    function nodeIdAvailable(nodeId, cy) {
         return !cy.getElementById(nodeId).isNode();
     }
+
     function testNodeIdAvailable() {
         var cy = cytoscape({elements: [{group: 'nodes', data: {id: 'existingNode'}}]});
         var existingNodeId = 'existingNode';
@@ -501,16 +503,17 @@ var graphingwikiBrowser = (function (gwClient, cy) {
      *  @param {String} edgeId - Id of edge.
      *  @return {Boolean} True if edge already defined, else False.
      */
-    function edgeExists(edgeId, cy){
+    function edgeExists(edgeId, cy) {
         return cy.getElementById(edgeId).isEdge();
     }
+
     function testEdgeExists() {
         var cy = cytoscape({
             elements: [
                 {group: 'nodes', data: {id: 'source'}},
                 {group: 'nodes', data: {id: 'target'}},
                 {group: 'edges', data: {id: 'source_to_target', source: 'source', target: 'target'}},
-                ]
+            ]
         });
 
         var existingEdgeId = 'source_to_target';
@@ -544,7 +547,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             };
 
             // If edge is already defined, return the existing one.
-            if (edgeExists(edgeId, cy)){
+            if (edgeExists(edgeId, cy)) {
                 return cy.getElementById(edgeId);
 
             } else {
@@ -577,6 +580,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         }
 
     }
+
     function testCreateNewEdge() {
         var sourceId = 'source';
         var targetId = 'target';
@@ -587,7 +591,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             elements: [
                 {group: 'nodes', data: {id: sourceId}},
                 {group: 'nodes', data: {id: targetId}}
-                ]
+            ]
         });
         var edge = createNewEdge(sourceId, targetId, categoryClass, cy);
         console.debug(edge);
@@ -613,7 +617,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
          * */
 
 
-        // todo: refactor to props
+            // todo: refactor to props
         var categories = props.tabs.styles.categories;
 
         try {
@@ -654,7 +658,8 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             console.groupEnd();
         }
     }
-    function testAddClassToEdge(){
+
+    function testAddClassToEdge() {
         var sourceId = 'source';
         var targetId = 'target';
         var edgeId = sourceId + '_to_' + targetId;
@@ -664,7 +669,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                 {group: 'nodes', data: {id: sourceId}},
                 {group: 'nodes', data: {id: targetId}},
                 {group: 'edges', data: {id: edgeId, source: sourceId, target: targetId}}
-                ]
+            ]
         });
         var edge = cy.getElementById(edgeId);
 
@@ -676,7 +681,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         });
     }
 
-    function createEdgeId(sourceNodeId, targetNodeId){
+    function createEdgeId(sourceNodeId, targetNodeId) {
         return sourceNodeId + "_to_" + targetNodeId;
     }
 
@@ -689,33 +694,34 @@ var graphingwikiBrowser = (function (gwClient, cy) {
      *  @param {Object} cy - Cytoscape instance.
      */
     function createNodesAndEdgeBetween(sourceNodeId, targetNodeId, classForEdge, cy) {
-            try {
+        try {
 
-                // If nodes do not exist, create them.
-                // nodeIdAvailable: true === node do not exist.
-                nodeIdAvailable(sourceNodeId, cy) ?
-                    createNewNode(sourceNodeId, cy) : null;
-                nodeIdAvailable(targetNodeId, cy) ?
-                    createNewNode(targetNodeId, cy) : null;
+            // If nodes do not exist, create them.
+            // nodeIdAvailable: true === node do not exist.
+            nodeIdAvailable(sourceNodeId, cy) ?
+                createNewNode(sourceNodeId, cy) : null;
+            nodeIdAvailable(targetNodeId, cy) ?
+                createNewNode(targetNodeId, cy) : null;
 
-                // createNewEdge checks if the edge already exists.
-                createNewEdge(sourceNodeId, targetNodeId, classForEdge, cy);
+            // createNewEdge checks if the edge already exists.
+            createNewEdge(sourceNodeId, targetNodeId, classForEdge, cy);
 
-                var edgeId = createEdgeId(sourceNodeId, targetNodeId);
-                addClassToEdge(edgeId, classForEdge, cy);
+            var edgeId = createEdgeId(sourceNodeId, targetNodeId);
+            addClassToEdge(edgeId, classForEdge, cy);
 
-            } catch (e) {
-                console.groupCollapsed("Exception with createNodesAndEdgeBetween()");
-                console.info("Parameters passed:");
-                console.info("sourceNodeId: " + sourceNodeId);
-                console.info("targetNodeId: " + targetNodeId);
-                console.info("classForEdge: " + classForEdge);
-                console.warn(e);
-                console.groupEnd();
-            }
-
+        } catch (e) {
+            console.groupCollapsed("Exception with createNodesAndEdgeBetween()");
+            console.info("Parameters passed:");
+            console.info("sourceNodeId: " + sourceNodeId);
+            console.info("targetNodeId: " + targetNodeId);
+            console.info("classForEdge: " + classForEdge);
+            console.warn(e);
+            console.groupEnd();
         }
-    function testCreateNodesAndEdgeBetween(){
+
+    }
+
+    function testCreateNodesAndEdgeBetween() {
         var idSource = 'source';
         var idTarget = 'target';
         var idOne = 'one';
@@ -728,7 +734,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             elements: [
                 {group: 'nodes', data: {id: idSource}},
                 {group: 'nodes', data: {id: idTarget}}
-                ]
+            ]
         });
         createNodesAndEdgeBetween(idSource, idTarget, edgeClass, cy);
         createNodesAndEdgeBetween(idSource, idOne, edgeClass, cy);
@@ -787,7 +793,8 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             }
         });
     }
-    function testCreateEdgesToNodes(){
+
+    function testCreateEdgesToNodes() {
         var idSource = 'source';
         var idOne = 'foo';
         var idTwo = 'bar';
@@ -797,8 +804,8 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
         var cy = cytoscape({
             elements: [
-                    {group: 'nodes', data: {id: idSource}}
-                ]
+                {group: 'nodes', data: {id: idSource}}
+            ]
         });
 
         createEdgesToNodes(idSource, targetIds, category, cy);
@@ -836,7 +843,8 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             createNodesAndEdgeBetween(sourceNodeId, targetNodeId, category, cy);
         });
     }
-    function testCreateEdgesFromNodes(){
+
+    function testCreateEdgesFromNodes() {
         var idTarget = 'target';
         var idOne = 'foo';
         var idTwo = 'bar';
@@ -846,8 +854,8 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
         var cy = cytoscape({
             elements: [
-                    {group: 'nodes', data: {id: idTarget}}
-                ]
+                {group: 'nodes', data: {id: idTarget}}
+            ]
         });
 
         createEdgesFromNodes(idTarget, sourceIds, category, cy);
@@ -873,7 +881,54 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         });
     }
 
-        // Todo: tests and docs for remaining!
+    /** @function updateCategories
+     *  Takes an array of categorynames as strings and updates the state of app
+     *  @param {Array} newCategories - array of strings.
+     *  @return {Array} updated categories.
+     */
+    function updateCategories(newCategories, categoriesToUpdate) {
+        /*
+         when: A new node is loaded.
+         why: To add new possible categories.
+         how: [( the category is already listed ) ? do nothing : add new category to graphingwikiBrowser props list]
+         CategoryStyles is the function, which handles the updating.
+         */
+
+        // get current categories from the graphingwikiBrowser
+        var categoriesToUpdate;
+
+        try {
+            // this could be written with reducer Todo ?
+            newCategories.forEach(function (category) {
+                if (categoriesToUpdate.indexOf(category) === -1) {
+                    categoriesToUpdate.push(category);
+                }
+            });
+
+            setEdgeCategories(categoriesToUpdate);
+
+        } catch (e) {
+            console.warn("Problem while updating categories!");
+            console.warn(e);
+        }
+
+        updateTabs();
+    }
+
+    function setEdgeCategories(newCategories){
+        props.tabs.styles.categories = newCategories;
+    }
+
+    function testSetEdgeCategories(testState) {
+        setProps(testState, 'all');
+        var categories = ['hello','world'];
+        setEdgeCategories(categories);
+        QUnit.test("setEdgeCategories()", function (assert) {
+            assert.deepEqual(getEdgeCategories(), categories, "sets categories");
+        });
+    }
+
+    // Todo: tests and docs for remaining!
 
     /** @function expandNode
      *  Description
@@ -885,40 +940,6 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         gw = props.gw;
         cy = props.cy;
 
-        /** @function updateCategories
-         *  Description
-         *  @param {Object} variable - Desc.
-         *  @return {Type} desc.
-         */
-        function updateCategories(newCategories) {
-            /*
-             when: A new node is loaded.
-             why: To add new possible categories.
-             how: [( the category is already listed ) ? do nothing : add new category to graphingwikiBrowser props list]
-             CategoryStyles is the function, which handles the updating.
-             */
-
-            // get current categories from the graphingwikiBrowser
-            var categoriesToUpdate = getEdgeCategories();
-
-            try {
-                // this could be written with reducer Todo ?
-                newCategories.forEach(function (category) {
-                    if (categoriesToUpdate.indexOf(category) === -1) {
-                        categoriesToUpdate.push(category);
-                    }
-                });
-
-                var tabStylesProps = props.tabs.styles;
-                tabStylesProps.categories = categoriesToUpdate;
-
-            } catch (e) {
-                console.warn("Problem while updating categories!");
-                console.warn(e);
-            }
-
-            updateTabs();
-        }
 
         //Get data for the clicked node.
         var nodePromise = gw.getNodeData(nodeId);
@@ -943,7 +964,8 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                     if (nodeHasOutgoingEdges) {
                         try {
                             newCategoriesOut = Object.keys(node.out);
-                            updateCategories(newCategoriesOut);
+                            var categoriesToUpdate = getEdgeCategories();
+                            updateCategories(newCategoriesOut, categoriesToUpdate);
                         } catch (e) {
                             console.groupCollapsed("Exception raised while updating categories in expandNode()");
                             console.warn(e);
@@ -954,7 +976,6 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                     }
 
                     // Iterate the outgoing edge categories.
-
                     try {
                         newCategoriesOut.forEach(function (category) {
                             // get list of nodes where the clicked node is connected t
@@ -969,7 +990,8 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                         console.warn(e);
                     }
                     var newCategoriesIn = Object.keys(node.in);
-                    updateCategories(newCategoriesIn);
+                    categoriesToUpdate = getEdgeCategories();
+                    updateCategories(newCategoriesIn, categoriesToUpdate);
 
                     // Iterate the incoming edge categories.
                     newCategoriesIn.forEach(function (category) {
@@ -1009,29 +1031,30 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         return cy;
     }
 
-    function testInitNewGraph(){
+    function testInitNewGraph() {
         var data = {
             elements: {
                 nodes: [
                     {
-                        data:{id:"personA"},
-                        position:{"x":420.97222900390625,"y":243.05557250976562},
-                        group:"nodes",
-                        removed:false,
-                        selected:true,
-                        selectable:true,
-                        locked:false,
-                        grabbable:true,
-                        classes:""
+                        data: {id: "personA"},
+                        position: {"x": 420.97222900390625, "y": 243.05557250976562},
+                        group: "nodes",
+                        removed: false,
+                        selected: true,
+                        selectable: true,
+                        locked: false,
+                        grabbable: true,
+                        classes: ""
                     }
-                ]},
-                style: [{
-                    selector:"node",
-                    style: {
-                        "background-color": "#6490af",
-                        "label":"data(id)"
-                    }
-                }]
+                ]
+            },
+            style: [{
+                selector: "node",
+                style: {
+                    "background-color": "#6490af",
+                    "label": "data(id)"
+                }
+            }]
         };
 
         // init should return element like this
@@ -1076,9 +1099,9 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         layout.run();
     }
 
-     /*
-        When behaviour of the following functions are defined,
-        write the unit tests.
+    /*
+     When behaviour of the following functions are defined,
+     write the unit tests.
      */
 
     /** @function generateContent
@@ -1256,6 +1279,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         console.log(divTabContainer);
         updateTabs();
     }
+
     function testHandleNavClick(testState) {
         setProps(testState, 'all');
 
@@ -1404,6 +1428,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
         return div;
     }
+
     function testRenderElementsContent(testState) {
 // set context for tests
         console.group("testRenderStylesContent()");
@@ -1650,6 +1675,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         console.groupEnd();
         return div;
     }
+
     function testRenderGraphsContent(testState) {
 // set context for tests
         console.group("testRenderGraphsContent()");
@@ -1735,6 +1761,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
         return divMenu;
     }
+
     function testRenderMenu(testState) {
         setProps(testState, 'all');
         var classes = classNames.menu;
@@ -2038,6 +2065,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         }
         return div;
     }
+
     function testRenderStylesContent(testState) {
 // set context for tests
 
@@ -2048,6 +2076,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             assert.equal(stylesContent.id, "styles-content", "renderStylesContent() returns div with proper id");
         });
     }
+
     /** @function renderTabs
      *  Description
      *  @param {Object} variable - Desc.
@@ -2077,6 +2106,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
         return divContent;
     }
+
     function testRenderTabs() {
         setProps(testState, 'all');
         var tabs = renderTabs();
@@ -2107,6 +2137,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
         return divTextPreviewContainer;
     }
+
     function testRenderTextPreview() {
         setProps(testState, 'all');
         var textPreview = renderTextPreview();
@@ -2140,6 +2171,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         testRenderStylesContent(stateForTests);
         testRenderTabs(stateForTests);
         testRenderMenu(stateForTests);
+        testSetEdgeCategories(stateForTests);
         testRenderTextPreview();
         testCreateNewNode();
         testNodeIdAvailable();
@@ -2204,7 +2236,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
 })();
 
-
+gwClient.setConfigs(configs);
 graphingwikiBrowser.start(testState);
 
 
