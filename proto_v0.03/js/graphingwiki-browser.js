@@ -895,7 +895,6 @@ var graphingwikiBrowser = (function (gwClient, cy) {
          */
 
         // get current categories from the graphingwikiBrowser
-        var categoriesToUpdate;
 
         try {
             // this could be written with reducer Todo ?
@@ -905,7 +904,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                 }
             });
 
-            setEdgeCategories(categoriesToUpdate);
+            return setEdgeCategories(categoriesToUpdate);
 
         } catch (e) {
             console.warn("Problem while updating categories!");
@@ -915,16 +914,45 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         updateTabs();
     }
 
+    function testUpdateCategories(testState) {
+        setProps(testState, 'all');
+
+        var categories = ['hello','world'];
+        var newCategories = ['foo', 'bar'];
+        var expectedCategories = ['hello', 'world', 'foo', 'bar'];
+
+        setEdgeCategories(categories);
+
+        var currentCategories = getEdgeCategories();
+        console.debug(currentCategories);
+        var updatedCategories = updateCategories(newCategories, currentCategories);
+        console.debug(getEdgeCategories());
+
+        QUnit.test("updateEdgeCategories()", function (assert) {
+            assert.deepEqual(updatedCategories, expectedCategories, "updates categories correctly");
+        });
+    }
+
+    /** @function setEdgeCategories
+     *  Description
+     *  Todo: Fix the bug! ( run tests to see what's happening )
+     *  @param {String} nodeId - Id of the node to expand.
+     *  @return {Array} categories.
+     */
     function setEdgeCategories(newCategories){
         props.tabs.styles.categories = newCategories;
+        return getEdgeCategories();
     }
 
     function testSetEdgeCategories(testState) {
         setProps(testState, 'all');
         var categories = ['hello','world'];
-        setEdgeCategories(categories);
+        var categoriesSet = setEdgeCategories(categories);
+        console.debug('?');
+        console.debug(getEdgeCategories());
         QUnit.test("setEdgeCategories()", function (assert) {
-            assert.deepEqual(getEdgeCategories(), categories, "sets categories");
+            assert.equal(getEdgeCategories(), categories, "sets categories");
+            assert.deepEqual(categoriesSet, categories, "returns categories");
         });
     }
 
@@ -1563,11 +1591,9 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
         function updateTextPreviewHeader(pagename) {
             var textContainerHeader = d.getElementById(classNames.text.header);
+            var spHeader = d.getElementById('header-text');
             console.log(textContainerHeader.childNodes[0]);
-            var spHeader = d.createElement('span');
-            spHeader.setAttribute('id', 'header-text');
             spHeader.innerHTML = pagename;
-            textContainerHeader.appendChild(spHeader);
             console.log(textContainerHeader.childNodes[0]);
             console.log(textContainerHeader.childNodes[0]);
             console.log(textContainerHeader.childElementCount);
@@ -2127,6 +2153,9 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         var textPreviewHeader = d.createElement('div');
         textPreviewHeader.classList.add(classNames.text.header);
         textPreviewHeader.setAttribute('id', classNames.text.header);
+        var spHeader = d.createElement('span');
+        spHeader.setAttribute('id', 'header-text');
+        textPreviewHeader.appendChild(spHeader);
 
         var textPreviewContent = d.createElement('div');
         textPreviewContent.classList.add(classNames.text.content);
@@ -2172,6 +2201,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         testRenderTabs(stateForTests);
         testRenderMenu(stateForTests);
         testSetEdgeCategories(stateForTests);
+        testUpdateCategories(stateForTests);
         testRenderTextPreview();
         testCreateNewNode();
         testNodeIdAvailable();
