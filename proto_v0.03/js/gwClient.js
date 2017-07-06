@@ -15,15 +15,6 @@ var gwClient = (function () {
         configs = configuration;
     }
 
-    function validateResponse(response) {
-        if (response.status >= 200 && response.status < 300) {
-
-            var json = response.json(); // there's always a body
-
-            return json;
-        }
-    }
-
     function fetchNode(pagename) {
         /*
      *        Example response
@@ -87,12 +78,6 @@ var gwClient = (function () {
             }),
             method: 'GET'
         });
-
-        console.groupCollapsed('Debugging gwClient.fetchNode()');
-        console.debug(requestUrl);
-        console.debug(nodeRequest);
-        console.groupEnd();
-
         return fetch(nodeRequest);
     }
 

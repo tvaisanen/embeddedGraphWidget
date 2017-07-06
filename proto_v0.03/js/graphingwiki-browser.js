@@ -1,5 +1,9 @@
 /**
- * Created by toni on 6.6.2017.
+ * Created by Toni Väisänen on 6.6.2017.
+ *
+ * Todo:
+ *      - update styles when new graph is loaded
+ *      - implement check box visibility toggling
  */
 var d = document;
 
@@ -67,7 +71,7 @@ function testCy(containerElement) {
                 style: {label: 'category'}
             },
 
-            // Todo: generate these from config!
+            // Todo: generate these from config! priority: low
 
             {selector: 'edge.line-style-solid', style: {'line-style': 'solid'}},
             {selector: 'edge.line-style-dotted', style: {'line-style': 'dotted'}},
@@ -152,6 +156,7 @@ function testCy(containerElement) {
     });
 }
 
+// todo: migrate with configs. priority: low
 var testState = {
     header: "GraphingWikiBrowser Prototype v0.03",
     appContainerId: "app-container",
@@ -188,7 +193,7 @@ var testState = {
     }
 };
 
-// Todo: clean up!
+// Todo: clean up! priority: medium
 function unorderedListFromArray(array, mouseOver, mouseOut, toggleVisibility, onClick, doubleClick) {
     /*
      * Todo: add support for the array containing evenListener -methods
@@ -880,10 +885,6 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         gw = props.gw;
         cy = props.cy;
 
-
-
-
-
         /** @function updateCategories
          *  Description
          *  @param {Object} variable - Desc.
@@ -1076,7 +1077,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
     }
 
      /*
-        When the following functions are stable,
+        When behaviour of the following functions are defined,
         write the unit tests.
      */
 
@@ -1226,10 +1227,6 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         cy.on('tap', 'node', function (evt) {
             var node = evt.target;
             var nodeId = node.id();
-            console.groupCollapsed('Debug expandNode parameter');
-            console.debug(node);
-            console.debug(nodeId);
-            console.groupEnd();
             expandNode(nodeId);
         });
 
@@ -1258,6 +1255,26 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         var divTabContainer = d.getElementById(classNames.tab.container);
         console.log(divTabContainer);
         updateTabs();
+    }
+    function testHandleNavClick(testState) {
+        setProps(testState, 'all');
+
+        function printTabs() {
+            var elements = props.tabs.elements.active;
+            var graphs = props.tabs.graphs.active;
+            var styles = props.tabs.styles.active;
+            console.log("Activity status");
+            console.log("Elements: " + elements);
+            console.log("Elements: " + elements);
+            console.log("Graphs: " + graphs);
+            console.log("Styles: " + styles);
+        }
+
+        QUnit.test("Initial states of graphingwikiBrowser activity is ok.", function (assert) {
+            assert.deepEqual(props.tabs.elements.active, false);
+            assert.deepEqual(props.tabs.graphs.active, false);
+            assert.deepEqual(props.tabs.styles.active, true);
+        });
     }
 
     /** @function updateTabs
@@ -1386,6 +1403,17 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         div.appendChild(renderElementsList());
 
         return div;
+    }
+    function testRenderElementsContent(testState) {
+// set context for tests
+        console.group("testRenderStylesContent()");
+        setProps(testState, 'all');
+        var elementsContent = renderElementsContent();
+        QUnit.test("Rendering the elements tab", function (assert) {
+            assert.equal(elementsContent.id, "elements-content", "renderElementsContent() returns div with proper id");
+        });
+
+        console.groupEnd();
     }
 
     /** @function renderElementsfilter
@@ -1622,6 +1650,21 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         console.groupEnd();
         return div;
     }
+    function testRenderGraphsContent(testState) {
+// set context for tests
+        console.group("testRenderGraphsContent()");
+        setProps(testState, 'all');
+        var classes = classNames.tab.graph;
+        var graphsContent = renderGraphsContent();
+        var firstChild = graphsContent.childNodes[0];
+        QUnit.test("Rendering the graphs tab", function (assert) {
+            assert.equal(graphsContent.id, classes.container, "renderGraphsContent() returns div with proper id");
+            assert.equal(firstChild.tagName, "UL", "renderGraphsContent() first child is a list element");
+        });
+
+
+        console.groupEnd();
+    }
 
     /** @function renderHeader
      *  Description
@@ -1691,6 +1734,27 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         });
 
         return divMenu;
+    }
+    function testRenderMenu(testState) {
+        setProps(testState, 'all');
+        var classes = classNames.menu;
+        var menuContainer = renderMenu();
+        var childs = menuContainer.childNodes;
+        var childsHaveCorrectIds = true;
+
+
+        childs.forEach(function (element) {
+            var starts = element.id.startsWith("panel-menu__item__");
+            childsHaveCorrectIds = childsHaveCorrectIds && starts;
+        });
+
+        QUnit.test("renderMenu() tests", function (assert) {
+            assert.ok(true, "Executes");
+            assert.equal(
+                menuContainer.id, classes.container,
+                "Returns div container with correct id.");
+            assert.ok(childsHaveCorrectIds, "Container childs have correct ids.");
+        });
     }
 
     /** @function renderNavigation
@@ -1974,7 +2038,16 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         }
         return div;
     }
+    function testRenderStylesContent(testState) {
+// set context for tests
 
+        setProps(testState, 'all');
+        handleNavClick('styles');
+        var stylesContent = renderStylesContent();
+        QUnit.test("Rendering the graphs tab", function (assert) {
+            assert.equal(stylesContent.id, "styles-content", "renderStylesContent() returns div with proper id");
+        });
+    }
     /** @function renderTabs
      *  Description
      *  @param {Object} variable - Desc.
@@ -2004,11 +2077,17 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
         return divContent;
     }
+    function testRenderTabs() {
+        setProps(testState, 'all');
+        var tabs = renderTabs();
+        QUnit.test("RenderTabs()", function (assert) {
+            assert.ok(tabs, "happening");
+        });
+    }
 
     /** @function renderTextPreview
-     *  Description
-     *  @param {Object} variable - Desc.
-     *  @return {Type} desc.
+     *  render div for textPreview
+     *  @return {HTML element} Div element with two child divs
      */
     function renderTextPreview() {
         var divTextPreviewContainer = d.createElement('div');
@@ -2028,6 +2107,23 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
         return divTextPreviewContainer;
     }
+    function testRenderTextPreview() {
+        setProps(testState, 'all');
+        var textPreview = renderTextPreview();
+        console.debug(textPreview.classList.contains('text-preview'));
+        QUnit.test("renderTextPreview()", function (assert) {
+            assert.ok(textPreview, "returns");
+            assert.deepEqual(textPreview.id, classNames.text.container, "Text preview returns div with an correct ID");
+            assert.deepEqual(textPreview.childElementCount, 2, "Text preview returns with correct amount of childs");
+            assert.deepEqual(textPreview.childNodes[0].id, classNames.text.header, "Text preview returns with correct header div as first child");
+            assert.deepEqual(textPreview.childNodes[1].id, classNames.text.content, "Text preview returns with correct content div as second child");
+            assert.deepEqual(textPreview.childNodes[0].classList[0], classNames.text.header,
+                "First child has correct class initialized");
+            assert.deepEqual(textPreview.childNodes[1].classList[0], classNames.text.content,
+                "Second child has correct class initialized");
+
+        });
+    }
 
     /* ---------- Tests ---------- */
     /*   Remove from deployment    */
@@ -2044,6 +2140,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         testRenderStylesContent(stateForTests);
         testRenderTabs(stateForTests);
         testRenderMenu(stateForTests);
+        testRenderTextPreview();
         testCreateNewNode();
         testNodeIdAvailable();
         testEdgeExists();
@@ -2082,101 +2179,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         });
     }
 
-    function testHandleNavClick(testState) {
-        setProps(testState, 'all');
-
-        function printTabs() {
-            var elements = props.tabs.elements.active;
-            var graphs = props.tabs.graphs.active;
-            var styles = props.tabs.styles.active;
-            console.log("Activity status");
-            console.log("Elements: " + elements);
-            console.log("Elements: " + elements);
-            console.log("Graphs: " + graphs);
-            console.log("Styles: " + styles);
-        }
-
-        printTabs();
-
-        QUnit.test("Initial states of graphingwikiBrowser activity is ok.", function (assert) {
-            assert.deepEqual(props.tabs.elements.active, false);
-            assert.deepEqual(props.tabs.graphs.active, false);
-            assert.deepEqual(props.tabs.styles.active, true);
-        });
-    }
-
-    function testRenderElementsContent(testState) {
-// set context for tests
-        console.group("testRenderStylesContent()");
-        setProps(testState, 'all');
-        var elementsContent = renderElementsContent();
-        QUnit.test("Rendering the elements tab", function (assert) {
-            assert.equal(elementsContent.id, "elements-content", "renderElementsContent() returns div with proper id");
-        });
-
-        console.groupEnd();
-    }
-
-    function testRenderMenu(testState) {
-        setProps(testState, 'all');
-        var classes = classNames.menu;
-        var menuContainer = renderMenu();
-        var childs = menuContainer.childNodes;
-        var childsHaveCorrectIds = true;
-
-
-        childs.forEach(function (element) {
-            var starts = element.id.startsWith("panel-menu__item__");
-            childsHaveCorrectIds = childsHaveCorrectIds && starts;
-        });
-
-        QUnit.test("renderMenu() tests", function (assert) {
-            assert.ok(true, "Executes");
-            assert.equal(
-                menuContainer.id, classes.container,
-                "Returns div container with correct id.");
-            assert.ok(childsHaveCorrectIds, "Container childs have correct ids.");
-        });
-    }
-
-    function testRenderGraphsContent(testState) {
-// set context for tests
-        console.group("testRenderGraphsContent()");
-        setProps(testState, 'all');
-        var classes = classNames.tab.graph;
-        var graphsContent = renderGraphsContent();
-        var firstChild = graphsContent.childNodes[0];
-        QUnit.test("Rendering the graphs tab", function (assert) {
-            assert.equal(graphsContent.id, classes.container, "renderGraphsContent() returns div with proper id");
-            assert.equal(firstChild.tagName, "UL", "renderGraphsContent() first child is a list element");
-        });
-
-
-        console.groupEnd();
-    }
-
-    function testRenderStylesContent(testState) {
-// set context for tests
-
-        setProps(testState, 'all');
-        handleNavClick('styles');
-        var stylesContent = renderStylesContent();
-        QUnit.test("Rendering the graphs tab", function (assert) {
-            assert.equal(stylesContent.id, "styles-content", "renderStylesContent() returns div with proper id");
-        });
-    }
-
-    function testRenderTabs() {
-        setProps(testState, 'all');
-        var tabs = renderTabs();
-        QUnit.test("RenderTabs()", function (assert) {
-            assert.ok(tabs, "happening");
-        });
-    }
-
-
     /* ---------- Public methods ---------- */
-
     /*
      *   Todo: do just start method?
      */
@@ -2200,6 +2203,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
     }
 
 })();
+
 
 graphingwikiBrowser.start(testState);
 
