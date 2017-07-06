@@ -25,6 +25,82 @@ var configs = {
     layoutOptions: ['cola', 'breadthfirst', 'circle', 'concentric', 'cose', 'grid', 'random'],
 };
 
+function initCyContextMenu() {
+    return {
+        menuItems: [
+            {
+                id: 'remove',
+                content: 'remove',
+                tooltipText: 'remove',
+                selector: 'node, edge',
+                onClickFunction: function (event) {
+                    var target = event.target || event.cyTarget;
+                    target.remove();
+                },
+                hasTrailingDivider: true
+            },
+            {
+                id: 'hide',
+                content: 'hide',
+                tooltipText: 'hide',
+                selector: '*',
+                onClickFunction: function (event) {
+                    var target = event.target || event.cyTarget;
+                    target.hide();
+                },
+                disabled: false
+            },
+            {
+                id: 'add-node',
+                content: 'add node',
+                tooltipText: 'add node',
+                coreAsWell: true,
+                onClickFunction: function (event) {
+                    var data = {
+                        group: 'nodes'
+                    };
+
+                    var pos = event.position || event.cyPosition;
+
+                    cy.add({
+                        data: data,
+                        position: {
+                            x: pos.x,
+                            y: pos.y
+                        }
+                    });
+                }
+            },
+            {
+                id: 'remove-selected',
+                content: 'remove selected',
+                tooltipText: 'remove selected',
+                coreAsWell: true,
+                onClickFunction: function (event) {
+                    cy.$(':selected').remove();
+                }
+            },
+            {
+                id: 'select-all-nodes',
+                content: 'select all nodes',
+                tooltipText: 'select all nodes',
+                selector: 'node',
+                onClickFunction: function (event) {
+                    selectAllOfTheSameType(event.target || event.cyTarget);
+                }
+            },
+            {
+                id: 'select-all-edges',
+                content: 'select all edges',
+                tooltipText: 'select all edges',
+                selector: 'edge',
+                onClickFunction: function (event) {
+                    selectAllOfTheSameType(event.target || event.cyTarget);
+                }
+            }
+        ]
+    };
+}
 
 function testCy(containerElement) {
     return cytoscape({
@@ -37,6 +113,12 @@ function testCy(containerElement) {
                     'background-color': '#6490af',
                     'size': '40',
                     'label': 'data(id)',
+                    'content': 'data(id)',
+                    'text-valign': 'center',
+                    'color': 'white',
+                    'text-outline-width': 1,
+                    'text-outline-color': '#000000',
+                    'background-color': '#9a9a9a'
                 }
             },
 
@@ -295,9 +377,8 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                     inactive: 'tab-elements__list-item--inactive'
                 },
                 filter: "tab-elements__filter",
-                filterClasses: {
-                    input: "tab-elements__filter-input"
-                }
+                filterInput: "tab-elements__filter-input"
+
             },
             styles: {
                 container: 'tab-styles',
@@ -917,7 +998,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
     function testUpdateCategories(testState) {
         setProps(testState, 'all');
 
-        var categories = ['hello','world'];
+        var categories = ['hello', 'world'];
         var newCategories = ['foo', 'bar'];
         var expectedCategories = ['hello', 'world', 'foo', 'bar'];
 
@@ -939,14 +1020,14 @@ var graphingwikiBrowser = (function (gwClient, cy) {
      *  @param {String} nodeId - Id of the node to expand.
      *  @return {Array} categories.
      */
-    function setEdgeCategories(newCategories){
+    function setEdgeCategories(newCategories) {
         props.tabs.styles.categories = newCategories;
         return getEdgeCategories();
     }
 
     function testSetEdgeCategories(testState) {
         setProps(testState, 'all');
-        var categories = ['hello','world'];
+        var categories = ['hello', 'world'];
         var categoriesSet = setEdgeCategories(categories);
         console.debug('?');
         console.debug(getEdgeCategories());
@@ -1280,6 +1361,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             var nodeId = node.id();
             expandNode(nodeId);
         });
+        cy.contextMenus(initCyContextMenu());
 
         props.cy = cy;
     }
@@ -1486,18 +1568,19 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             props.tabs.elements.filter = '';
             updateTabs();
         });
-        var mockFilter = d.createElement("input");
+        var inFilter = d.createElement("input");
+        inFilter.type = "text";
+        inFilter.placeholder = "Filter...";
+        inFilter.setAttribute('id', 'filter');
+        inFilter.classList.add(classNames.tab.elements.filterInput);
+        // inFilter
+        //.setAttribute('placeholder', 'Filter Elements');
 
 
-        mockFilter.type = "text";
-        mockFilter.setAttribute('id', 'filter');
-        // mockFilter.setAttribute('placeholder', 'Filter Elements');
-
-
-        mockFilter.addEventListener('keypress', function (event) {
+        inFilter.addEventListener('keypress', function (event) {
             var divList = d.getElementById('elements-list');
-            props.tabs.elements.filter = mockFilter.value;
-            spanFilter.innerHTML = ": filter :" + mockFilter.value;
+            props.tabs.elements.filter = inFilter.value;
+            spanFilter.innerHTML = ": filter :" + inFilter.value;
             console.log("prop.filter: " + props.tabs.elements.filter);
             var elesContent = d.getElementById('elements-content');
             var oldContent = elesContent.childNodes[1];
@@ -1505,14 +1588,52 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             elesContent.replaceChild(newContent, oldContent);
         });
 
-        div.appendChild(mockFilter);
+        div.appendChild(inFilter);
         div.appendChild(btnClearFilter);
         div.appendChild(spanFilter);
         return div;
     }
 
+    /** @function setTextPreviewHeader
+     *  Description
+     *  @param {Object} variable - Desc.
+     *  @return {Type} desc.
+     */
+    function setTextPreviewHeader(headerText) {
+        var spHeader = d.getElementById('header-text');
+        spHeader.innerHTML = headerText;
+    }
+
+    /** @function setTextPreviewContent
+     *  Description
+     *  Todo: TEST!
+     *  @param {Object} variable - Desc.
+     *  @return {Type} desc.
+     */
+    function setTextPreviewContent(param) {
+        // set header to reflect the content
+        setTextPreviewHeader(param);
+
+        // get paget text promise
+        var gw = props.gw;
+        var textPromise = gw.getPageText(param);
+
+        var textPreviewContent = d.getElementById(classNames.text.content);
+        var linkToSite = d.createElement('a');
+
+        linkToSite.innerHTML = param;
+        linkToSite.setAttribute('href', "http://localhost/" + param);
+        textPromise.then(function (response) {
+            return response.json();
+        }).then(function (json) {
+            textPreviewContent.innerHTML = json.data;
+            return json.data;
+        });
+    }
+
     /** @function renderElementsList
      *  Description
+     *  Todo: Refactor
      *  @param {Object} variable - Desc.
      *  @return {Type} desc.
      */
@@ -1566,38 +1687,10 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         }
 
         function doubleClick(param) {
+            console.debug('doubleclick!');
             if (cy.getElementById(param).isNode()) {
                 expandNode(param);
             }
-        }
-
-        function updateTextPreview(param) {
-            console.log("load page text");
-            var textPromise = gw.getPageText(param);
-
-            updateTextPreviewHeader(param);
-            var textPreviewContent = d.getElementById(classNames.text.content);
-            var linkToSite = d.createElement('a');
-
-            linkToSite.innerHTML = param;
-            linkToSite.setAttribute('href', "http://localhost/" + param);
-            textPromise.then(function (response) {
-                return response.json();
-            }).then(function (json) {
-                textPreviewContent.innerHTML = json.data;
-                return json.data;
-            });
-        }
-
-        function updateTextPreviewHeader(pagename) {
-            var textContainerHeader = d.getElementById(classNames.text.header);
-            var spHeader = d.getElementById('header-text');
-            console.log(textContainerHeader.childNodes[0]);
-            spHeader.innerHTML = pagename;
-            console.log(textContainerHeader.childNodes[0]);
-            console.log(textContainerHeader.childNodes[0]);
-            console.log(textContainerHeader.childElementCount);
-            textContainerHeader.childNodes['header-text']
         }
 
         function mouseOver(param) {
@@ -1634,7 +1727,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         var hdEdges = d.createElement('h2');
         hdEdges.innerHTML = "Links";
 
-        var ulNodes = unorderedListFromArray(nodes, mouseOver, mouseOut, toggleVisibility, updateTextPreview, doubleClick);
+        var ulNodes = unorderedListFromArray(nodes, mouseOver, mouseOut, toggleVisibility, setTextPreviewContent, doubleClick);
         var ulEdges = unorderedListFromArray(edges, mouseOver, mouseOut, toggleVisibility);
 
         div.setAttribute('id', "elements-list");
