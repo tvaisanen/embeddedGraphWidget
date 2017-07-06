@@ -5,6 +5,17 @@
  *      - update styles when new graph is loaded
  *      - implement check box visibility toggling
  */
+/*
+var selectAllOfTheSameType = function(ele) {
+    cy.elements().unselect();
+    if(ele.isNode()) {
+        cy.nodes().select();
+    }
+    else if(ele.isEdge()) {
+        cy.edges().select();
+    }
+};*/
+
 var d = document;
 
 var configs = {
