@@ -60,6 +60,11 @@ li {
     border-width: 1px;
 }
 
+.tab-elements__list-item__selected li{
+    background-color: #af0027;
+    size: 30px;
+}
+
 .tab-elements__filter-input {
     width: 100%;
     background-color: white;

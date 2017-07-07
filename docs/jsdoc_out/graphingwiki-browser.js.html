@@ -1,4 +1,32 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: graphingwiki-browser.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: graphingwiki-browser.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * Created by Toni Väisänen on 6.6.2017.
  *
  * Todo:
@@ -397,8 +425,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         }
     }
 
-    /** @function cy context menu init
-     * initCyContextMenu
+    /** @function cy context menu init*
      * @param cy
      * @return {Object}
      */
@@ -1003,7 +1030,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             assert.ok(edgeFour.isEdge(), "returns edge and is edge for created source and target");
             assert.ok(nodeOne.isNode(), "creates the target node if not exist");
             assert.ok(nodeTwo.isNode(), "creates the source node if not exist");
-            assert.ok(nodeThree.isNode() && nodeFour.isNode(), "creates the source node and target if not exist");
+            assert.ok(nodeThree.isNode() &amp;&amp; nodeFour.isNode(), "creates the source node and target if not exist");
 
         });
     }
@@ -1062,8 +1089,8 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         var nodeTwo = cy.getElementById(idTwo);
         var nodeThree = cy.getElementById(idThree);
 
-        var allEdgesCreatedIfNotExisting = edgeOne.isEdge() && edgeTwo.isEdge() && edgeThree.isEdge();
-        var allNodesCreatedIfNotExisting = nodeOne.isNode() && nodeTwo.isNode() && nodeThree.isNode();
+        var allEdgesCreatedIfNotExisting = edgeOne.isEdge() &amp;&amp; edgeTwo.isEdge() &amp;&amp; edgeThree.isEdge();
+        var allNodesCreatedIfNotExisting = nodeOne.isNode() &amp;&amp; nodeTwo.isNode() &amp;&amp; nodeThree.isNode();
 
         QUnit.test("createEdgesToNodes()", function (assert) {
             assert.ok(allEdgesCreatedIfNotExisting, "creates all the edges if does not exist");
@@ -1116,8 +1143,8 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         var nodeTwo = cy.getElementById(idTwo);
         var nodeThree = cy.getElementById(idThree);
 
-        var allEdgesCreatedIfNotExisting = edgeOne.isEdge() && edgeTwo.isEdge() && edgeThree.isEdge();
-        var allNodesCreatedIfNotExisting = nodeOne.isNode() && nodeTwo.isNode() && nodeThree.isNode();
+        var allEdgesCreatedIfNotExisting = edgeOne.isEdge() &amp;&amp; edgeTwo.isEdge() &amp;&amp; edgeThree.isEdge();
+        var allNodesCreatedIfNotExisting = nodeOne.isNode() &amp;&amp; nodeTwo.isNode() &amp;&amp; nodeThree.isNode();
 
         QUnit.test("createEdgesFromNodes()", function (assert) {
             assert.ok(allEdgesCreatedIfNotExisting, "creates all the edges if does not exist");
@@ -1477,7 +1504,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
      */
     function initCytoscape() {
         /*
-         *   Return <div id="cy">
+         *   Return &lt;div id="cy">
          *   Initialize empty Cytoscape graph
          *
          * */
@@ -2087,7 +2114,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
         childs.forEach(function (element) {
             var starts = element.id.startsWith("panel-menu__item__");
-            childsHaveCorrectIds = childsHaveCorrectIds && starts;
+            childsHaveCorrectIds = childsHaveCorrectIds &amp;&amp; starts;
         });
 
         QUnit.test("renderMenu() tests", function (assert) {
@@ -2431,7 +2458,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
     }
 
     /** @function renderTextPreview
-     *  renderTextPreview()
+     *  render div for textPreview
      *  @return {Object} Div element with two child divs
      */
     function renderTextPreview() {
@@ -2510,7 +2537,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         var container = d.getElementById(props.appContainerId);
         console.log("container: " + container);
         QUnit.test("App container initialized correctly", function (assert) {
-            var notUndefined = (container != 'undefined' && container != null);
+            var notUndefined = (container != 'undefined' &amp;&amp; container != null);
             assert.ok(notUndefined, "App container is defined");
         })
     }
@@ -2559,3 +2586,75 @@ graphingwikiBrowser.start(testState);
 
 
 
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addClassToEdgeTodo:Decidewhattodowiththis.">addClassToEdge
+ Todo: Decide what to do with this.</a></li><li><a href="global.html#createEdgesFromNodesDescription">createEdgesFromNodes
+ Description</a></li><li><a href="global.html#createNewEdgeDescription">createNewEdge
+ Description</a></li><li><a href="global.html#createNewNodeCreatenewnodeandaddittothegivencytoscapeinstance.">createNewNode
+ Create new node and add it to the given cytoscape instance.</a></li><li><a href="global.html#createNodesAndEdgeBetweenCreatesedgebetweentwonodesandifthenodesdonotexist,thesearealsocreated.">createNodesAndEdgeBetween
+ Creates edge between two nodes and if the nodes do not
+ exist, these are also created.</a></li><li><a href="global.html#createNodesAndEdgeBetweenDescription">createNodesAndEdgeBetween
+ Description</a></li><li><a href="global.html#cycontextmenuinitTodo:cleanup!priority:medium">cy context menu init
+Todo: clean up! priority: medium</a></li><li><a href="global.html#cycontextmenuinit*">cy context menu init*</a></li><li><a href="global.html#d">d</a></li><li><a href="global.html#downloadGraphPNGDescription">downloadGraphPNG
+ Description</a></li><li><a href="global.html#edgeExistsCheckifanodeofgivenidisalreadydefinedinthegraph.">edgeExists
+ Check if a node of given id is already defined in the graph.</a></li><li><a href="global.html#elementHasCategoryClassCheckifthegivenelementhasbeenassignedwithexistingcategorystyleclasses.">elementHasCategoryClass
+ Check if the given element has been assigned with existing
+ category style classes.</a></li><li><a href="global.html#expandNodeDescription">expandNode
+ Description</a></li><li><a href="global.html#generateContentDescription">generateContent
+ Description</a></li><li><a href="global.html#getEdgeCategoriesReturnanarrayofedgecategoriesusedincurrentgraph.">getEdgeCategories
+  Return an array of edge categories used in current graph.</a></li><li><a href="global.html#handleNavClickDescription">handleNavClick
+ Description</a></li><li><a href="global.html#initCytoscapeDescription">initCytoscape
+ Description</a></li><li><a href="global.html#initNewGraphDescription">initNewGraph
+ Description</a></li><li><a href="global.html#menuItemCreateDescription">menuItemCreate
+ Description</a></li><li><a href="global.html#menuItemLayoutDescription">menuItemLayout
+ Description</a></li><li><a href="global.html#menuItemSaveDescription">menuItemSave
+ Description</a></li><li><a href="global.html#nodeIdAvailableCheckifanodeofgivenidisalreadydefinedinthegraph.">nodeIdAvailable
+ Check if a node of given id is already defined in the graph.</a></li><li><a href="global.html#renderDescription">render
+ Description</a></li><li><a href="global.html#renderContentContainerDescription">renderContentContainer
+ Description</a></li><li><a href="global.html#renderElementsContentDescription">renderElementsContent
+ Description</a></li><li><a href="global.html#renderElementsfilterDescription">renderElementsfilter
+ Description</a></li><li><a href="global.html#renderElementsListDescriptionTodo:Refactor">renderElementsList
+ Description
+ Todo: Refactor</a></li><li><a href="global.html#renderGraphColumnDescription">renderGraphColumn
+ Description</a></li><li><a href="global.html#renderGraphListItemDescription">renderGraphListItem
+ Description</a></li><li><a href="global.html#renderGraphsContentDescription">renderGraphsContent
+ Description</a></li><li><a href="global.html#renderHeaderDescription">renderHeader
+ Description</a></li><li><a href="global.html#renderHeaderContainerDescription">renderHeaderContainer
+ Description</a></li><li><a href="global.html#renderMenuDescription">renderMenu
+ Description</a></li><li><a href="global.html#renderNavigationDescription">renderNavigation
+ Description</a></li><li><a href="global.html#renderPanelDescription">renderPanel
+ Description</a></li><li><a href="global.html#renderStylesContentDescription">renderStylesContent
+ Description</a></li><li><a href="global.html#renderTabsDescription">renderTabs
+ Description</a></li><li><a href="global.html#renderTextPreviewrenderdivfortextPreview">renderTextPreview
+ render div for textPreview</a></li><li><a href="global.html#setAndRunLayoutDescription">setAndRunLayout
+ Description</a></li><li><a href="global.html#setEdgeCategoriesDescriptionTodo:Fixthebug!(runteststoseewhat'shappening)">setEdgeCategories
+ Description
+ Todo: Fix the bug! ( run tests to see what's happening )</a></li><li><a href="global.html#setPropsDescription">setProps
+ Description</a></li><li><a href="global.html#setTextPreviewContentDescriptionTodo:TEST!">setTextPreviewContent
+ Description
+ Todo: TEST!</a></li><li><a href="global.html#setTextPreviewHeaderDescription">setTextPreviewHeader
+ Description</a></li><li><a href="global.html#toggleNodeVisibilityTodo:connectelementlistcheckboxestocynodevisibility">toggleNodeVisibility
+ Todo: connect element list checkboxes to cy node visibility</a></li><li><a href="global.html#updateCategoriesTakesanarrayofcategorynamesasstringsandupdatesthestateofapp">updateCategories
+ Takes an array of categorynames as strings and updates the state of app</a></li><li><a href="global.html#updateTabsDescription">updateTabs
+ Description</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Jul 07 2017 14:11:55 GMT+0300 (EEST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
