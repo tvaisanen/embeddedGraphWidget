@@ -349,129 +349,180 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         }
     };
 
+    var listenerFunctions = {
+        menuItemCreate: {
+            btnSave: {
+                onClick: function (name) {
+                    console.group("menuItemCreate.btnSave.onClick()");
+                    console.info("Clicked create node button.");
+                    console.info("Current value: " + name);
+                    var promise = gwClient.savePageToMoin(name, 'hello');
+                    promise.then(function (response) {
+                        var j = response.json();
+                        console.info(j);
+                        return j;
+                    }).then(function (obj) {
+                        console.info(obj);
+                        createNewNode(name, cy);
+                        console.groupEnd();
+                    }).catch(function (error) {
+                        console.warn(error);
+                        console.groupEnd();
+                    });
+                }
+            }
+        },
+        elementsFilter: {
+            inFilter: {
+                keypress: function (filtProps) {
+                    console.groupCollapsed("elementsFilter.inFilter.keypress()");
+                    try {
+                        var filterValue = filtProps.inFilter.value;
+
+                        props.tabs.elements.filter = filterValue;
+                        filtProps.spanFilter.innerHTML = ": filter :" + filterValue;
+
+                        /* elesContent has to be declared here
+                         *  it is created dynamically and therefore can not
+                         *  be passed as prop
+                         */
+                        var elesContent = d.getElementById('elements-content');
+                        var newContent = filtProps.renderNewContent();
+                        var oldContent = elesContent.childNodes[1];
+                        elesContent.replaceChild(newContent, oldContent);
+                    } catch (e) {
+                        console.warn("elementsFilter.inFilter.keypress()");
+                        console.warn(e);
+                    }
+                    console.groupEnd();
+                }
+            }
+        }
+    }
+
     /** @function cy context menu init*
      * @param cy
      * @returns {{menuItems: [*,*,*,*,*,*,*]}}
      */
     function initCyContextMenu(cy) {
-    return {
-        menuItems: [
-            {
-                id: 'remove',
-                content: 'remove',
-                tooltipText: 'remove',
-                selector: 'node, edge',
-                onClickFunction: function (event) {
-                    var target = event.target || event.cyTarget;
-                    target.remove();
+        return {
+            menuItems: [
+                {
+                    id: 'remove',
+                    content: 'remove',
+                    tooltipText: 'remove',
+                    selector: 'node, edge',
+                    onClickFunction: function (event) {
+                        var target = event.target || event.cyTarget;
+                        target.remove();
+                    },
+                    hasTrailingDivider: true
                 },
-                hasTrailingDivider: true
-            },
-            {
-                id: 'add-edge',
-                content: 'connect',
-                tooltipText: 'add edge between this node and the chosen node',
-                selector: 'node',
-                onClickFunction: function (event) {
-                    var source = event.target || event.cyTarget;
-                    console.info('I am ' + source.id() + ' and I want to connect!');
-                    var targetId = prompt('Provide id of the node, which to connect.');
-                    console.log(targetId);
-                    if (nodeIdAvailable(targetId, cy)){
-                        var confirmation = confirm("The node do not exist. Do you want to create it?");
-                        console.log(confirmation);
-                        if (confirmation){
-                            createNewNode(targetId, cy);
-                        } else {
-                            console.info('User replied no');
-                            return null;
+                {
+                    id: 'add-edge',
+                    content: 'connect',
+                    tooltipText: 'add edge between this node and the chosen node',
+                    selector: 'node',
+                    onClickFunction: function (event) {
+                        var source = event.target || event.cyTarget;
+                        console.info('I am ' + source.id() + ' and I want to connect!');
+                        var targetId = prompt('Provide id of the node, which to connect.');
+                        console.log(targetId);
+                        if (nodeIdAvailable(targetId, cy)){
+                            var confirmation = confirm("The node do not exist. Do you want to create it?");
+                            console.log(confirmation);
+                            if (confirmation){
+                                createNewNode(targetId, cy);
+                            } else {
+                                console.info('User replied no');
+                                return null;
+                            }
                         }
-                    }
-                    var edge = {
-                        group: 'edges',
-                        data: {
-                            id: source.id() + "_to_" + targetId,
-                            source: source.id(),
-                            target: targetId
-                        }
-                    };
-                    cy.add(edge);
+                        var edge = {
+                            group: 'edges',
+                            data: {
+                                id: source.id() + "_to_" + targetId,
+                                source: source.id(),
+                                target: targetId
+                            }
+                        };
+                        cy.add(edge);
+                    },
                 },
-            },
-            {
-                id: 'hide',
-                content: 'hide',
-                tooltipText: 'hide',
-                selector: '*',
-                onClickFunction: function (event) {
-                    var target = event.target || event.cyTarget;
-                    target.hide();
+                {
+                    id: 'hide',
+                    content: 'hide',
+                    tooltipText: 'hide',
+                    selector: '*',
+                    onClickFunction: function (event) {
+                        var target = event.target || event.cyTarget;
+                        target.hide();
+                    },
+                    disabled: false
                 },
-                disabled: false
-            },
-            {
-                id: 'add-node',
-                content: 'add node',
-                tooltipText: 'add node',
-                coreAsWell: true,
-                onClickFunction: function (event) {
-                    var targetId = prompt('Provide id for the new node.');
-                    var data = {
-                        group: 'nodes',
-                        id: targetId
-                    };
+                {
+                    id: 'add-node',
+                    content: 'add node',
+                    tooltipText: 'add node',
+                    coreAsWell: true,
+                    onClickFunction: function (event) {
+                        var targetId = prompt('Provide id for the new node.');
+                        var data = {
+                            group: 'nodes',
+                            id: targetId
+                        };
 
-                    var pos = event.position || event.cyPosition;
-                    // todo: refactor to be standalone function
-                    var promise = props.gw.savePageToMoin(targetId, 'hello');
-                    promise.then(function (response) {
-                        var j = response.json();
-                        console.log(j);
-                        return j;
-                    }).then(function (obj) {
-                        console.log(obj);
-                        createNewNode(targetId, cy);
-                    });
-                    /*
-                    cy.add({
-                        data: data,
-                        position: {
-                            x: pos.x,
-                            y: pos.y
-                        }
-                    });*/
+                        var pos = event.position || event.cyPosition;
+                        // todo: refactor to be standalone function
+                        var promise = props.gw.savePageToMoin(targetId, 'hello');
+                        promise.then(function (response) {
+                            var j = response.json();
+                            console.log(j);
+                            return j;
+                        }).then(function (obj) {
+                            console.log(obj);
+                            createNewNode(targetId, cy);
+                        });
+                        /*
+                        cy.add({
+                            data: data,
+                            position: {
+                                x: pos.x,
+                                y: pos.y
+                            }
+                        });*/
+                    }
+                },
+                {
+                    id: 'remove-selected',
+                    content: 'remove selected',
+                    tooltipText: 'remove selected',
+                    coreAsWell: true,
+                    onClickFunction: function (event) {
+                        cy.$(':selected').remove();
+                    }
+                },
+                {
+                    id: 'select-all-nodes',
+                    content: 'select all nodes',
+                    tooltipText: 'select all nodes',
+                    selector: 'node',
+                    onClickFunction: function (event) {
+                        selectAllOfTheSameType(event.target || event.cyTarget);
+                    }
+                },
+                {
+                    id: 'select-all-edges',
+                    content: 'select all edges',
+                    tooltipText: 'select all edges',
+                    selector: 'edge',
+                    onClickFunction: function (event) {
+                        selectAllOfTheSameType(event.target || event.cyTarget);
+                    }
                 }
-            },
-            {
-                id: 'remove-selected',
-                content: 'remove selected',
-                tooltipText: 'remove selected',
-                coreAsWell: true,
-                onClickFunction: function (event) {
-                    cy.$(':selected').remove();
-                }
-            },
-            {
-                id: 'select-all-nodes',
-                content: 'select all nodes',
-                tooltipText: 'select all nodes',
-                selector: 'node',
-                onClickFunction: function (event) {
-                    selectAllOfTheSameType(event.target || event.cyTarget);
-                }
-            },
-            {
-                id: 'select-all-edges',
-                content: 'select all edges',
-                tooltipText: 'select all edges',
-                selector: 'edge',
-                onClickFunction: function (event) {
-                    selectAllOfTheSameType(event.target || event.cyTarget);
-                }
-            }
-        ]
-    };
-}
+            ]
+        };
+    }
 
     /** @function toggleNodeVisibility
      *  Todo: connect element list checkboxes to cy node visibility
@@ -1022,7 +1073,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             return setEdgeCategories(categoriesToUpdate);
 
         } catch (e) {
-            console.warn("Problem while updating categories!");
+            console.warn("Exception raised by updateCategories()");
             console.warn(e);
         }
 
@@ -1267,23 +1318,14 @@ var graphingwikiBrowser = (function (gwClient, cy) {
     function menuItemCreate() {
         "use strict";
         var cy = props.cy;
+        var onClick = listenerFunctions.menuItemCreate.btnSave.onClick;
         var div = d.createElement('div');
         var inName = d.createElement('input');
         inName.setAttribute('id', 'input-graph-name');
         inName.setAttribute('type', 'text');
         var btnSave = d.createElement('button');
-        btnSave.addEventListener('click', function (event) {
-            console.log("Clicked create node button.");
-            console.log("Current value: " + inName.value);
-            var promise = gwClient.savePageToMoin(inName.value, 'hello');
-            promise.then(function (response) {
-                var j = response.json();
-                console.log(j);
-                return j;
-            }).then(function (obj) {
-                console.log(obj);
-                createNewNode(inName.value, cy);
-            });
+        btnSave.addEventListener('click', function(event){
+            onClick(event);
         });
         var label = d.createElement('span');
         label.innerHTML = 'Node ID:';
@@ -1611,16 +1653,19 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         //.setAttribute('placeholder', 'Filter Elements');
 
 
+
+        var filtProps = {
+            divList: d.getElementById('elements-list'),
+            inFilter: inFilter,
+            renderNewContent: renderElementsList,
+            spanFilter: spanFilter,
+        };
+
         inFilter.addEventListener('keypress', function (event) {
-            var divList = d.getElementById('elements-list');
-            props.tabs.elements.filter = inFilter.value;
-            spanFilter.innerHTML = ": filter :" + inFilter.value;
-            console.log("prop.filter: " + props.tabs.elements.filter);
-            var elesContent = d.getElementById('elements-content');
-            var oldContent = elesContent.childNodes[1];
-            var newContent = renderElementsList();
-            elesContent.replaceChild(newContent, oldContent);
+            console.debug(filtProps.elesContent);
+            listenerFunctions.elementsFilter.inFilter.keypress(filtProps);
         });
+
 
         div.appendChild(inFilter);
         div.appendChild(btnClearFilter);
@@ -1761,6 +1806,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         var hdEdges = d.createElement('h2');
         hdEdges.innerHTML = "Links";
 
+        // Todo: Reduce complexity
         var ulNodes = unorderedListFromArray(nodes, mouseOver, mouseOut, toggleVisibility, setTextPreviewContent, doubleClick);
         var ulEdges = unorderedListFromArray(edges, mouseOver, mouseOut, toggleVisibility);
 
@@ -2369,9 +2415,6 @@ var graphingwikiBrowser = (function (gwClient, cy) {
     }
 
     /* ---------- Public methods ---------- */
-    /*
-     *   Todo: do just start method?
-     */
 
     return {
 
