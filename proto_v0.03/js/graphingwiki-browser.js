@@ -349,6 +349,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         }
     };
 
+    // Todo: write tests! priority: medium.
     var listenerFunctions = {
         menuItemCreate: {
             btnSave: {
@@ -395,6 +396,12 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                         console.warn(e);
                     }
                     console.groupEnd();
+                }
+            },
+            btnClearFilter: {
+                onClick: function (updateTabs) {
+                    props.tabs.elements.filter = '';
+                    updateTabs();
                 }
             }
         }
@@ -1370,34 +1377,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
      *  @param {Object} variable - Desc.
      *  @return {Type} desc.
      */
-    function menuItemLayout() {
-        "use strict";
-        var div = d.createElement('div');
-        var selLayout = d.createElement('select');
-        selLayout.setAttribute('id', 'layout-options');
 
-        configs.layoutOptions.forEach(function (option) {
-            var opt = d.createElement('option');
-            opt.setAttribute('value', option);
-            opt.innerHTML = option;
-            selLayout.appendChild(opt);
-        });
-
-        var btnResetLayout = d.createElement('button');
-        btnResetLayout.addEventListener('click', function (event) {
-            console.log("Clicked reset layout.");
-            console.log("Current value: " + selLayout.value);
-            setAndRunLayout();
-        });
-        var label = d.createElement('span');
-        label.innerHTML = 'selected:';
-        btnResetLayout.innerHTML = 'reset';
-        div.appendChild(label);
-        div.appendChild(selLayout);
-        div.appendChild(btnResetLayout);
-        //div.innerHTML = this.content + "Generated content!";
-        return div;
-    }
 
     /** @function downloadGraphPNG
      *  Description
@@ -1641,8 +1621,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
         btnClearFilter.innerHTML = "ClearFilter";
         btnClearFilter.addEventListener('click', function () {
-            props.tabs.elements.filter = '';
-            updateTabs();
+            listenerFunctions.elementsFilter.btnClearFilter.onClick(updateTabs)
         });
         var inFilter = d.createElement("input");
         inFilter.type = "text";
