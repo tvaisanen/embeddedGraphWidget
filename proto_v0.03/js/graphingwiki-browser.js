@@ -400,8 +400,49 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             },
             btnClearFilter: {
                 onClick: function (updateTabs) {
-                    props.tabs.elements.filter = '';
-                    updateTabs();
+                    try {
+                        console.group("btnClearFilter.onClick()")
+                        props.tabs.elements.filter = '';
+                        updateTabs();
+                    } catch (e){
+                        console.warn("btnClearFilter.onClick()");
+                        console.warn(e);
+                    }
+                }
+            }
+        },
+        graphsList: {
+            listItem: {
+                /** @function graphList.listItem.onClick()
+                 *
+                 *  @param {Object} listItemProps
+                 */
+                onClick: function (listItemProps) {
+                    console.group("graphList.listItem.onClick()");
+
+                    try {
+                        var graphName = listItemProps.graphName;
+                        var gw = listItemProps.gw;
+
+                        console.log("clicked: " + graphName);
+
+                        // Todo: precautions!
+                        var confirmChange = true;
+                        if (confirmChange) {
+                            var graphPromise = gw.getGraph('graph/' + graphName);
+                            graphPromise.then(function (response) {
+                                var json = response.json();
+                                return json;
+                            }).then(function (json) {
+                                props.cy.destroy();
+                                props.cy = initNewGraph(json.data);
+                            });
+                        }
+
+                    } catch (e){
+                        console.warn("graphList.listItem.onClick()");
+                        console.warn(e);
+                    }
                 }
             }
         }
@@ -1620,18 +1661,12 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         div.classList.add("element-filter");
 
         btnClearFilter.innerHTML = "ClearFilter";
-        btnClearFilter.addEventListener('click', function () {
-            listenerFunctions.elementsFilter.btnClearFilter.onClick(updateTabs)
-        });
+
         var inFilter = d.createElement("input");
         inFilter.type = "text";
         inFilter.placeholder = "Filter...";
         inFilter.setAttribute('id', 'filter');
         inFilter.classList.add(classNames.tab.elements.filterInput);
-        // inFilter
-        //.setAttribute('placeholder', 'Filter Elements');
-
-
 
         var filtProps = {
             divList: d.getElementById('elements-list'),
@@ -1640,6 +1675,9 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             spanFilter: spanFilter,
         };
 
+        btnClearFilter.addEventListener('click', function () {
+            listenerFunctions.elementsFilter.btnClearFilter.onClick(updateTabs)
+        });
         inFilter.addEventListener('keypress', function (event) {
             console.debug(filtProps.elesContent);
             listenerFunctions.elementsFilter.inFilter.keypress(filtProps);
@@ -1649,6 +1687,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         div.appendChild(inFilter);
         div.appendChild(btnClearFilter);
         div.appendChild(spanFilter);
+
         return div;
     }
 
@@ -1829,9 +1868,17 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                 li.classList.add(classes.listItem.inactive);
                 li.innerHTML = graph;
 
-                li.addEventListener('click', function () {
+                li.addEventListener('click', function (event) {
+                    listenerFunctions.graphsList.listItem.onClick({
+                        graphName: graph,
+                        gw: gw
+                    });
+                });
+
+                /*
+                function () {
                     console.log("clicked: " + graph);
-                    if (true /*confirm('Are you sure that you want to change the graph?')*/) {
+                    if (true ) {
                         var graphPromise = gw.getGraph('graph/' + graph);
                         graphPromise.then(function (response) {
                             var json = response.json();
@@ -1843,7 +1890,9 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                     } else {
                         // Do nothing!
                     }
-                });
+                }
+                */
+
                 ul.appendChild(li);
             });
         });
