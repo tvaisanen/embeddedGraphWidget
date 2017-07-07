@@ -1846,6 +1846,27 @@ var graphingwikiBrowser = (function (gwClient, cy) {
          * Implement graphs tab rendering here
          *
          * */
+
+        function renderListItem(listItemProps){
+
+            var graphName = listItemProps.graphName;
+            var gw = listItemProps.gw;
+            var list = listItemProps.listElement;
+
+            var li = document.createElement('li');
+            li.classList.add(classes.listItem.inactive);
+            li.innerHTML = graphName;
+
+            li.addEventListener('click', function (event) {
+                listenerFunctions.graphsList.listItem.onClick({
+                    graphName: graphName,
+                    gw: gw
+                });
+            });
+
+            list.appendChild(li);
+        }
+
         var cy = props.cy;
         var gw = props.gw;
         var classes = classNames.tab.graph;
@@ -1863,37 +1884,11 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         }).then(function (json) {
             var graphs = json.data;
 
+            /* loop array of graphName strings and generate
+             * the list items for the panel
+             */
             graphs.forEach(function (graph) {
-                var li = document.createElement('li');
-                li.classList.add(classes.listItem.inactive);
-                li.innerHTML = graph;
-
-                li.addEventListener('click', function (event) {
-                    listenerFunctions.graphsList.listItem.onClick({
-                        graphName: graph,
-                        gw: gw
-                    });
-                });
-
-                /*
-                function () {
-                    console.log("clicked: " + graph);
-                    if (true ) {
-                        var graphPromise = gw.getGraph('graph/' + graph);
-                        graphPromise.then(function (response) {
-                            var json = response.json();
-                            return json;
-                        }).then(function (json) {
-                            props.cy.destroy();
-                            props.cy = initNewGraph(json.data);
-                        });
-                    } else {
-                        // Do nothing!
-                    }
-                }
-                */
-
-                ul.appendChild(li);
+                renderListItem({graphName: graph, gw: gw, listElement: ul});
             });
         });
 
