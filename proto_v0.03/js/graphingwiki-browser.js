@@ -302,6 +302,8 @@ var graphingwikiBrowser = (function (gwClient, cy) {
      * @param {Object} funcProps
      */
     function toggleVisibility(param, cy) {
+        console.debug("inside toggleVisibility()");
+        console.log(param);
         try {
             var el = cy.getElementById(param);
             if (el.hidden()) {
@@ -403,12 +405,16 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             }
         },
         elementsList: {
+            /** @function elementsList.onClick()
+             *  elementsList.onClick()
+             * @param {Object} funcProps
+             */
             onClick: function (funcProps) {
                 var evt = funcProps.evt;
                 console.debug('CLICKING: ' + evt.target.id + ' type: ' + evt.target.type);
                 if (evt.target.type === 'checkbox') {
-                    toggleVisibility(item, cy);
-                    console.debug(item);
+                    toggleVisibility(funcProps.elementId, cy);
+                    console.debug(evt.target.id);
                 } else {
                     try {
                         if (props.currentDetail) {
@@ -426,8 +432,8 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                     setTextPreviewContent(evt.target.id);
                 }
             },
-            /** @function
-             *  Eventlistener for elements tab list item
+            /** @function elementsList.onMouseover()
+             *  elementsList.onMouseover()
              * @param {Object} funcProps
              */
             onMouseOver: function mouseOver(funcProps) {
@@ -440,6 +446,10 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                     console.warn(e);
                 }
             },
+            /** @function elementsList.onMouseout()
+             *  elementsList.onMouseout()
+             * @param {Object} funcProps
+             */
             onMouseOut: function mouseOut(funcProps) {
                 try {
                     var node = funcProps.cy.getElementById(funcProps.listItemId);
@@ -454,7 +464,10 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         graphsList: {
             listItem: {
                 /** @function graphList.listItem.onClick()
-                 *
+                 *  graphList.listItem.onClick()
+                 *  Load new graph to canvas with gwClient.
+                 *  todo: the gw action.
+                 *  Graphingwiki action is the interface for this action.
                  *  @param {Object} listItemProps
                  */
                 onClick: function (listItemProps) {
@@ -603,7 +616,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
     }
 
     /** @function cy context menu init
-     * Todo: clean up! priority: medium
+     * Todo: separate ul rendering and eventListener binding
      * @param cy
      * @return {Object}
      */
@@ -617,40 +630,39 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
         var cy = funcProps.cy;
         var array = funcProps.array;
-        var mouseOver = funcProps.onMouseOver;
-        var mouseOut = funcProps.onMouseOut;
         var toggleVisibility = funcProps.toggleVisibility;
-        var onClick = funcProps.onClick;
+
 
         var ul = d.createElement('ul');
-        array.forEach(function (item) {
+
+        array.forEach(function (listElementId) {
             var li = d.createElement('li');
 
             var checkBox = d.createElement('input');
-            checkBox.setAttribute('id', 'visibility_' + item);
+            checkBox.setAttribute('id', 'visibility_' + listElementId);
             checkBox.setAttribute('type', 'checkbox');
 
-            var elementHidden = cy.getElementById(item).hidden()
+            var elementHidden = cy.getElementById(listElementId).hidden()
             checkBox.setAttribute('checked', elementHidden);
 
 
             checkBox.checked = true;
             //console.log(checkBox);
             checkBox.addEventListener('click', function (event) {
-                //console.log(event.target);
+                console.log(event.target);
                 toggleVisibility(event.target);
-                //console.log(event.target.id);
+                console.log(event.target.id);
             });
-            //console.log(checkBox);
+
 
             li.appendChild(checkBox);
 
-            li.innerHTML += item;
+            li.innerHTML += listElementId;
 
-            li.setAttribute('id', item);
+            li.setAttribute('id', listElementId);
 
             li.addEventListener('mouseover', function (evt) {
-                mouseOver({
+                funcProps.onMouseOver({
                     cy: cy,
                     listItemId: evt.target.id
                 });
@@ -658,15 +670,16 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
 
             li.addEventListener('mouseout', function (evt) {
-                mouseOut({
+                funcProps.onMouseOut({
                     cy: cy,
                     listItemId: evt.target.id
                 });
             });
 
             li.addEventListener('click', function (evt) {
-                onClick({
+                funcProps.onClick({
                     evt: evt,
+                    elementId: listElementId,
                     currentDetail: props.currentDetail,
                     classToToggle: classNames.tab.elements.listItem.selected,
                     setCurrentDetail: function(){console.log("stub set detail")}
