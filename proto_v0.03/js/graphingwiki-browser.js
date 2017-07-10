@@ -297,6 +297,49 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         }
     };
 
+    /** @function
+     *  Utils
+     * @param {Object} funcProps
+     */
+    function toggleVisibility(param, cy) {
+        try {
+            var el = cy.getElementById(param);
+            if (el.hidden()){
+                el.show();
+            } else {
+                el.hide();
+            }
+        } catch (e) {
+            console.group("Exception raised by toggleVisibility()");
+            console.warn(e);
+            console.info("param: " + param);
+            console.info("cy: ");
+            console.info(cy);
+            console.groupEnd();
+        }
+    }
+
+    /** @function
+     *  Utils
+     * @param {Object} funcProps
+     */
+    function toggleNeighbourhood(node) {
+        var neighborhood = node.neighborhood('node');
+        var edges = node.neighborhood('edge');
+
+        try {
+            neighborhood.forEach(function (e) {
+                e.toggleClass('highlight');
+            });
+            edges.forEach(function (e) {
+                e.toggleClass('highlight');
+            });
+        } catch (e) {
+            console.error("Something went wrong with 'toggleNeighbourhood()'");
+        }
+    }
+
+
     // Todo: write tests! priority: medium.
     var listenerFunctions = {
         menuItemCreate: {
@@ -353,7 +396,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                         props.tabs.elements.filter = '';
                         updateTabs();
                     } catch (e){
-                        console.warn("btnClearFilter.onClick()");
+                        console.warn("Exception raised by btnClearFilter.onClick()");
                         console.warn(e);
                     }
                 }
@@ -366,10 +409,25 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                  * @param {Object} funcProps
                  */
                 onMouseOver: function mouseOver(funcProps) {
-                    var node = funcProps.cy.getElementById(funcProps.listItemId);
-                    node.toggleClass('hover-on');
-                    toggleNeighbourhood(node);
-        },
+                    try {
+                        var node = funcProps.cy.getElementById(funcProps.listItemId);
+                        node.toggleClass('hover-on');
+                        toggleNeighbourhood(node);
+                    } catch (e){
+                        console.warn("Exception raised by elementsList.onMouseOver()");
+                        console.warn(e);
+                    }
+                },
+                onMouseOut: function mouseOut(funcProps) {
+                    try {
+                        var node = funcProps.cy.getElementById(funcProps.listItemId);
+                        node.toggleClass('hover-on');
+                        toggleNeighbourhood(node);
+                    } catch (e){
+                        console.warn("Exception raised by elementsList.onMouseOut()");
+                        console.warn(e);
+                    }
+                }
         },
         graphsList: {
             listItem: {
@@ -583,7 +641,10 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         });
 
         li.addEventListener('mouseout', function (evt) {
-            mouseOut(evt.target.id);
+            mouseOut({
+                cy: cy,
+                listItemId: evt.target.id
+            });
         });
 
         li.addEventListener('click', function (evt) {
@@ -1813,58 +1874,20 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             return idArray;
         }
 
-        function toggleNeighbourhood(node) {
-            var neighborhood = node.neighborhood('node');
-            var edges = node.neighborhood('edge');
-
-            try {
-                neighborhood.forEach(function (e) {
-                    e.toggleClass('highlight');
-                });
-                edges.forEach(function (e) {
-                    e.toggleClass('highlight');
-                });
-            } catch (e) {
-                console.error("Something went wrong with 'toggleNeighbourhood()'");
-            }
-        }
-
         function doubleClick(param) {
             console.debug('doubleclick!');
             if (cy.getElementById(param).isNode()) {
                 expandNode(param);
             }
         }
-        /*
-        function mouseOver(param) {
-            var node = cy.getElementById(param);
-            node.toggleClass('hover-on');
-            toggleNeighbourhood(node);
-        }*/
 
+        /*
         function mouseOut(param) {
             var node = cy.getElementById(param);
             node.toggleClass('hover-on');
             toggleNeighbourhood(node);
         }
-
-        function toggleVisibility(param, cy) {
-            try {
-                var el = cy.getElementById(param);
-                if (el.hidden()){
-                    el.show();
-                } else {
-                    el.hide();
-                }
-            } catch (e) {
-                console.group("Exception raised by toggleVisibility()");
-                console.warn(e);
-                console.info("param: " + param);
-                console.info("cy: ");
-                console.info(cy);
-                console.groupEnd();
-            }
-        }
+        */
 
 
 // extract the ids from aforementioned elements
@@ -1888,7 +1911,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             array: nodes,
             cy: cy,
             onMouseOver: listenerFunctions.elementsList.onMouseOver,
-            onMouseOut: mouseOut,
+            onMouseOut: listenerFunctions.elementsList.onMouseOut,
             toggleVisibility: toggleVisibility,
             onClick: setTextPreviewContent,
             onDblClick: doubleClick
@@ -1897,7 +1920,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             cy: cy,
             array: edges,
             onMouseOver: listenerFunctions.elementsList.onMouseOver,
-            onMouseOut: mouseOut,
+            onMouseOut: listenerFunctions.elementsList.onMouseOut,
             toggleVisibility: toggleVisibility,
             onClick: toggleVisibility
         });
