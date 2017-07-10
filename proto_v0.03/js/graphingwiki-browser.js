@@ -297,16 +297,15 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         }
     };
 
-    /** @function
-     *  Utils
-     * @param {Object} funcProps
+    /** @function toggleVisibility
+     *  toggleVisibility: toggle visibility of cy element.
+     *  parameter is a object, which contains string:elementId
+     *  and object:cy (cytoscape instance).
+     * @param {Object} funcProps {elementId, cy}
      */
-    function toggleVisibility(param, cy) {
-        console.debug("inside toggleVisibility()");
-        console.log(param);
-        console.log(typeof param);
+    function toggleVisibility(funcProps) {
         try {
-            var el = cy.getElementById(param);
+            var el = funcProps.cy.getElementById(funcProps.elementId);
             if (el.hidden()) {
                 el.show();
             } else {
@@ -315,7 +314,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         } catch (e) {
             console.group("Exception raised by toggleVisibility()");
             console.warn(e);
-            console.info("param: " + param);
+            console.info("elementId: " + elementId);
             console.info("cy: ");
             console.info(cy);
             console.groupEnd();
@@ -343,8 +342,14 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         console.debug("before toggling - visible is hidden: " + nodeVisible.hidden());
         console.debug("before toggling - hidden is hidden: " + nodeHidden.hidden());
 
-        toggleVisibility(idVisible, cy);
-        toggleVisibility(idHidden, cy);
+        toggleVisibility({
+            elementId: idVisible,
+            cy: cy
+        });
+        toggleVisibility({
+            elementId: idHidden,
+            cy: cy
+        });
 
         console.debug("after toggling - visible is hidden: " + nodeVisible.hidden());
         console.debug("after toggling - hidden is hidden: " + nodeHidden.hidden());
@@ -371,7 +376,8 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                 e.toggleClass('highlight');
             });
         } catch (e) {
-            console.error("Something went wrong with 'toggleNeighbourhood()'");
+            console.warn("Something went wrong with 'toggleNeighbourhood()'");
+            console.warn(e);
         }
     }
 
@@ -439,26 +445,31 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             }
         },
         elementsList: {
+
             /** @function elementsList.onClick()
              *  elementsList.onClick()
              * @param {Object} funcProps
              */
             onClick: function (funcProps) {
                 var evt = funcProps.evt;
-                console.debug('CLICKING: ' + evt.target.id + ' type: ' + evt.target.type);
+
                 if (evt.target.type === 'checkbox') {
-                    toggleVisibility(funcProps.elementId, cy);
-                    console.debug(evt.target.id);
+                    toggleVisibility({
+                        elementId: funcProps.elementId,
+                        cy: cy
+                    });
+
                 } else {
                     try {
                         if (props.currentDetail) {
                             props.currentDetail.classList.remove(
                                 classNames.tab.elements.listItem.selected);
                         }
+
                         props.currentDetail = evt.target;
-                        props.currentDetail.classList.add(
-                            classNames.tab.elements.listItem.selected)
-                        console.debug(props.currentDetail);
+                        props.currentDetail.classList.add(classNames.tab.elements.listItem.selected);
+                        // console.debug(props.currentDetail);
+
                     } catch (e) {
                         console.warn("Exception raised by unorderedList -> li.addEventListener()");
                         console.warn(e);
@@ -466,6 +477,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                     setTextPreviewContent(evt.target.id);
                 }
             },
+
             /** @function elementsList.onMouseover()
              *  elementsList.onMouseover()
              * @param {Object} funcProps

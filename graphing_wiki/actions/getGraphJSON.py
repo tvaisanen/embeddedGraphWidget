@@ -14,12 +14,6 @@ from graphingwiki.util import format_wikitext
 import graphingwiki as gw
 import graphingwiki.util as gw_util
 
-# Import for logging proxy
-import requests
-
-PROXY_URL = 'http://127.0.0.1:5000/log'
-
-##########################
 
 from time import time
 
@@ -32,12 +26,6 @@ except ImportError:
 def execute(pagename, request):
     # parse query parameters to a dict
     form = gw.values_to_form(request.values)
-
-    # post for proxy logging
-
-
-
-    # requests.post(PROXY_URL, json.dumps(['request', str(form)]))
 
 
     # Set up the graph data query
