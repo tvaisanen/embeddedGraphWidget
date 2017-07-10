@@ -24,12 +24,5 @@ Current development version needs the proxy server `devProxyServer.py`,  which u
 
 ## Testing
 
-Open the file: `test.html` in a browser to run unit tests.
+Open the file: `tests/test.html` in a browser to run unit tests.
 
-
-## Project layout
-
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
