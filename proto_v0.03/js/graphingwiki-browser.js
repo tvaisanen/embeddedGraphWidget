@@ -3,7 +3,7 @@
  *
  * Todo:
  *      - update styles when new graph is loaded
- *      - implement check box visibility toggling
+ *      - Manage link categories? -> needs GW action to be functional!
  */
 /*
  var selectAllOfTheSameType = function(ele) {
@@ -304,6 +304,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
     function toggleVisibility(param, cy) {
         console.debug("inside toggleVisibility()");
         console.log(param);
+        console.log(typeof param);
         try {
             var el = cy.getElementById(param);
             if (el.hidden()) {
@@ -319,6 +320,39 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             console.info(cy);
             console.groupEnd();
         }
+    }
+
+    function testToggleVisibility() {
+
+        var idVisible = 'visibleNode';
+        var idHidden = 'hiddenNode';
+
+        var cy = cytoscape({
+                container: d.getElementById('cy'),
+                elements: [
+                    {group: 'nodes', data: {id: idVisible}},
+                    {group: 'nodes', data: {id: idHidden}}
+            ]});
+
+        var nodeVisible = cy.getElementById(idVisible);
+        var nodeHidden = cy.getElementById(idHidden);
+
+        // hide the nodeHidden to test toggling from hidden.
+        nodeHidden.hide();
+
+        console.debug("before toggling - visible is hidden: " + nodeVisible.hidden());
+        console.debug("before toggling - hidden is hidden: " + nodeHidden.hidden());
+
+        toggleVisibility(idVisible, cy);
+        toggleVisibility(idHidden, cy);
+
+        console.debug("after toggling - visible is hidden: " + nodeVisible.hidden());
+        console.debug("after toggling - hidden is hidden: " + nodeHidden.hidden());
+
+        QUnit.test("toggleVisibility() - cytoscape visibility toggling", function (assert) {
+            assert.ok(nodeVisible.hidden(), "toggleVisibility hides node if not hidden");
+            assert.notOk(nodeHidden.hidden(), "toggleVisibility shows node if hidden");
+        })
     }
 
     /** @function
@@ -682,22 +716,15 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                     elementId: listElementId,
                     currentDetail: props.currentDetail,
                     classToToggle: classNames.tab.elements.listItem.selected,
-                    setCurrentDetail: function(){console.log("stub set detail")}
+                    setCurrentDetail: function () {
+                        console.log("stub set detail")
+                    }
                 })
             });
 
             ul.appendChild(li);
         });
         return ul;
-    }
-
-
-    /** @function toggleNodeVisibility
-     *  Todo: connect element list checkboxes to cy node visibility
-     */
-    function toggleNodeVisibility() {
-        // stubb
-
     }
 
     /** @function createNewNode
@@ -1925,7 +1952,9 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             onMouseOver: listenerFunctions.elementsList.onMouseOver,
             onMouseOut: listenerFunctions.elementsList.onMouseOut,
             toggleVisibility: toggleVisibility,
-            onClick: function(){console.info("This action is undefined.")}
+            onClick: function () {
+                console.info("This action is undefined.")
+            }
         });
 
         div.setAttribute('id', "elements-list");
@@ -2542,6 +2571,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         testCreateEdgesToNodes();
         testCreateEdgesFromNodes();
         testRenderGraphListItem();
+        testToggleVisibility();
         console.groupEnd();
     }
 
