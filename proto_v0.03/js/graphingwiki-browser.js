@@ -288,10 +288,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             label: "Save",
             content: "form to input graph name",
             onClick: function (event) {
-                var graphName = prompt("Enter name for saving the graph:");
-                console.log("clicked " + this.label);
-                console.log("trying to save: " + graphName);
-
+                createPopUp('save');
             },
             generateContent: generateContent
         }
@@ -390,6 +387,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                     console.group("menuItemCreate.btnSave.onClick()");
                     console.info("Clicked create node button.");
                     console.info("Current value: " + name);
+
                     var promise = gwClient.savePageToMoin(name, 'hello');
                     promise.then(function (response) {
                         var j = response.json();
@@ -544,8 +542,29 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                     }
                 }
             }
+        },
+        window: {
+            onClick: function (event) {
+
+                // todo: remove hardcoding
+                var popupId = 'popup';
+
+                var popup = d.getElementById(popupId);
+                // if popup is null do nothing, if not then close popup
+                // if the clicked target is not the popup
+                if (popupId){
+                    console.debug('popup is active');
+                    console.debug(event.target.id);
+                    if (event.target.id !== popupId){
+                        // todo:
+                        // set guard that the popup does not
+                        // get destroyed with the same click as it were created
+                        console.debug("destroy");
+                    }
+                }
+            }
         }
-    }
+    };
 
     /** @function cy context menu init
      * initCyContextMenu
@@ -1624,6 +1643,13 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         props.cy = cy;
     }
 
+    function initWindowListeners(){
+        // to close opened popup
+        window.addEventListener('click', function(event){
+            listenerFunctions.window.onClick(event);
+        })
+    }
+
     /** @function handleNavClick
      *  Description
      *  @param {Object} variable - Desc.
@@ -1749,7 +1775,6 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         var appContainer = d.getElementById(props.appContainerId);
         appContainer.appendChild(renderHeaderContainer());
         appContainer.appendChild(renderContentContainer());
-
     }
 
     /** @function renderGraphColumn
@@ -2473,6 +2498,76 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         });
     }
 
+
+    var popup = {
+        download: {
+            title: "Download the graph!",
+            render: function(){
+                var div = d.createElement('div');
+                div.innerHTML = "Download the graph!";
+                return div;
+            }
+        },
+        save: {
+            title: "Save the graph",
+            render: function(){
+                var div = d.createElement('div');
+                div.innerHTML = "Content goes here!";
+                return div;
+            }
+        },
+
+        popupItem: {
+            title: "Your title",
+            render: function () {
+                console.log('create popup with this!')
+            }
+        },
+
+        render: function(content) {
+            var container = d.createElement('div');
+            var header = d.createElement('div');
+
+            var spHeader = d.createElement('span');
+            spHeader.innerHTML = this[content].title;
+
+            var btnClose = d.createElement('button');
+            btnClose.innerHTML = "close";
+            btnClose.addEventListener('click', destroyPopUp);
+
+            header.appendChild(spHeader);
+            header.appendChild(btnClose);
+
+            var content = this[content].render();
+            container.appendChild(header);
+            container.appendChild(content);
+            return container;
+
+        }
+    };
+
+    /** @function createPopUp
+     *  popup for saving the graphs
+     */
+    function createPopUp(form){
+
+        console.log(form);
+
+        var divPopup = d.createElement('div');
+        divPopup.classList.add('popup');
+        divPopup.setAttribute('id', 'popup');
+        var content = popup.render(form);
+        divPopup.appendChild(content);
+        d.body.appendChild(divPopup);
+        console.debug('popup');
+    }
+
+    function destroyPopUp(){
+        var p = d.getElementById('popup');
+        document.body.removeChild(p);
+        console.debug("closed popup!");
+    }
+
     /** @function renderTabs
      *  Description
      *  @param {Object} variable - Desc.
@@ -2618,6 +2713,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
     return {
         start: function (props) {
             setProps(props, "all");
+            initWindowListeners();
             render();
             initCytoscape();
         },
@@ -2629,6 +2725,14 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
         runTests: function () {
             tests();
+        },
+
+        popup: function(form){
+            createPopUp(form);
+        },
+
+        closePopup: function (){
+            destroyPopUp();
         }
     }
 })();
