@@ -6,15 +6,15 @@
  *      - implement check box visibility toggling
  */
 /*
-var selectAllOfTheSameType = function(ele) {
-    cy.elements().unselect();
-    if(ele.isNode()) {
-        cy.nodes().select();
-    }
-    else if(ele.isEdge()) {
-        cy.edges().select();
-    }
-};*/
+ var selectAllOfTheSameType = function(ele) {
+ cy.elements().unselect();
+ if(ele.isNode()) {
+ cy.nodes().select();
+ }
+ else if(ele.isEdge()) {
+ cy.edges().select();
+ }
+ };*/
 
 var d = document;
 
@@ -287,7 +287,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         save: {
             label: "Save",
             content: "form to input graph name",
-            onClick: function(event){
+            onClick: function (event) {
                 var graphName = prompt("Enter name for saving the graph:");
                 console.log("clicked " + this.label);
                 console.log("trying to save: " + graphName);
@@ -304,7 +304,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
     function toggleVisibility(param, cy) {
         try {
             var el = cy.getElementById(param);
-            if (el.hidden()){
+            if (el.hidden()) {
                 el.show();
             } else {
                 el.hide();
@@ -395,7 +395,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                         console.group("btnClearFilter.onClick()")
                         props.tabs.elements.filter = '';
                         updateTabs();
-                    } catch (e){
+                    } catch (e) {
                         console.warn("Exception raised by btnClearFilter.onClick()");
                         console.warn(e);
                     }
@@ -403,31 +403,53 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             }
         },
         elementsList: {
-                onClick: function(){},
-                /** @function
-                 *  Eventlistener for elements tab list item
-                 * @param {Object} funcProps
-                 */
-                onMouseOver: function mouseOver(funcProps) {
+            onClick: function (funcProps) {
+                var evt = funcProps.evt;
+                console.debug('CLICKING: ' + evt.target.id + ' type: ' + evt.target.type);
+                if (evt.target.type === 'checkbox') {
+                    toggleVisibility(item, cy);
+                    console.debug(item);
+                } else {
                     try {
-                        var node = funcProps.cy.getElementById(funcProps.listItemId);
-                        node.toggleClass('hover-on');
-                        toggleNeighbourhood(node);
-                    } catch (e){
-                        console.warn("Exception raised by elementsList.onMouseOver()");
+                        if (props.currentDetail) {
+                            props.currentDetail.classList.remove(
+                                classNames.tab.elements.listItem.selected);
+                        }
+                        props.currentDetail = evt.target;
+                        props.currentDetail.classList.add(
+                            classNames.tab.elements.listItem.selected)
+                        console.debug(props.currentDetail);
+                    } catch (e) {
+                        console.warn("Exception raised by unorderedList -> li.addEventListener()");
                         console.warn(e);
                     }
-                },
-                onMouseOut: function mouseOut(funcProps) {
-                    try {
-                        var node = funcProps.cy.getElementById(funcProps.listItemId);
-                        node.toggleClass('hover-on');
-                        toggleNeighbourhood(node);
-                    } catch (e){
-                        console.warn("Exception raised by elementsList.onMouseOut()");
-                        console.warn(e);
-                    }
+                    setTextPreviewContent(evt.target.id);
                 }
+            },
+            /** @function
+             *  Eventlistener for elements tab list item
+             * @param {Object} funcProps
+             */
+            onMouseOver: function mouseOver(funcProps) {
+                try {
+                    var node = funcProps.cy.getElementById(funcProps.listItemId);
+                    node.toggleClass('hover-on');
+                    toggleNeighbourhood(node);
+                } catch (e) {
+                    console.warn("Exception raised by elementsList.onMouseOver()");
+                    console.warn(e);
+                }
+            },
+            onMouseOut: function mouseOut(funcProps) {
+                try {
+                    var node = funcProps.cy.getElementById(funcProps.listItemId);
+                    node.toggleClass('hover-on');
+                    toggleNeighbourhood(node);
+                } catch (e) {
+                    console.warn("Exception raised by elementsList.onMouseOut()");
+                    console.warn(e);
+                }
+            }
         },
         graphsList: {
             listItem: {
@@ -457,7 +479,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                             });
                         }
 
-                    } catch (e){
+                    } catch (e) {
                         console.warn("graphList.listItem.onClick()");
                         console.warn(e);
                     }
@@ -484,10 +506,10 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                         console.info('I am ' + source.id() + ' and I want to connect!');
                         var targetId = prompt('Provide id of the node, which to connect.');
                         console.log(targetId);
-                        if (nodeIdAvailable(targetId, cy)){
+                        if (nodeIdAvailable(targetId, cy)) {
                             var confirmation = confirm("The node do not exist. Do you want to create it?");
                             console.log(confirmation);
-                            if (confirmation){
+                            if (confirmation) {
                                 createNewNode(targetId, cy);
                             } else {
                                 console.info('User replied no');
@@ -540,13 +562,13 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                             createNewNode(targetId, cy);
                         });
                         /*
-                        cy.add({
-                            data: data,
-                            position: {
-                                x: pos.x,
-                                y: pos.y
-                            }
-                        });*/
+                         cy.add({
+                         data: data,
+                         position: {
+                         x: pos.x,
+                         y: pos.y
+                         }
+                         });*/
                     }
                 },
                 {
@@ -559,23 +581,23 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                     }
                 },
                 /*{
-                    id: 'select-all-nodes',
-                    content: 'select all nodes',
-                    tooltipText: 'select all nodes',
-                    selector: 'node',
-                    onClickFunction: function (event) {
-                        selectAllOfTheSameType(event.target || event.cyTarget);
-                    }
-                },
-                {
-                    id: 'select-all-edges',
-                    content: 'select all edges',
-                    tooltipText: 'select all edges',
-                    selector: 'edge',
-                    onClickFunction: function (event) {
-                        selectAllOfTheSameType(event.target || event.cyTarget);
-                    }
-                }*/
+                 id: 'select-all-nodes',
+                 content: 'select all nodes',
+                 tooltipText: 'select all nodes',
+                 selector: 'node',
+                 onClickFunction: function (event) {
+                 selectAllOfTheSameType(event.target || event.cyTarget);
+                 }
+                 },
+                 {
+                 id: 'select-all-edges',
+                 content: 'select all edges',
+                 tooltipText: 'select all edges',
+                 selector: 'edge',
+                 onClickFunction: function (event) {
+                 selectAllOfTheSameType(event.target || event.cyTarget);
+                 }
+                 }*/
             ]
         };
     }
@@ -586,100 +608,81 @@ var graphingwikiBrowser = (function (gwClient, cy) {
      * @return {Object}
      */
     function unorderedListFromArray(funcProps) {
-    /*
-     * Todo: add support for the array containing evenListener -methods
-     * array: array of string items
-     * return: unordered html element with list items
-     * from the array
-     * */
+        /*
+         * Todo: add support for the array containing evenListener -methods
+         * array: array of string items
+         * return: unordered html element with list items
+         * from the array
+         * */
 
-    var cy = funcProps.cy;
-    var array = funcProps.array;
-    var mouseOver = funcProps.onMouseOver;
-    var mouseOut = funcProps.onMouseOut;
-    var toggleVisibility = funcProps.toggleVisibility;
-    var onClick = funcProps.onClick;
-    var doubleClick = funcProps.doubleClick;
+        var cy = funcProps.cy;
+        var array = funcProps.array;
+        var mouseOver = funcProps.onMouseOver;
+        var mouseOut = funcProps.onMouseOut;
+        var toggleVisibility = funcProps.toggleVisibility;
+        var onClick = funcProps.onClick;
 
-    var ul = d.createElement('ul');
-    array.forEach(function (item) {
-        var li = d.createElement('li');
+        var ul = d.createElement('ul');
+        array.forEach(function (item) {
+            var li = d.createElement('li');
 
-        var checkBox = d.createElement('input');
-        checkBox.setAttribute('id', 'visibility_' + item);
-        checkBox.setAttribute('type', 'checkbox');
+            var checkBox = d.createElement('input');
+            checkBox.setAttribute('id', 'visibility_' + item);
+            checkBox.setAttribute('type', 'checkbox');
 
-        var elementHidden = cy.getElementById(item).hidden()
-        checkBox.setAttribute('checked', elementHidden);
-
+            var elementHidden = cy.getElementById(item).hidden()
+            checkBox.setAttribute('checked', elementHidden);
 
 
-        checkBox.checked = true;
-        //console.log(checkBox);
-        checkBox.addEventListener('click', function (event) {
-            //console.log(event.target);
-            toggleVisibility(event.target);
-            //console.log(event.target.id);
-        });
-        //console.log(checkBox);
-
-        li.appendChild(checkBox);
-
-        li.innerHTML += item;
-
-        li.setAttribute('id', item);
-
-        li.addEventListener('mouseover', function (evt) {
-            mouseOver({
-                cy: cy,
-                listItemId: evt.target.id
+            checkBox.checked = true;
+            //console.log(checkBox);
+            checkBox.addEventListener('click', function (event) {
+                //console.log(event.target);
+                toggleVisibility(event.target);
+                //console.log(event.target.id);
             });
-        });
+            //console.log(checkBox);
 
-        li.addEventListener('doubleclick', function (evt) {
-            doubleClick(evt.target.id);
-        });
+            li.appendChild(checkBox);
 
-        li.addEventListener('mouseout', function (evt) {
-            mouseOut({
-                cy: cy,
-                listItemId: evt.target.id
+            li.innerHTML += item;
+
+            li.setAttribute('id', item);
+
+            li.addEventListener('mouseover', function (evt) {
+                mouseOver({
+                    cy: cy,
+                    listItemId: evt.target.id
+                });
             });
-        });
 
-        li.addEventListener('click', function (evt) {
-            console.debug('CLICKING: ' + evt.target.id + ' type: ' + evt.target.type);
-            if (evt.target.type === 'checkbox'){
-                toggleVisibility(item, cy);
-                console.debug(item);
-            } else {
-                try{
-                    if (props.currentDetail){
-                        props.currentDetail.classList.remove(
-                            classNames.tab.elements.listItem.selected);
-                    }
-                    props.currentDetail = evt.target;
-                    props.currentDetail.classList.add(
-                        classNames.tab.elements.listItem.selected)
-                    console.debug(props.currentDetail);
-                } catch (e) {
-                    console.warn("Exception raised by unorderedList -> li.addEventListener()");
-                    console.warn(e);
-                }
-                onClick(evt.target.id);
-            }
-        });
 
-        ul.appendChild(li);
-    });
-    return ul;
-}
+            li.addEventListener('mouseout', function (evt) {
+                mouseOut({
+                    cy: cy,
+                    listItemId: evt.target.id
+                });
+            });
+
+            li.addEventListener('click', function (evt) {
+                onClick({
+                    evt: evt,
+                    currentDetail: props.currentDetail,
+                    classToToggle: classNames.tab.elements.listItem.selected,
+                    setCurrentDetail: function(){console.log("stub set detail")}
+                })
+            });
+
+            ul.appendChild(li);
+        });
+        return ul;
+    }
 
 
     /** @function toggleNodeVisibility
      *  Todo: connect element list checkboxes to cy node visibility
      */
-    function toggleNodeVisibility(){
+    function toggleNodeVisibility() {
         // stubb
 
     }
@@ -1476,7 +1479,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         inName.setAttribute('id', 'input-graph-name');
         inName.setAttribute('type', 'text');
         var btnSave = d.createElement('button');
-        btnSave.addEventListener('click', function(event){
+        btnSave.addEventListener('click', function (event) {
             onClick(event);
         });
         var label = d.createElement('span');
@@ -1874,21 +1877,6 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             return idArray;
         }
 
-        function doubleClick(param) {
-            console.debug('doubleclick!');
-            if (cy.getElementById(param).isNode()) {
-                expandNode(param);
-            }
-        }
-
-        /*
-        function mouseOut(param) {
-            var node = cy.getElementById(param);
-            node.toggleClass('hover-on');
-            toggleNeighbourhood(node);
-        }
-        */
-
 
 // extract the ids from aforementioned elements
 
@@ -1910,19 +1898,21 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         var ulNodes = unorderedListFromArray({
             array: nodes,
             cy: cy,
+            onClick: listenerFunctions.elementsList.onClick,
             onMouseOver: listenerFunctions.elementsList.onMouseOver,
             onMouseOut: listenerFunctions.elementsList.onMouseOut,
             toggleVisibility: toggleVisibility,
-            onClick: setTextPreviewContent,
-            onDblClick: doubleClick
+            onClick: listenerFunctions.elementsList.onClick
         });
+
         var ulEdges = unorderedListFromArray({
             cy: cy,
             array: edges,
+            onClick: listenerFunctions.elementsList.onClick,
             onMouseOver: listenerFunctions.elementsList.onMouseOver,
             onMouseOut: listenerFunctions.elementsList.onMouseOut,
             toggleVisibility: toggleVisibility,
-            onClick: toggleVisibility
+            onClick: function(){console.info("This action is undefined.")}
         });
 
         div.setAttribute('id', "elements-list");
@@ -1974,7 +1964,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
     }
 
     function testRenderGraphsContent(testState) {
-    // set context for tests
+        // set context for tests
         console.group("testRenderGraphsContent()");
         setProps(testState, 'all');
 
@@ -2001,7 +1991,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
      *  @param {Object} variable - Desc.
      *  @return {Type} desc.
      */
-    function renderGraphListItem(listItemProps){
+    function renderGraphListItem(listItemProps) {
 
         var graphName = listItemProps.graphName;
         var gw = listItemProps.gw;
@@ -2024,7 +2014,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
     }
 
     function testRenderGraphListItem() {
-    // set context for tests
+        // set context for tests
         console.group("testRenderGraphListItem()");
 
 
