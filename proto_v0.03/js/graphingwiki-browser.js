@@ -211,7 +211,6 @@ var testState = {
 
 var graphingwikiBrowser = (function (gwClient, cy) {
 
-    // Every variable needs to be accessed through props
     var props;
     var classNames = {
         container: 'app-container',
@@ -359,6 +358,18 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                     }
                 }
             }
+        },
+        elementsList: {
+                onClick: function(){},
+                /** @function
+                 *  Eventlistener for elements tab list item
+                 * @param {Object} funcProps
+                 */
+                onMouseOver: function mouseOver(funcProps) {
+                    var node = funcProps.cy.getElementById(funcProps.listItemId);
+                    node.toggleClass('hover-on');
+                    toggleNeighbourhood(node);
+        },
         },
         graphsList: {
             listItem: {
@@ -524,8 +535,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
      * from the array
      * */
 
-    var cy = props.cy;
-
+    var cy = funcProps.cy;
     var array = funcProps.array;
     var mouseOver = funcProps.onMouseOver;
     var mouseOut = funcProps.onMouseOut;
@@ -562,7 +572,10 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         li.setAttribute('id', item);
 
         li.addEventListener('mouseover', function (evt) {
-            mouseOver(evt.target.id);
+            mouseOver({
+                cy: cy,
+                listItemId: evt.target.id
+            });
         });
 
         li.addEventListener('doubleclick', function (evt) {
@@ -1822,12 +1835,12 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                 expandNode(param);
             }
         }
-
+        /*
         function mouseOver(param) {
             var node = cy.getElementById(param);
             node.toggleClass('hover-on');
             toggleNeighbourhood(node);
-        }
+        }*/
 
         function mouseOut(param) {
             var node = cy.getElementById(param);
@@ -1871,18 +1884,19 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         var hdEdges = d.createElement('h2');
         hdEdges.innerHTML = "Links";
 
-        // Todo: Reduce complexity
         var ulNodes = unorderedListFromArray({
             array: nodes,
-            onMouseOver: mouseOver,
+            cy: cy,
+            onMouseOver: listenerFunctions.elementsList.onMouseOver,
             onMouseOut: mouseOut,
             toggleVisibility: toggleVisibility,
             onClick: setTextPreviewContent,
             onDblClick: doubleClick
         });
         var ulEdges = unorderedListFromArray({
+            cy: cy,
             array: edges,
-            onMouseOver: mouseOver,
+            onMouseOver: listenerFunctions.elementsList.onMouseOver,
             onMouseOut: mouseOut,
             toggleVisibility: toggleVisibility,
             onClick: toggleVisibility
