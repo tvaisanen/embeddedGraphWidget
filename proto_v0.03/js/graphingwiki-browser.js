@@ -18,7 +18,9 @@
 
 var d = document;
 
-function InvalidProps(){console.warn("Invalid props!")}
+function InvalidProps() {
+    console.warn("Invalid props!")
+}
 
 var configs = {
     API_PATH: 'http://127.0.0.1:5000/',
@@ -293,10 +295,14 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             generateContent: generateContent
         },
         save: {
+            // todo: eventlistener which passes gw etc alongside with funcprops
             label: "Save",
             content: "form to input graph name",
-            onClick: function (event) {
-                createPopUp('save');
+            onClick: function (funcProps) {
+                console.log("save.onClick()");
+                console.log(funcProps);
+                funcProps.context = 'save';
+                createPopUp(funcProps);
             },
             generateContent: generateContent
         }
@@ -306,7 +312,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
      *  toggleVisibility: toggle visibility of cy element.
      *  parameter is a object, which contains string:elementId
      *  and object:cy (cytoscape instance).
-     * @param {Object} funcProps {elementId, cy}
+     *  @param {Object} funcProps {elementId, cy}
      */
     function toggleVisibility(funcProps) {
         try {
@@ -332,11 +338,12 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         var idHidden = 'hiddenNode';
 
         var cy = cytoscape({
-                container: d.getElementById('cy'),
-                elements: [
-                    {group: 'nodes', data: {id: idVisible}},
-                    {group: 'nodes', data: {id: idHidden}}
-            ]});
+            container: d.getElementById('cy'),
+            elements: [
+                {group: 'nodes', data: {id: idVisible}},
+                {group: 'nodes', data: {id: idHidden}}
+            ]
+        });
 
         var nodeVisible = cy.getElementById(idVisible);
         var nodeHidden = cy.getElementById(idHidden);
@@ -417,7 +424,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                  *  popupConnect.btnConnect.onClick()
                  *  @param {Object} funcProps {targetNodeId, cy}
                  */
-                onClick: function (funcProps){
+                onClick: function (funcProps) {
                     console.log(funcProps);
                     console.log("btnConnect.onClick() connecting node: " + funcProps.sourceNode.id() + " to " + funcProps.inTargetNodeId.value);
                 }
@@ -427,12 +434,12 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                  *  popupConnect.btnSelect.onClick()
                  *  @param funcProps {}
                  */
-                onClick: function (funcProps){
+                onClick: function (funcProps) {
 
-                    function bindNodeSelection(funcProps){
+                    function bindNodeSelection(funcProps) {
                         console.log('here!');
                         console.log(funcProps);
-                        return function (event){
+                        return function (event) {
                             console.log(event.target.id());
                             console.log(funcProps);
                             console.log("Select the node, which to connect!");
@@ -606,10 +613,10 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                 var popup = d.getElementById(popupId);
                 // if popup is null do nothing, if not then close popup
                 // if the clicked target is not the popup
-                if (popupId){
+                if (popupId) {
                     console.debug('popup is active');
                     console.debug(event.target.id);
-                    if (event.target.id !== popupId){
+                    if (event.target.id !== popupId) {
                         // todo:
                         // set guard that the popup does not
                         // get destroyed with the same click as it were created
@@ -637,10 +644,9 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                         var source = event.target || event.cyTarget;
                         console.info('I am ' + source.id() + ' and I want to connect!');
                         createPopUp({
-                            context:'createEdge',
-                            props: {
-                                sourceNode: source
-                            }
+                            context: 'createEdge',
+                            sourceNode: source
+
                         });
                     }
                 },
@@ -1491,6 +1497,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             var cy = this;
             expandNode(nodeId, cy);
         });
+        cy.contextMenus(initCyContextMenu(cy));
         return cy;
     }
 
@@ -1661,11 +1668,15 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         a.click()
     }
 
+    /**
+     *
+     * @param evt
+     */
     function bindExpandNode(evt) {
-            var node = evt.target;
-            var nodeId = node.id();
-            expandNode(nodeId);
-        }
+        var node = evt.target;
+        var nodeId = node.id();
+        expandNode(nodeId);
+    }
 
     /** @function initCytoscape
      *  Description
@@ -1687,13 +1698,14 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
         props.cy = cy;
     }
+
     /*
-    function initWindowListeners(){
-        // to close opened popup
-        window.addEventListener('click', function(event){
-            listenerFunctions.window.onClick(event);
-        })
-    }*/
+     function initWindowListeners(){
+     // to close opened popup
+     window.addEventListener('click', function(event){
+     listenerFunctions.window.onClick(event);
+     })
+     }*/
 
     /** @function handleNavClick
      *  Description
@@ -2173,12 +2185,13 @@ var graphingwikiBrowser = (function (gwClient, cy) {
     /** @function renderMenu
      *  Description
      *  @param {Object} variable - Desc.
-     *  @return {Type} desc.
+     *  @return {Element} desc.
      */
     function renderMenu() {
 
         // Create the div which contains graphingwikiBrowser navigation tabs.
-        var tabs = props.tabs;
+        var cy = props.cy;
+        var gw = props.gw;
 
         // css classes
         var classes = classNames.menu;
@@ -2202,7 +2215,11 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
             // Bind an action to the click of the label.
             div.addEventListener('click', function () {
-                item.onClick(item.label + " clicked");
+                item.onClick({
+                    cy: cy,
+                    gw: gw,
+                    msg: item.label + " clicked"
+                });
             });
 
             // Show the content.
@@ -2544,65 +2561,68 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         });
     }
 
-/*
-  console.log(targetId);
-    if (nodeIdAvailable(targetId, cy)) {
-        var confirmation = confirm("The node do not exist. Do you want to create it?");
-        console.log(confirmation);
-        if (confirmation) {
-            createNewNode(targetId, cy);
-        } else {
-            console.info('User replied no');
-            return null;
-        }
-    }
-    var edge = {
-        group: 'edges',
-        data: {
-            id: source.id() + "_to_" + targetId,
-            source: source.id(),
-            target: targetId
-        }
-    };
-    cy.add(edge);
-* */
+    /*
+     console.log(targetId);
+     if (nodeIdAvailable(targetId, cy)) {
+     var confirmation = confirm("The node do not exist. Do you want to create it?");
+     console.log(confirmation);
+     if (confirmation) {
+     createNewNode(targetId, cy);
+     } else {
+     console.info('User replied no');
+     return null;
+     }
+     }
+     var edge = {
+     group: 'edges',
+     data: {
+     id: source.id() + "_to_" + targetId,
+     source: source.id(),
+     target: targetId
+     }
+     };
+     cy.add(edge);
+     * */
 
 
     var popup = {
         createEdge: {
+            // todo: refactor
             title: "Connect",
-            render: function(funcProps){
-                console.debug('createEdge');
+            connectButton: function (funcProps) {
+                var btnConnect = d.createElement('button');
+                btnConnect.innerHTML = "connect";
+                btnConnect.addEventListener('click', function () {
+                    listenerFunctions.popupConnect.btnConnect.onClick(funcProps);
+                });
+                return btnConnect;
+            },
+            selectButton: function (funcProps) {
+                var btnSelect = d.createElement('button');
+                btnSelect.innerHTML = "select";
+                btnSelect.addEventListener('click', function () {
+                    listenerFunctions.popupConnect.btnSelect.onClick(funcProps);
+                });
+                return btnSelect;
+            },
+            render: function (funcProps) {
                 console.debug(funcProps);
                 var div = d.createElement('div');
                 var input = d.createElement('input');
                 input.setAttribute('type', 'text');
-
                 // pass target node input field
                 funcProps.inTargetNodeId = input;
 
-                var btnConnect = d.createElement('button');
-                btnConnect.innerHTML = "connect";
-                btnConnect.addEventListener('click', function(){
-                    listenerFunctions.popupConnect.btnConnect.onClick(funcProps);
-                });
-
-                var btnSelect = d.createElement('button');
-                btnSelect.innerHTML = "select";
-                btnSelect.addEventListener('click', function(){
-                    listenerFunctions.popupConnect.btnSelect.onClick(funcProps);
-                });
-
                 div.appendChild(input);
-                div.appendChild(btnConnect);
-                div.appendChild(btnSelect);
+                div.appendChild(this.connectButton(funcProps));
+                div.appendChild(this.selectButton(funcProps));
 
                 return div;
             }
         },
         download: {
             title: "Download the graph!",
-            render: function(){
+            render: function () {
                 var div = d.createElement('div');
                 div.innerHTML = "Download the graph!";
                 return div;
@@ -2610,21 +2630,29 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         },
         save: {
             title: "Save the graph",
-            render: function(funcProps){
-                var div = d.createElement('div');
-                var input = d.createElement('input');
-                input.setAttribute('type', 'text');
+            saveButton: function (funcProps) {
                 var btnSave = d.createElement('button');
                 btnSave.innerHTML = "save";
-                btnSave.addEventListener('click', function(){
+                btnSave.addEventListener('click', function () {
                     listenerFunctions.popupSave.btnSave.onClick({
                         gw: funcProps.gw,
                         name: input.value
                     });
                 });
+                return btnSave;
+            },
+
+            render: function (funcProps) {
+
+                console.debug(funcProps);
+
+                var div = d.createElement('div');
+                var input = d.createElement('input');
+
+                input.setAttribute('type', 'text');
 
                 div.appendChild(input);
-                div.appendChild(btnSave);
+                div.appendChild(this.saveButton(funcProps));
 
                 return div;
             }
@@ -2637,10 +2665,10 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             }
         },
 
-        render: function(popupProps) {
+        render: function (funcProps) {
 
             console.debug("popup render");
-            console.debug(popupProps);
+            console.debug(funcProps);
 
 
             var container = d.createElement('div');
@@ -2650,7 +2678,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             header.classList.add('popup-header');
 
             var spHeader = d.createElement('span');
-            spHeader.innerHTML = this[popupProps.context].title;
+            spHeader.innerHTML = this[funcProps.context].title;
             spHeader.classList.add(classNames.popup.header.text);
 
             var btnClose = d.createElement('button');
@@ -2661,25 +2689,32 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             header.appendChild(spHeader);
             header.appendChild(btnClose);
 
-            var content = this[popupProps.context].render(popupProps.props);
+            var content = this[funcProps.context].render(funcProps);
             container.appendChild(header);
             container.appendChild(content);
-            return container;
 
+            return container;
         }
     };
 
     /** @function createPopUp
      *  popup for saving the graphs
      */
-    function createPopUp(funcProps){
+    function createPopUp(funcProps) {
 
         // naming should be more declarative
         // the funcProps act as a panelProps
         // and funcProps.props as funcProps
         // for the next function
-        funcProps.props.gw = props.gw;
-        funcProps.props.cy = props.cy;
+
+        console.debug("createPopup()");
+        console.debug(funcProps);
+
+        if (!funcProps.cy){
+            // todo: refactor this to eventlistener
+            funcProps.cy = props.cy;
+        }
+
         console.log(funcProps.context);
 
         var divPopup = d.createElement('div');
@@ -2691,7 +2726,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         console.debug('popup');
     }
 
-    function destroyPopUp(){
+    function destroyPopUp() {
         var p = d.getElementById('popup');
         document.body.removeChild(p);
         console.debug("closed popup!");
@@ -2857,11 +2892,11 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             tests();
         },
 
-        popup: function(form){
+        popup: function (form) {
             createPopUp(form);
         },
 
-        closePopup: function (){
+        closePopup: function () {
             destroyPopUp();
         }
     }
