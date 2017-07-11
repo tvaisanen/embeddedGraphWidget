@@ -12,10 +12,17 @@
     flex-direction: column;
 }
 
+.message-container {
+    height: auto;
+    font-size: large;
+    width: 100%;
+    background-color: #0D47A1;
+}
+
 
 
 .text-preview {
-    height: 20vh;
+    height: auto;
     width: 74vw;
     margin: 10px;
     font-size: large;
@@ -35,6 +42,4 @@
     font-size: large;
     height: 17vh;
     overflow: auto;
-
-
 }

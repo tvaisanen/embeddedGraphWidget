@@ -451,6 +451,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                                 funcProps.cy
                             );
                             funcProps.cy.off('tap');
+                            clearMessageText();
                             funcProps.cy.on('tap', bindExpandNode);
                         };
                     }
@@ -459,9 +460,10 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                     console.log(funcProps);
                     console.log("now you need to bind listener for cy.select");
                     funcProps.cy.off('tap');
-                    funcProps.cy.on('tap', bindNodeSelection(funcProps));
+                    funcProps.cy.on('tap', 'node', bindNodeSelection(funcProps));
                     destroyPopUp();
-                    alert("now there should be somekind of notification that the user may select a node");
+                    setMessageText({messageText: "Select node to connect!"});
+                    //alert("now there should be somekind of notification that the user may select a node");
                 }
             }
         },
@@ -1834,6 +1836,16 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         appContainer.appendChild(renderContentContainer());
     }
 
+    function setMessageText(funcProps){
+        var spText = d.getElementById('message-text');
+        spText.innerHTML = funcProps.messageText;
+    }
+
+    function clearMessageText(){
+        var spText = d.getElementById('message-text');
+        spText.innerHTML = '';
+    }
+
     /** @function renderGraphColumn
      *  Description
      *  @param {Object} variable - Desc.
@@ -1844,13 +1856,20 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         graphColumnContainer.setAttribute('id', 'graph-column-container');
         graphColumnContainer.classList.add("graph-column");
 
-        var graphContainer = d.createElement('div');
+        var messageContainer = d.createElement('div');
+        messageContainer.setAttribute('id', 'message-container');
+        messageContainer.classList.add('message-container');
+        var messageText = d.createElement('span');
+        messageText.setAttribute('id', 'message-text');
+        messageContainer.appendChild(messageText);
 
+        var graphContainer = d.createElement('div');
         graphContainer.setAttribute('id', props.graphContainerId);
         graphContainer.classList.add("graph-container");
 
         var textPrevievContainer = renderTextPreview();
 
+        graphColumnContainer.appendChild(messageContainer);
         graphColumnContainer.appendChild(graphContainer);
         graphColumnContainer.appendChild(textPrevievContainer);
 
