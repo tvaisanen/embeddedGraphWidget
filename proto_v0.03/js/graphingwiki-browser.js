@@ -18,6 +18,8 @@
 
 var d = document;
 
+function InvalidProps(){console.warn("Invalid props!")}
+
 var configs = {
     API_PATH: 'http://127.0.0.1:5000/',
     API_CREATE_NEW_NODE: 'http://127.0.0.1:5000/add-to-wiki/',
@@ -275,6 +277,12 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             container: "text-preview",
             header: "text-preview__header",
             content: "text-preview__content"
+        },
+        popup: {
+            header: {
+                btnClose: 'popup-header__btn-close',
+                text: 'popup-header__text'
+            }
         }
     };
     var menuItems = {
@@ -381,26 +389,72 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
     // Todo: write tests! priority: medium.
     var listenerFunctions = {
-        menuItemCreate: {
+        popupSave: {
             btnSave: {
-                onClick: function (name) {
+                onClick: function (funcProps) {
                     console.group("menuItemCreate.btnSave.onClick()");
                     console.info("Clicked create node button.");
-                    console.info("Current value: " + name);
+                    console.info("Current value: " + funcProps.name);
 
-                    var promise = gwClient.savePageToMoin(name, 'hello');
+                    var promise = funcProps.gw.savePageToMoin(funcProps.name, 'hello');
                     promise.then(function (response) {
                         var j = response.json();
                         console.info(j);
                         return j;
                     }).then(function (obj) {
                         console.info(obj);
-                        createNewNode(name, cy);
                         console.groupEnd();
                     }).catch(function (error) {
                         console.warn(error);
                         console.groupEnd();
                     });
+                }
+            }
+        },
+        popupConnect: {
+            btnConnect: {
+                /** @function popupConnect.btnConnect.onClick()
+                 *  popupConnect.btnConnect.onClick()
+                 *  @param {Object} funcProps {targetNodeId, cy}
+                 */
+                onClick: function (funcProps){
+                    console.log(funcProps);
+                    console.log("btnConnect.onClick() connecting node: " + funcProps.sourceNode.id() + " to " + funcProps.inTargetNodeId.value);
+                }
+            },
+            btnSelect: {
+                /** @function popupConnect.btnSelect.onClick()
+                 *  popupConnect.btnSelect.onClick()
+                 *  @param funcProps {}
+                 */
+                onClick: function (funcProps){
+
+                    function bindNodeSelection(funcProps){
+                        console.log('here!');
+                        console.log(funcProps);
+                        return function (event){
+                            console.log(event.target.id());
+                            console.log(funcProps);
+                            console.log("Select the node, which to connect!");
+
+                            createNewEdge(
+                                funcProps.sourceNode.id(),
+                                event.target.id(),
+                                'category',
+                                funcProps.cy
+                            );
+                            funcProps.cy.off('tap');
+                            funcProps.cy.on('tap', bindExpandNode);
+                        };
+                    }
+
+                    console.log("btnSelect");
+                    console.log(funcProps);
+                    console.log("now you need to bind listener for cy.select");
+                    funcProps.cy.off('tap');
+                    funcProps.cy.on('tap', bindNodeSelection(funcProps));
+                    destroyPopUp();
+                    alert("now there should be somekind of notification that the user may select a node");
                 }
             }
         },
@@ -582,28 +636,13 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                     onClickFunction: function (event) {
                         var source = event.target || event.cyTarget;
                         console.info('I am ' + source.id() + ' and I want to connect!');
-                        var targetId = prompt('Provide id of the node, which to connect.');
-                        console.log(targetId);
-                        if (nodeIdAvailable(targetId, cy)) {
-                            var confirmation = confirm("The node do not exist. Do you want to create it?");
-                            console.log(confirmation);
-                            if (confirmation) {
-                                createNewNode(targetId, cy);
-                            } else {
-                                console.info('User replied no');
-                                return null;
+                        createPopUp({
+                            context:'createEdge',
+                            props: {
+                                sourceNode: source
                             }
-                        }
-                        var edge = {
-                            group: 'edges',
-                            data: {
-                                id: source.id() + "_to_" + targetId,
-                                source: source.id(),
-                                target: targetId
-                            }
-                        };
-                        cy.add(edge);
-                    },
+                        });
+                    }
                 },
                 {
                     id: 'hide',
@@ -772,6 +811,8 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                 }
             };
 
+            // after saving page to moin
+            // Can not create element with invalid string ID ``
             if (nodeIdAvailable(id, cy)) {
                 cy.add(newNode);
                 return true;
@@ -1072,6 +1113,8 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             assert.deepEqual(edge.id(), edgeId, "Returned edgeId() matches with with intended Id");
         });
     }
+
+    /* ------------------------------------------------------------ */
 
     function createEdgeId(sourceNodeId, targetNodeId) {
         return sourceNodeId + "_to_" + targetNodeId;
@@ -1618,6 +1661,12 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         a.click()
     }
 
+    function bindExpandNode(evt) {
+            var node = evt.target;
+            var nodeId = node.id();
+            expandNode(nodeId);
+        }
+
     /** @function initCytoscape
      *  Description
      *  @param {Object} variable - Desc.
@@ -1631,24 +1680,20 @@ var graphingwikiBrowser = (function (gwClient, cy) {
          * */
         var cyContainer = d.getElementById('cy');
         cy = testCy(cyContainer);
-        cy.on('tap', 'node', function (evt) {
-            var node = evt.target;
-            var nodeId = node.id();
-            expandNode(nodeId);
-        });
+        cy.on('tap', 'node', bindExpandNode);
 
         // initialize the context menu plugin
         cy.contextMenus(initCyContextMenu(cy));
 
         props.cy = cy;
     }
-
+    /*
     function initWindowListeners(){
         // to close opened popup
         window.addEventListener('click', function(event){
             listenerFunctions.window.onClick(event);
         })
-    }
+    }*/
 
     /** @function handleNavClick
      *  Description
@@ -1975,6 +2020,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         var ulNodes = unorderedListFromArray({
             array: nodes,
             cy: cy,
+            gw: gw,
             onClick: listenerFunctions.elementsList.onClick,
             onMouseOver: listenerFunctions.elementsList.onMouseOver,
             onMouseOut: listenerFunctions.elementsList.onMouseOut,
@@ -2498,8 +2544,62 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         });
     }
 
+/*
+  console.log(targetId);
+    if (nodeIdAvailable(targetId, cy)) {
+        var confirmation = confirm("The node do not exist. Do you want to create it?");
+        console.log(confirmation);
+        if (confirmation) {
+            createNewNode(targetId, cy);
+        } else {
+            console.info('User replied no');
+            return null;
+        }
+    }
+    var edge = {
+        group: 'edges',
+        data: {
+            id: source.id() + "_to_" + targetId,
+            source: source.id(),
+            target: targetId
+        }
+    };
+    cy.add(edge);
+* */
+
 
     var popup = {
+        createEdge: {
+            title: "Connect",
+            render: function(funcProps){
+                console.debug('createEdge');
+                console.debug(funcProps);
+                var div = d.createElement('div');
+                var input = d.createElement('input');
+                input.setAttribute('type', 'text');
+
+                // pass target node input field
+                funcProps.inTargetNodeId = input;
+
+                var btnConnect = d.createElement('button');
+                btnConnect.innerHTML = "connect";
+                btnConnect.addEventListener('click', function(){
+                    listenerFunctions.popupConnect.btnConnect.onClick(funcProps);
+                });
+
+                var btnSelect = d.createElement('button');
+                btnSelect.innerHTML = "select";
+                btnSelect.addEventListener('click', function(){
+                    listenerFunctions.popupConnect.btnSelect.onClick(funcProps);
+                });
+
+                div.appendChild(input);
+                div.appendChild(btnConnect);
+                div.appendChild(btnSelect);
+
+                return div;
+            }
+        },
         download: {
             title: "Download the graph!",
             render: function(){
@@ -2510,9 +2610,22 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         },
         save: {
             title: "Save the graph",
-            render: function(){
+            render: function(funcProps){
                 var div = d.createElement('div');
-                div.innerHTML = "Content goes here!";
+                var input = d.createElement('input');
+                input.setAttribute('type', 'text');
+                var btnSave = d.createElement('button');
+                btnSave.innerHTML = "save";
+                btnSave.addEventListener('click', function(){
+                    listenerFunctions.popupSave.btnSave.onClick({
+                        gw: funcProps.gw,
+                        name: input.value
+                    });
+                });
+
+                div.appendChild(input);
+                div.appendChild(btnSave);
+
                 return div;
             }
         },
@@ -2524,21 +2637,31 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             }
         },
 
-        render: function(content) {
+        render: function(popupProps) {
+
+            console.debug("popup render");
+            console.debug(popupProps);
+
+
             var container = d.createElement('div');
             var header = d.createElement('div');
 
+            container.classList.add('popup');
+            header.classList.add('popup-header');
+
             var spHeader = d.createElement('span');
-            spHeader.innerHTML = this[content].title;
+            spHeader.innerHTML = this[popupProps.context].title;
+            spHeader.classList.add(classNames.popup.header.text);
 
             var btnClose = d.createElement('button');
             btnClose.innerHTML = "close";
+            btnClose.classList.add(classNames.popup.header.btnClose);
             btnClose.addEventListener('click', destroyPopUp);
 
             header.appendChild(spHeader);
             header.appendChild(btnClose);
 
-            var content = this[content].render();
+            var content = this[popupProps.context].render(popupProps.props);
             container.appendChild(header);
             container.appendChild(content);
             return container;
@@ -2549,14 +2672,20 @@ var graphingwikiBrowser = (function (gwClient, cy) {
     /** @function createPopUp
      *  popup for saving the graphs
      */
-    function createPopUp(form){
+    function createPopUp(funcProps){
 
-        console.log(form);
+        // naming should be more declarative
+        // the funcProps act as a panelProps
+        // and funcProps.props as funcProps
+        // for the next function
+        funcProps.props.gw = props.gw;
+        funcProps.props.cy = props.cy;
+        console.log(funcProps.context);
 
         var divPopup = d.createElement('div');
         divPopup.classList.add('popup');
         divPopup.setAttribute('id', 'popup');
-        var content = popup.render(form);
+        var content = popup.render(funcProps);
         divPopup.appendChild(content);
         d.body.appendChild(divPopup);
         console.debug('popup');
@@ -2713,7 +2842,8 @@ var graphingwikiBrowser = (function (gwClient, cy) {
     return {
         start: function (props) {
             setProps(props, "all");
-            initWindowListeners();
+            // todo: clean up
+            // initWindowListeners();
             render();
             initCytoscape();
         },

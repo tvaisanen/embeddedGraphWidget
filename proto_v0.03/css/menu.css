@@ -1,7 +1,7 @@
 .panel-menu-item {
     display: flex;
     justify-content: center;
-    flex-direction: column;
+    flex-direction: row;
     color: white;
     border-top-style: solid;
     border-width: 1px;
