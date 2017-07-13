@@ -18,9 +18,6 @@
 
 var d = document;
 
-function InvalidProps() {
-    console.warn("Invalid props!")
-}
 
 var configs = {
     API_PATH: 'http://127.0.0.1:5000/',
@@ -638,6 +635,18 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         return {
             menuItems: [
                 {
+                    id: 'node-details',
+                    content: 'details',
+                    tooltipText: 'node details for debugging',
+                    selector: 'edge',
+                    onClickFunction: function (event) {
+                        var source = event.target || event.cyTarget;
+                        console.info("Id: " + source.id());
+                        console.info("classes:");
+                        console.info(source.classes());
+                    }
+                },
+                {
                     id: 'add-edge',
                     content: 'connect',
                     tooltipText: 'add edge between this node and the chosen node',
@@ -998,12 +1007,18 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
                 var classesToAdd = props.elementStyles[classForEdge];
                 if (!classesToAdd) {
+                    console.debug('Add generic styles');
                     classesToAdd = props.elementStyles.generic;
+                } else {
+                    console.debug('Add ' + classForEdge + ' styles.');
                 }
 
                 // Add the new edge to cy.elements.
 
+                console.debug(classesToAdd);
+
                 classesToAdd.forEach(function (styleClass) {
+                    console.debug('add style: ' + styleClass);
                     edge.addClass(styleClass);
                 });
                 return edge;
@@ -1016,6 +1031,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             console.info("sourceId: " + sourceId);
             console.info("targetId: " + targetId);
             console.info("classForEdge: " + classForEdge);
+            console.info("styleClasses: " + JSON.stringify(props.elementStyles));
             console.warn(e);
             console.groupEnd();
         }
@@ -1136,7 +1152,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
      *  @param {String} classForEdge - Style category for the edge.
      *  @param {Object} cy - Cytoscape instance.
      */
-    function createNodesAndEdgeBetween(sourceNodeId, targetNodeId, classForEdge, cy) {
+    function createNodesAndEdgeBetween(sourceNodeId, targetNodeId, category, cy) {
         try {
 
             // If nodes do not exist, create them.
@@ -1147,10 +1163,10 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                 createNewNode(targetNodeId, cy) : null;
 
             // createNewEdge checks if the edge already exists.
-            createNewEdge(sourceNodeId, targetNodeId, classForEdge, cy);
+            createNewEdge(sourceNodeId, targetNodeId, category, cy);
 
             var edgeId = createEdgeId(sourceNodeId, targetNodeId);
-            addClassToEdge(edgeId, classForEdge, cy);
+            addClassToEdge(edgeId, category, cy);
 
         } catch (e) {
             console.groupCollapsed("Exception with createNodesAndEdgeBetween()");
@@ -1222,12 +1238,14 @@ var graphingwikiBrowser = (function (gwClient, cy) {
          * If nodes do not exist, create them and add to cy.elements.
          */
 
+        console.debug(category);
+
         nodesToCreateEdges.forEach(function (targetNodeId) {
             try {
                 createNodesAndEdgeBetween(sourceNodeId, targetNodeId, category, cy);
             } catch (e) {
                 console.groupCollapsed("Exception with createEdgesToNodes()");
-                console.info("Parameters passed:")
+                console.info("Parameters passed:");
                 console.info("sourceNodeId: " + sourceNodeId);
                 console.info("nodesToCreateEdges: " + nodesToCreateEdges);
                 console.info("category: " + category);
@@ -1408,9 +1426,9 @@ var graphingwikiBrowser = (function (gwClient, cy) {
      *
      */
     function expandNode(nodeId) {
+
         gw = props.gw;
         cy = props.cy;
-
 
         //Get data for the clicked node.
         var nodePromise = gw.getNodeData(nodeId);
@@ -1426,6 +1444,8 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                  *  }
                  * */
                 var node = json.data;
+
+                console.debug(node);
 
                 try {
                     // If node has outgoing edges refresh the categories
@@ -1449,6 +1469,9 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                     // Iterate the outgoing edge categories.
                     try {
                         newCategoriesOut.forEach(function (category) {
+
+                            console.debug(category);
+
                             // get list of nodes where the clicked node is connected t
                             var nodesConnectedTo = node.out[category];
 
@@ -1470,7 +1493,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                         createEdgesFromNodes(nodeId, nodesConnectedTo, category, cy);
                     });
                 } catch (e) {
-                    console.groupCollapsed("Expanding node raised exception");
+                    console.groupCollapsed("Exception raised by expandNode()");
                     console.warn(e);
                     console.groupEnd();
                 }
@@ -1859,6 +1882,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         var messageContainer = d.createElement('div');
         messageContainer.setAttribute('id', 'message-container');
         messageContainer.classList.add('message-container');
+
         var messageText = d.createElement('span');
         messageText.setAttribute('id', 'message-text');
         messageContainer.appendChild(messageText);
@@ -2401,27 +2425,26 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             var categoryElements = cy.elements(baseClass + '.' + category);
             categoryElements.forEach(function (e) {
                 e.toggleClass(parameter + '-' + value);
-                console.debug(e);
+                //console.debug(e);
 
+                // console.log(props.elementStyles[category]);
+
+
+                // do only if the value is not all ready in the category styles
                 try {
-                    console.log(props.elementStyles[category]);
-                    props.elementStyles[category][selector] = value;
-                    console.log(props.elementStyles[category]);
+                    if (props.elementStyles[category].indexOf(value) === -1) {
 
+                        //console.log(props.elementStyles[category]);
+                        console.debug('setting value');
+                        console.debug(value);
+                        props.elementStyles[category].push(value);
+                        //console.log(props.elementStyles[category]);
+
+                    }
                 } catch (e) {
-                    props.elementStyles[category] = {};
-                    props.elementStyles[category][selector] = value;
+                        props.elementStyles[category] = [];
+                        props.elementStyles[category].push(value);
                 }
-                /*
-                 console.groupCollapsed("StyleSelection log");
-                 console.log("props.elementStyles[" + category + "][" + selector + "] = " + value);
-                 console.log(props.elementStyles[category][selector]);
-                 console.log("Category: " + category);
-                 console.log("Parameter: " + parameter);
-                 console.log("State!");
-                 console.log(props);
-                 console.groupEnd();
-                 */
             });
         }
 
@@ -2696,9 +2719,11 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             container.classList.add('popup');
             header.classList.add('popup-header');
 
+
             var spHeader = d.createElement('span');
             spHeader.innerHTML = this[funcProps.context].title;
             spHeader.classList.add(classNames.popup.header.text);
+
 
             var btnClose = d.createElement('button');
             btnClose.innerHTML = "close";
@@ -2716,6 +2741,113 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         }
     };
 
+    var menuExtension = {
+        items: {
+            createEdge: {
+                // todo: refactor
+                title: "Connect",
+                connectButton: function (funcProps) {
+                    var btnConnect = d.createElement('button');
+                    btnConnect.innerHTML = "connect";
+                    btnConnect.addEventListener('click', function () {
+                        listenerFunctions.popupConnect.btnConnect.onClick(funcProps);
+                    });
+                    return btnConnect;
+                },
+                selectButton: function (funcProps) {
+                    var btnSelect = d.createElement('button');
+                    btnSelect.innerHTML = "select";
+                    btnSelect.addEventListener('click', function () {
+                        listenerFunctions.popupConnect.btnSelect.onClick(funcProps);
+                    });
+                    return btnSelect;
+                },
+                render: function (funcProps) {
+                    console.debug(funcProps);
+                    var div = d.createElement('div');
+                    var input = d.createElement('input');
+                    input.setAttribute('type', 'text');
+                    // pass target node input field
+                    funcProps.inTargetNodeId = input;
+
+                    div.appendChild(input);
+                    div.appendChild(this.connectButton(funcProps));
+                    div.appendChild(this.selectButton(funcProps));
+
+                    return div;
+                }
+            },
+            save: {
+                title: "Save the graph",
+                saveButton: function (funcProps) {
+                    var btnSave = d.createElement('button');
+                    btnSave.innerHTML = "save";
+                    btnSave.addEventListener('click', function () {
+                        listenerFunctions.popupSave.btnSave.onClick({
+                            gw: funcProps.gw,
+                            name: input.value
+                        });
+                    });
+                    return btnSave;
+                },
+
+                render: function (funcProps) {
+
+                    console.debug(funcProps);
+
+                    var div = d.createElement('div');
+                    var input = d.createElement('input');
+
+                    input.setAttribute('type', 'text');
+
+                    div.appendChild(input);
+                    div.appendChild(this.saveButton(funcProps));
+
+                    return div;
+                }
+            },
+
+            popupItem: {
+                title: "Your title",
+                render: function () {
+                    console.log('create popup with this!')
+                }
+            }
+        },
+
+        render: function (funcProps) {
+            try {
+                console.debug("menuExtension render");
+                console.debug(funcProps);
+
+
+                var container = d.createElement('div');
+                var header = d.createElement('div');
+
+                //container.classList.add('popup');
+                //header.classList.add('popup-header');
+
+                var btnClose = d.createElement('button');
+                btnClose.innerHTML = "close";
+                //btnClose.classList.add(classNames.popup.header.btnClose);
+                btnClose.addEventListener('click', destroyPopUp);
+
+                header.appendChild(btnClose);
+
+                var content = this.items[funcProps.context].render(funcProps);
+                container.appendChild(header);
+                container.appendChild(content);
+
+                return container;
+            } catch (e){
+                console.warn("Exception raised by menuExtension.render()");
+                console.warn(e);
+                console.warn("props:");
+                console.warn(funcProps);
+            }
+        }
+    };
+
     /** @function createPopUp
      *  popup for saving the graphs
      */
@@ -2726,6 +2858,12 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         // and funcProps.props as funcProps
         // for the next function
 
+        var container = d.getElementById('message-container');
+        var content = menuExtension.render(funcProps);
+        container.appendChild(content);
+
+
+        /*
         console.debug("createPopup()");
         console.debug(funcProps);
 
@@ -2742,7 +2880,10 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         var content = popup.render(funcProps);
         divPopup.appendChild(content);
         d.body.appendChild(divPopup);
-        console.debug('popup');
+        //var infoBox = d.getElementById('message-container');
+        //infoBox.appendChild(divPopup);
+
+        console.debug('popup');*/
     }
 
     function destroyPopUp() {
