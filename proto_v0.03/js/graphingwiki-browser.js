@@ -41,9 +41,9 @@ var configs = {
         {label: 'triangle-tee', styleClass: 'arrow-shape-triangle-tee'},
         {label: 'triangle-cross', styleClass: 'arrow-shape-triangle-cross'},
         {label: 'triangle-backcurve', styleClass: 'arrow-shape-triangle-backcurve'},
-        {label: 'square',  styleClass: 'arrow-shape-square'},
-        {label: 'circle',  styleClass: 'arrow-shape-circle'},
-        {label: 'diamond',  styleClass: 'arrow-shape-diamond'},
+        {label: 'square', styleClass: 'arrow-shape-square'},
+        {label: 'circle', styleClass: 'arrow-shape-circle'},
+        {label: 'diamond', styleClass: 'arrow-shape-diamond'},
         {label: 'none', styleClass: 'arrow-shape-none'}
     ],
     colors: [
@@ -53,7 +53,16 @@ var configs = {
         {label: 'yellow', styleClass: 'line-color-yellow'},
         {label: 'cyan', styleClass: 'line-color-cyan'},
         {label: 'blue', styleClass: 'line-color-blue'}
-        ],
+    ],
+    widths: function () {
+        // generate array of width objects {label: VALUE, styleClass: 'line-width-VALUE'}
+        var range = Array.from(Array(31).keys());
+        var widths = [];
+        range.forEach(function (value) {
+            widths.push({label: value, styleClass: 'line-width-' + value});
+        });
+        return widths;
+    },
     params: ['line-style', 'arrow-shape', 'line-color', 'line-width'],
     layoutOptions: ['cola', 'breadthfirst', 'circle', 'concentric', 'cose', 'grid', 'random']
 };
@@ -656,7 +665,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         return {
             menuItems: [
                 {
-                    id: 'node-details',
+                    id: 'edge-details',
                     content: 'details',
                     tooltipText: 'node details for debugging',
                     selector: 'edge',
@@ -665,6 +674,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                         console.info("Id: " + source.id());
                         console.info("classes:");
                         console.info(source.classes());
+                        console.info(source.style());
                     }
                 },
                 {
@@ -2441,60 +2451,75 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         // Todo: create configs object where to store the following..
 
 
-        function styleSelectionEventListener(funcProps, baseClass, category, parameter, selector, value) {
-            console.debug("styleSelectionEventListener()");
-            console.debug(funcProps);
+        function styleSelectionEventListener(funcProps, value) {
+            try {
+                var categoryElements = cy.elements(funcProps.baseClass + '.' + funcProps.category);
+                categoryElements.forEach(function (element) {
 
-            var categoryElements = cy.elements(funcProps.baseClass + '.' + funcProps.category);
-            categoryElements.forEach(function (e) {
-                e.toggleClass(funcProps.value);
-                //console.debug(e);
+                    element.toggleClass(funcProps.value);
 
-                // console.log(props.elementStyles[category]);
+                    // do only if the value is not all ready in the category styles
+                    try {
+                        if (props.elementStyles[funcProps.category].indexOf(funcProps.value) === -1) {
 
-
-                // do only if the value is not all ready in the category styles
-                try {
-                    if (props.elementStyles[funcProps.category].indexOf(funcProps.value) === -1) {
-
-                        //console.log(props.elementStyles[category]);
-                        console.debug('setting value');
-                        console.debug(funcProps.value);
+                            //console.log(props.elementStyles[category]);
+                            console.debug('setting value');
+                            console.debug(funcProps.value);
+                            props.elementStyles[funcProps.category].push(funcProps.value);
+                        }
+                    } catch (e) {
+                        // if category not listed add it
+                        props.elementStyles[funcProps.category] = [];
                         props.elementStyles[funcProps.category].push(funcProps.value);
-                        //console.log(props.elementStyles[category]);
-
                     }
-                } catch (e) {
-                    props.elementStyles[funcProps.category] = [];
-                    props.elementStyles[funcProps.category].push(funcProps.value);
-                }
-            });
+                });
+            } catch (e) {
+                console.groupCollapsed("Exception raised by styleSelectionEventListener().");
+                console.warn(e);
+                console.warn("props:");
+                console.debug(funcProps);
+            }
+
+
         }
 
         // Todo: make this generic version to work for all of the following use cases
-        function styleSelectionDropdown(attributeId, selectionId, values) {
-            var selection = d.createElement('select');
-            selection.setAttribute('id', selectionId);
+        function styleSelection(funcProps) {
+            try {
+                console.debug(funcProps);
+                var div = d.createElement('div');
+                var selection = d.createElement('select');
+                selection.setAttribute('id', funcProps.selectionId);
 
-            selection.addEventListener('change', function () {
-                var categoryElements = cy.elements('edge.' + category);
-                categoryElements.forEach(function (e) {
-                    console.debug(e);
-                    e.toggleClass('line-style-' + selection.value);
-                    console.debug(e);
+                // generate options for selection
+                funcProps.options.forEach(function (option) {
+                    var opt = d.createElement('option');
+                    opt.setAttribute('id', funcProps.attributeId + option.label);
+                    opt.innerHTML = option.label;
+                    opt.value = option.styleClass;
+                    selection.appendChild(opt);
                 });
-            });
 
+                console.debug(selection);
 
-            values.forEach(function (lineStyle) {
-                var option = d.createElement('option');
-                option.setAttribute('id', attributeId + "-" + lineStyle);
-                option.innerHTML = lineStyle;
-                selLineStyle.appendChild(option);
-            });
+                // event listener for selection
+                selection.addEventListener('change', function () {
+                    styleSelectionEventListener({
+                        baseClass: 'edge',
+                        category: funcProps.category,
+                        parameter: "line-style",
+                        value: selection.value
+                    });
+                });
+                div.appendChild(selection);
+                return div;
+            } catch (e) {
+                console.groupCollapsed('Exception raised by styleSelection()');
+                console.warn(e);
+                console.debug(funcPropS);
+                console.groupEnd();
+            }
 
-            liParam.appendChild(selLineStyle);
-            return liParam;
         }
 
         // Create the style option selection list
@@ -2522,113 +2547,83 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                     liParam.appendChild(div);
 
                     // generate line style selection
+
                     if (parameter === 'line-style') {
-                        var div = d.createElement('div');
-                        var selLineStyle = d.createElement('select');
-                        selLineStyle.setAttribute('id', 'select-line-style');
-
-                        // generate options for selection
-                        configs.lines.forEach(function (lineStyle) {
-                            var optLine = d.createElement('option');
-                            optLine.setAttribute('id', 'option-line-style' + lineStyle);
-                            optLine.innerHTML = lineStyle.label;
-                            optLine.value = lineStyle.styleClass;
-                            selLineStyle.appendChild(optLine);
+                        var lineStyleSelection = styleSelection({
+                            attributeId: 'select-line-style',
+                            category: category,
+                            selectionId: 'option-line-style',
+                            options: configs.lines
                         });
-                        div.appendChild(selLineStyle);
-                        liParam.appendChild(div);
-
-                        // event listener for selection
-                        selLineStyle.addEventListener('change', function () {
-                            styleSelectionEventListener({
-                                baseClass: 'edge',
-                                category: category,
-                                parameter: "line-style",
-                                selector: 'line-style',
-                                value: selLineStyle.value
-                            });
-                        });
-
-
+                        liParam.appendChild(lineStyleSelection);
                     }
+
                     ulCategory.appendChild(liParam);
 
                     // generate arrow selection
                     if (parameter === 'arrow-shape') {
-                        var selArrow = d.createElement('select');
-                        selArrow.setAttribute('id', 'select-arrow-shape');
-                        selArrow.addEventListener('change', function () {
-                            styleSelectionEventListener({
-                                baseClass: 'edge',
-                                category: category,
-                                parameter: 'arrow-shape',
-                                selector: 'arrow-shape',
-                                value: selArrow.value
-                            });
+                        var arrowStyleSelection = styleSelection({
+                            attributeId: 'select-arrow-shape',
+                            category: category,
+                            selectionId: 'option-arrow-shape',
+                            options: configs.arrows
                         });
-                        configs.arrows.forEach(function (arrowShape) {
-                            var optArrow = d.createElement('option');
-                            optArrow.setAttribute('id', 'option-arrow-shape' + arrowShape);
-                            optArrow.innerHTML = arrowShape.label;
-                            optArrow.value = arrowShape.styleClass;
-                            selArrow.appendChild(optArrow);
-                        });
-                        liParam.appendChild(selArrow);
+                        liParam.appendChild(arrowStyleSelection);
                     }
+
                     ulCategory.appendChild(liParam);
 
                     // generate color selection
                     if (parameter === 'line-color') {
-                        var selColor = d.createElement('select');
-                        selColor.setAttribute('id', 'select-line-color');
-
-                        selColor.addEventListener('change', function () {
-                            styleSelectionEventListener({
-                                baseClass: 'edge',
-                                category: category,
-                                parameter: "line-color",
-                                selector: 'line-color',
-                                value: selColor.value
-                            });
+                        var arrowStyleSelection = styleSelection({
+                            attributeId: 'select-line-color',
+                            category: category,
+                            selectionId: 'option-line-color',
+                            options: configs.colors
                         });
-
-                        configs.colors.forEach(function (color) {
-                            var optColor = d.createElement('option');
-                            optColor.setAttribute('id', 'option-line-color');
-                            optColor.innerHTML = color.label;
-                            optColor.value = color.styleClass;
-                            selColor.appendChild(optColor);
-                        });
-                        liParam.appendChild(selColor);
+                        liParam.appendChild(arrowStyleSelection);
                     }
+
                     ulCategory.appendChild(liParam);
 
                     // generate linewidth selection
                     if (parameter === 'line-width') {
-                        var selLineWidth = d.createElement('select');
-                        selLineWidth.setAttribute('id', 'select-line-width');
-
-                        selLineWidth.addEventListener('change', function () {
-                            styleSelectionEventListener({
-                                baseClass: 'edge',
-                                category: category,
-                                parameter: "line-width",
-                                selector: 'line-width',
-                                value: selLineWidth.value
-                            });
+                        var lineWidthSelection = styleSelection({
+                            attributeId: 'select-line-width',
+                            category: category,
+                            selectionId: 'option-line-width',
+                            options: configs.widths()
                         });
-
-
-                        Array.from(Array(31).keys()).forEach(function (lineWidth) {
-                            var optLineWidth = d.createElement('option');
-                            optLineWidth.setAttribute('id', 'option-line-width');
-                            optLineWidth.innerHTML = lineWidth;
-                            selLineWidth.appendChild(optLineWidth);
-                        });
-
-                        liParam.appendChild(selLineWidth);
-
+                        liParam.appendChild(lineWidthSelection);
                     }
+
+                    ulCategory.appendChild(liParam);
+                    /*
+                     if (parameter === 'line-width') {
+                     var selLineWidth = d.createElement('select');
+                     selLineWidth.setAttribute('id', 'select-line-width');
+
+                     selLineWidth.addEventListener('change', function () {
+                     styleSelectionEventListener({
+                     baseClass: 'edge',
+                     category: category,
+                     parameter: "line-width",
+                     selector: 'line-width',
+                     value: selLineWidth.value
+                     });
+                     });
+
+
+                     Array.from(Array(31).keys()).forEach(function (lineWidth) {
+                     var optLineWidth = d.createElement('option');
+                     optLineWidth.setAttribute('id', 'option-line-width');
+                     optLineWidth.innerHTML = lineWidth;
+                     selLineWidth.appendChild(optLineWidth);
+                     });
+
+                     liParam.appendChild(selLineWidth);
+
+                     }*/
                     ulCategory.appendChild(liParam);
 
                 });
