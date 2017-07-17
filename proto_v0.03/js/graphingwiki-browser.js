@@ -30,9 +30,30 @@ var configs = {
         'target-arrow-shape': [],
         'curve-style': []
     },
-    lines: ['solid', 'dotted', 'dashed'],
-    arrows: ['tee', 'triangle', 'triangle-tee', 'triangle-cross', 'triangle-backcurve', 'square', 'circle', 'diamond', 'none'],
-    colors: ['red', 'green', 'orange', 'yellow', 'cyan', 'blue'],
+    lines: [
+        {label: 'solid', styleClass: 'line-style-solid'},
+        {label: 'dotted', styleClass: 'line-style-dotted'},
+        {label: 'dashed', styleClass: 'line-style-dashed'}
+    ],
+    arrows: [
+        {label: 'tee', styleClass: 'arrow-shape-tee'},
+        {label: 'triangle', styleClass: 'arrow-shape-triangle'},
+        {label: 'triangle-tee', styleClass: 'arrow-shape-triangle-tee'},
+        {label: 'triangle-cross', styleClass: 'arrow-shape-triangle-cross'},
+        {label: 'triangle-backcurve', styleClass: 'arrow-shape-triangle-backcurve'},
+        {label: 'square',  styleClass: 'arrow-shape-square'},
+        {label: 'circle',  styleClass: 'arrow-shape-circle'},
+        {label: 'diamond',  styleClass: 'arrow-shape-diamond'},
+        {label: 'none', styleClass: 'arrow-shape-none'}
+    ],
+    colors: [
+        {label: 'red', styleClass: 'line-color-red'},
+        {label: 'green', styleClass: 'line-color-green'},
+        {label: 'orange', styleClass: 'line-color-orange'},
+        {label: 'yellow', styleClass: 'line-color-yellow'},
+        {label: 'cyan', styleClass: 'line-color-cyan'},
+        {label: 'blue', styleClass: 'line-color-blue'}
+        ],
     params: ['line-style', 'arrow-shape', 'line-color', 'line-width'],
     layoutOptions: ['cola', 'breadthfirst', 'circle', 'concentric', 'cose', 'grid', 'random']
 };
@@ -1859,12 +1880,12 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         appContainer.appendChild(renderContentContainer());
     }
 
-    function setMessageText(funcProps){
+    function setMessageText(funcProps) {
         var spText = d.getElementById('message-text');
         spText.innerHTML = funcProps.messageText;
     }
 
-    function clearMessageText(){
+    function clearMessageText() {
         var spText = d.getElementById('message-text');
         spText.innerHTML = '';
     }
@@ -2420,11 +2441,13 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         // Todo: create configs object where to store the following..
 
 
-        function styleSelectionEventListener(baseClass, category, parameter, selector, value) {
+        function styleSelectionEventListener(funcProps, baseClass, category, parameter, selector, value) {
+            console.debug("styleSelectionEventListener()");
+            console.debug(funcProps);
 
-            var categoryElements = cy.elements(baseClass + '.' + category);
+            var categoryElements = cy.elements(funcProps.baseClass + '.' + funcProps.category);
             categoryElements.forEach(function (e) {
-                e.toggleClass(parameter + '-' + value);
+                e.toggleClass(funcProps.value);
                 //console.debug(e);
 
                 // console.log(props.elementStyles[category]);
@@ -2432,18 +2455,18 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
                 // do only if the value is not all ready in the category styles
                 try {
-                    if (props.elementStyles[category].indexOf(value) === -1) {
+                    if (props.elementStyles[funcProps.category].indexOf(funcProps.value) === -1) {
 
                         //console.log(props.elementStyles[category]);
                         console.debug('setting value');
-                        console.debug(value);
-                        props.elementStyles[category].push(value);
+                        console.debug(funcProps.value);
+                        props.elementStyles[funcProps.category].push(funcProps.value);
                         //console.log(props.elementStyles[category]);
 
                     }
                 } catch (e) {
-                        props.elementStyles[category] = [];
-                        props.elementStyles[category].push(value);
+                    props.elementStyles[funcProps.category] = [];
+                    props.elementStyles[funcProps.category].push(funcProps.value);
                 }
             });
         }
@@ -2504,20 +2527,29 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                         var selLineStyle = d.createElement('select');
                         selLineStyle.setAttribute('id', 'select-line-style');
 
-                        selLineStyle.addEventListener('change', function () {
-                            styleSelectionEventListener(
-                                'edge', category, "line-style", 'line-style', selLineStyle.value);
-                        });
-
-
+                        // generate options for selection
                         configs.lines.forEach(function (lineStyle) {
                             var optLine = d.createElement('option');
                             optLine.setAttribute('id', 'option-line-style' + lineStyle);
-                            optLine.innerHTML = lineStyle;
+                            optLine.innerHTML = lineStyle.label;
+                            optLine.value = lineStyle.styleClass;
                             selLineStyle.appendChild(optLine);
                         });
                         div.appendChild(selLineStyle);
                         liParam.appendChild(div);
+
+                        // event listener for selection
+                        selLineStyle.addEventListener('change', function () {
+                            styleSelectionEventListener({
+                                baseClass: 'edge',
+                                category: category,
+                                parameter: "line-style",
+                                selector: 'line-style',
+                                value: selLineStyle.value
+                            });
+                        });
+
+
                     }
                     ulCategory.appendChild(liParam);
 
@@ -2526,13 +2558,19 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                         var selArrow = d.createElement('select');
                         selArrow.setAttribute('id', 'select-arrow-shape');
                         selArrow.addEventListener('change', function () {
-                            styleSelectionEventListener(
-                                'edge', category, 'arrow-shape', 'arrow-shape', selArrow.value);
+                            styleSelectionEventListener({
+                                baseClass: 'edge',
+                                category: category,
+                                parameter: 'arrow-shape',
+                                selector: 'arrow-shape',
+                                value: selArrow.value
+                            });
                         });
                         configs.arrows.forEach(function (arrowShape) {
                             var optArrow = d.createElement('option');
                             optArrow.setAttribute('id', 'option-arrow-shape' + arrowShape);
-                            optArrow.innerHTML = arrowShape;
+                            optArrow.innerHTML = arrowShape.label;
+                            optArrow.value = arrowShape.styleClass;
                             selArrow.appendChild(optArrow);
                         });
                         liParam.appendChild(selArrow);
@@ -2545,14 +2583,20 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                         selColor.setAttribute('id', 'select-line-color');
 
                         selColor.addEventListener('change', function () {
-                            styleSelectionEventListener(
-                                'edge', category, "line-color", 'line-color', selColor.value);
+                            styleSelectionEventListener({
+                                baseClass: 'edge',
+                                category: category,
+                                parameter: "line-color",
+                                selector: 'line-color',
+                                value: selColor.value
+                            });
                         });
 
                         configs.colors.forEach(function (color) {
                             var optColor = d.createElement('option');
                             optColor.setAttribute('id', 'option-line-color');
-                            optColor.innerHTML = color;
+                            optColor.innerHTML = color.label;
+                            optColor.value = color.styleClass;
                             selColor.appendChild(optColor);
                         });
                         liParam.appendChild(selColor);
@@ -2565,8 +2609,13 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                         selLineWidth.setAttribute('id', 'select-line-width');
 
                         selLineWidth.addEventListener('change', function () {
-                            styleSelectionEventListener(
-                                'edge', category, 'width', 'line-width', selLineWidth.value);
+                            styleSelectionEventListener({
+                                baseClass: 'edge',
+                                category: category,
+                                parameter: "line-width",
+                                selector: 'line-width',
+                                value: selLineWidth.value
+                            });
                         });
 
 
@@ -2839,7 +2888,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                 container.appendChild(content);
 
                 return container;
-            } catch (e){
+            } catch (e) {
                 console.warn("Exception raised by menuExtension.render()");
                 console.warn(e);
                 console.warn("props:");
@@ -2864,26 +2913,26 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
 
         /*
-        console.debug("createPopup()");
-        console.debug(funcProps);
+         console.debug("createPopup()");
+         console.debug(funcProps);
 
-        if (!funcProps.cy){
-            // todo: refactor this to eventlistener
-            funcProps.cy = props.cy;
-        }
+         if (!funcProps.cy){
+         // todo: refactor this to eventlistener
+         funcProps.cy = props.cy;
+         }
 
-        console.log(funcProps.context);
+         console.log(funcProps.context);
 
-        var divPopup = d.createElement('div');
-        divPopup.classList.add('popup');
-        divPopup.setAttribute('id', 'popup');
-        var content = popup.render(funcProps);
-        divPopup.appendChild(content);
-        d.body.appendChild(divPopup);
-        //var infoBox = d.getElementById('message-container');
-        //infoBox.appendChild(divPopup);
+         var divPopup = d.createElement('div');
+         divPopup.classList.add('popup');
+         divPopup.setAttribute('id', 'popup');
+         var content = popup.render(funcProps);
+         divPopup.appendChild(content);
+         d.body.appendChild(divPopup);
+         //var infoBox = d.getElementById('message-container');
+         //infoBox.appendChild(divPopup);
 
-        console.debug('popup');*/
+         console.debug('popup');*/
     }
 
     function destroyPopUp() {
