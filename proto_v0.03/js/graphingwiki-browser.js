@@ -208,55 +208,7 @@ var testState = {
     contentContainerId: "content-container",
     graphContainerId: "cy",
     gw: gwClient,
-    elementStyles: {
-        addCategory: function (category) {
-            // init new category with generic style
-            this[category] = this.getDefaultStyle();
-        }
-        ,
-        categoryExists: function (category) {
-            return (typeof this[category] !== 'undefined');
-        },
-        getDefaultStyle: function () {
-            return this['generic'];
-        },
-        getStyle: function (style) {
-            // return styles as array
-            /*
-             * if no style get generic
-             * */
-            if (!style) {
-                return Object.values(this['generic']);
-            }
-            return Object.values(this[style]);
-        },
-        setStyle: function (funcProps) {
-            try {
-                var fp = funcProps;
-                console.debug("setStyle()");
-                console.debug(funcProps);
-                var selector = funcProps.baseClass + '.' + funcProps.category;
-                console.debug(funcProps.cy);
-                var elementsToUpdate = funcProps.cy.elements(selector);
-                console.debug('setStyle() - elementsToUpdate.forEach()');
-                this[fp.category][fp.style] = fp.value;
-                elementsToUpdate.forEach(function (el) {
-                    console.debug(el.id());
-                    el.addClass(Object.values(this[fp.category]));
-                });
-                console.debug(this[fp.category][fp.style]);
-            } catch (e) {
-                console.group("Exception raised by props.elementStyles.setStyle()");
-                console.warn(e);
-                console.groupEnd();
-            }
-            },
-        generic: {
-            lineColor: 'line-color-grey',
-            lineWidth: 'line-width-10',
-            arrowShape: 'arrow-shape-triangle'
-        }
-    },
+
     tabs: {
         graphs: {
             label: "Graphs",
@@ -373,6 +325,55 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                 createPopUp(funcProps);
             },
             generateContent: generateContent
+        }
+    };
+    var elementStyles = {
+        addCategory: function (category) {
+            // init new category with generic style
+            this[category] = this.getDefaultStyle();
+        }
+        ,
+        categoryExists: function (category) {
+            return (typeof this[category] !== 'undefined');
+        },
+        getDefaultStyle: function () {
+            return this['generic'];
+        },
+        getStyle: function (style) {
+            // return styles as array
+            /*
+             * if no style get generic
+             * */
+            if (!style) {
+                return Object.values(this['generic']);
+            }
+            return Object.values(this[style]);
+        },
+        setStyle: function (funcProps) {
+            try {
+                var fp = funcProps;
+                console.debug("setStyle()");
+                console.debug(funcProps);
+                var selector = funcProps.baseClass + '.' + funcProps.category;
+                console.debug(funcProps.cy);
+                var elementsToUpdate = funcProps.cy.elements(selector);
+                console.debug('setStyle() - elementsToUpdate.forEach()');
+                this[fp.category][fp.style] = fp.value;
+                elementsToUpdate.forEach(function (el) {
+                    console.debug(el.id());
+                    console.debug("these classes has to be assigned");
+                    console.debug(elementStyles[fp.category]);
+                });
+            } catch (e) {
+                console.group("Exception raised by elementStyles.setStyle()");
+                console.warn(e);
+                console.groupEnd();
+            }
+            },
+        generic: {
+            lineColor: 'line-color-grey',
+            lineWidth: 'line-width-10',
+            arrowShape: 'arrow-shape-triangle'
         }
     };
 
@@ -1076,14 +1077,14 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
                 cy.add(newEdge);
                 var edge = cy.getElementById(edgeId);
-                var categoryExists = props.elementStyles.categoryExists(classForEdge);
+                var categoryExists = elementStyles.categoryExists(classForEdge);
 
-                console.debug(props.elementStyles);
+                console.debug(elementStyles);
                 console.debug(categoryExists);
-                var classesToAdd = props.elementStyles.getStyle(classForEdge);
+                var classesToAdd = elementStyles.getStyle(classForEdge);
                 if (!classesToAdd) {
                     console.debug('Add generic styles');
-                    classesToAdd = props.elementStyles.getStyle();
+                    classesToAdd = elementStyles.getStyle();
                 } else {
                     console.debug('Add ' + classForEdge + ' styles.');
                 }
@@ -1105,7 +1106,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             console.info("sourceId: " + sourceId);
             console.info("targetId: " + targetId);
             console.info("classForEdge: " + classForEdge);
-            console.info("styleClasses: " + JSON.stringify(props.elementStyles));
+            console.info("styleClasses: " + JSON.stringify(elementStyles));
             console.warn(e);
             console.groupEnd();
         }
@@ -1484,9 +1485,9 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
     function updateStyleCategories() {
         getEdgeCategories().forEach(function (category) {
-            var categoryHasNoStyle = !props.elementStyles.categoryExists(category);
+            var categoryHasNoStyle = !elementStyles.categoryExists(category);
             if (categoryHasNoStyle) {
-                props.elementStyles.addCategory(category);
+                elementStyles.addCategory(category);
             }
         })
     }
@@ -2512,36 +2513,36 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                 console.debug('CategoryElements');
                 console.debug(categoryElements);
                 // defaults
-                var classesToRemove = props.elementStyles.getStyle();
+                var classesToRemove = elementStyles.getStyle();
 
                 // do only if the value is not all ready in the category styles
                     try {
                         console.debug('2. try - catch block.');
                         var categoryNotListed =
-                            props.elementStyles.categoryExists(funcProps.category);
+                            elementStyles.categoryExists(funcProps.category);
                         if (categoryNotListed) {
                             console.debug('condition: categoryNotListed');
                             // if category is not listed, the defaults are in use
                             console.debug('setting value');
                             console.debug(funcProps);
-                            props.elementStyles.setStyle({
+                            elementStyles.setStyle({
                                 category: funcProps.category,
                                 cy: cy,
                                 style: funcProps.parameter,
                                 value: funcProps.value,
                                 baseClass: funcProps.baseClass
                             });
-                            var addThese = props.elementStyles.getStyle(funcProps.category);
+                            var addThese = elementStyles.getStyle(funcProps.category);
                             console.debug(addThese);
                             element.addClass(addThese);
                             console.debug("Updated category to elementStyles");
                             console.debug(funcProps);
-                            console.debug(props.elementStyles.getStyle(funcProps.category));
+                            console.debug(elementStyles.getStyle(funcProps.category));
                         }
                     } catch (e) {
                         console.debug('2. catch.');
                         // if category not listed add it
-                        props.elementStyles.setStyle({
+                        elementStyles.setStyle({
                             category: funcProps.category,
                             cy: cy,
                             style: funcProps.parameter,
@@ -2550,10 +2551,10 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                         });
                         console.debug("Add category to elementStyles");
                         console.debug(funcProps);
-                        console.debug(props.elementStyles.getStyle(funcProps.category));
+                        console.debug(elementStyles.getStyle(funcProps.category));
                     }
 
-                var classesToAdd = props.elementStyles.getStyle(funcProps.category);
+                var classesToAdd = elementStyles.getStyle(funcProps.category);
                 /*
                 console.debug('reached categoryElements.forEach()');
                 categoryElements.forEach(function (element) {
@@ -2584,7 +2585,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                 console.debug(funcProps);
             }
 
-            console.debug(props.elementStyles);
+            console.debug(elementStyles);
             console.groupEnd();
 
 
@@ -3210,7 +3211,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         },
 
         styles: function(){
-            return props.elementStyles;
+            return elementStyles;
         },
 
         closePopup: function () {
