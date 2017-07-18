@@ -231,11 +231,26 @@ var testState = {
             return Object.values(this[style]);
         },
         setStyle: function (funcProps) {
-            var fp = funcProps;
-            this[fp.category][fp.style] = fp.value;
-            console.debug('setStyle()');
-            console.debug(funcProps);
-        },
+            try {
+                var fp = funcProps;
+                console.debug("setStyle()");
+                console.debug(funcProps);
+                var selector = funcProps.baseClass + '.' + funcProps.category;
+                console.debug(funcProps.cy);
+                var elementsToUpdate = funcProps.cy.elements(selector);
+                console.debug('setStyle() - elementsToUpdate.forEach()');
+                this[fp.category][fp.style] = fp.value;
+                elementsToUpdate.forEach(function (el) {
+                    console.debug(el.id());
+                    el.addClass(Object.values(this[fp.category]));
+                });
+                console.debug(this[fp.category][fp.style]);
+            } catch (e) {
+                console.group("Exception raised by props.elementStyles.setStyle()");
+                console.warn(e);
+                console.groupEnd();
+            }
+            },
         generic: {
             lineColor: 'line-color-grey',
             lineWidth: 'line-width-10',
@@ -2489,24 +2504,32 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
         function styleSelectionEventListener(funcProps, value) {
             try {
+                console.group('styleSelectionEventListener()');
+                console.debug('1. try - catch block.');
                 var selector = funcProps.baseClass + '.' + funcProps.category;
                 var categoryElements = cy.elements(funcProps.baseClass + '.' + funcProps.category);
                 console.debug(selector);
+                console.debug('CategoryElements');
+                console.debug(categoryElements);
                 // defaults
                 var classesToRemove = props.elementStyles.getStyle();
 
                 // do only if the value is not all ready in the category styles
                     try {
+                        console.debug('2. try - catch block.');
                         var categoryNotListed =
                             props.elementStyles.categoryExists(funcProps.category);
                         if (categoryNotListed) {
+                            console.debug('condition: categoryNotListed');
                             // if category is not listed, the defaults are in use
                             console.debug('setting value');
                             console.debug(funcProps);
                             props.elementStyles.setStyle({
                                 category: funcProps.category,
+                                cy: cy,
                                 style: funcProps.parameter,
-                                value: funcProps.value
+                                value: funcProps.value,
+                                baseClass: funcProps.baseClass
                             });
                             var addThese = props.elementStyles.getStyle(funcProps.category);
                             console.debug(addThese);
@@ -2516,11 +2539,14 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                             console.debug(props.elementStyles.getStyle(funcProps.category));
                         }
                     } catch (e) {
+                        console.debug('2. catch.');
                         // if category not listed add it
                         props.elementStyles.setStyle({
                             category: funcProps.category,
+                            cy: cy,
                             style: funcProps.parameter,
-                            value: funcProps.value
+                            value: funcProps.value,
+                            baseClass: funcProps.baseClass
                         });
                         console.debug("Add category to elementStyles");
                         console.debug(funcProps);
@@ -2528,24 +2554,38 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                     }
 
                 var classesToAdd = props.elementStyles.getStyle(funcProps.category);
-
+                /*
+                console.debug('reached categoryElements.forEach()');
                 categoryElements.forEach(function (element) {
-                    console.debug("Remove classes");
-                    console.debug(classesToRemove.join().replace(',', ' '));
-                    console.debug("from element:");
-                    console.debug(element);
-                    element.removeClass(classesToRemove);
-                    element.addClass(classesToAdd);
+                    var addThese = classesToAdd.join().replace(',', ' ');
+                    var removeThese = classesToRemove.join().replace(',', ' ');
+
+                    classesToRemove.forEach(function(item){
+                        console.debug(element.id()+".removeClass('"+item+"')");
+                        element.removeClass(item);
+                    });
+
+                    classesToAdd.forEach(function(item){
+                        console.debug(element.id()+".addClass('"+item+"')");
+                        element.toggleClass(item);
+                    });
+
+                    // element.removeClass(removeThese);
+                    // element.addClass(addThese);
                     console.debug("Element classes!");
                     console.debug(element.classes());
                     //element.toggleClass(funcProps.value);
-                });
+                });*/
             } catch (e) {
+                console.debug('1. catch.');
                 console.groupCollapsed("Exception raised by styleSelectionEventListener().");
                 console.warn(e);
                 console.warn("props:");
                 console.debug(funcProps);
             }
+
+            console.debug(props.elementStyles);
+            console.groupEnd();
 
 
         }
@@ -2553,8 +2593,6 @@ var graphingwikiBrowser = (function (gwClient, cy) {
         // Todo: make this generic version to work for all of the following use cases
         function styleSelection(funcProps) {
             try {
-                console.debug("%cHERE", "color: red;");
-                console.debug(funcProps);
                 var div = d.createElement('div');
                 var selection = d.createElement('select');
                 selection.setAttribute('id', funcProps.selectionId);
@@ -2568,7 +2606,6 @@ var graphingwikiBrowser = (function (gwClient, cy) {
                     selection.appendChild(opt);
                 });
 
-                console.debug(selection);
 
                 // event listener for selection
                 selection.addEventListener('change', function () {
@@ -3170,6 +3207,10 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
         popup: function (form) {
             createPopUp(form);
+        },
+
+        styles: function(){
+            return props.elementStyles;
         },
 
         closePopup: function () {
