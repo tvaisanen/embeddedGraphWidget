@@ -2121,9 +2121,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             onMouseOver: listenerFunctions.elementsList.onMouseOver,
             onMouseOut: listenerFunctions.elementsList.onMouseOut,
             toggleVisibility: toggleVisibility,
-            onClick: function () {
-                console.info("This action is undefined.")
-            }
+            onClick: listenerFunctions.elementsList.onClick
         });
 
         div.setAttribute('id', "elements-list");
