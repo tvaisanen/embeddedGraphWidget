@@ -18,7 +18,6 @@
 
 var d = document;
 
-
 var configs = {
     API_PATH: 'http://127.0.0.1:5000/',
     API_CREATE_NEW_NODE: 'http://127.0.0.1:5000/add-to-wiki/',
@@ -210,11 +209,24 @@ var testState = {
     graphContainerId: "cy",
     gw: gwClient,
     elementStyles: {
-        generic: [
-            'line-width-10',
-            'arrow-shape-triangle',
-            'line-color-grey'
-        ]
+        categoryExists: function(category){
+            return (typeof this[category] !== 'undefined');
+        },
+        getStyle: function (style) {
+            // return styles as array
+            /*
+            * if no style get generic
+            * */
+            if (!style){
+                return Object.values(this['generic']);
+            }
+            return Object.values(this[style]);
+        },
+        generic: {
+            lineColor: 'line-color-grey',
+            lineWidth: 'line-width-10',
+            arrowShape: 'arrow-shape-triangle'
+        }
     },
     tabs: {
         graphs: {
@@ -1035,11 +1047,14 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
                 cy.add(newEdge);
                 var edge = cy.getElementById(edgeId);
+                var categoryExists = props.elementStyles.categoryExists(classForEdge);
 
-                var classesToAdd = props.elementStyles[classForEdge];
+                console.debug(props.elementStyles);
+                console.debug(categoryExists);
+                var classesToAdd = props.elementStyles.getStyle(classForEdge);
                 if (!classesToAdd) {
                     console.debug('Add generic styles');
-                    classesToAdd = props.elementStyles.generic;
+                    classesToAdd = props.elementStyles.getStyle();
                 } else {
                     console.debug('Add ' + classForEdge + ' styles.');
                 }
@@ -1056,7 +1071,6 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             }
 
         } catch (e) {
-            console.info(e.type);
             console.groupCollapsed("Exception with createNewEdge()");
             console.info("Parameters passed:");
             console.info("sourceId: " + sourceId);
@@ -2110,8 +2124,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             onClick: listenerFunctions.elementsList.onClick,
             onMouseOver: listenerFunctions.elementsList.onMouseOver,
             onMouseOut: listenerFunctions.elementsList.onMouseOut,
-            toggleVisibility: toggleVisibility,
-            onClick: listenerFunctions.elementsList.onClick
+            toggleVisibility: toggleVisibility
         });
 
         var ulEdges = unorderedListFromArray({
@@ -2120,8 +2133,7 @@ var graphingwikiBrowser = (function (gwClient, cy) {
             onClick: listenerFunctions.elementsList.onClick,
             onMouseOver: listenerFunctions.elementsList.onMouseOver,
             onMouseOut: listenerFunctions.elementsList.onMouseOut,
-            toggleVisibility: toggleVisibility,
-            onClick: listenerFunctions.elementsList.onClick
+            toggleVisibility: toggleVisibility
         });
 
         div.setAttribute('id', "elements-list");
@@ -2458,12 +2470,14 @@ var graphingwikiBrowser = (function (gwClient, cy) {
 
                     // do only if the value is not all ready in the category styles
                     try {
-                        if (props.elementStyles[funcProps.category].indexOf(funcProps.value) === -1) {
-
+                        var categoryNotListed =
+                            props.elementStyles.categoryExists(funcProps.category);
+                        if (categoryNotListed) {
                             //console.log(props.elementStyles[category]);
                             console.debug('setting value');
                             console.debug(funcProps.value);
                             props.elementStyles[funcProps.category].push(funcProps.value);
+                            console.debug(props.elementStyles[funcProps.category]);
                         }
                     } catch (e) {
                         // if category not listed add it
