@@ -4,8 +4,7 @@
 
 define([
         "./js/configuration/configs",
-        "./utils/gwClient",
-        "./graphingwikiBrowser"
+        "./js/graphingwikiBrowser"
         ], function (configs, gwClient, graphingwikiBrowser) {
 
 
