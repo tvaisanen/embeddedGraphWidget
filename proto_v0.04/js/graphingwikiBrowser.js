@@ -1210,7 +1210,7 @@ define([
             nodeId: nodeId,
             cy: cy,
             gwClient: gwClient,
-            getEdgeCategories: getEdgeCategories,
+            edgeCategories: edgeCategories
         });
         updateTabs();
     }

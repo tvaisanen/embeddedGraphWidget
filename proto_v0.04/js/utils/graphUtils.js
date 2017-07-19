@@ -53,8 +53,10 @@ define([], function () {
                         if (nodeHasOutgoingEdges) {
                             try {
                                 newCategoriesOut = Object.keys(node.out);
-                                var categoriesToUpdate = props.getEdgeCategories();
-                                updateCategories(newCategoriesOut, categoriesToUpdate);
+                                var categoriesToUpdate = props.edgeCategories.get();
+                                props.edgeCategories.update({
+                                    newCategories: newCategoriesOut
+                                });
                             } catch (e) {
                                 console.groupCollapsed("Exception raised while updating categories in expandNode()");
                                 console.warn(e);
@@ -151,7 +153,7 @@ define([], function () {
         });
     }
 
-        function createEdgeId(sourceNodeId, targetNodeId) {
+    function createEdgeId(sourceNodeId, targetNodeId) {
         return sourceNodeId + "_to_" + targetNodeId;
     }
 
@@ -163,9 +165,9 @@ define([], function () {
      *  @param {String} classForEdge - Style category for the edge.
      *  @param {Object} cy - Cytoscape instance.
      */
-    function createNodesAndEdgeBetween(sourceNodeId, targetNodeId, category, cy) {
+    function createNodesAndEdgeBetween(props) {
         try {
-
+            console.debug(props);
             // If nodes do not exist, create them.
             // nodeIdAvailable: true === node do not exist.
             nodeIdAvailable(props.sourceNodeId, props.cy) ?
@@ -195,5 +197,6 @@ define([], function () {
     return {
         expandNode: expandNode
     }
+
 
 });

@@ -37,10 +37,11 @@ define([], function () {
         }
     }
 
-    function update(newCategories) {
+    function update(props) {
         try {
+            console.debug(props);
 
-            newCategories.forEach(function (category) {
+            props.newCategories.forEach(function (category) {
                 if (categories.indexOf(category) === -1) {
                     categories.push(category);
                 }
@@ -58,6 +59,7 @@ define([], function () {
     return {
         add: add,
         get: get,
-        remove: remove
+        remove: remove,
+        update: update
     }
 });
