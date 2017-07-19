@@ -10,8 +10,10 @@ define([
     "./components/ui",
     "./configuration/configs",
     "./dependencies/cytoscape",
+    "./utils/edgeCategories",
+    "./utils/graphUtils",
     "./utils/gwClient"],
-    function (classNames, elementStyles, menuItems, ui, configs, cytoscape, gwClient) {
+    function (classNames, elementStyles, menuItems, ui, configs, cytoscape, edgeCategories, graphUtils, gwClient) {
     var d = document;
     var cy;
     var props;
@@ -478,7 +480,7 @@ define([
      */
     function getEdgeCategories() {
         try {
-            var categories = props.tabs.styles.categories;
+            var categories = edgeCategories.get();
             if (categories === 'undefined') {
                 return []
             } else {
@@ -754,45 +756,7 @@ define([
 
     /* ------------------------------------------------------------ */
 
-    function createEdgeId(sourceNodeId, targetNodeId) {
-        return sourceNodeId + "_to_" + targetNodeId;
-    }
 
-    /** @function createNodesAndEdgeBetween
-     *  Creates edge between two nodes and if the nodes do not
-     *  exist, these are also created.
-     *  @param {String} sourceNodeId - Id of the source node.
-     *  @param {String} targetNodeId - Id of the target node.
-     *  @param {String} classForEdge - Style category for the edge.
-     *  @param {Object} cy - Cytoscape instance.
-     */
-    function createNodesAndEdgeBetween(sourceNodeId, targetNodeId, category, cy) {
-        try {
-
-            // If nodes do not exist, create them.
-            // nodeIdAvailable: true === node do not exist.
-            nodeIdAvailable(sourceNodeId, cy) ?
-                createNewNode(sourceNodeId, cy) : null;
-            nodeIdAvailable(targetNodeId, cy) ?
-                createNewNode(targetNodeId, cy) : null;
-
-            // createNewEdge checks if the edge already exists.
-            createNewEdge(sourceNodeId, targetNodeId, category, cy);
-
-            var edgeId = createEdgeId(sourceNodeId, targetNodeId);
-            addClassToEdge(edgeId, category, cy);
-
-        } catch (e) {
-            console.groupCollapsed("Exception with createNodesAndEdgeBetween()");
-            console.info("Parameters passed:");
-            console.info("sourceNodeId: " + sourceNodeId);
-            console.info("targetNodeId: " + targetNodeId);
-            console.info("classForEdge: " + classForEdge);
-            console.warn(e);
-            console.groupEnd();
-        }
-
-    }
 
     function testCreateNodesAndEdgeBetween() {
         var idSource = 'source';
@@ -1045,90 +1009,14 @@ define([
 
     // Todo: tests and docs for remaining!
 
+
     /** @function expandNode
      *  Description
      *  @param {String} nodeId - Id of the node to expand.
      *  @param {Object} cy - Cytoscape instance.
      *
      */
-    function expandNode(nodeId) {
 
-        gw = props.gw;
-        cy = props.cy;
-
-        //Get data for the clicked node.
-        var nodePromise = gw.getNodeData(nodeId);
-
-        nodePromise.then(function (response) {
-            return response.json();
-        }).then(function (json) {
-                /*
-                 *  node = {
-                 *      in: Object,
-                 *      out: Object,
-                 *      meta: Object
-                 *  }
-                 * */
-                var node = json.data;
-
-                console.debug(node);
-
-                try {
-                    // If node has outgoing edges refresh the categories
-                    var nodeHasOutgoingEdges = (node.out != 'undefined');
-                    var newCategoriesOut = [];
-
-                    if (nodeHasOutgoingEdges) {
-                        try {
-                            newCategoriesOut = Object.keys(node.out);
-                            var categoriesToUpdate = getEdgeCategories();
-                            updateCategories(newCategoriesOut, categoriesToUpdate);
-                        } catch (e) {
-                            console.groupCollapsed("Exception raised while updating categories in expandNode()");
-                            console.warn(e);
-                            console.info("%cNode", "color:red;");
-                            console.info(node);
-                            console.groupEnd();
-                        }
-                    }
-
-                    // Iterate the outgoing edge categories.
-                    try {
-                        newCategoriesOut.forEach(function (category) {
-
-                            console.debug(category);
-
-                            // get list of nodes where the clicked node is connected t
-                            var nodesConnectedTo = node.out[category];
-
-                            // for each connected node create a new edge
-                            createEdgesToNodes(nodeId, nodesConnectedTo, category, cy);
-
-                        });
-                    } catch (e) {
-                        console.warn("Something went wrong while creating outgoing edges.");
-                        console.warn(e);
-                    }
-                    var newCategoriesIn = Object.keys(node.in);
-                    categoriesToUpdate = getEdgeCategories();
-                    updateCategories(newCategoriesIn, categoriesToUpdate);
-
-                    // Iterate the incoming edge categories.
-                    newCategoriesIn.forEach(function (category) {
-                        var nodesConnectedTo = node.in[category];
-                        createEdgesFromNodes(nodeId, nodesConnectedTo, category, cy);
-                    });
-                } catch (e) {
-                    console.groupCollapsed("Exception raised by expandNode()");
-                    console.warn(e);
-                    console.groupEnd();
-                }
-                setAndRunLayout();
-                updateTabs();
-
-            }
-        );
-    }
 
     /** @function initNewGraph
      *  Description
@@ -1210,15 +1098,7 @@ define([
         });
     }
 
-    /** @function setAndRunLayout
-     *  Description
-     *  @param {Object} variable - Desc.
-     *  @return {Type} desc.
-     */
-    function setAndRunLayout() {
-        var layout = cy.makeLayout({name: "cola"});
-        layout.run();
-    }
+
 
     /*
      When behaviour of the following functions are defined,
@@ -1326,7 +1206,13 @@ define([
     function bindExpandNode(evt) {
         var node = evt.target;
         var nodeId = node.id();
-        expandNode(nodeId);
+        graphUtils.expandNode({
+            nodeId: nodeId,
+            cy: cy,
+            gwClient: gwClient,
+            getEdgeCategories: getEdgeCategories,
+        });
+        updateTabs();
     }
 
     /** @function initCytoscape
