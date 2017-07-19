@@ -18,53 +18,7 @@
 
 var d = document;
 
-var configs = {
-    API_PATH: 'http://127.0.0.1:5000/',
-    API_CREATE_NEW_NODE: 'http://127.0.0.1:5000/add-to-wiki/',
-    lineStyleOptions: {
-        'width': Array.from(Array(20).keys()),
-        'line-color': 'rgb',
-        'line-style': [],
-        'target-arrow-color': 'rgb',
-        'target-arrow-shape': [],
-        'curve-style': []
-    },
-    lines: [
-        {label: 'solid', styleClass: 'line-style-solid'},
-        {label: 'dotted', styleClass: 'line-style-dotted'},
-        {label: 'dashed', styleClass: 'line-style-dashed'}
-    ],
-    arrows: [
-        {label: 'tee', styleClass: 'arrow-shape-tee'},
-        {label: 'triangle', styleClass: 'arrow-shape-triangle'},
-        {label: 'triangle-tee', styleClass: 'arrow-shape-triangle-tee'},
-        {label: 'triangle-cross', styleClass: 'arrow-shape-triangle-cross'},
-        {label: 'triangle-backcurve', styleClass: 'arrow-shape-triangle-backcurve'},
-        {label: 'square', styleClass: 'arrow-shape-square'},
-        {label: 'circle', styleClass: 'arrow-shape-circle'},
-        {label: 'diamond', styleClass: 'arrow-shape-diamond'},
-        {label: 'none', styleClass: 'arrow-shape-none'}
-    ],
-    colors: [
-        {label: 'red', styleClass: 'line-color-red'},
-        {label: 'green', styleClass: 'line-color-green'},
-        {label: 'orange', styleClass: 'line-color-orange'},
-        {label: 'yellow', styleClass: 'line-color-yellow'},
-        {label: 'cyan', styleClass: 'line-color-cyan'},
-        {label: 'blue', styleClass: 'line-color-blue'}
-    ],
-    widths: function () {
-        // generate array of width objects {label: VALUE, styleClass: 'line-width-VALUE'}
-        var range = Array.from(Array(31).keys());
-        var widths = [];
-        range.forEach(function (value) {
-            widths.push({label: value, styleClass: 'line-width-' + value});
-        });
-        return widths;
-    },
-    params: ['line-style', 'arrow-shape', 'line-color', 'line-width'],
-    layoutOptions: ['cola', 'breadthfirst', 'circle', 'concentric', 'cose', 'grid', 'random']
-};
+
 
 function testCy(containerElement) {
     return cytoscape({
@@ -204,80 +158,14 @@ function testCy(containerElement) {
 
 
 
-define([], function () {
+define([
+    "configuration/classNames",
+    "components/ui",
+    "configuration/configs",
+    "utils/gwClient"], function (classNames, ui, configs, gwClient) {
 
     var props;
-    var classNames = {
-        container: 'app-container',
-        graph: {
-            container: 'graph-container'
-        },
-        panel: {
-            container: 'panel-container'
-        },
-        menu: {
-            container: 'panel-menu',
-            item: {
 
-                active: 'panel-menu__menu-item--active',
-                inactive: 'panel-menu__menu-item--inactive'
-            }
-        },
-        tab: {
-            container: 'panel-tabs',
-            nav: {
-                container: 'panel-tab-nav',
-                item: {
-                    item: 'panel-tab-nav__nav-item',
-                    active: 'panel-tab-nav__nav-item--active',
-                    inactive: 'panel-tab-nav__nav-item--inactive'
-                }
-            },
-            graph: {
-                container: 'tab-graph',
-                listHeader: 'tab-graph__list-header',
-                listItem: {
-                    active: 'tab-graph__list-item--active',
-                    inactive: 'tab-graph__list-item--inactive'
-                },
-                filter: "tab-graph__filter",
-                filterClasses: {
-                    input: "tab-elements__filter-input"
-                }
-            },
-            elements: {
-                container: 'tab-elements',
-                listHeader: 'tab-elements__list-header',
-                listItem: {
-                    active: 'tab-elements__list-item--active',
-                    inactive: 'tab-elements__list-item--inactive',
-                    selected: '.tab-elements__list-item__selected'
-                },
-                filter: "tab-elements__filter",
-                filterInput: "tab-elements__filter-input"
-
-            },
-            styles: {
-                container: 'tab-styles',
-                listHeader: 'tab-styles__list-header',
-                listItem: {
-                    active: 'tab-styles__list-item--active',
-                    inactive: 'tab-styles__list-item--inactive'
-                }
-            }
-        },
-        text: {
-            container: "text-preview",
-            header: "text-preview__header",
-            content: "text-preview__content"
-        },
-        popup: {
-            header: {
-                btnClose: 'popup-header__btn-close',
-                text: 'popup-header__text'
-            }
-        }
-    };
     var menuItems = {
         download: {
             label: "Download",
@@ -2177,7 +2065,7 @@ define([], function () {
 
         div.setAttribute('id', classes.container);
 
-        var graphListPromise = props.gw.getGraphList();
+        var graphListPromise = gwClient.getGraphList();
 
         graphListPromise.then(function (response) {
             return response.json();
@@ -2188,7 +2076,7 @@ define([], function () {
             /* loop array of graphName strings and generate
              * the list items for the panel */
             graphs.forEach(function (graph) {
-                renderGraphListItem({graphName: graph, gw: gw, listElement: ul});
+                components.graphListItem({graphName: graph, gwClient: gw, listElement: ul});
             });
         });
 

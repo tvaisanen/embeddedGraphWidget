@@ -2,18 +2,13 @@
  * Created by toni on 7.6.2017.
  */
 
-define(function () {
+define(["../configuration/configs"], function (configs) {
     /*
     * Client for requesting and posting data to graphingwiki
     * */
 
     // private methods
     var moduleName = "GraphingWiki client";
-    var configs = {};
-
-    function setConfiguration(configuration) {
-        configs = configuration;
-    }
 
     function fetchNode(pagename) {
         /*
