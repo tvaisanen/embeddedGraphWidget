@@ -428,41 +428,7 @@ define([
         return ul;
     }
 
-    /** @function createNewNode
-     *  Create new node and add it to the given cytoscape instance.
-     *  @param {string} id - ID for the node.
-     *  @param {Object} cy - Cytoscape instance
-     * */
-    function createNewNode(id, cy) {
-        try {
-            var newNode = {
-                group: 'nodes',
-                data: {
-                    id: id
-                }
-            };
 
-            // after saving page to moin
-            // Can not create element with invalid string ID ``
-            if (nodeIdAvailable(id, cy)) {
-                cy.add(newNode);
-                return true;
-            } else {
-                return false;
-            }
-
-        } catch (e) {
-            console.groupCollapsed("Exception raised by graphingwikiBrowser.createNewNode(id)");
-            console.warn(e);
-            console.debug("Parameters passed:");
-            console.debug("id:");
-            console.debug(id);
-            console.groupEnd();
-            console.debug('returning false from second catch');
-
-            return false;
-        }
-    }
 
     function testCreateNewNode() {
         var cy = cytoscape({elements: [{group: 'nodes', data: {id: 'existingNode'}}]})
@@ -543,14 +509,7 @@ define([
         })
     }
 
-    /** @function nodeIdAvailable
-     *  Check if a node of given id is already defined in the graph.
-     *  @param {String} nodeId- Id of node.
-     *  @return {Boolean} True if id is available for use, else False.
-     */
-    function nodeIdAvailable(nodeId, cy) {
-        return !cy.getElementById(nodeId).isNode();
-    }
+
 
     function testNodeIdAvailable() {
         var cy = cytoscape({elements: [{group: 'nodes', data: {id: 'existingNode'}}]});
@@ -588,71 +547,7 @@ define([
         });
     }
 
-    /** @function createNewEdge
-     *  Description
-     *  @param {String} sourceId - Id of the source node.
-     *  @param {String} targetId - Id of the target node.
-     *  @param {String} classForEdge - Selector for assigning style.
-     *  @param {Object} cy - Cytoscape instance.
-     *  @return {Object} The new edge element.
-     */
-    function createNewEdge(sourceId, targetId, classForEdge, cy) {
 
-        try {
-            var edgeId = sourceId + "_to_" + targetId;
-            // Create new edge.
-            var newEdge = {
-                group: 'edges',
-                data: {
-                    id: edgeId,
-                    source: sourceId,
-                    target: targetId
-                }
-            };
-
-            // If edge is already defined, return the existing one.
-            if (edgeExists(edgeId, cy)) {
-                return cy.getElementById(edgeId);
-
-            } else {
-
-                cy.add(newEdge);
-                var edge = cy.getElementById(edgeId);
-                var categoryExists = elementStyles.categoryExists(classForEdge);
-
-                console.debug(elementStyles);
-                console.debug(categoryExists);
-                var classesToAdd = elementStyles.getStyle(classForEdge);
-                if (!classesToAdd) {
-                    console.debug('Add generic styles');
-                    classesToAdd = elementStyles.getStyle();
-                } else {
-                    console.debug('Add ' + classForEdge + ' styles.');
-                }
-
-                // Add the new edge to cy.elements.
-
-                console.debug(classesToAdd);
-
-                classesToAdd.forEach(function (styleClass) {
-                    console.debug('add style: ' + styleClass);
-                    edge.addClass(styleClass);
-                });
-                return edge;
-            }
-
-        } catch (e) {
-            console.groupCollapsed("Exception with createNewEdge()");
-            console.info("Parameters passed:");
-            console.info("sourceId: " + sourceId);
-            console.info("targetId: " + targetId);
-            console.info("classForEdge: " + classForEdge);
-            console.info("styleClasses: " + JSON.stringify(elementStyles));
-            console.warn(e);
-            console.groupEnd();
-        }
-
-    }
 
     function testCreateNewEdge() {
         var sourceId = 'source';
@@ -1210,7 +1105,8 @@ define([
             nodeId: nodeId,
             cy: cy,
             gwClient: gwClient,
-            edgeCategories: edgeCategories
+            edgeCategories: edgeCategories,
+            elementStyles: elementStyles
         });
         updateTabs();
     }
