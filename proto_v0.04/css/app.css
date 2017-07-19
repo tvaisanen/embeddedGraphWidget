@@ -1,0 +1,61 @@
+
+.app-container {
+    font-family: "Bookman Old Style", Helvetica, sans-serif;
+    width: 97vw;
+
+}
+
+.header-container {
+    width: inherit;
+    height: auto;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    background-color: #0270b6;
+    color: #ffffff;
+    text-indent: 10px;
+    border-radius: 5px 5px 0 0;
+}
+
+.content-container {
+    display: flex;
+    height: 92vh;
+    flex-direction: row;
+    border-left-style: solid;
+    border-right-style: solid;
+    border-bottom-style: solid;
+    border-width: 1px;
+    border-color: #5f89af;
+    border-radius: 0 0 5px 5px;
+}
+
+
+.panel-container {
+    width: 25vw;
+    height: auto;
+    background-color: #f7fcfe;
+    word-wrap: break-word;
+    overflow: auto;
+    border-bottom-left-radius: 5px;
+    border-right-style: solid;
+    border-width: 1px;
+    border-color: #5f89af;
+}
+
+
+.panel-tabs{
+
+
+}
+
+::-webkit-scrollbar {
+    width: 4px; /* for vertical scrollbars */
+    height: 4px; /* for horizontal scrollbars */
+}
+
+::-webkit-scrollbar-track {
+    background: #BBDEFB;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #0D47A1;
+}

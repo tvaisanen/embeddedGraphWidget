@@ -1,0 +1,28 @@
+.popup {
+    display: flex;
+    flex-direction: row;
+    border: solid;
+    border-color: #000;
+    background-color: #ffffff;
+    height: 200px;
+    width: 300px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-top: -100px;
+    margin-left: -150px;
+}
+
+
+.popup-header {
+    display: flex;
+    flex-direction: column;
+}
+
+.popup-header__btn-close {
+    float: right;
+}
+
+.popup-header__text {
+    width: auto;
+}
