@@ -1,26 +1,22 @@
 /**
  * Created by Toni Väisänen on 6.6.2017.
  *
- * Todo:
- *      - update styles when new graph is loaded
- *      - Manage link categories? -> needs GW action to be functional!
  */
-/*
- var selectAllOfTheSameType = function(ele) {
- cy.elements().unselect();
- if(ele.isNode()) {
- cy.nodes().select();
- }
- else if(ele.isEdge()) {
- cy.edges().select();
- }
- };*/
 
-var d = document;
+define([
+    "./configuration/classNames",
+    "./components/elementStyles",
+    "./components/menuItems",
+    "./components/ui",
+    "./configuration/configs",
+    "./dependencies/cytoscape",
+    "./utils/gwClient"],
+    function (classNames, elementStyles, menuItems, ui, configs, cytoscape, gwClient) {
+    var d = document;
+    var cy;
+    var props;
 
-
-
-function testCy(containerElement) {
+    function testCy(containerElement) {
     return cytoscape({
         container: containerElement,
         elements: [{group: 'nodes', data: {id: 'personA'}}],
@@ -155,87 +151,6 @@ function testCy(containerElement) {
     });
 }
 
-
-
-
-define([
-    "configuration/classNames",
-    "components/ui",
-    "configuration/configs",
-    "utils/gwClient"], function (classNames, ui, configs, gwClient) {
-
-    var props;
-
-    var menuItems = {
-        download: {
-            label: "Download",
-            content: "Click to download image.",
-            onClick: downloadGraphPNG,
-            generateContent: generateContent
-        },
-        save: {
-            // todo: eventlistener which passes gw etc alongside with funcprops
-            label: "Save",
-            content: "form to input graph name",
-            onClick: function (funcProps) {
-                console.log("save.onClick()");
-                console.log(funcProps);
-                funcProps.context = 'save';
-                createPopUp(funcProps);
-            },
-            generateContent: generateContent
-        }
-    };
-    var elementStyles = {
-        addCategory: function (category) {
-            // init new category with generic style
-            this[category] = this.getDefaultStyle();
-        }
-        ,
-        categoryExists: function (category) {
-            return (typeof this[category] !== 'undefined');
-        },
-        getDefaultStyle: function () {
-            return this['generic'];
-        },
-        getStyle: function (style) {
-            // return styles as array
-            /*
-             * if no style get generic
-             * */
-            if (!style) {
-                return Object.values(this['generic']);
-            }
-            return Object.values(this[style]);
-        },
-        setStyle: function (funcProps) {
-            try {
-                var fp = funcProps;
-                console.debug("setStyle()");
-                console.debug(funcProps);
-                var selector = funcProps.baseClass + '.' + funcProps.category;
-                console.debug(funcProps.cy);
-                var elementsToUpdate = funcProps.cy.elements(selector);
-                console.debug('setStyle() - elementsToUpdate.forEach()');
-                this[fp.category][fp.style] = fp.value;
-                elementsToUpdate.forEach(function (el) {
-                    console.debug(el.id());
-                    console.debug("these classes has to be assigned");
-                    console.debug(elementStyles[fp.category]);
-                });
-            } catch (e) {
-                console.group("Exception raised by elementStyles.setStyle()");
-                console.warn(e);
-                console.groupEnd();
-            }
-            },
-        generic: {
-            lineColor: 'line-color-grey',
-            lineWidth: 'line-width-10',
-            arrowShape: 'arrow-shape-triangle'
-        }
-    };
-
     /** @function toggleVisibility
      *  toggleVisibility: toggle visibility of cy element.
      *  parameter is a object, which contains string:elementId
@@ -321,241 +236,6 @@ define([
         }
     }
 
-
-    // Todo: write tests! priority: medium.
-    var listenerFunctions = {
-        popupSave: {
-            btnSave: {
-                onClick: function (funcProps) {
-                    console.group("menuItemCreate.btnSave.onClick()");
-                    console.info("Clicked create node button.");
-                    console.info("Current value: " + funcProps.name);
-
-                    var promise = funcProps.gw.savePageToMoin(funcProps.name, 'hello');
-                    promise.then(function (response) {
-                        var j = response.json();
-                        console.info(j);
-                        return j;
-                    }).then(function (obj) {
-                        console.info(obj);
-                        console.groupEnd();
-                    }).catch(function (error) {
-                        console.warn(error);
-                        console.groupEnd();
-                    });
-                }
-            }
-        },
-        popupConnect: {
-            btnConnect: {
-                /** @function popupConnect.btnConnect.onClick()
-                 *  popupConnect.btnConnect.onClick()
-                 *  @param {Object} funcProps {targetNodeId, cy}
-                 */
-                onClick: function (funcProps) {
-                    console.log(funcProps);
-                    console.log("btnConnect.onClick() connecting node: " + funcProps.sourceNode.id() + " to " + funcProps.inTargetNodeId.value);
-                }
-            },
-            btnSelect: {
-                /** @function popupConnect.btnSelect.onClick()
-                 *  popupConnect.btnSelect.onClick()
-                 *  @param funcProps {}
-                 */
-                onClick: function (funcProps) {
-
-                    function bindNodeSelection(funcProps) {
-                        console.log('here!');
-                        console.log(funcProps);
-                        return function (event) {
-                            console.log(event.target.id());
-                            console.log(funcProps);
-                            console.log("Select the node, which to connect!");
-
-                            createNewEdge(
-                                funcProps.sourceNode.id(),
-                                event.target.id(),
-                                'category',
-                                funcProps.cy
-                            );
-                            funcProps.cy.off('tap');
-                            clearMessageText();
-                            funcProps.cy.on('tap', bindExpandNode);
-                        };
-                    }
-
-                    console.log("btnSelect");
-                    console.log(funcProps);
-                    console.log("now you need to bind listener for cy.select");
-                    funcProps.cy.off('tap');
-                    funcProps.cy.on('tap', 'node', bindNodeSelection(funcProps));
-                    destroyPopUp();
-                    setMessageText({messageText: "Select node to connect!"});
-                    //alert("now there should be somekind of notification that the user may select a node");
-                }
-            }
-        },
-        elementsFilter: {
-            inFilter: {
-                keypress: function (filtProps) {
-                    console.groupCollapsed("elementsFilter.inFilter.keypress()");
-                    try {
-                        var filterValue = filtProps.inFilter.value;
-
-                        props.tabs.elements.filter = filterValue;
-                        filtProps.spanFilter.innerHTML = ": filter :" + filterValue;
-
-                        /* elesContent has to be declared here
-                         *  it is created dynamically and therefore can not
-                         *  be passed as prop
-                         */
-                        var elesContent = d.getElementById('elements-content');
-                        var newContent = filtProps.renderNewContent();
-                        var oldContent = elesContent.childNodes[1];
-                        elesContent.replaceChild(newContent, oldContent);
-                    } catch (e) {
-                        console.warn("elementsFilter.inFilter.keypress()");
-                        console.warn(e);
-                    }
-                    console.groupEnd();
-                }
-            },
-            btnClearFilter: {
-                onClick: function (updateTabs) {
-                    try {
-                        console.group("btnClearFilter.onClick()")
-                        props.tabs.elements.filter = '';
-                        updateTabs();
-                    } catch (e) {
-                        console.warn("Exception raised by btnClearFilter.onClick()");
-                        console.warn(e);
-                    }
-                }
-            }
-        },
-        elementsList: {
-
-            /** @function elementsList.onClick()
-             *  elementsList.onClick()
-             * @param {Object} funcProps
-             */
-            onClick: function (funcProps) {
-                var evt = funcProps.evt;
-
-                if (evt.target.type === 'checkbox') {
-                    toggleVisibility({
-                        elementId: funcProps.elementId,
-                        cy: cy
-                    });
-
-                } else {
-                    try {
-                        if (props.currentDetail) {
-                            props.currentDetail.classList.remove(
-                                classNames.tab.elements.listItem.selected);
-                        }
-
-                        props.currentDetail = evt.target;
-                        props.currentDetail.classList.add(classNames.tab.elements.listItem.selected);
-                        // console.debug(props.currentDetail);
-
-                    } catch (e) {
-                        console.warn("Exception raised by unorderedList -> li.addEventListener()");
-                        console.warn(e);
-                    }
-                    setTextPreviewContent(evt.target.id);
-                }
-            },
-
-            /** @function elementsList.onMouseover()
-             *  elementsList.onMouseover()
-             * @param {Object} funcProps
-             */
-            onMouseOver: function mouseOver(funcProps) {
-                try {
-                    var node = funcProps.cy.getElementById(funcProps.listItemId);
-                    node.toggleClass('hover-on');
-                    toggleNeighbourhood(node);
-                } catch (e) {
-                    console.warn("Exception raised by elementsList.onMouseOver()");
-                    console.warn(e);
-                }
-            },
-            /** @function elementsList.onMouseout()
-             *  elementsList.onMouseout()
-             * @param {Object} funcProps
-             */
-            onMouseOut: function mouseOut(funcProps) {
-                try {
-                    var node = funcProps.cy.getElementById(funcProps.listItemId);
-                    node.toggleClass('hover-on');
-                    toggleNeighbourhood(node);
-                } catch (e) {
-                    console.warn("Exception raised by elementsList.onMouseOut()");
-                    console.warn(e);
-                }
-            }
-        },
-        graphsList: {
-            listItem: {
-                /** @function graphList.listItem.onClick()
-                 *  graphList.listItem.onClick()
-                 *  Load new graph to canvas with gwClient.
-                 *  todo: the gw action.
-                 *  Graphingwiki action is the interface for this action.
-                 *  @param {Object} listItemProps
-                 */
-                onClick: function (listItemProps) {
-                    console.group("graphList.listItem.onClick()");
-
-                    try {
-                        var graphName = listItemProps.graphName;
-                        var gw = listItemProps.gw;
-
-                        console.log("clicked: " + graphName);
-
-                        // Todo: precautions!
-                        var confirmChange = true;
-                        if (confirmChange) {
-                            var graphPromise = gw.getGraph('graph/' + graphName);
-                            graphPromise.then(function (response) {
-                                var json = response.json();
-                                return json;
-                            }).then(function (json) {
-                                props.cy.destroy();
-                                props.cy = initNewGraph(json.data);
-                            });
-                        }
-
-                    } catch (e) {
-                        console.warn("graphList.listItem.onClick()");
-                        console.warn(e);
-                    }
-                }
-            }
-        },
-        window: {
-            onClick: function (event) {
-
-                // todo: remove hardcoding
-                var popupId = 'popup';
-
-                var popup = d.getElementById(popupId);
-                // if popup is null do nothing, if not then close popup
-                // if the clicked target is not the popup
-                if (popupId) {
-                    console.debug('popup is active');
-                    console.debug(event.target.id);
-                    if (event.target.id !== popupId) {
-                        // todo:
-                        // set guard that the popup does not
-                        // get destroyed with the same click as it were created
-                        console.debug("destroy");
-                    }
-                }
-            }
-        }
-    };
 
     /** @function cy context menu init
      * initCyContextMenu
@@ -1665,9 +1345,9 @@ define([
         cy.on('tap', 'node', bindExpandNode);
 
         // initialize the context menu plugin
-        cy.contextMenus(initCyContextMenu(cy));
+        // cy.contextMenus(initCyContextMenu(cy));
 
-        props.cy = cy;
+        cy = cy;
     }
 
     /*
@@ -1773,7 +1453,7 @@ define([
      */
     function renderContentContainer() {
         var contentContainer = d.createElement('div');
-        contentContainer.setAttribute('id', props.contentContainerId);
+        contentContainer.setAttribute('id', configs.contentContainerId);
         contentContainer.classList.add("content-container");
         contentContainer.appendChild(renderPanel());
         contentContainer.appendChild(renderGraphColumn());
@@ -1800,7 +1480,7 @@ define([
      */
     function render() {
 
-        var appContainer = d.getElementById(props.appContainerId);
+        var appContainer = d.getElementById(configs.appContainerId);
         appContainer.appendChild(renderHeaderContainer());
         appContainer.appendChild(renderContentContainer());
     }
@@ -1834,7 +1514,7 @@ define([
         messageContainer.appendChild(messageText);
 
         var graphContainer = d.createElement('div');
-        graphContainer.setAttribute('id', props.graphContainerId);
+        graphContainer.setAttribute('id', configs.graphContainerId);
         graphContainer.classList.add("graph-container");
 
         var textPrevievContainer = renderTextPreview();
@@ -2076,7 +1756,7 @@ define([
             /* loop array of graphName strings and generate
              * the list items for the panel */
             graphs.forEach(function (graph) {
-                components.graphListItem({graphName: graph, gwClient: gw, listElement: ul});
+                ui.graphListItem({graphName: graph, gwClient: gw, listElement: ul});
             });
         });
 
@@ -2163,7 +1843,7 @@ define([
      */
     function renderHeader() {
         var header = d.createElement('h2');
-        header.innerHTML = props.header;
+        header.innerHTML = configs.header;
         return header;
     }
 
@@ -2175,8 +1855,7 @@ define([
     function renderMenu() {
 
         // Create the div which contains graphingwikiBrowser navigation tabs.
-        var cy = props.cy;
-        var gw = props.gw;
+        var gw = gwClient;
 
         // css classes
         var classes = classNames.menu;
@@ -2262,7 +1941,7 @@ define([
 
         // Create the div which contains graphingwikiBrowser navigation tabs.
 
-        var tabs = props.tabs;
+        var tabs = configs.tabs;
 
         // css classes
         var classes = classNames.tab.nav;
@@ -2915,7 +2594,7 @@ define([
          * Returns the container for tabs in the side panel
          */
 
-        var tabs = props.tabs;
+        var tabs = configs.tabs;
 
         var divContent = d.createElement('div');
         divContent.classList.add(classNames.tab.container);
@@ -2923,7 +2602,11 @@ define([
 
         // render content
         if (tabs.graphs.active) {
-            divContent.appendChild(renderGraphsContent());
+            divContent.appendChild(
+                ui.graphsContent({
+                    cy: cy,
+                    gwClient: gwClient
+                }));
 
         } else if (tabs.elements.active) {
             divContent.appendChild(renderElementsContent());
@@ -3049,9 +2732,6 @@ define([
 
     return {
         start: function (props) {
-            setProps(props, "all");
-            // todo: clean up
-            // initWindowListeners();
             render();
             initCytoscape();
         },

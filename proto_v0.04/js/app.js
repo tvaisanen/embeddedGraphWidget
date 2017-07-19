@@ -3,9 +3,9 @@
  */
 
 define([
-        "./js/configuration/configs",
-        "./js/graphingwikiBrowser"
-        ], function (configs, gwClient, graphingwikiBrowser) {
+        "./configuration/configs",
+        "./graphingwikiBrowser"
+        ], function (configs, graphingwikiBrowser) {
 
 
     return {
