@@ -4,6 +4,61 @@
 
 define([], function () {
 
+    /** @function addClassToEdge
+     *  Todo: Decide what to do with this.
+     *  @param {String} edgeId- Id of the edge.
+     *  @param {String} classForEdge - Style category for the edge.
+     */
+    function addClassToEdge(props, edgeId, classToAdd, cy) {
+        /**
+         * Is this really necessary? Seems like
+         * unnecessary complexity...
+         *
+         * */
+
+
+            // todo: refactor to props
+        var categories = props.tabs.styles.categories;
+
+        try {
+            // Get element reference to the edge with edgeId.
+            var edge = cy.getElementById(edgeId);
+
+            // Check if the edge does not have a category set.
+            var edgeDoesNotHaveAnyCategory = elementHasCategoryClass(edge, categories);
+
+
+            /*
+             * If element edgeId has class '_notype' (= edgeDoesNotHaveCategory)
+             * and current class classToAdd is not '_notype'. Remove the '_notype'
+             * and replace it with the classToAdd. If the edge does not have class
+             * defined yet, set class as classToAdd. Even if it is '_notype'
+             *
+             * Get classes from graphingwikiBrowser.props.categoryStyles.
+             * -> assign each appropriate style for edge
+             */
+
+
+            if (classToAdd != '_notype') {
+                // Therefore, the '_notype' class is removed.
+                if (edge.hasClass('_notype')) {
+                    edge.removeClass('_notype');
+                }
+                edge.addClass(classToAdd);
+            } else if (!edgeDoesNotHaveAnyCategory) {
+                edge.addClass(classToAdd);
+            }
+            // Add the class for the edge.
+        } catch (e) {
+            console.groupCollapsed("Exception with addClassToEdge()");
+            console.info("Parameters passed:");
+            console.info("edgeId: " + edgeId);
+            console.info("classToAdd: " + classToAdd);
+            console.warn(e);
+            console.groupEnd();
+        }
+    }
+
     /** @function setAndRunLayout
      *  Description
      *  @param {Object} variable - Desc.
@@ -321,6 +376,23 @@ define([], function () {
             console.groupEnd();
         }
 
+    }
+
+        /** @function createEdgesFromNodes
+     *  Description
+     *  @param {String} sourceNodeId- Id of the source node.
+     *  @param {Array} nodesToCreateEdges - Array of nodes?.
+     *  @param {String} category - Category for edges.
+     */
+    function createEdgesFromNodes(targetNodeId, nodesFromCreateEdges, category, cy) {
+        /*
+         * Iterate through the nodesFromCreateEdges array and add
+         * edges between the source node and target nodes.
+         * If nodes do not exist, create them and add to cy.elements.
+         */
+        nodesFromCreateEdges.forEach(function (sourceNodeId) {
+            createNodesAndEdgeBetween(sourceNodeId, targetNodeId, category, cy);
+        });
     }
 
 
