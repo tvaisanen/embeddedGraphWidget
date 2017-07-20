@@ -2,13 +2,17 @@
  * Created by toni on 19.7.2017.
  */
 
-define(["utils/graphUtils", "dependencies/cytoscape"], function (graphUtils, cytoscape) {
+define([
+    "utils/graphUtils",
+    "dependencies/cytoscape",
+    "components/elementStyles"
+], function (graphUtils, cytoscape, elementStyles) {
 
     var gu = graphUtils;
 
     console.debug(graphUtils);
 
-    QUnit.module("Unit Tests");
+    QUnit.module("Unit Tests - utils.graphUtils: ");
 
     QUnit.test("createNewEdge()", function (assert) {
         var sourceId = 'source';
@@ -151,7 +155,12 @@ define(["utils/graphUtils", "dependencies/cytoscape"], function (graphUtils, cyt
             ]
         });
 
-        gu.createEdgesFromNodes(idTarget, sourceIds, category, cy);
+        gu.createEdgesFromNodes({
+            targetNodeId: idTarget,
+            nodesFromCreateEdges: sourceIds,
+            category: category,
+            cy: cy
+        });
 
         var edgeOne = cy.getElementById(gu.createEdgeId(idOne, idTarget));
         var edgeTwo = cy.getElementById(gu.createEdgeId(idTwo, idTarget));
@@ -171,7 +180,7 @@ define(["utils/graphUtils", "dependencies/cytoscape"], function (graphUtils, cyt
         assert.ok(allNodesCreatedIfNotExisting, "creates all the nodes if does not exist");
     });
 
-/*
+
     QUnit.test("Create new node.", function (assert) {
         var cy = cytoscape({elements: [{group: 'nodes', data: {id: 'existingNode'}}]})
         var existingNodeId = 'existingNode';
@@ -222,13 +231,21 @@ define(["utils/graphUtils", "dependencies/cytoscape"], function (graphUtils, cyt
                 {group: 'nodes', data: {id: targetId}}
             ]
         });
-        var edge = gu.createNewEdge(sourceId, targetId, categoryClass, cy);
+        var edge = gu.createNewEdge({
+            sourceNodeId: sourceId,
+            targetNodeId: targetId,
+            category: categoryClass,
+            cy: cy,
+            elementStyles: elementStyles
+        });
+
+        console.debug("Debug edgeID");
         console.debug(edge);
+        console.debug(edge.id());
 
         assert.ok(gu.edgeExists(edge.id(), cy), "Returned edge can be found from cy");
         assert.ok(gu.edgeExists(edgeId, cy), "New edge can be found with getElementById");
         assert.deepEqual(edge.id(), edgeId, "Returned edgeId() matches with with intended Id");
     });
-    */
 
 });

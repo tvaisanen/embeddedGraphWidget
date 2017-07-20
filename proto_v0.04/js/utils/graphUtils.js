@@ -241,38 +241,38 @@ define([], function () {
      *  @param {Object} cy - Cytoscape instance.
      *  @return {Object} The new edge element.
      */
-    function createNewEdge(sourceId, targetId, classForEdge, cy, elementStyles) {
+    function createNewEdge(props, elementStyles) {
 
         try {
-            var edgeId = sourceId + "_to_" + targetId;
+            var edgeId = props.sourceNodeId + "_to_" + props.targetNodeId;
             // Create new edge.
             var newEdge = {
                 group: 'edges',
                 data: {
                     id: edgeId,
-                    source: sourceId,
-                    target: targetId
+                    source: props.sourceNodeId,
+                    target: props.targetNodeId
                 }
             };
 
             // If edge is already defined, return the existing one.
-            if (edgeExists(edgeId, cy)) {
-                return cy.getElementById(edgeId);
+            if (edgeExists(edgeId, props.cy)) {
+                return props.cy.getElementById(edgeId);
 
             } else {
 
-                cy.add(newEdge);
-                var edge = cy.getElementById(edgeId);
-                var categoryExists = elementStyles.categoryExists(classForEdge);
+                props.cy.add(newEdge);
+                var edge = props.cy.getElementById(edgeId);
+                var categoryExists = props.elementStyles.categoryExists(props.category);
 
                 console.debug(elementStyles);
                 console.debug(categoryExists);
-                var classesToAdd = elementStyles.getStyle(classForEdge);
+                var classesToAdd = props.elementStyles.getStyle(props.category);
                 if (!classesToAdd) {
                     console.debug('Add generic styles');
-                    classesToAdd = elementStyles.getStyle();
+                    classesToAdd = props.elementStyles.getStyle();
                 } else {
-                    console.debug('Add ' + classForEdge + ' styles.');
+                    console.debug('Add ' + props.category + ' styles.');
                 }
 
                 // Add the new edge to cy.elements.
@@ -289,10 +289,7 @@ define([], function () {
         } catch (e) {
             console.groupCollapsed("Exception with createNewEdge()");
             console.info("Parameters passed:");
-            console.info("sourceId: " + sourceId);
-            console.info("targetId: " + targetId);
-            console.info("classForEdge: " + classForEdge);
-            console.info("styleClasses: " + JSON.stringify(elementStyles));
+            console.info(props);
             console.warn(e);
             console.groupEnd();
         }
@@ -354,13 +351,7 @@ define([], function () {
                 createNewNode(props.targetNodeId, props.cy) : null;
 
             // createNewEdge checks if the edge already exists.
-            createNewEdge(
-                props.sourceNodeId,
-                props.targetNodeId,
-                props.category,
-                props.cy,
-                props.elementStyles
-            );
+            createNewEdge(props);
 
             var edgeId = createEdgeId(props.sourceNodeId, props.targetNodeId);
             addClassToEdge(edgeId, props.category, props.cy);
@@ -378,20 +369,21 @@ define([], function () {
 
     }
 
-        /** @function createEdgesFromNodes
+    /** @function createEdgesFromNodes
      *  Description
      *  @param {String} sourceNodeId- Id of the source node.
      *  @param {Array} nodesToCreateEdges - Array of nodes?.
      *  @param {String} category - Category for edges.
      */
-    function createEdgesFromNodes(targetNodeId, nodesFromCreateEdges, category, cy) {
+    function createEdgesFromNodes(props) {
         /*
          * Iterate through the nodesFromCreateEdges array and add
          * edges between the source node and target nodes.
          * If nodes do not exist, create them and add to cy.elements.
          */
-        nodesFromCreateEdges.forEach(function (sourceNodeId) {
-            createNodesAndEdgeBetween(sourceNodeId, targetNodeId, category, cy);
+        props.nodesFromCreateEdges.forEach(function (sourceNodeId) {
+            props.sourceNodeId = sourceNodeId;
+            createNodesAndEdgeBetween(props);
         });
     }
 
