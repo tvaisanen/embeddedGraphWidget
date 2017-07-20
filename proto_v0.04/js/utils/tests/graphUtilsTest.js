@@ -2,8 +2,13 @@
  * Created by toni on 19.7.2017.
  */
 
-define(["utils/graphUtils"], function (graphUtils) {
+define(["utils/graphUtils", "dependencies/cytoscape"], function (graphUtils, cytoscape) {
 
+    var gu = graphUtils;
+
+    console.debug(graphUtils);
+
+    QUnit.module("Unit Tests");
 
     QUnit.test("createNewEdge()", function (assert) {
         var sourceId = 'source';
@@ -18,8 +23,8 @@ define(["utils/graphUtils"], function (graphUtils) {
             ]
         });
         var edge = cy.getElementById(edgeId);
-        assert.ok(edgeExists(edge.id(), cy), "Returned edge can be found from cy");
-        assert.ok(edgeExists(edgeId, cy), "New edge can be found with getElementById");
+        assert.ok(gu.edgeExists(edge.id(), cy), "Returned edge can be found from cy");
+        assert.ok(gu.edgeExists(edgeId, cy), "New edge can be found with getElementById");
         assert.deepEqual(edge.id(), edgeId, "Returned edgeId() matches with with intended Id");
     });
 
@@ -39,21 +44,50 @@ define(["utils/graphUtils"], function (graphUtils) {
                 {group: 'nodes', data: {id: idTarget}}
             ]
         });
-        createNodesAndEdgeBetween(idSource, idTarget, edgeClass, cy);
-        createNodesAndEdgeBetween(idSource, idOne, edgeClass, cy);
-        createNodesAndEdgeBetween(idTwo, idTarget, edgeClass, cy);
-        createNodesAndEdgeBetween(idThree, idFour, edgeClass, cy);
+
+        gu.createNodesAndEdgeBetween({
+            sourceNodeId: idSource,
+            targetNodeId: idTarget,
+            category: edgeClass,
+            cy: cy
+        });
+
+        gu.createNodesAndEdgeBetween({
+            sourceNodeId: idSource,
+            targetNodeId: idOne,
+            category: edgeClass,
+            cy: cy
+        });
+
+        gu.createNodesAndEdgeBetween({
+            sourceNodeId: idTwo,
+            targetNodeId: idTarget,
+            category: edgeClass,
+            cy: cy
+        });
+
+        gu.createNodesAndEdgeBetween({
+            sourceNodeId: idThree,
+            targetNodeId: idFour,
+            category: edgeClass,
+            cy: cy
+        });
 
 
-        var edgeOne = cy.getElementById(createEdgeId(idSource, idTarget));
-        var edgeTwo = cy.getElementById(createEdgeId(idSource, idOne));
-        var edgeThree = cy.getElementById(createEdgeId(idTwo, idTarget));
-        var edgeFour = cy.getElementById(createEdgeId(idThree, idFour));
+        var edgeOne = cy.getElementById(gu.createEdgeId(idSource, idTarget));
+        var edgeTwo = cy.getElementById(gu.createEdgeId(idSource, idOne));
+        var edgeThree = cy.getElementById(gu.createEdgeId(idTwo, idTarget));
+        var edgeFour = cy.getElementById(gu.createEdgeId(idThree, idFour));
 
         var nodeOne = cy.getElementById(idOne);
         var nodeTwo = cy.getElementById(idTwo);
         var nodeThree = cy.getElementById(idThree);
         var nodeFour = cy.getElementById(idFour);
+
+        console.debug("Debugging!");
+        console.debug(edgeOne);
+        console.debug(edgeOne.isEdge());
+
         assert.ok(edgeOne.isEdge(), "returns edge and is edge for existing nodes");
         assert.ok(edgeTwo.isEdge(), "returns edge and is edge for existing source and created target");
         assert.ok(edgeThree.isEdge(), "returns edge and is edge for existing target and created source");
@@ -79,11 +113,17 @@ define(["utils/graphUtils"], function (graphUtils) {
             ]
         });
 
-        createEdgesToNodes(idSource, targetIds, category, cy);
+        gu.createEdgesToNodes({
+            sourceNodeId: idSource,
+            targetNodeId: targetIds,
+            nodesToCreateEdges: targetIds,
+            category: category,
+            cy: cy
+        });
 
-        var edgeOne = cy.getElementById(createEdgeId(idSource, idOne));
-        var edgeTwo = cy.getElementById(createEdgeId(idSource, idTwo));
-        var edgeThree = cy.getElementById(createEdgeId(idSource, idThree));
+        var edgeOne = cy.getElementById(gu.createEdgeId(idSource, idOne));
+        var edgeTwo = cy.getElementById(gu.createEdgeId(idSource, idTwo));
+        var edgeThree = cy.getElementById(gu.createEdgeId(idSource, idThree));
 
         var nodeOne = cy.getElementById(idOne);
         var nodeTwo = cy.getElementById(idTwo);
@@ -111,11 +151,11 @@ define(["utils/graphUtils"], function (graphUtils) {
             ]
         });
 
-        createEdgesFromNodes(idTarget, sourceIds, category, cy);
+        gu.createEdgesFromNodes(idTarget, sourceIds, category, cy);
 
-        var edgeOne = cy.getElementById(createEdgeId(idOne, idTarget));
-        var edgeTwo = cy.getElementById(createEdgeId(idTwo, idTarget));
-        var edgeThree = cy.getElementById(createEdgeId(idThree, idTarget));
+        var edgeOne = cy.getElementById(gu.createEdgeId(idOne, idTarget));
+        var edgeTwo = cy.getElementById(gu.createEdgeId(idTwo, idTarget));
+        var edgeThree = cy.getElementById(gu.createEdgeId(idThree, idTarget));
 
         console.debug(edgeOne.isEdge());
         console.debug(edgeTwo.isEdge());
@@ -131,14 +171,14 @@ define(["utils/graphUtils"], function (graphUtils) {
         assert.ok(allNodesCreatedIfNotExisting, "creates all the nodes if does not exist");
     });
 
-
+/*
     QUnit.test("Create new node.", function (assert) {
         var cy = cytoscape({elements: [{group: 'nodes', data: {id: 'existingNode'}}]})
         var existingNodeId = 'existingNode';
         var newNodeId = 'newNode';
 
-        assert.ok(createNewNode(newNodeId, cy), "Return true upon creating new node");
-        assert.notOk(createNewNode(existingNodeId, cy), "Return false if trying to create node with an existing id.");
+        assert.ok(gu.createNewNode(newNodeId, cy), "Return true upon creating new node");
+        assert.notOk(gu.createNewNode(existingNodeId, cy), "Return false if trying to create node with an existing id.");
     });
 
 
@@ -148,12 +188,12 @@ define(["utils/graphUtils"], function (graphUtils) {
         var existingNodeId = 'existingNode';
         var nonExistingNodeId = 'nonExistingNode';
 
-        assert.notOk(nodeIdAvailable(existingNodeId, cy), "Returns false, when id already in use.");
-        assert.ok(nodeIdAvailable(nonExistingNodeId, cy), "Returns true, when nodeId is available for use.");
+        assert.notOk(gu.nodeIdAvailable(existingNodeId, cy), "Returns false, when id already in use.");
+        assert.ok(gu.nodeIdAvailable(nonExistingNodeId, cy), "Returns true, when nodeId is available for use.");
     });
 
 
-    QUnit.test("nodeIdAvailable()", function (assert) {
+    QUnit.test("edgeExists()", function (assert) {
         var cy = cytoscape({
             elements: [
                 {group: 'nodes', data: {id: 'source'}},
@@ -164,8 +204,8 @@ define(["utils/graphUtils"], function (graphUtils) {
 
         var existingEdgeId = 'source_to_target';
         var nonExistingEdgeId = 'b_to_a';
-        assert.ok(edgeExists(existingEdgeId, cy), "Returns true, when edge exists.");
-        assert.notOk(edgeExists(nonExistingEdgeId, cy), "Returns false, when edge does not exist yet.");
+        assert.ok(gu.edgeExists(existingEdgeId, cy), "Returns true, when edge exists.");
+        assert.notOk(gu.edgeExists(nonExistingEdgeId, cy), "Returns false, when edge does not exist yet.");
     });
 
 
@@ -182,13 +222,13 @@ define(["utils/graphUtils"], function (graphUtils) {
                 {group: 'nodes', data: {id: targetId}}
             ]
         });
-        var edge = createNewEdge(sourceId, targetId, categoryClass, cy);
+        var edge = gu.createNewEdge(sourceId, targetId, categoryClass, cy);
         console.debug(edge);
 
-        assert.ok(edgeExists(edge.id(), cy), "Returned edge can be found from cy");
-        assert.ok(edgeExists(edgeId, cy), "New edge can be found with getElementById");
+        assert.ok(gu.edgeExists(edge.id(), cy), "Returned edge can be found from cy");
+        assert.ok(gu.edgeExists(edgeId, cy), "New edge can be found with getElementById");
         assert.deepEqual(edge.id(), edgeId, "Returned edgeId() matches with with intended Id");
     });
-
+    */
 
 });

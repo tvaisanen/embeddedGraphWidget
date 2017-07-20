@@ -6,10 +6,7 @@ define(function () {
 
     console.log("this got loaded?");
 
-    QUnit.module("utils/graphUtils");
+    //QUnit.module("utils/graphUtils");
 
-    QUnit.test("Loading successful", function () {
-        QUnit.ok(true, "hello");
-    });
 
 });

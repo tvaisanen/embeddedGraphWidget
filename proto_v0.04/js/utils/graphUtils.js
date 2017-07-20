@@ -397,7 +397,15 @@ define([], function () {
 
 
     return {
-        expandNode: expandNode
+        createEdgesFromNodes: createEdgesFromNodes,
+        createEdgesToNodes: createEdgesToNodes,
+        createEdgeId: createEdgeId,
+        createNewEdge: createNewEdge,
+        createNewNode: createNewNode,
+        createNodesAndEdgeBetween: createNodesAndEdgeBetween,
+        edgeExists: edgeExists,
+        expandNode: expandNode,
+        nodeIdAvailable: nodeIdAvailable
     }
 
 
