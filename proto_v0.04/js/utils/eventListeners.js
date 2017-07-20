@@ -304,6 +304,36 @@ define(function () {
 
             }
         },
+        ui: {
+            navClick: /** @function handleNavClick
+             *  Description
+             *  @param {Object} variable - Desc.
+             *  @return {Type} desc.
+             */
+                function handleNavClick(props) {
+
+                    var keyToActivate = props.keyToActivate;
+                    var tabs = props.configs.tabs;
+                    var navItemClasses = props.classNames.tab.nav.item;
+                    // toggle all navlink classes to inactive
+                    var links = Object.keys(tabs);
+                    links.forEach(function (key) {
+                        tabs[key].active = false;
+                        document.getElementById("nav-item-" + key)
+                            .classList.remove(navItemClasses.active);
+                    });
+
+                    // activate clicked navlink
+                    tabs[keyToActivate].active = true;
+                    document.getElementById("nav-item-" + keyToActivate)
+                        .classList.add(navItemClasses.active);
+                    var divTabContainer = document.getElementById(props.classNames.tab.container);
+                    console.log(divTabContainer);
+                    props.updateTabs({
+                        cy: props.cy
+                    });
+                }
+            },
         window: {
             onClick: function (event) {
 

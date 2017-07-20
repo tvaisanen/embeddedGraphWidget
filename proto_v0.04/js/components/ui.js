@@ -205,7 +205,7 @@ define([
             };
 
             btnClearFilter.addEventListener('click', function () {
-                listenerFunctions.elementsFilter.btnClearFilter.onClick(updateTabs)
+                listenerFunctions.elementsFilter.btnClearFilter.onClick(updateTabs);
             });
             inFilter.addEventListener('keypress', function (event) {
                 console.debug(filtProps.elesContent);
@@ -544,7 +544,12 @@ define([
                 var link = tabs[key];
                 var divLink = d.createElement('div');
                 divLink.addEventListener('click', function (event) {
-                    handleNavClick(key);
+                    eventListeners.ui.navClick({
+                        configs: props.configs,
+                        keyToActivate: key,
+                        classNames: props.classNames,
+                        updateTabs: updateTabs
+                    });
                 });
 
                 if (link.active) {
@@ -567,6 +572,34 @@ define([
             return divNav;
         }
 
+                /** @function updateTabs
+         *  Description
+         *  @param {Object} variable - Desc.
+         *  @return {Type} desc.
+         */
+        function updateTabs(props) {
+
+            /*
+             *   Clear the tabs container and re-render content.
+             *   Append the content to panelContainer.
+             */
+            var divTabContainer = d.getElementById(classNames.tab.container);
+
+            var panelContainer = d.getElementById(classNames.panel.container);
+
+            var childsToRemove = divTabContainer.childNodes;
+
+            childsToRemove.forEach(function (child) {
+                divTabContainer.remove(child);
+            });
+
+            var tabsContent = tabs({
+                cy: props.cy,
+                configs: props.configs
+            });
+            panelContainer.appendChild(tabsContent);
+        }
+
                 /** @function renderTabs
          *  Description
          *  @param {Object} variable - Desc.
@@ -582,6 +615,7 @@ define([
             var divContent = d.createElement('div');
             divContent.classList.add(classNames.tab.container);
             divContent.id = classNames.tab.container;
+
 
             // render content
             if (tabs.graphs.active) {

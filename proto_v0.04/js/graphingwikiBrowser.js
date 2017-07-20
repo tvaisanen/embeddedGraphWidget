@@ -745,32 +745,7 @@ define([
          })
          }*/
 
-        /** @function handleNavClick
-         *  Description
-         *  @param {Object} variable - Desc.
-         *  @return {Type} desc.
-         */
-        function handleNavClick(props) {
 
-            var keyToActivate = props.keyToActivate;
-            var tabs = props.tabs;
-            var navItemClasses = classNames.tab.nav.item;
-            // toggle all navlink classes to inactive
-            var links = Object.keys(tabs);
-            links.forEach(function (key) {
-                tabs[key].active = false;
-                d.getElementById("nav-item-" + key).classList.remove(navItemClasses.active);
-            });
-
-            // activate clicked navlink
-            tabs[keyToActivate].active = true;
-            d.getElementById("nav-item-" + keyToActivate).classList.add(navItemClasses.active);
-            var divTabContainer = d.getElementById(classNames.tab.container);
-            console.log(divTabContainer);
-            updateTabs({
-                cy: props.cy
-            });
-        }
 
 
         /** @function updateTabs
@@ -823,12 +798,12 @@ define([
          *  @param {Object} variable - Desc.
          *  @return {Type} desc.
          */
-        function renderContentContainer() {
+        function renderContentContainer(props) {
             var contentContainer = d.createElement('div');
             contentContainer.setAttribute('id', configs.contentContainerId);
             contentContainer.classList.add("content-container");
-            contentContainer.appendChild(renderPanel({}));
-            contentContainer.appendChild(renderGraphColumn());
+            contentContainer.appendChild(renderPanel(props));
+            contentContainer.appendChild(renderGraphColumn(props));
             return contentContainer;
         }
 
@@ -850,11 +825,12 @@ define([
          *  @param {Object} variable - Desc.
          *  @return {Type} desc.
          */
-        function render() {
+        function render(props) {
+
 
             var appContainer = d.getElementById(configs.appContainerId);
-            appContainer.appendChild(renderHeaderContainer());
-            appContainer.appendChild(renderContentContainer());
+            appContainer.appendChild(renderHeaderContainer(props));
+            appContainer.appendChild(renderContentContainer(props));
         }
 
         function setMessageText(funcProps) {
@@ -888,6 +864,8 @@ define([
             var graphContainer = d.createElement('div');
             graphContainer.setAttribute('id', configs.graphContainerId);
             graphContainer.classList.add("graph-container");
+
+
 
             var textPrevievContainer = renderTextPreview();
 
@@ -1013,10 +991,14 @@ define([
                 classNames: classNames,
                 menuItems: menuItems
             });
+
+
+
             var navProps = props;
             console.debug(navProps);
             console.debug(configs);
             navProps.configs = configs;
+            navProps.classNames = classNames;
             var tabNav = ui.navigation(navProps);
             var tabs = ui.tabs(props);
 
@@ -1349,7 +1331,9 @@ define([
 
         return {
             start: function (props) {
-                render();
+                render({
+                    gwClient: gwClient,
+                });
                 initCytoscape();
             },
 
