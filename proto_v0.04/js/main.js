@@ -3,7 +3,6 @@
  */
 
 require([
-    "test",
     "app",
 ], function (test, app) {
     'use strict';

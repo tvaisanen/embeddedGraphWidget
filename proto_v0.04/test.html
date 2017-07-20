@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<!-- Test suite example
+https://github.com/jonnyreeves/qunit-require/tree/master/tests
+-->
+
+<html>
+    <head>
+        <title>GraphingwikiBrowser Tests</title>
+        <link rel="stylesheet" href="css/qunit-2.4.0.css" />
+
+        <!-- QUnit includes -->
+        <script src="js/dependencies/qunit.js"></script>
+
+        <!--Prevent Tests from auto starting-->
+        <script>
+        // Defer Qunit so RequireJS can work its magic and resolve all modules.
+            QUnit.config.autostart = false;
+        </script>
+
+        <!-- Load RequireJS & the testsuite -->
+        <script src="./require.js" data-main="js/test.js"></script>
+        <script src="require-config.js"></script>
+    </head>
+    <body>
+        <div id="qunit"></div>
+        <div id="app-container" class="app-container"></div>
+
+    </body>
+</html>

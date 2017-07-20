@@ -4,15 +4,12 @@
 
 define(function () {
 
-    function method(x) {
-        return x + x;
-    }
+    console.log("this got loaded?");
 
-    return {
-        someValue: 'foobar',
-        myMethod: method,
-        start: function () {
-            console.debug("starting!");
-        }
-    }
+    QUnit.module("utils/graphUtils");
+
+    QUnit.test("Loading successful", function () {
+        QUnit.ok(true, "hello");
+    });
+
 });
