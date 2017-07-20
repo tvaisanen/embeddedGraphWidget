@@ -295,6 +295,60 @@ define([], function () {
         }
 
     }
+    function createNewEdge(props, elementStyles) {
+
+        try {
+            var edgeId = props.sourceNodeId + "_to_" + props.targetNodeId;
+            // Create new edge.
+            var newEdge = {
+                group: 'edges',
+                data: {
+                    id: edgeId,
+                    source: props.sourceNodeId,
+                    target: props.targetNodeId
+                }
+            };
+
+            // If edge is already defined, return the existing one.
+            if (edgeExists(edgeId, props.cy)) {
+                return props.cy.getElementById(edgeId);
+
+            } else {
+
+                props.cy.add(newEdge);
+                var edge = props.cy.getElementById(edgeId);
+                var categoryExists = props.elementStyles.categoryExists(props.category);
+
+                console.debug(elementStyles);
+                console.debug(categoryExists);
+                var classesToAdd = props.elementStyles.getStyle(props.category);
+                if (!classesToAdd) {
+                    console.debug('Add generic styles');
+                    classesToAdd = props.elementStyles.getStyle();
+                } else {
+                    console.debug('Add ' + props.category + ' styles.');
+                }
+
+                // Add the new edge to cy.elements.
+
+                console.debug(classesToAdd);
+
+                classesToAdd.forEach(function (styleClass) {
+                    console.debug('add style: ' + styleClass);
+                    edge.addClass(styleClass);
+                });
+                return edge;
+            }
+
+        } catch (e) {
+            console.groupCollapsed("Exception with createNewEdge()");
+            console.info("Parameters passed:");
+            console.info(props);
+            console.warn(e);
+            console.groupEnd();
+        }
+
+    }
 
     /** @function createNewNode
      *  Create new node and add it to the given cytoscape instance.

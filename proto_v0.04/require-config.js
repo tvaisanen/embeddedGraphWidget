@@ -14,7 +14,8 @@
     // extension so RequireJS resolves them as relative paths rather than using
     // the `baseUrl` value supplied above.
     var testModules = [
-        "js/utils/tests/graphUtilsTest.js"
+        "js/utils/tests/graphUtilsTest.js",
+        "js/components/tests/uiTest.js"
     ];
 
     // Resolve all testModules and then start the Test Runner.

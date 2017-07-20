@@ -10,8 +10,6 @@ define([
 
     var gu = graphUtils;
 
-    console.debug(graphUtils);
-
     QUnit.module("Unit Tests - utils.graphUtils: ");
 
     QUnit.test("createNewEdge()", function (assert) {
