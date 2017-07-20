@@ -23,8 +23,9 @@ define([
              * */
 
             try {
+                console.debug('DEbug mE!');
                 console.debug(props);
-                var cy = props.cy;
+
                 var gwClient = props.gwClient;
                 var classes = classNames.tab.graph;
 
@@ -45,6 +46,7 @@ define([
                      * the list items for the panel */
                     graphs.forEach(function (graph) {
                         graphListItem({
+                            cy: props.cy,
                             graphName: graph,
                             gwClient: gwClient,
                             listElement: ul
@@ -80,12 +82,14 @@ define([
             li.addEventListener('click', function (event) {
                 eventListeners.graphsList.listItem.onClick({
                     graphName: graphName,
-                    gw: gw
+                    gwClient: gwClient,
+                    cy: cy
                 });
             });
             list.appendChild(li);
             return li;
         }
+
 
         /** @function renderMenu
          *  Description
@@ -151,7 +155,155 @@ define([
             return divMenu;
         }
 
+        /** @function elementsContent
+         *  Description
+         *  @param {Object} variable - Desc.
+         *  @return {Type} desc.
+         */
+        function elementsContent(props) {
+            /*
+             * Implement elements tab rendering here
+             *
+             * */
+            var content = props.content;
 
+
+            var div = d.createElement('div');
+            div.setAttribute('id', "elements-content");
+
+            div.appendChild(elementsFilter(props));
+            div.appendChild(elementsList(props));
+
+            return div;
+        }
+
+        /** @function renderElementsfilter
+         *  Description
+         *  @param {Object} variable - Desc.
+         *  @return {Type} desc.
+         */
+        function elementsFilter() {
+            var div = d.createElement('div');
+            var spanFilter = d.createElement('span');
+            var btnClearFilter = d.createElement("button");
+
+            div.classList.add("element-filter");
+
+            btnClearFilter.innerHTML = "ClearFilter";
+
+            var inFilter = d.createElement("input");
+            inFilter.type = "text";
+            inFilter.placeholder = "Filter...";
+            inFilter.setAttribute('id', 'filter');
+            inFilter.classList.add(classNames.tab.elements.filterInput);
+
+            var filtProps = {
+                divList: d.getElementById('elements-list'),
+                inFilter: inFilter,
+                renderNewContent: elementsList,
+                spanFilter: spanFilter
+            };
+
+            btnClearFilter.addEventListener('click', function () {
+                listenerFunctions.elementsFilter.btnClearFilter.onClick(updateTabs)
+            });
+            inFilter.addEventListener('keypress', function (event) {
+                console.debug(filtProps.elesContent);
+                listenerFunctions.elementsFilter.inFilter.keypress(filtProps);
+            });
+
+            div.appendChild(inFilter);
+            div.appendChild(btnClearFilter);
+            div.appendChild(spanFilter);
+
+            return div;
+        }
+
+        /** @function renderElementsList
+         *  Description
+         *  Todo: Refactor
+         *  @param {Object} variable - Desc.
+         *  @return {Type} desc.
+         */
+        function elementsList(props) {
+            var content = props.content;
+            var cy = props.cy;
+            var gw = props.gwClient;
+
+// which are meant to be used with
+            function getElementIDsToArray(selector) {
+                /*
+                 * param eles: cy.elements
+                 * return: array of element id strings
+                 */
+
+                var idArray = [];
+                try {
+                    cy.elements(selector).forEach(function (el) {
+                        var id = el.id();
+                        var filter = content.filter.toLowerCase();
+                        var filterIncludes = id.toLowerCase().includes(filter);
+
+                        if (content.filter == '' || content.filter == 'undefined') {
+                            idArray.push(id);
+                        } else {
+                            if (filterIncludes) {
+                                idArray.push(id);
+                            }
+                        }
+                    });
+                } catch (e) {
+                    console.error(e);
+                }
+                return idArray;
+            }
+
+
+// extract the ids from aforementioned elements
+
+            var nodes = getElementIDsToArray("node");
+            var edges = getElementIDsToArray("edge");
+
+
+            var div = document.createElement('div');
+
+            var hdNodes = d.createElement('h2');
+            hdNodes.innerHTML = "Pages";
+
+            var pNodeNotes = d.createElement('p');
+            pNodeNotes.innerHTML = "order by degree?";
+
+            var hdEdges = d.createElement('h2');
+            hdEdges.innerHTML = "Links";
+
+            var ulNodes = unorderedListFromArray({
+                array: nodes,
+                cy: cy,
+                gw: gw,
+                onClick: listenerFunctions.elementsList.onClick,
+                onMouseOver: listenerFunctions.elementsList.onMouseOver,
+                onMouseOut: listenerFunctions.elementsList.onMouseOut,
+                toggleVisibility: toggleVisibility
+            });
+
+            var ulEdges = unorderedListFromArray({
+                cy: cy,
+                array: edges,
+                onClick: listenerFunctions.elementsList.onClick,
+                onMouseOver: listenerFunctions.elementsList.onMouseOver,
+                onMouseOut: listenerFunctions.elementsList.onMouseOut,
+                toggleVisibility: toggleVisibility
+            });
+
+            div.setAttribute('id', "elements-list");
+            div.appendChild(hdNodes);
+            div.appendChild(ulNodes);
+            div.appendChild(hdEdges);
+            div.appendChild(ulEdges);
+            return div;
+        }
+
+        // Todo: refactor - too big function!
         /** @function renderStylesContent
          *  Description
          *  @param {Object} variable - Desc.
@@ -366,11 +518,100 @@ define([
 
         }
 
+        /** @function renderNavigation
+         *  Description
+         *  @param {Object} variable - Desc.
+         *  @return {Type} desc.
+         */
+        function navigation(props) {
+
+            // Create the div which contains graphingwikiBrowser navigation tabs.
+
+            var tabs = props.configs.tabs;
+
+            // css classes
+            var classes = classNames.tab.nav;
+
+            var divNav = document.createElement('div');
+            divNav.classList.add(classes.container);
+
+            divNav.id = classes.container;
+
+            var links = Object.keys(tabs);
+
+            links.forEach(function (key) {
+
+                var link = tabs[key];
+                var divLink = d.createElement('div');
+                divLink.addEventListener('click', function (event) {
+                    handleNavClick(key);
+                });
+
+                if (link.active) {
+                    divLink.classList.add(classes.item.item);
+                    divLink.classList.add(classes.item.active);
+
+                } else {
+                    divLink.classList.add(classes.item.item);
+
+                }
+
+                divLink.innerHTML = link.label;
+
+                // Fixme: clean the implementation!
+                divLink.setAttribute('id', "nav-item-" + link.label.toLowerCase());
+                divNav.appendChild(divLink);
+            });
+
+
+            return divNav;
+        }
+
+                /** @function renderTabs
+         *  Description
+         *  @param {Object} variable - Desc.
+         *  @return {Type} desc.
+         */
+        function tabs(props) {
+            /*
+             * Returns the container for tabs in the side panel
+             */
+
+            var tabs = props.configs.tabs;
+
+            var divContent = d.createElement('div');
+            divContent.classList.add(classNames.tab.container);
+            divContent.id = classNames.tab.container;
+
+            // render content
+            if (tabs.graphs.active) {
+                divContent.appendChild(
+                    graphsContent({
+                        cy: props.cy,
+                        gwClient: props.gwClient
+                    }));
+
+            } else if (tabs.elements.active) {
+                divContent.appendChild(renderElementsContent());
+
+            } else if (tabs.styles.active) {
+                divContent.appendChild(renderStylesContent());
+            }
+
+            return divContent;
+        }
+
+
+
+
         return {
+            elementsContent: elementsContent,
             graphsContent: graphsContent,
             graphListItem: graphListItem,
             menu: menu,
+            navigation: navigation,
             stylesContent: stylesContent,
+            tabs: tabs,
             textPreview: textPreview
         }
     }

@@ -186,19 +186,19 @@ define(function () {
                  *  Graphingwiki action is the interface for this action.
                  *  @param {Object} listItemProps
                  */
-                onClick: function (listItemProps) {
+                onClick: function (props) {
                     console.group("graphList.listItem.onClick()");
-
+                    console.debug(props);
                     try {
-                        var graphName = listItemProps.graphName;
-                        var gw = listItemProps.gw;
+                        var graphName = props.graphName;
+                        var gwClient = props.gwClient;
 
                         console.log("clicked: " + graphName);
 
                         // Todo: precautions!
                         var confirmChange = true;
                         if (confirmChange) {
-                            var graphPromise = gw.getGraph('graph/' + graphName);
+                            var graphPromise = gwClient.getGraph('graph/' + graphName);
                             graphPromise.then(function (response) {
                                 var json = response.json();
                                 return json;

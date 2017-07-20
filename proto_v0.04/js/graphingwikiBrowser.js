@@ -573,8 +573,148 @@ define([
                 edgeCategories: edgeCategories,
                 elementStyles: elementStyles
             });
-            updateTabs();
+            updateTabs({
+                cy: cy
+            });
         }
+
+        function testCy(containerElement) {
+    return cytoscape({
+        container: containerElement,
+        elements: [{group: 'nodes', data: {id: 'personA'}}],
+        style: [ // the stylesheet for the graph
+            {
+                selector: 'node',
+                style: {
+                    'background-color': '#6490af',
+                    'size': '40',
+                    'label': 'data(id)',
+                    'content': 'data(id)',
+                    'text-valign': 'center',
+                    'color': 'white',
+                    'text-outline-width': 1,
+                    'text-outline-color': '#000000',
+                    'background-color': '#9a9a9a'
+                }
+            },
+
+
+            {
+                selector: 'node.highlight',
+                style: {
+                    'background-color': '#c50004',
+                }
+            },
+
+            {
+                selector: 'node.hover-on',
+                style: {
+                    'background-color': '#00ff14',
+                }
+            },
+
+            {
+                selector: 'edge',
+                style: {
+                    'line-color': '#ccc',
+                    'target-arrow-color': '#000000',
+                    'target-arrow-shape': 'triangle',
+                    'curve-style': 'bezier',
+                    'overlay-padding': 1
+                }
+            },
+            {
+                selector: 'edge.mouse-over',
+                style: {label: 'category'}
+            },
+
+            // Todo: generate these from config! priority: low
+
+            {selector: 'edge.line-style-solid', style: {'line-style': 'solid'}},
+            {selector: 'edge.line-style-dotted', style: {'line-style': 'dotted'}},
+            {selector: 'edge.line-style-dashed', style: {'line-style': 'dashed'}},
+
+            {selector: 'edge.line-width-0', style: {'line-width': 0}},
+            {selector: 'edge.line-width-1', style: {'line-width': 1}},
+            {selector: 'edge.line-width-2', style: {'line-width': 2}},
+            {selector: 'edge.line-width-3', style: {'line-width': 3}},
+            {selector: 'edge.line-width-4', style: {'line-width': 4}},
+            {selector: 'edge.line-width-5', style: {'line-width': 5}},
+            {selector: 'edge.line-width-6', style: {'line-width': 6}},
+            {selector: 'edge.line-width-7', style: {'line-width': 7}},
+            {selector: 'edge.line-width-8', style: {'line-width': 8}},
+            {selector: 'edge.line-width-9', style: {'line-width': 9}},
+            {selector: 'edge.line-width-10', style: {'line-width': 10}},
+            {selector: 'edge.line-width-11', style: {'line-width': 11}},
+            {selector: 'edge.line-width-12', style: {'line-width': 12}},
+            {selector: 'edge.line-width-13', style: {'line-width': 13}},
+            {selector: 'edge.line-width-14', style: {'line-width': 14}},
+            {selector: 'edge.line-width-15', style: {'line-width': 15}},
+            {selector: 'edge.line-width-16', style: {'line-width': 16}},
+            {selector: 'edge.line-width-17', style: {'line-width': 17}},
+            {selector: 'edge.line-width-18', style: {'line-width': 18}},
+            {selector: 'edge.line-width-19', style: {'line-width': 19}},
+            {selector: 'edge.line-width-20', style: {'line-width': 20}},
+            {selector: 'edge.line-width-21', style: {'line-width': 21}},
+            {selector: 'edge.line-width-22', style: {'line-width': 22}},
+            {selector: 'edge.line-width-23', style: {'line-width': 23}},
+            {selector: 'edge.line-width-24', style: {'line-width': 24}},
+            {selector: 'edge.line-width-25', style: {'line-width': 25}},
+            {selector: 'edge.line-width-26', style: {'line-width': 26}},
+            {selector: 'edge.line-width-27', style: {'line-width': 27}},
+            {selector: 'edge.line-width-28', style: {'line-width': 28}},
+            {selector: 'edge.line-width-29', style: {'line-width': 29}},
+            {selector: 'edge.line-width-30', style: {'width': 30}},
+
+            {selector: 'edge.arrow-shape-tee', style: {'target-arrow-shape': 'tee'}},
+            {selector: 'edge.arrow-shape-triangle', style: {'target-arrow-shape': 'triangle'}},
+            {selector: 'edge.arrow-shape-triangle-tee', style: {'target-arrow-shape': 'triangle-tee'}},
+            {selector: 'edge.arrow-shape-triangle-cross', style: {'target-arrow-shape': 'triangle-cross'}},
+            {
+                selector: 'edge.arrow-shape-triangle-backcurve',
+                style: {'target-arrow-shape': 'triangle-backcurve'}
+            },
+            {selector: 'edge.arrow-shape-square', style: {'target-arrow-shape': 'square'}},
+            {selector: 'edge.arrow-shape-circle', style: {'target-arrow-shape': 'circle'}},
+            {selector: 'edge.arrow-shape-diamond', style: {'target-arrow-shape': 'diamond'}},
+            {selector: 'edge.arrow-shape-none', style: {'target-arrow-shape': 'none'}},
+
+            {selector: 'edge.line-color-grey', style: {'line-color': 'grey', 'arrow-color': 'grey'}},
+            {selector: 'edge.line-color-black', style: {'line-color': 'black', 'arrow-color': 'black'}},
+            {selector: 'edge.line-color-red', style: {'line-color': 'red', 'arrow-color': 'red'}},
+            {selector: 'edge.line-color-green', style: {'line-color': 'green', 'arrow-color': 'green'}},
+            {selector: 'edge.line-color-orange', style: {'line-color': 'orange', 'arrow-color': 'orange'}},
+            {selector: 'edge.line-color-yellow', style: {'line-color': 'yellow', 'arrow-color': 'yellow'}},
+            {selector: 'edge.line-color-cyan', style: {'line-color': 'cyan', 'arrow-color': 'cyan'}},
+            {selector: 'edge.line-color-blue', style: {'line-color': 'blue', 'arrow-color': 'blue'}},
+
+
+            {
+                selector: 'edge.hover-on',
+                style: {
+                    'width': 5,
+                    'line-color': '#cc7500',
+                    'line-style': 'dashed',
+                    'target-arrow-color': '#000000',
+                    'target-arrow-shape': 'triangle',
+                    'curve-style': 'bezier',
+                }
+            },
+
+            {
+                selector: 'edge.highlight',
+                style: {
+                    'width': 5,
+                    'line-color': '#cc7500',
+                    'line-style': 'dashed',
+                    'target-arrow-color': '#000000',
+                    'target-arrow-shape': 'triangle',
+                    'curve-style': 'bezier',
+                }
+            },
+        ],
+    });
+}
 
         /** @function initCytoscape
          *  Description
@@ -610,8 +750,9 @@ define([
          *  @param {Object} variable - Desc.
          *  @return {Type} desc.
          */
-        function handleNavClick(keyToActivate) {
+        function handleNavClick(props) {
 
+            var keyToActivate = props.keyToActivate;
             var tabs = props.tabs;
             var navItemClasses = classNames.tab.nav.item;
             // toggle all navlink classes to inactive
@@ -626,7 +767,9 @@ define([
             d.getElementById("nav-item-" + keyToActivate).classList.add(navItemClasses.active);
             var divTabContainer = d.getElementById(classNames.tab.container);
             console.log(divTabContainer);
-            updateTabs();
+            updateTabs({
+                cy: props.cy
+            });
         }
 
 
@@ -635,7 +778,7 @@ define([
          *  @param {Object} variable - Desc.
          *  @return {Type} desc.
          */
-        function updateTabs() {
+        function updateTabs(props) {
 
             /*
              *   Clear the tabs container and re-render content.
@@ -651,7 +794,9 @@ define([
                 divTabContainer.remove(child);
             });
 
-            var tabsContent = renderTabs();
+            var tabsContent = ui.tabs({
+                cy: props.cy
+            });
             panelContainer.appendChild(tabsContent);
         }
 
@@ -682,7 +827,7 @@ define([
             var contentContainer = d.createElement('div');
             contentContainer.setAttribute('id', configs.contentContainerId);
             contentContainer.classList.add("content-container");
-            contentContainer.appendChild(renderPanel());
+            contentContainer.appendChild(renderPanel({}));
             contentContainer.appendChild(renderGraphColumn());
             return contentContainer;
         }
@@ -753,27 +898,7 @@ define([
             return graphColumnContainer;
         }
 
-        /** @function renderElementsContent
-         *  Description
-         *  @param {Object} variable - Desc.
-         *  @return {Type} desc.
-         */
-        function renderElementsContent() {
-            /*
-             * Implement elements tab rendering here
-             *
-             * */
-            var content = props.tabs.elements;
-            var cy = props.cy;
 
-            var div = d.createElement('div');
-            div.setAttribute('id', "elements-content");
-
-            div.appendChild(renderElementsFilter());
-            div.appendChild(renderElementsList());
-
-            return div;
-        }
 
 
         /** @function renderElementsfilter
@@ -857,159 +982,6 @@ define([
             });
         }
 
-        /** @function renderElementsList
-         *  Description
-         *  Todo: Refactor
-         *  @param {Object} variable - Desc.
-         *  @return {Type} desc.
-         */
-        function renderElementsList() {
-            var content = props.tabs.elements;
-            var cy = props.cy;
-            var gw = props.gw;
-
-// which are meant to be used with
-            function getElementIDsToArray(selector) {
-                /*
-                 * param eles: cy.elements
-                 * return: array of element id strings
-                 */
-
-                var idArray = [];
-                try {
-                    cy.elements(selector).forEach(function (el) {
-                        var id = el.id();
-                        var filter = content.filter.toLowerCase();
-                        var filterIncludes = id.toLowerCase().includes(filter);
-
-                        if (content.filter == '' || content.filter == 'undefined') {
-                            idArray.push(id);
-                        } else {
-                            if (filterIncludes) {
-                                idArray.push(id);
-                            }
-                        }
-                    });
-                } catch (e) {
-                    console.error(e);
-                }
-                return idArray;
-            }
-
-
-// extract the ids from aforementioned elements
-
-            var nodes = getElementIDsToArray("node");
-            var edges = getElementIDsToArray("edge");
-
-
-            var div = document.createElement('div');
-
-            var hdNodes = d.createElement('h2');
-            hdNodes.innerHTML = "Pages";
-
-            var pNodeNotes = d.createElement('p');
-            pNodeNotes.innerHTML = "order by degree?";
-
-            var hdEdges = d.createElement('h2');
-            hdEdges.innerHTML = "Links";
-
-            var ulNodes = unorderedListFromArray({
-                array: nodes,
-                cy: cy,
-                gw: gw,
-                onClick: listenerFunctions.elementsList.onClick,
-                onMouseOver: listenerFunctions.elementsList.onMouseOver,
-                onMouseOut: listenerFunctions.elementsList.onMouseOut,
-                toggleVisibility: toggleVisibility
-            });
-
-            var ulEdges = unorderedListFromArray({
-                cy: cy,
-                array: edges,
-                onClick: listenerFunctions.elementsList.onClick,
-                onMouseOver: listenerFunctions.elementsList.onMouseOver,
-                onMouseOut: listenerFunctions.elementsList.onMouseOut,
-                toggleVisibility: toggleVisibility
-            });
-
-            div.setAttribute('id', "elements-list");
-            div.appendChild(hdNodes);
-            div.appendChild(ulNodes);
-            div.appendChild(hdEdges);
-            div.appendChild(ulEdges);
-            return div;
-        }
-
-        /** @function renderGraphsContent
-         *  Description
-         *  @param {Object} variable - Desc.
-         *  @return {Type} desc.
-         */
-        function renderGraphsContent() {
-            /*
-             * Implement graphs tab rendering here
-             *
-             * */
-
-            var cy = props.cy;
-            var gw = props.gw;
-            var classes = classNames.tab.graph;
-
-            var div = document.createElement('div');
-            var ul = document.createElement('ul');
-
-            div.setAttribute('id', classes.container);
-
-            var graphListPromise = gwClient.getGraphList();
-
-            graphListPromise.then(function (response) {
-                return response.json();
-
-            }).then(function (json) {
-                var graphs = json.data;
-
-                /* loop array of graphName strings and generate
-                 * the list items for the panel */
-                graphs.forEach(function (graph) {
-                    ui.graphListItem({graphName: graph, gwClient: gw, listElement: ul});
-                });
-            });
-
-            div.appendChild(ul);
-            console.groupEnd();
-            return div;
-        }
-
-
-        /** @function renderGraphListItem
-         *  Description
-         *  @param {Object} variable - Desc.
-         *  @return {Type} desc.
-         */
-        function renderGraphListItem(listItemProps) {
-
-            var graphName = listItemProps.graphName;
-            var gw = listItemProps.gw;
-            var list = listItemProps.listElement;
-            var listItemClass = listItemProps.listItemClass;
-
-            var li = document.createElement('li');
-            li.classList.add(listItemClass);
-            li.innerHTML = graphName;
-
-            li.addEventListener('click', function (event) {
-                listenerFunctions.graphsList.listItem.onClick({
-                    graphName: graphName,
-                    gw: gw
-                });
-            });
-
-            list.appendChild(li);
-            return li;
-        }
-
-
         /** @function renderHeader
          *  Description
          *  @param {Object} variable - Desc.
@@ -1022,61 +994,13 @@ define([
         }
 
 
-        /** @function renderNavigation
-         *  Description
-         *  @param {Object} variable - Desc.
-         *  @return {Type} desc.
-         */
-        function renderNavigation() {
-
-            // Create the div which contains graphingwikiBrowser navigation tabs.
-
-            var tabs = configs.tabs;
-
-            // css classes
-            var classes = classNames.tab.nav;
-
-            var divNav = document.createElement('div');
-            divNav.classList.add(classes.container);
-
-            divNav.id = classes.container;
-
-            var links = Object.keys(tabs);
-
-            links.forEach(function (key) {
-
-                var link = tabs[key];
-                var divLink = d.createElement('div');
-                divLink.addEventListener('click', function (event) {
-                    handleNavClick(key);
-                });
-
-                if (link.active) {
-                    divLink.classList.add(classes.item.item);
-                    divLink.classList.add(classes.item.active);
-
-                } else {
-                    divLink.classList.add(classes.item.item);
-
-                }
-
-                divLink.innerHTML = link.label;
-
-                // Fixme: clean the implementation!
-                divLink.setAttribute('id', "nav-item-" + link.label.toLowerCase());
-                divNav.appendChild(divLink);
-            });
-
-
-            return divNav;
-        }
 
         /** @function renderPanel
          *  Description
          *  @param {Object} variable - Desc.
          *  @return {Type} desc.
          */
-        function renderPanel() {
+        function renderPanel(props) {
             var divTabContainer = d.getElementById(classNames.tab.container);
 
             var divPanel = d.createElement('div');
@@ -1084,9 +1008,17 @@ define([
             divPanel.setAttribute('id', classNames.panel.container);
             divPanel.classList.add(classNames.panel.container);
 
-            var menu = renderMenu();
-            var tabNav = renderNavigation();
-            var tabs = renderTabs();
+            var menu = ui.menu({
+                gwClient: gwClient,
+                classNames: classNames,
+                menuItems: menuItems
+            });
+            var navProps = props;
+            console.debug(navProps);
+            console.debug(configs);
+            navProps.configs = configs;
+            var tabNav = ui.navigation(navProps);
+            var tabs = ui.tabs(props);
 
             divPanel.appendChild(menu);
             divPanel.appendChild(tabNav);
@@ -1385,40 +1317,6 @@ define([
             var p = d.getElementById('popup');
             document.body.removeChild(p);
             console.debug("closed popup!");
-        }
-
-        /** @function renderTabs
-         *  Description
-         *  @param {Object} variable - Desc.
-         *  @return {Type} desc.
-         */
-        function renderTabs() {
-            /*
-             * Returns the container for tabs in the side panel
-             */
-
-            var tabs = configs.tabs;
-
-            var divContent = d.createElement('div');
-            divContent.classList.add(classNames.tab.container);
-            divContent.id = classNames.tab.container;
-
-            // render content
-            if (tabs.graphs.active) {
-                divContent.appendChild(
-                    ui.graphsContent({
-                        cy: cy,
-                        gwClient: gwClient
-                    }));
-
-            } else if (tabs.elements.active) {
-                divContent.appendChild(renderElementsContent());
-
-            } else if (tabs.styles.active) {
-                divContent.appendChild(renderStylesContent());
-            }
-
-            return divContent;
         }
 
 

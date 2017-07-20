@@ -7,7 +7,8 @@ define([
     "configuration/classNames",
     "utils/eventListeners",
     "utils/gwClient",
-    "components/menuItems"
+    "components/menuItems",
+
 ], function (ui, classNames, eventListeners, gwClient, menuItems) {
 
     var el = eventListeners;
@@ -31,12 +32,12 @@ define([
     });
 
     /*
-    QUnit.test("RenderTabs()", function (assert) {
-        setProps(testState, 'all');
-        var tabs = renderTabs();
-        assert.ok(tabs, "happening");
-    });
-    */
+     QUnit.test("RenderTabs()", function (assert) {
+     setProps(testState, 'all');
+     var tabs = renderTabs();
+     assert.ok(tabs, "happening");
+     });
+     */
 
     QUnit.test("stylesContent()", function (assert) {
         var content = {
@@ -77,33 +78,32 @@ define([
             "Returns div container with correct id.");
         assert.ok(childsHaveCorrectIds, "Container childs have correct ids.");
     });
-/*
-    QUnit.test("renderGraphListItem()", function (assert) {
+
+    QUnit.test("graphListItem()", function (assert) {
         var ul = document.createElement('ul');
         var listProps = {
             graphName: "foo",
-            gw: props.gw,
+            gw: gwClient,
             listElement: ul,
             listItemClass: classNames.tab.graph.listItem.inactive
         }
-        var listItem = renderGraphListItem(listProps);
+        var listItem = ui.graphListItem(listProps);
         assert.ok(listItem, "renderListItem() returns a value");
         assert.ok(listItem.classList.contains(listProps.listItemClass), "list item has correct class assigned");
     });
 
+
     QUnit.test("Rendering the graphs tab", function (assert) {
-        console.group("testRenderGraphsContent()");
-        setProps(testState, 'all');
 
         var ul = document.createElement('ul');
-        var listProps = {
-            graphName: "foo",
-            gw: props.gw,
-            listElement: ul
-        };
 
         var classes = classNames.tab.graph;
-        var graphsContent = renderGraphsContent();
+        var graphsContent = ui.graphsContent({
+            graphName: "foo",
+            gwClient: gwClient,
+            listElement: ul,
+
+        });
 
         var firstChild = graphsContent.childNodes[0];
         assert.equal(graphsContent.id, classes.container, "renderGraphsContent() returns div with proper id");
@@ -111,10 +111,17 @@ define([
     });
 
     QUnit.test("Rendering the elements tab", function (assert) {
+        var content = {
+            filter: "",
+            label: "Elements",
+            active: false,
+            data: "Data for elements"
+        };
 
-        setProps(testState, 'all');
-        var elementsContent = renderElementsContent();
+        var elementsContent = ui.elementsContent({
+            content: content
+        });
         assert.equal(elementsContent.id, "elements-content", "renderElementsContent() returns div with proper id");
     });
-*/
+
 });
