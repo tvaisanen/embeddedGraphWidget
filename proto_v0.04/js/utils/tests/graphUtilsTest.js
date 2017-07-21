@@ -22,8 +22,11 @@ define([
     });
 
     QUnit.test("createEdgeId()", function (assert) {
-        assert.ok(false, "NOT IMPLEMENTED");
 
+        var sourceId = 'source';
+        var targetId = 'target';
+        var edgeId = sourceId + '_to_' + targetId;
+        assert.deepEqual(gu.createEdgeId(sourceId, targetId), edgeId, "returns id in correct format");
     });
 
     QUnit.test("createNewEdge()", function (assert) {

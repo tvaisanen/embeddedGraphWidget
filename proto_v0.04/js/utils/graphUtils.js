@@ -340,7 +340,6 @@ define([
 
     }
 
-
     /** @function createNewNode
      *  Create new node and add it to the given cytoscape instance.
      *  @param {string} id - ID for the node.
@@ -604,7 +603,7 @@ define([
          *   Initialize empty Cytoscape graph
          *
          * */
-        var cyContainer = document.getElementById('cy');
+
         _cy = testCy(props.container);
         _cy.on('tap', 'node', bindExpandNode);
 

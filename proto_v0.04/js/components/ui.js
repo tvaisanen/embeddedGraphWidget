@@ -94,7 +94,6 @@ define([
             return li;
         }
 
-
         /** @function renderMenu
          *  Description
          *  @param {Object} variable - Desc.
@@ -584,35 +583,7 @@ define([
             return divNav;
         }
 
-                /** @function updateTabs
-         *  Description
-         *  @param {Object} variable - Desc.
-         *  @return {Type} desc.
-         */
-        function updateTabs(props) {
-
-            /*
-             *   Clear the tabs container and re-render content.
-             *   Append the content to panelContainer.
-             */
-            var divTabContainer = d.getElementById(classNames.tab.container);
-
-            var panelContainer = d.getElementById(classNames.panel.container);
-
-            var childsToRemove = divTabContainer.childNodes;
-
-            childsToRemove.forEach(function (child) {
-                divTabContainer.remove(child);
-            });
-
-            var tabsContent = tabs({
-                cy: props.cy,
-                configs: props.configs
-            });
-            panelContainer.appendChild(tabsContent);
-        }
-
-                /** @function renderTabs
+        /** @function renderTabs
          *  Description
          *  @param {Object} variable - Desc.
          *  @return {Type} desc.
@@ -648,7 +619,7 @@ define([
             return divContent;
         }
 
-                /** @function updateTabs
+        /** @function updateTabs
          *  Description
          *  @param {Object} variable - Desc.
          *  @return {Type} desc.

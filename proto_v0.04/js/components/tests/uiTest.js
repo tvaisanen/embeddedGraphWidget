@@ -31,14 +31,6 @@ define([
 
     });
 
-    /*
-     QUnit.test("RenderTabs()", function (assert) {
-     setProps(testState, 'all');
-     var tabs = renderTabs();
-     assert.ok(tabs, "happening");
-     });
-     */
-
     QUnit.test("stylesContent()", function (assert) {
         var content = {
             label: "Styles",
@@ -56,8 +48,7 @@ define([
             "renderStylesContent() returns div with proper id");
     });
 
-
-    QUnit.test("renderMenu()", function (assert) {
+    QUnit.test("menu()", function (assert) {
         var classes = classNames.menu;
         var menuContainer = ui.menu({
             gwClient: gwClient,
@@ -92,8 +83,7 @@ define([
         assert.ok(listItem.classList.contains(listProps.listItemClass), "list item has correct class assigned");
     });
 
-
-    QUnit.test("Rendering the graphs tab", function (assert) {
+    QUnit.test("graphsContent()", function (assert) {
 
         var ul = document.createElement('ul');
 
@@ -110,7 +100,19 @@ define([
         assert.equal(firstChild.tagName, "UL", "renderGraphsContent() first child is a list element");
     });
 
-    QUnit.test("Rendering the elements tab", function (assert) {
+    QUnit.test("elementsFilter()", function (assert) {
+        assert.ok(false, "NOT IMPLEMENTED");
+    });
+
+    QUnit.test("elementsList()", function (assert) {
+        assert.ok(false, "NOT IMPLEMENTED");
+    });
+
+    QUnit.test("tabs()", function (assert) {
+        assert.ok(false, "NOT IMPLEMENTED");
+    });
+
+    QUnit.test("elementsContent()", function (assert) {
         var content = {
             filter: "",
             label: "Elements",
@@ -123,5 +125,10 @@ define([
         });
         assert.equal(elementsContent.id, "elements-content", "renderElementsContent() returns div with proper id");
     });
+
+    QUnit.test("template", function (assert) {
+        assert.ok(true, "implement your test here");
+    });
+
 
 });

@@ -1115,7 +1115,8 @@ define([
                 });
                 console.debug(graphUtils);
                 graphUtils.initCy({
-                    gwClient: gwClient
+                    gwClient: gwClient,
+                    container: document.getElementById('cy')
                 });
             },
 
