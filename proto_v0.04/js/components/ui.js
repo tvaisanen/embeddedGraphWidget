@@ -25,9 +25,6 @@ define([
              * Implement graphs tab rendering here
              *
              * */
-            console.debug('DEbug mE!');
-            console.debug(props);
-
             try {
 
                 var gwClient = props.gwClient;
@@ -532,11 +529,7 @@ define([
          */
         function navigation(props) {
 
-            // Create the div which contains graphingwikiBrowser navigation tabs.
-
-            console.debug("Debugging ui.navigation()");
-            console.debug(props);
-
+            // Create the div which contains graphingwikiBrowser navigation tabs
 
             var tabs = props.configs.tabs;
 
@@ -600,11 +593,6 @@ define([
 
             props.gwClient = gwClient;
 
-            console.debug("Debugging ui.tabs()");
-            console.debug(props);
-
-            // render content
-            console.debug(props);
             if (configs.tabs.graphs.active) {
                 divContent.appendChild(
                     graphsContent({

@@ -754,10 +754,6 @@ define([
          *  @return {Type} desc.
          */
         function renderPanel(props) {
-            var divTabContainer = d.getElementById(classNames.tab.container);
-
-            console.debug("getGraphList props?");
-            console.debug(props);
 
             var divPanel = d.createElement('div');
 
@@ -773,11 +769,10 @@ define([
 
 
             var navProps = props;
-            console.debug(navProps);
-            console.debug(configs);
             navProps.configs = configs;
             navProps.classNames = classNames;
             navProps.cy = cy;
+
             var tabNav = ui.navigation(navProps);
             var tabs = ui.tabs(props);
 
@@ -1113,7 +1108,7 @@ define([
                 render({
                     gwClient: gwClient
                 });
-                console.debug(graphUtils);
+
                 graphUtils.initCy({
                     gwClient: gwClient,
                     container: document.getElementById('cy')

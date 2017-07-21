@@ -39,11 +39,7 @@ define([], function () {
 
     function update(props) {
         try {
-            console.debug(props);
-
-            console.debug(typeof props.newCategories);
             if (typeof props.newCategories === 'undefined'){
-                console.debug("undefined categories return old ones");
                 return categories;
             }
 
