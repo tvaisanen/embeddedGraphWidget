@@ -4,8 +4,8 @@
 
 define([
         "../dependencies/cytoscape",
-    "../configuration/configs",
-    "../components/elementStyles",
+        "../configuration/configs",
+        "../components/elementStyles",
         "../utils/gwClient",
         "../utils/edgeCategories",
         "../components/ui"
@@ -81,6 +81,8 @@ define([
                 if (edge.hasClass('_notype')) {
                     edge.removeClass('_notype');
                 }
+                console.debug('What is this?');
+                console.debug(classToAdd);
                 edge.addClass(classToAdd);
             } else if (!edgeDoesNotHaveAnyCategory) {
                 edge.addClass(classToAdd);
@@ -285,8 +287,9 @@ define([
      *  @param {Object} cy - Cytoscape instance.
      *  @return {Object} The new edge element.
      */
-    function createNewEdge(props, elementStyles) {
-
+    function createNewEdge(props) {
+        console.debug("createNewEdge()");
+        console.debug(props);
         try {
             var edgeId = props.sourceNodeId + "_to_" + props.targetNodeId;
             // Create new edge.
@@ -307,6 +310,7 @@ define([
 
                 props.cy.add(newEdge);
                 var edge = props.cy.getElementById(edgeId);
+
                 var categoryExists = elementStyles.categoryExists(props.category);
 
                 console.debug(elementStyles);
@@ -331,7 +335,7 @@ define([
             }
 
         } catch (e) {
-            console.groupCollapsed("Exception with createNewEdge()");
+            console.groupCollapsed("Exception raised by createNewEdge()");
             console.info("Parameters passed:");
             console.info(props);
             console.warn(e);

@@ -31,12 +31,15 @@ define([
 
     QUnit.test("getDefaultStyle()", function (assert) {
         var defaultCategory = es.getDefaultStyle();
-        assert.ok(true, "helo ok foobar?");
+        assert.ok(false, "helo ok foobar?");
     });
+
     QUnit.test("getStyle()", function (assert) {
-        assert.ok(true, "helo ok foobar?");
+        assert.ok(false, "helo ok foobar?");
     });
+
     QUnit.test("setStyle()", function (assert) {
-        assert.ok(true, "helo ok foobar?");
+        assert.ok(false, "helo ok foobar?");
     });
+
 });

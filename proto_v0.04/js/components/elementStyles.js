@@ -2,7 +2,7 @@
  * Created by toni on 19.7.2017.
  */
 
-define(function () {
+define([], function () {
 
     var styles = {
         generic: {

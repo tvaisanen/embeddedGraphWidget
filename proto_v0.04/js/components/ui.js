@@ -6,9 +6,10 @@
 define([
         "../utils/eventListeners",
         "../configuration/classNames",
-        "../configuration/configs"
+        "../configuration/configs",
+        "../utils/gwClient"
     ],
-    function (eventListeners, classNames, configs) {
+    function (eventListeners, classNames, configs, gwClient) {
 
         var d = document;
 
@@ -596,6 +597,8 @@ define([
             var divContent = d.createElement('div');
             divContent.classList.add(classNames.tab.container);
             divContent.id = classNames.tab.container;
+
+            props.gwClient = gwClient;
 
             console.debug("Debugging ui.tabs()");
             console.debug(props);
