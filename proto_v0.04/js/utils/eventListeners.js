@@ -329,8 +329,11 @@ define(function () {
                         .classList.add(navItemClasses.active);
                     var divTabContainer = document.getElementById(props.classNames.tab.container);
                     console.log(divTabContainer);
+                    console.debug("Debugging eventListeners.ui.navClick()");
+                    console.debug(props);
                     props.updateTabs({
-                        cy: props.cy
+                        cy: props.cy,
+                        configs: props.configs
                     });
                 }
             },

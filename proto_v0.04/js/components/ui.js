@@ -11,6 +11,7 @@ define([
         var d = document;
 
 
+
         /** @function renderGraphsContent
          *  Description
          *  @param {Object} variable - Desc.
@@ -21,10 +22,10 @@ define([
              * Implement graphs tab rendering here
              *
              * */
+            console.debug('DEbug mE!');
+            console.debug(props);
 
             try {
-                console.debug('DEbug mE!');
-                console.debug(props);
 
                 var gwClient = props.gwClient;
                 var classes = classNames.tab.graph;
@@ -61,6 +62,7 @@ define([
                 console.group("Exception raised by ui.graphsContent()");
                 console.warn(e);
                 console.groupEnd();
+                return document.createElement('div');
             }
         }
 
@@ -112,7 +114,6 @@ define([
             divToggleMenu.innerHTML = '#';
             //divMenu.appendChild(divToggleMenu);
             var menus = Object.keys(props.menuItems);
-            console.log(menus);
 
             var itemKeys = Object.keys(props.menuItems);
             itemKeys.forEach(function (key) {
@@ -167,6 +168,8 @@ define([
              * */
             var content = props.content;
 
+            console.debug("Debugging ui.elementsContent()");
+            console.debug(props);
 
             var div = d.createElement('div');
             div.setAttribute('id', "elements-content");
@@ -226,6 +229,8 @@ define([
          *  @return {Type} desc.
          */
         function elementsList(props) {
+            console.debug("Debugging ui.elementsList()");
+            console.debug(props);
             var content = props.content;
             var cy = props.cy;
             var gw = props.gwClient;
@@ -527,6 +532,10 @@ define([
 
             // Create the div which contains graphingwikiBrowser navigation tabs.
 
+            console.debug("Debugging ui.navigation()");
+            console.debug(props);
+
+
             var tabs = props.configs.tabs;
 
             // css classes
@@ -545,6 +554,7 @@ define([
                 var divLink = d.createElement('div');
                 divLink.addEventListener('click', function (event) {
                     eventListeners.ui.navClick({
+                        cy: props.cy,
                         configs: props.configs,
                         keyToActivate: key,
                         classNames: props.classNames,
@@ -610,33 +620,31 @@ define([
              * Returns the container for tabs in the side panel
              */
 
-            var tabs = props.configs.tabs;
-
             var divContent = d.createElement('div');
             divContent.classList.add(classNames.tab.container);
             divContent.id = classNames.tab.container;
 
+            console.debug("Debugging ui.tabs()");
+            console.debug(props);
 
             // render content
-            if (tabs.graphs.active) {
+            console.debug(props);
+            if (props.configs.tabs.graphs.active) {
                 divContent.appendChild(
                     graphsContent({
                         cy: props.cy,
                         gwClient: props.gwClient
                     }));
 
-            } else if (tabs.elements.active) {
-                divContent.appendChild(renderElementsContent());
+            } else if (props.configs.tabs.elements.active) {
+                divContent.appendChild(elementsContent(props));
 
-            } else if (tabs.styles.active) {
-                divContent.appendChild(renderStylesContent());
+            } else if (props.configs.tabs.styles.active) {
+                divContent.appendChild(stylesContent());
             }
 
             return divContent;
         }
-
-
-
 
         return {
             elementsContent: elementsContent,
