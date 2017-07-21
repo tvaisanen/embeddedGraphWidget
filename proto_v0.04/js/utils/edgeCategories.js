@@ -41,6 +41,12 @@ define([], function () {
         try {
             console.debug(props);
 
+            console.debug(typeof props.newCategories);
+            if (typeof props.newCategories === 'undefined'){
+                console.debug("undefined categories return old ones");
+                return categories;
+            }
+
             props.newCategories.forEach(function (category) {
                 if (categories.indexOf(category) === -1) {
                     categories.push(category);
@@ -52,7 +58,9 @@ define([], function () {
         } catch (e) {
             console.group("Exception raised by utils.edgeCategories.update()");
             console.warn(e);
-            console.group();
+            console.groupEnd();
+
+            return categories;
         }
     }
 

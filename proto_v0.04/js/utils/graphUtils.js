@@ -4,23 +4,49 @@
 
 define([
         "../dependencies/cytoscape",
+    "../configuration/configs",
     "../components/elementStyles",
         "../utils/gwClient",
-        "../utils/edgeCategories"
+        "../utils/edgeCategories",
+        "../components/ui"
     ],
-    function (cytoscape, elementStyles, gwClient, edgeCategories) {
+    function (cytoscape, configs, elementStyles, gwClient, edgeCategories, ui) {
 
     // todo: add active CY instance here and use it through this module?
 
     // active graph instance
     var cy;
 
+    /** @function elementHasCategoryClass
+     *  Check if the given element has been assigned with existing
+     *  category style classes.
+     *  @param {Object} element - Cytoscape element
+     *  @param {Array} categories - Array of category names.
+     *  @return {Boolean} True if element have assigned classes.
+     */
+    function elementHasCategoryClass(element, categories) {
+        try {
+            var categoryClassFound = categories.some(function (c) {
+                return element.hasClass(c);
+            });
+            return categoryClassFound;
+
+        } catch (e) {
+            console.groupCollapsed("Exception raised by graphingwikiBrowser.elementHasCategoryClass()");
+            console.warn(e);
+            console.info("Parameters passed:");
+            console.info("element:");
+            console.info(element);
+            console.groupEnd();
+        }
+    }
+
     /** @function addClassToEdge
      *  Todo: Decide what to do with this.
      *  @param {String} edgeId- Id of the edge.
      *  @param {String} classForEdge - Style category for the edge.
      */
-    function addClassToEdge(props, edgeId, classToAdd, cy) {
+    function addClassToEdge(props, edgeId, classToAdd) {
         /**
          * Is this really necessary? Seems like
          * unnecessary complexity...
@@ -29,11 +55,11 @@ define([
 
 
             // todo: refactor to props
-        var categories = props.tabs.styles.categories;
+        var categories = configs.tabs.styles.categories;
 
         try {
             // Get element reference to the edge with edgeId.
-            var edge = cy.getElementById(edgeId);
+            var edge = props.cy.getElementById(props.edgeId);
 
             // Check if the edge does not have a category set.
             var edgeDoesNotHaveAnyCategory = elementHasCategoryClass(edge, categories);
@@ -63,8 +89,7 @@ define([
         } catch (e) {
             console.groupCollapsed("Exception with addClassToEdge()");
             console.info("Parameters passed:");
-            console.info("edgeId: " + edgeId);
-            console.info("classToAdd: " + classToAdd);
+            console.info(props);
             console.warn(e);
             console.groupEnd();
         }
@@ -165,6 +190,7 @@ define([
                                     nodesToCreateEdges: nodesConnectedTo,
                                     category: category,
                                     cy: cy,
+                                    configs: props.configs,
                                     elementStyles: props.elementStyles,
                                 });
 
@@ -175,13 +201,20 @@ define([
                             console.groupEnd();
                         }
                         var newCategoriesIn = Object.keys(node.in);
-                        categoriesToUpdate = props.getEdgeCategories();
-                        updateCategories(newCategoriesIn, categoriesToUpdate);
+                        categoriesToUpdate = edgeCategories.get();
+                        edgeCategories.update({
+                            newCategories: newCategoriesIn
+                        });
 
                         // Iterate the incoming edge categories.
                         newCategoriesIn.forEach(function (category) {
                             var nodesConnectedTo = node.in[category];
-                            createEdgesFromNodes(nodeId, nodesConnectedTo, category, cy);
+                            createEdgesFromNodes({
+                                sourceNodeId: nodeId,
+                                nodesFromCreateEdges: nodesConnectedTo,
+                                category: category,
+                                cy: cy
+                            });
                         });
                     } catch (e) {
                         console.groupCollapsed("Exception raised by expandNode()");
@@ -307,60 +340,6 @@ define([
 
     }
 
-    function createNewEdge(props, elementStyles) {
-
-        try {
-            var edgeId = props.sourceNodeId + "_to_" + props.targetNodeId;
-            // Create new edge.
-            var newEdge = {
-                group: 'edges',
-                data: {
-                    id: edgeId,
-                    source: props.sourceNodeId,
-                    target: props.targetNodeId
-                }
-            };
-
-            // If edge is already defined, return the existing one.
-            if (edgeExists(edgeId, props.cy)) {
-                return props.cy.getElementById(edgeId);
-
-            } else {
-
-                props.cy.add(newEdge);
-                var edge = props.cy.getElementById(edgeId);
-                var categoryExists = props.elementStyles.categoryExists(props.category);
-
-                console.debug(elementStyles);
-                console.debug(categoryExists);
-                var classesToAdd = props.elementStyles.getStyle(props.category);
-                if (!classesToAdd) {
-                    console.debug('Add generic styles');
-                    classesToAdd = props.elementStyles.getStyle();
-                } else {
-                    console.debug('Add ' + props.category + ' styles.');
-                }
-
-                // Add the new edge to cy.elements.
-
-                console.debug(classesToAdd);
-
-                classesToAdd.forEach(function (styleClass) {
-                    console.debug('add style: ' + styleClass);
-                    edge.addClass(styleClass);
-                });
-                return edge;
-            }
-
-        } catch (e) {
-            console.groupCollapsed("Exception with createNewEdge()");
-            console.info("Parameters passed:");
-            console.info(props);
-            console.warn(e);
-            console.groupEnd();
-        }
-
-    }
 
     /** @function createNewNode
      *  Create new node and add it to the given cytoscape instance.
@@ -420,7 +399,11 @@ define([
             createNewEdge(props);
 
             var edgeId = createEdgeId(props.sourceNodeId, props.targetNodeId);
-            addClassToEdge(edgeId, props.category, props.cy);
+            addClassToEdge({
+                edgeId: edgeId,
+                category: props.category,
+                cy: props.cy
+            });
 
         } catch (e) {
             console.groupCollapsed("Exception with createNodesAndEdgeBetween()");
@@ -453,7 +436,6 @@ define([
         });
     }
 
-
     /**
      *
      * @param evt
@@ -468,7 +450,7 @@ define([
             edgeCategories: edgeCategories,
             elementStyles: elementStyles
         });
-        updateTabs({
+        ui.updateTabs({
             cy: cy
         });
     }
@@ -616,19 +598,20 @@ define([
      *  @param {Object} variable - Desc.
      *  @return {Type} desc.
      */
-    function initCytoscape() {
+    function initCytoscape(props) {
         /*
          *   Return <div id="cy">
          *   Initialize empty Cytoscape graph
          *
          * */
         var cyContainer = document.getElementById('cy');
-        _cy = testCy(cyContainer);
+        _cy = testCy(props.container);
         _cy.on('tap', 'node', bindExpandNode);
 
         // initialize the context menu plugin
         // cy.contextMenus(initCyContextMenu(cy));
         cy = _cy;
+        return cy;
     }
 
     return {

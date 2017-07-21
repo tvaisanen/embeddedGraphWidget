@@ -275,29 +275,6 @@ define([
             }
         }
 
-        /** @function elementHasCategoryClass
-         *  Check if the given element has been assigned with existing
-         *  category style classes.
-         *  @param {Object} element - Cytoscape element
-         *  @param {Array} categories - Array of category names.
-         *  @return {Boolean} True if element have assigned classes.
-         */
-        function elementHasCategoryClass(element, categories) {
-            try {
-                var categoryClassFound = categories.some(function (c) {
-                    return element.hasClass(c);
-                });
-                return categoryClassFound;
-
-            } catch (e) {
-                console.groupCollapsed("Exception raised by graphingwikiBrowser.elementHasCategoryClass()");
-                console.warn(e);
-                console.info("Parameters passed:");
-                console.info("element:");
-                console.info(element);
-                console.groupEnd();
-            }
-        }
 
 
         /** @function edgeExists
@@ -571,32 +548,7 @@ define([
 
 
 
-        /** @function updateTabs
-         *  Description
-         *  @param {Object} variable - Desc.
-         *  @return {Type} desc.
-         */
-        function updateTabs(props) {
 
-            /*
-             *   Clear the tabs container and re-render content.
-             *   Append the content to panelContainer.
-             */
-            var divTabContainer = d.getElementById(classNames.tab.container);
-
-            var panelContainer = d.getElementById(classNames.panel.container);
-
-            var childsToRemove = divTabContainer.childNodes;
-
-            childsToRemove.forEach(function (child) {
-                divTabContainer.remove(child);
-            });
-
-            var tabsContent = ui.tabs({
-                cy: props.cy
-            });
-            panelContainer.appendChild(tabsContent);
-        }
 
         /** @function setProps
          *  Description

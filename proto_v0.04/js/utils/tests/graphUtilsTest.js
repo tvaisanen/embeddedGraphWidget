@@ -12,6 +12,20 @@ define([
 
     QUnit.module("Unit Tests - utils.graphUtils: ");
 
+    QUnit.test("addClassToEdge()", function (assert) {
+        assert.ok(false, "NOT IMPLEMENTED");
+    });
+
+    QUnit.test("bindExpandNode", function (assert) {
+        assert.ok(false, "NOT IMPLEMENTED");
+
+    });
+
+    QUnit.test("createEdgeId()", function (assert) {
+        assert.ok(false, "NOT IMPLEMENTED");
+
+    });
+
     QUnit.test("createNewEdge()", function (assert) {
         var sourceId = 'source';
         var targetId = 'target';
@@ -29,7 +43,6 @@ define([
         assert.ok(gu.edgeExists(edgeId, cy), "New edge can be found with getElementById");
         assert.deepEqual(edge.id(), edgeId, "Returned edgeId() matches with with intended Id");
     });
-
 
     QUnit.test("createNodesAndEdgeBetween()", function (assert) {
         var idSource = 'source';
@@ -100,7 +113,6 @@ define([
 
     });
 
-
     QUnit.test("createEdgesToNodes()", function (assert) {
         var idSource = 'source';
         var idOne = 'foo';
@@ -137,7 +149,6 @@ define([
         assert.ok(allEdgesCreatedIfNotExisting, "creates all the edges if does not exist");
         assert.ok(allNodesCreatedIfNotExisting, "creates all the nodes if does not exist");
     });
-
 
     QUnit.test("createEdgesFromNodes()", function (assert) {
         var idTarget = 'target';
@@ -178,8 +189,7 @@ define([
         assert.ok(allNodesCreatedIfNotExisting, "creates all the nodes if does not exist");
     });
 
-
-    QUnit.test("Create new node.", function (assert) {
+    QUnit.test("createNewNode()", function (assert) {
         var cy = cytoscape({elements: [{group: 'nodes', data: {id: 'existingNode'}}]})
         var existingNodeId = 'existingNode';
         var newNodeId = 'newNode';
@@ -188,6 +198,22 @@ define([
         assert.notOk(gu.createNewNode(existingNodeId, cy), "Return false if trying to create node with an existing id.");
     });
 
+    QUnit.test("elementHasCategoryClass()", function (assert) {
+
+    });
+
+    QUnit.test("expandNode", function (assert) {
+        assert.ok(initCytoscape, "cytoscape returns");
+    });
+
+    QUnit.test("initCytoscape", function (assert) {
+        var container = document.createElement('div');
+        container.setAttribute('id', 'cy');
+        document.body.appendChild(container);
+        assert.ok(gu.initCy(container), "NOT IMPLEMENTED");
+        document.body.removeChild(container);
+
+    });
 
     QUnit.test("nodeIdAvailable()", function (assert) {
 
@@ -198,7 +224,6 @@ define([
         assert.notOk(gu.nodeIdAvailable(existingNodeId, cy), "Returns false, when id already in use.");
         assert.ok(gu.nodeIdAvailable(nonExistingNodeId, cy), "Returns true, when nodeId is available for use.");
     });
-
 
     QUnit.test("edgeExists()", function (assert) {
         var cy = cytoscape({
@@ -214,7 +239,6 @@ define([
         assert.ok(gu.edgeExists(existingEdgeId, cy), "Returns true, when edge exists.");
         assert.notOk(gu.edgeExists(nonExistingEdgeId, cy), "Returns false, when edge does not exist yet.");
     });
-
 
     QUnit.test("createNewEdge()", function (assert) {
 
@@ -245,5 +269,10 @@ define([
         assert.ok(gu.edgeExists(edgeId, cy), "New edge can be found with getElementById");
         assert.deepEqual(edge.id(), edgeId, "Returned edgeId() matches with with intended Id");
     });
+
+    QUnit.test("setAndRunLayout()", function (assert) {
+        assert.ok(false, "NOT IMPLEMENTED");
+
+    })
 
 });

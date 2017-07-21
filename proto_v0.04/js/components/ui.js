@@ -5,8 +5,10 @@
 
 define([
         "../utils/eventListeners",
-        "../configuration/classNames"],
-    function (eventListeners, classNames) {
+        "../configuration/classNames",
+        "../configuration/configs"
+    ],
+    function (eventListeners, classNames, configs) {
 
         var d = document;
 
@@ -629,21 +631,48 @@ define([
 
             // render content
             console.debug(props);
-            if (props.configs.tabs.graphs.active) {
+            if (configs.tabs.graphs.active) {
                 divContent.appendChild(
                     graphsContent({
                         cy: props.cy,
                         gwClient: props.gwClient
                     }));
 
-            } else if (props.configs.tabs.elements.active) {
+            } else if (configs.tabs.elements.active) {
                 divContent.appendChild(elementsContent(props));
 
-            } else if (props.configs.tabs.styles.active) {
+            } else if (configs.tabs.styles.active) {
                 divContent.appendChild(stylesContent());
             }
 
             return divContent;
+        }
+
+                /** @function updateTabs
+         *  Description
+         *  @param {Object} variable - Desc.
+         *  @return {Type} desc.
+         */
+        function updateTabs(props) {
+
+            /*
+             *   Clear the tabs container and re-render content.
+             *   Append the content to panelContainer.
+             */
+            var divTabContainer = d.getElementById(classNames.tab.container);
+
+            var panelContainer = d.getElementById(classNames.panel.container);
+
+            var childsToRemove = divTabContainer.childNodes;
+
+            childsToRemove.forEach(function (child) {
+                divTabContainer.remove(child);
+            });
+
+            var tabsContent = tabs({
+                cy: props.cy
+            });
+            panelContainer.appendChild(tabsContent);
         }
 
         return {
@@ -654,7 +683,8 @@ define([
             navigation: navigation,
             stylesContent: stylesContent,
             tabs: tabs,
-            textPreview: textPreview
+            textPreview: textPreview,
+            updateTabs: updateTabs
         }
     }
 );
