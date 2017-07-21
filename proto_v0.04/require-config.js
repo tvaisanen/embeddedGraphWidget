@@ -7,7 +7,7 @@
     // Configure RequireJS so it resolves relative module paths from the `src`
     // folder.
     require.config({
-        baseUrl: "./js",
+        baseUrl: "./js"
     });
 
     // A list of all QUnit test Modules.  Make sure you include the `.js`
@@ -15,7 +15,8 @@
     // the `baseUrl` value supplied above.
     var testModules = [
         "js/utils/tests/graphUtilsTest.js",
-        "js/components/tests/uiTest.js"
+        "js/components/tests/uiTest.js",
+        "js/components/tests/elementStyleTest.js"
     ];
 
     // Resolve all testModules and then start the Test Runner.

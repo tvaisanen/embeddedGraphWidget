@@ -307,7 +307,7 @@ define([
 
                 props.cy.add(newEdge);
                 var edge = props.cy.getElementById(edgeId);
-                var categoryExists = props.elementStyles.categoryExists(props.category);
+                var categoryExists = elementStyles.categoryExists(props.category);
 
                 console.debug(elementStyles);
                 console.debug(categoryExists);

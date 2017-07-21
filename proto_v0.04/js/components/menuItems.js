@@ -33,7 +33,6 @@ define(["../utils/eventListeners"], function (eventListeners){
                 createPopUp(funcProps);
             },
             generateContent: generateContent
-
         }
     }
 });
