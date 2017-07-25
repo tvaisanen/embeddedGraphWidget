@@ -465,6 +465,7 @@
 
   if( typeof define !== 'undefined' && define.amd ){ // expose as an amd/requirejs module
     define('cytoscape-context-menus', function(){
+
       return register;
     });
   }

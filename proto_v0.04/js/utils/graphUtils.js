@@ -8,9 +8,10 @@ define([
         "../components/elementStyles",
         "../utils/gwClient",
         "../utils/edgeCategories",
-        "../components/ui"
+        "../components/ui",
+        "../utils/cyInitUtils"
     ],
-    function (cytoscape, configs, elementStyles, gwClient, edgeCategories, ui) {
+    function (cytoscape, configs, elementStyles, gwClient, edgeCategories, ui, cyInitUtils) {
 
         // todo: add active CY instance here and use it through this module?
 
@@ -625,7 +626,7 @@ define([
              *   Initialize empty Cytoscape graph
              *
              * */
-
+            cyInitUtils.init();
             _cy = testCy(props.container);
             _cy.on('tap', 'node', bindExpandNode);
 

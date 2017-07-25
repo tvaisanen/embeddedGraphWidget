@@ -3,8 +3,9 @@
  */
 
 define([
-    "components/elementStyles"
-], function (elementStyles) {
+    "components/elementStyles",
+    "configuration/configs"
+], function (elementStyles, configs) {
 
     var es = elementStyles;
 
@@ -31,7 +32,7 @@ define([
 
     QUnit.test("getDefaultStyle()", function (assert) {
         var defaultCategory = es.getDefaultStyle();
-        assert.ok(false, "helo ok foobar?");
+        assert.equal(defaultCategory, configs.style.generic, "generic style returns correctly");
     });
 
     QUnit.test("getStyle()", function (assert) {

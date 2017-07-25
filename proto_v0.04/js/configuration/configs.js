@@ -33,13 +33,12 @@ define(function () {
 
         API_PATH: 'http://127.0.0.1:5000/',
         API_CREATE_NEW_NODE: 'http://127.0.0.1:5000/add-to-wiki/',
-        lineStyleOptions: {
-            'width': Array.from(Array(20).keys()),
-            'line-color': 'rgb',
-            'line-style': [],
-            'target-arrow-color': 'rgb',
-            'target-arrow-shape': [],
-            'curve-style': []
+        style: {
+            generic: {
+                lineColor: 'line-color-grey',
+                lineWidth: 'line-width-10',
+                arrowShape: 'arrow-shape-triangle'
+            }
         },
         lines: [
             {label: 'solid', styleClass: 'line-style-solid'},

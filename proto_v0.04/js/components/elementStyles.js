@@ -2,14 +2,10 @@
  * Created by toni on 19.7.2017.
  */
 
-define([], function () {
+define(["../configuration/configs"], function (configs) {
 
     var styles = {
-        generic: {
-            lineColor: 'line-color-grey',
-            lineWidth: 'line-width-10',
-            arrowShape: 'arrow-shape-triangle'
-        }
+        generic: configs.style.generic
     };
 
     function addCategory(category) {
