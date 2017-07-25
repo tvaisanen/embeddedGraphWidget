@@ -8,9 +8,14 @@ define(["../configuration/configs"], function (configs) {
         generic: configs.style.generic
     };
 
-    function addCategory(category) {
+    function addCategory(props) {
         // init new category with generic style
-        styles[category] = getDefaultStyle();
+        styles[props.name] = getDefaultStyle();
+        if (typeof props.style !== 'undefined'){
+            Object.keys(props.style).forEach(function (key){
+                styles[props.name][key] = props.style[key];
+            });
+        }
     }
 
     function categoryExists(category) {
@@ -32,21 +37,23 @@ define(["../configuration/configs"], function (configs) {
         return Object.values(styles.generic);
     }
 
-    function setStyle(funcProps) {
+    function setStyle(props) {
         try {
-            var fp = funcProps;
-            console.debug("setStyle()");
-            console.debug(funcProps);
-            var selector = funcProps.baseClass + '.' + funcProps.category;
-            console.debug(funcProps.cy);
-            var elementsToUpdate = funcProps.cy.elements(selector);
-            console.debug('setStyle() - elementsToUpdate.forEach()');
-            this[fp.category][fp.style] = fp.value;
-            elementsToUpdate.forEach(function (el) {
-                console.debug(el.id());
-                console.debug("these classes has to be assigned");
-                console.debug(elementStyles[fp.category]);
-            });
+
+            console.debug(props);
+            addCategory(props);
+            console.debug('after defaults setStyle()');
+            console.debug(getStyle(props.name));
+            console.debug(styles[props.name]);
+            styles[props.name] = props.style;
+            console.debug('after assignment setStyle()');
+            console.debug(getStyle(props.name));
+            return getStyle(props.name);
+            // use graphUtils.updateElementStyles() here!
+            // var elementsToUpdate = funcProps.cy.elements(selector);
+            // console.debug('setStyle() - elementsToUpdate.forEach()');
+            // this[fp.category][fp.style] = fp.value;
+            // console.debug(funcProps.cy);
         } catch (e) {
             console.group("Exception raised by elementStyles.setStyle()");
             console.warn(e);

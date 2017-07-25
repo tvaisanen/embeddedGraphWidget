@@ -388,38 +388,42 @@ define([
          */
         function createNodesAndEdgeBetween(props) {
             try {
-                console.group("Debugging edge creation!");
+
                 // If nodes do not exist, create them.
                 // nodeIdAvailable: true === node do not exist.
 
-                console.debug("sourceNodeId: " + props.sourceNodeId);
+
                 nodeIdAvailable(props.sourceNodeId, props.cy) ?
                     createNewNode(props.sourceNodeId, props.cy) : null;
 
-                console.debug("sourceNodeId: " + props.targetNodeId);
                 nodeIdAvailable(props.targetNodeId, props.cy) ?
                     createNewNode(props.targetNodeId, props.cy) : null;
 
                 // createNewEdge checks if the edge already exists.
                 createNewEdge(props);
 
-                if (typeof props.targetNodeId === 'undefined'){
-                    console.log("%cHere's the problem", "color:red;");
-                    console.debug(props);
 
-                }
+
+
 
 
                 var edgeId = createEdgeId(
                     props.sourceNodeId,
                     props.targetNodeId
                 );
+/*
+                console.group("Debugging edge creation!");
+                console.debug("sourceNodeId: " + props.sourceNodeId);
+                console.debug("sourceNodeId: " + props.targetNodeId);
+                if (typeof props.targetNodeId === 'undefined'){
+                    console.log("%cHere's the problem", "color:red;");
+                    console.debug(props);
 
-
+                }
                 console.debug(props);
                 console.debug(edgeId);
                 console.groupEnd();
-
+*/
                 addClassToEdge({
                     edgeId: edgeId,
                     category: props.category,
