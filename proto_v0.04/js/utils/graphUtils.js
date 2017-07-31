@@ -55,8 +55,9 @@ define([
             }
         }
 
-        /** @function addClassToEdge
-         *  Todo: Decide what to do with this.
+        /** @function
+         *  @name addClassToEdge
+         *  @description Todo: Redundant? Decide what to do with this.
          *  @param {String} edgeId- Id of the edge.
          *  @param {String} classForEdge - Style category for the edge.
          */
@@ -109,24 +110,39 @@ define([
             }
         }
 
-        /** @function setAndRunLayout
-         *  Description
-         *  @param {Object} variable - Desc.
-         *  @return {Type} desc.
+        /** @function
+         *  @name setAndRunLayout
+         *  @description Update cytoscape graph layout.
+         *  @param {Object} props
+         *  @param {Object} props.cy cytoscape instance
+         *  @param {String} props.layout layout name.
+         *  @return {Boolean} True if no errors.
          */
-        function setAndRunLayout(cy) {
-            var layout = cy.makeLayout({name: "circle"});
-            //var layout = cy.makeLayout({name: "cola"});
-            layout.run();
+        function setAndRunLayout(props) {
+            try {
+                var layoutStyle = props.layout || "circle";
+                var layout = props.cy.makeLayout({name: layoutStyle});
+                //var layout = cy.makeLayout({name: "cola"});
+                layout.run();
+                return true;
+            } catch (e){
+                console.group("Exception raised by graphUtils.setAndRunLayout()");
+                console.debug("props:");
+                console.debug(props);
+                console.warn(e);
+                console.groupEnd();
+                return false;
+            }
         }
 
-        /** @function nodeIdAvailable
-         *  Check if a node of given id is already defined in the graph.
+        /** @function
+         *  @name nodeIdAvailable
+         *  @description Check if a node of given id is already defined in the graph.
          *  @param {String} nodeId- Id of node.
          *  @return {Boolean} True if id is available for use, else False.
          */
-        function nodeIdAvailable(nodeId, cy) {
-            return !cy.getElementById(nodeId).isNode();
+        function nodeIdAvailable(props, nodeId, cy) {
+            return !props.cy.getElementById(props.nodeId).isNode();
         }
 
         /** @function edgeExists
@@ -236,7 +252,7 @@ define([
                             console.warn(e);
                             console.groupEnd();
                         }
-                        setAndRunLayout(props.cy);
+                        setAndRunLayout(props);
 
 
                     }
@@ -393,7 +409,7 @@ define([
 
                 // after saving page to moin
                 // Can not create element with invalid string ID ``
-                if (nodeIdAvailable(id, cy)) {
+                if (nodeIdAvailable({nodeId: id, cy: cy})) {
                     cy.add(newNode);
                     return true;
                 } else {
@@ -427,10 +443,10 @@ define([
                 // If nodes do not exist, create them.
                 // nodeIdAvailable: true === node do not exist.
 
-                nodeIdAvailable(props.sourceNodeId, props.cy) ?
+                nodeIdAvailable({nodeId: props.sourceNodeId, cy: props.cy}) ?
                     createNewNode(props.sourceNodeId, props.cy) : null;
 
-                nodeIdAvailable(props.targetNodeId, props.cy) ?
+                nodeIdAvailable({nodeId: props.targetNodeId, cy: props.cy}) ?
                     createNewNode(props.targetNodeId, props.cy) : null;
 
                 // createNewEdge checks if the edge already exists.

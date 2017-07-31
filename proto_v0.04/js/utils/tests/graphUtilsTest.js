@@ -244,8 +244,19 @@ define([
         var existingNodeId = 'existingNode';
         var nonExistingNodeId = 'nonExistingNode';
 
-        assert.notOk(gu.nodeIdAvailable(existingNodeId, cy), "Returns false, when id already in use.");
-        assert.ok(gu.nodeIdAvailable(nonExistingNodeId, cy), "Returns true, when nodeId is available for use.");
+        assert.notOk(
+            gu.nodeIdAvailable({
+                nodeId: existingNodeId,
+                cy: cy
+            }),
+            "Returns false, when id already in use.");
+
+        assert.ok(
+            gu.nodeIdAvailable({
+                nodeId: nonExistingNodeId,
+                cy: cy
+            }),
+            "Returns true, when nodeId is available for use.");
     });
 
     QUnit.test("edgeExists()", function (assert) {
