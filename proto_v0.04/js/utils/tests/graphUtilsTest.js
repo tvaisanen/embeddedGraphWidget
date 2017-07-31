@@ -270,8 +270,19 @@ define([
 
         var existingEdgeId = 'source_to_target';
         var nonExistingEdgeId = 'b_to_a';
-        assert.ok(gu.edgeExists(existingEdgeId, cy), "Returns true, when edge exists.");
-        assert.notOk(gu.edgeExists(nonExistingEdgeId, cy), "Returns false, when edge does not exist yet.");
+        assert.ok(
+            gu.edgeExists({
+                edgeId: existingEdgeId,
+                cy: cy
+            }),
+            "Returns true, when edge exists.");
+
+        assert.notOk(
+            gu.edgeExists({
+                edgeId: nonExistingEdgeId,
+                cy: cy
+            }),
+            "Returns false, when edge does not exist yet.");
     });
 
     QUnit.test("createNewEdge()", function (assert) {

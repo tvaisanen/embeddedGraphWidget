@@ -147,11 +147,13 @@ define([
 
         /** @function edgeExists
          *  Check if a node of given id is already defined in the graph.
-         *  @param {String} edgeId - Id of edge.
+         *  @param {Objec} props
+         *  @param {String} props.cy Cytoscape instance.
+         *  @param {String} props.edgeId Id of edge element.
          *  @return {Boolean} True if edge already defined, else False.
          */
-        function edgeExists(edgeId, cy) {
-            return cy.getElementById(edgeId).isEdge();
+        function edgeExists(props) {
+            return props.cy.getElementById(props.edgeId).isEdge();
         }
 
         /** @function expandNode
@@ -345,7 +347,7 @@ define([
                 };
 
                 // If edge is already defined, return the existing one.
-                if (edgeExists(edgeId, props.cy)) {
+                if (edgeExists({edgeId: edgeId, cy: props.cy})) {
                     return props.cy.getElementById(edgeId);
 
                 } else {
