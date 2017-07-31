@@ -14,17 +14,25 @@ define([
     ],
     function (eventListeners, menuItems, classNames, configs, graphUtils, gwClient) {
 
+        /**
+         * User interface components. Collection of functions to create UI components.
+         * @exports ui
+         */
+
         var d = document;
-
-
-
-        /** @function renderContentContainer
-         *  Description
-         *  @param {Object} variable - Desc.
-         *  @return {Type} desc.
+        
+        /** @function
+         *  @name contentContainer
+         *  @description Returns the root div container element where to append the rest of the application.
+         *  @param {Object} props
+         *  @param {Object} props.gwClient Graphingwiki ajax client reference.
+         *  @return {HTMLDivElement} HTML div element.
          */
         function contentContainer(props) {
+            console.debug("content props!");
+            console.debug(props);
             var container = d.createElement('div');
+            props.cy = graphUtils.cy();
             container.setAttribute('id', configs.containerId);
             container.classList.add("content-container");
             container.appendChild(panel(props));
@@ -275,6 +283,8 @@ define([
          *  @return {Type} desc.
          */
         function elementsList(props) {
+
+            console.debug(props);
 
             var content = props.content;
             var cy = props.cy;
@@ -653,6 +663,9 @@ define([
             console.debug("NavProps!");
             console.debug(navProps);
             var tabNavDiv = navigation(navProps);
+
+            console.debug("TabProps:");
+            console.debug(props);
             var tabsDiv = tabs(props);
 
             divPanel.appendChild(menuDiv);
