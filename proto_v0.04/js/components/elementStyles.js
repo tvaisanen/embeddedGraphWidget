@@ -39,15 +39,8 @@ define(["../configuration/configs"], function (configs) {
 
     function setStyle(props) {
         try {
-
-            console.debug(props);
             addCategory(props);
-            console.debug('after defaults setStyle()');
-            console.debug(getStyle(props.name));
-            console.debug(styles[props.name]);
             styles[props.name] = props.style;
-            console.debug('after assignment setStyle()');
-            console.debug(getStyle(props.name));
             return getStyle(props.name);
             // use graphUtils.updateElementStyles() here!
             // var elementsToUpdate = funcProps.cy.elements(selector);

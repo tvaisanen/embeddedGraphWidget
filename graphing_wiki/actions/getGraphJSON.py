@@ -24,7 +24,7 @@ except ImportError:
 
 
 def execute(pagename, request):
-    # parse query parameters to a dict
+    # parse query configuration to a dict
     form = gw.values_to_form(request.values)
 
 
@@ -52,7 +52,7 @@ def execute(pagename, request):
             data = request.graphdata.getpage(query_node)
             error_with_response_graph = False
         except Exception as ex:
-            # if there's no pagename in query parameters, use the one defined in the path
+            # if there's no pagename in query configuration, use the one defined in the path
             data = request.graphdata.getpage(pagename)
             error_with_response_graph = True
 

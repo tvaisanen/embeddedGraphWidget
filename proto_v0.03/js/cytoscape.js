@@ -3527,7 +3527,7 @@ var Element = function( cy, params, restore ){
   restore = (restore === undefined || restore ? true : false);
 
   if( cy === undefined || params === undefined || !is.core( cy ) ){
-    util.error( 'An element must have a core reference and parameters set' );
+    util.error( 'An element must have a core reference and configuration set' );
     return;
   }
 

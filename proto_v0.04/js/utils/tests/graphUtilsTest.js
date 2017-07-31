@@ -178,9 +178,6 @@ define([
         var edgeTwo = cy.getElementById(gu.createEdgeId(idTwo, idTarget));
         var edgeThree = cy.getElementById(gu.createEdgeId(idThree, idTarget));
 
-        console.debug(edgeOne.isEdge());
-        console.debug(edgeTwo.isEdge());
-        console.debug(edgeThree.isEdge());
 
         var nodeOne = cy.getElementById(idOne);
         var nodeTwo = cy.getElementById(idTwo);

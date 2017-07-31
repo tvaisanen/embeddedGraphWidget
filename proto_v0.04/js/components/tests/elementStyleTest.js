@@ -51,7 +51,6 @@ define([
         };
         var expected = Object.values(style.style);
         var returnedStyle = es.setStyle(style);
-        console.debug(returnedStyle);
         assert.deepEqual(returnedStyle, expected, "style is set and returned");
     });
 

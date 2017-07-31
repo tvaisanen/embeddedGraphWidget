@@ -132,11 +132,14 @@ define([
          *
          */
         function expandNode(props) {
-
+            console.log(props);
             try {
                 var gw = props.gwClient;
-                var cy = props.cy;
                 var nodeId = props.nodeId;
+                cy = props.cy;
+
+                console.debug("expandNode()");
+                console.debug(props);
 
                 //Get data for the clicked node.
                 var nodePromise = gw.getNodeData(nodeId);
@@ -152,6 +155,9 @@ define([
                          *  }
                          * */
                         var node = json.data;
+
+                        console.debug("expandNode().node");
+                        console.debug(node);
 
                         try {
                             // If node has outgoing edges refresh the categories
@@ -175,6 +181,7 @@ define([
                             }
 
                             // Iterate the outgoing edge categories.
+
                             try {
                                 newCategoriesOut.forEach(function (category) {
                                     // get list of nodes where the clicked node is connected t
@@ -190,9 +197,8 @@ define([
                                         category: category,
                                         cy: cy,
                                         configs: props.configs,
-                                        elementStyles: props.elementStyles,
+                                        elementStyles: props.elementStyles
                                     });
-
                                 });
                             } catch (e) {
                                 console.group("Exception raised by graphUtilsExpandNode()");
@@ -247,18 +253,21 @@ define([
              * edges between the source node and target nodes.
              * If nodes do not exist, create them and add to cy.elements.
              */
-            console.group('createEdgesToNodes.props');
-            console.debug(props);
-            console.groupEnd();
             props.nodesToCreateEdges.forEach(function (targetNodeId) {
                 try {
-                    createNodesAndEdgeBetween({
-                        sourceNodeId: props.sourceNodeId,
-                        targetNodeId: targetNodeId,
-                        category: props.category,
-                        cy: props.cy,
-                        elementStyles: props.elementStyles
-                    });
+                    if (targetNodeId === 'undefined'){
+                        console.warn("graphUtils.createEdgesToNodes() is trying to create edge to undefined node!");
+                        console.debug(props);
+                    } else {
+                        createNodesAndEdgeBetween({
+                            sourceNodeId: props.sourceNodeId,
+                            targetNodeId: targetNodeId,
+                            category: props.category,
+                            cy: props.cy,
+                            elementStyles: props.elementStyles
+                        });
+                    }
+
                 } catch (e) {
                     console.groupCollapsed("Exception with createEdgesToNodes()");
                     console.info("Parameters passed:");
@@ -272,7 +281,15 @@ define([
         }
 
         function createEdgeId(sourceNodeId, targetNodeId) {
-            return sourceNodeId + "_to_" + targetNodeId;
+            var sourceType = typeof sourceNodeId;
+            var targetType = typeof targetNodeId;
+
+            if (sourceType === 'undefined' || targetType === 'undefined'){
+                console.debug("undefined node");
+                throw TypeError('createEdgeId() called with undefined node id');
+            } else {
+                return sourceNodeId + "_to_" + targetNodeId;
+            }
         }
 
         /** @function createNewEdge
@@ -318,12 +335,12 @@ define([
                         console.debug('Add generic styles');
                         classesToAdd = elementStyles.getStyle();
                     } else {
-                        console.debug('Add ' + props.category + ' styles.');
+                        // console.debug('Add ' + props.category + ' styles.');
                     }
 
                     // Add the new edge to cy.elements.
 
-                    console.debug(classesToAdd);
+                    // console.debug(classesToAdd);
 
                     classesToAdd.forEach(function (styleClass) {
                         //console.debug('add style: ' + styleClass);
@@ -348,6 +365,11 @@ define([
          *  @param {Object} cy - Cytoscape instance
          * */
         function createNewNode(id, cy) {
+
+            if (typeof id === 'undefined'){
+                throw TypeError("createNewNode() called with undefined id");
+            }
+
             try {
                 var newNode = {
                     group: 'nodes',
@@ -456,8 +478,6 @@ define([
             // FixMe!
             props.nodesFromCreateEdges.forEach(function (sourceNodeId) {
                 props.sourceNodeId = sourceNodeId;
-                console.log("%cFrom here!");
-                console.debug(props);
                 createNodesAndEdgeBetween(props);
             });
         }
@@ -467,18 +487,27 @@ define([
          * @param evt
          */
         function bindExpandNode(evt) {
-            var node = evt.target;
-            var nodeId = node.id();
-            expandNode({
-                nodeId: nodeId,
-                cy: cy,
-                gwClient: gwClient,
-                edgeCategories: edgeCategories,
-                elementStyles: elementStyles
-            });
-            ui.updateTabs({
-                cy: cy
-            });
+            console.debug('debugging bindExpandNodE()');
+            try {
+                var node = evt.target;
+                var nodeId = node.id();
+                expandNode({
+                    nodeId: nodeId,
+                    cy: cy,
+                    gwClient: gwClient,
+                    edgeCategories: edgeCategories,
+                    elementStyles: elementStyles
+                });
+                ui.updateTabs({
+                    cy: cy
+                });
+            } catch (e) {
+                console.group("Exception raised by graphUtils.bindExpandNode()");
+                console.warn(e);
+                console.debug("props:");
+                console.debug(evt);
+                console.groupEnd();
+            }
         }
 
         function testCy(containerElement) {
@@ -614,8 +643,8 @@ define([
                             'target-arrow-shape': 'triangle',
                             'curve-style': 'bezier',
                         }
-                    },
-                ],
+                    }
+                ]
             });
         }
 
@@ -653,7 +682,8 @@ define([
                 return cy;
             },
             nodeIdAvailable: nodeIdAvailable,
-            initCy: initCytoscape
+            initCy: initCytoscape,
+            testCy: testCy
         }
 
 

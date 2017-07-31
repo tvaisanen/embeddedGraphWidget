@@ -177,83 +177,6 @@ define([
             };
         }
 
-        /** @function cy context menu init
-         * Todo: separate ul rendering and eventListener binding
-         * @param cy
-         * @return {Object}
-         */
-        function unorderedListFromArray(funcProps) {
-            /*
-             * Todo: add support for the array containing evenListener -methods
-             * array: array of string items
-             * return: unordered html element with list items
-             * from the array
-             * */
-
-            var cy = funcProps.cy;
-            var array = funcProps.array;
-            var toggleVisibility = funcProps.toggleVisibility;
-
-
-            var ul = d.createElement('ul');
-
-            array.forEach(function (listElementId) {
-                var li = d.createElement('li');
-
-                var checkBox = d.createElement('input');
-                checkBox.setAttribute('id', 'visibility_' + listElementId);
-                checkBox.setAttribute('type', 'checkbox');
-
-                var elementHidden = cy.getElementById(listElementId).hidden()
-                checkBox.setAttribute('checked', elementHidden);
-
-
-                checkBox.checked = true;
-                //console.log(checkBox);
-                checkBox.addEventListener('click', function (event) {
-                    console.log(event.target);
-                    toggleVisibility(event.target);
-                    console.log(event.target.id);
-                });
-
-
-                li.appendChild(checkBox);
-
-                li.innerHTML += listElementId;
-
-                li.setAttribute('id', listElementId);
-
-                li.addEventListener('mouseover', function (evt) {
-                    funcProps.onMouseOver({
-                        cy: cy,
-                        listItemId: evt.target.id
-                    });
-                });
-
-
-                li.addEventListener('mouseout', function (evt) {
-                    funcProps.onMouseOut({
-                        cy: cy,
-                        listItemId: evt.target.id
-                    });
-                });
-
-                li.addEventListener('click', function (evt) {
-                    funcProps.onClick({
-                        evt: evt,
-                        elementId: listElementId,
-                        currentDetail: props.currentDetail,
-                        classToToggle: classNames.tab.elements.listItem.selected,
-                        setCurrentDetail: function () {
-                            console.log("stub set detail")
-                        }
-                    })
-                });
-
-                ul.appendChild(li);
-            });
-            return ul;
-        }
 
 
         // Todo: write tests when the datastructures are stable
@@ -568,19 +491,7 @@ define([
             }
         }
 
-        /** @function renderContentContainer
-         *  Description
-         *  @param {Object} variable - Desc.
-         *  @return {Type} desc.
-         */
-        function renderContentContainer(props) {
-            var contentContainer = d.createElement('div');
-            contentContainer.setAttribute('id', configs.contentContainerId);
-            contentContainer.classList.add("content-container");
-            contentContainer.appendChild(renderPanel(props));
-            contentContainer.appendChild(renderGraphColumn(props));
-            return contentContainer;
-        }
+
 
         /** @function renderHeaderContainer
          *  Description
@@ -605,7 +516,7 @@ define([
 
             var appContainer = d.getElementById(configs.appContainerId);
             appContainer.appendChild(renderHeaderContainer(props));
-            appContainer.appendChild(renderContentContainer(props));
+            appContainer.appendChild(ui.contentContainer(props));
         }
 
         function setMessageText(funcProps) {
@@ -618,38 +529,7 @@ define([
             spText.innerHTML = '';
         }
 
-        /** @function renderGraphColumn
-         *  Description
-         *  @param {Object} variable - Desc.
-         *  @return {Type} desc.
-         */
-        function renderGraphColumn() {
-            var graphColumnContainer = d.createElement('div');
-            graphColumnContainer.setAttribute('id', 'graph-column-container');
-            graphColumnContainer.classList.add("graph-column");
 
-            var messageContainer = d.createElement('div');
-            messageContainer.setAttribute('id', 'message-container');
-            messageContainer.classList.add('message-container');
-
-            var messageText = d.createElement('span');
-            messageText.setAttribute('id', 'message-text');
-            messageContainer.appendChild(messageText);
-
-            var graphContainer = d.createElement('div');
-            graphContainer.setAttribute('id', configs.graphContainerId);
-            graphContainer.classList.add("graph-container");
-
-
-
-            var textPrevievContainer = renderTextPreview();
-
-            graphColumnContainer.appendChild(messageContainer);
-            graphColumnContainer.appendChild(graphContainer);
-            graphColumnContainer.appendChild(textPrevievContainer);
-
-            return graphColumnContainer;
-        }
 
 
 
@@ -745,44 +625,6 @@ define([
             header.innerHTML = configs.header;
             return header;
         }
-
-
-
-        /** @function renderPanel
-         *  Description
-         *  @param {Object} variable - Desc.
-         *  @return {Type} desc.
-         */
-        function renderPanel(props) {
-
-            var divPanel = d.createElement('div');
-
-            divPanel.setAttribute('id', classNames.panel.container);
-            divPanel.classList.add(classNames.panel.container);
-
-            var menu = ui.menu({
-                gwClient: gwClient,
-                classNames: classNames,
-                menuItems: menuItems
-            });
-
-
-
-            var navProps = props;
-            navProps.configs = configs;
-            navProps.classNames = classNames;
-            navProps.cy = cy;
-
-            var tabNav = ui.navigation(navProps);
-            var tabs = ui.tabs(props);
-
-            divPanel.appendChild(menu);
-            divPanel.appendChild(tabNav);
-            divPanel.appendChild(tabs);
-
-            return divPanel;
-        }
-
 
 
 
@@ -1105,6 +947,9 @@ define([
 
         return {
             start: function (props) {
+
+                console.debug(ui.info());
+
                 render({
                     gwClient: gwClient
                 });

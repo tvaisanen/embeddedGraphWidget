@@ -5,15 +5,65 @@
 
 define([
         "../utils/eventListeners",
+        "../components/menuItems",
         "../configuration/classNames",
         "../configuration/configs",
-        "../utils/gwClient"
+        "../utils/graphUtils",
+        "../utils/gwClient",
+        "../utils/eventListeners"
     ],
-    function (eventListeners, classNames, configs, gwClient) {
+    function (eventListeners, menuItems, classNames, configs, graphUtils, gwClient) {
 
         var d = document;
 
 
+
+        /** @function renderContentContainer
+         *  Description
+         *  @param {Object} variable - Desc.
+         *  @return {Type} desc.
+         */
+        function contentContainer(props) {
+            var container = d.createElement('div');
+            container.setAttribute('id', configs.containerId);
+            container.classList.add("content-container");
+            container.appendChild(panel(props));
+            container.appendChild(graphColumn(props));
+            return container;
+        }
+
+        /** @function graphColumn
+         *  Description
+         *  @param {Object} variable - Desc.
+         *  @return {Type} desc.
+         */
+        function graphColumn() {
+            var graphColumnContainer = d.createElement('div');
+            graphColumnContainer.setAttribute('id', 'graph-column-container');
+            graphColumnContainer.classList.add("graph-column");
+
+            var messageContainer = d.createElement('div');
+            messageContainer.setAttribute('id', 'message-container');
+            messageContainer.classList.add('message-container');
+
+            var messageText = d.createElement('span');
+            messageText.setAttribute('id', 'message-text');
+            messageContainer.appendChild(messageText);
+
+            var graphContainer = d.createElement('div');
+            graphContainer.setAttribute('id', configs.graphContainerId);
+            graphContainer.classList.add("graph-container");
+
+
+
+            var textPrevievContainer = textPreview();
+
+            graphColumnContainer.appendChild(messageContainer);
+            graphColumnContainer.appendChild(graphContainer);
+            graphColumnContainer.appendChild(textPrevievContainer);
+
+            return graphColumnContainer;
+        }
 
         /** @function renderGraphsContent
          *  Description
@@ -167,9 +217,6 @@ define([
              * */
             var content = props.content;
 
-            console.debug("Debugging ui.elementsContent()");
-            console.debug(props);
-
             var div = d.createElement('div');
             div.setAttribute('id', "elements-content");
 
@@ -184,7 +231,7 @@ define([
          *  @param {Object} variable - Desc.
          *  @return {Type} desc.
          */
-        function elementsFilter() {
+        function elementsFilter(props) {
             var div = d.createElement('div');
             var spanFilter = d.createElement('span');
             var btnClearFilter = d.createElement("button");
@@ -228,11 +275,10 @@ define([
          *  @return {Type} desc.
          */
         function elementsList(props) {
-            console.debug("Debugging ui.elementsList()");
-            console.debug(props);
+
             var content = props.content;
             var cy = props.cy;
-            var gw = props.gwClient;
+            var gw = gwClient;
 
 // which are meant to be used with
             function getElementIDsToArray(selector) {
@@ -284,18 +330,18 @@ define([
                 array: nodes,
                 cy: cy,
                 gw: gw,
-                onClick: listenerFunctions.elementsList.onClick,
-                onMouseOver: listenerFunctions.elementsList.onMouseOver,
-                onMouseOut: listenerFunctions.elementsList.onMouseOut,
+                onClick: eventListeners.elementsList.onClick,
+                onMouseOver: eventListeners.elementsList.onMouseOver,
+                onMouseOut: eventListeners.elementsList.onMouseOut,
                 toggleVisibility: toggleVisibility
             });
 
             var ulEdges = unorderedListFromArray({
                 cy: cy,
                 array: edges,
-                onClick: listenerFunctions.elementsList.onClick,
-                onMouseOver: listenerFunctions.elementsList.onMouseOver,
-                onMouseOut: listenerFunctions.elementsList.onMouseOut,
+                onClick: eventListeners.elementsList.onClick,
+                onMouseOver: eventListeners.elementsList.onMouseOver,
+                onMouseOut: eventListeners.elementsList.onMouseOut,
                 toggleVisibility: toggleVisibility
             });
 
@@ -529,6 +575,9 @@ define([
          */
         function navigation(props) {
 
+            console.debug("navigation()");
+            console.debug(props);
+
             // Create the div which contains graphingwikiBrowser navigation tabs
 
             var tabs = props.configs.tabs;
@@ -577,6 +626,42 @@ define([
             return divNav;
         }
 
+        /** @function renderPanel
+         *  renderPanel : returns ui panel, wich contain <DESCRIBE>
+         *  @param {Object} variable - Desc.
+         *  @return {Type} desc.
+         */
+        function panel(props) {
+
+            var divPanel = d.createElement('div');
+
+            divPanel.setAttribute('id', classNames.panel.container);
+            divPanel.classList.add(classNames.panel.container);
+
+            var menuDiv = menu({
+                gwClient: gwClient,
+                classNames: classNames,
+                menuItems: menuItems
+            });
+
+
+
+            var navProps = props;
+            navProps.configs = configs;
+            navProps.classNames = classNames;
+            navProps.cy = graphUtils.cy();
+            console.debug("NavProps!");
+            console.debug(navProps);
+            var tabNavDiv = navigation(navProps);
+            var tabsDiv = tabs(props);
+
+            divPanel.appendChild(menuDiv);
+            divPanel.appendChild(tabNavDiv);
+            divPanel.appendChild(tabsDiv);
+
+            return divPanel;
+        }
+
         /** @function renderTabs
          *  Description
          *  @param {Object} variable - Desc.
@@ -610,6 +695,85 @@ define([
             return divContent;
         }
 
+                /** @function cy context menu init
+         * Todo: separate ul rendering and eventListener binding
+         * @param cy
+         * @return {Object}
+         */
+        function unorderedListFromArray(funcProps) {
+            /*
+             * Todo: add support for the array containing evenListener -methods
+             * array: array of string items
+             * return: unordered html element with list items
+             * from the array
+             * */
+
+            var cy = funcProps.cy;
+            var array = funcProps.array;
+            var toggleVisibility = funcProps.toggleVisibility;
+
+
+            var ul = d.createElement('ul');
+
+            array.forEach(function (listElementId) {
+                var li = d.createElement('li');
+
+                var checkBox = d.createElement('input');
+                checkBox.setAttribute('id', 'visibility_' + listElementId);
+                checkBox.setAttribute('type', 'checkbox');
+
+                var elementHidden = cy.getElementById(listElementId).hidden()
+                checkBox.setAttribute('checked', elementHidden);
+
+
+                checkBox.checked = true;
+                //console.log(checkBox);
+                checkBox.addEventListener('click', function (event) {
+                    console.log(event.target);
+                    toggleVisibility(event.target);
+                    console.log(event.target.id);
+                });
+
+
+                li.appendChild(checkBox);
+
+                li.innerHTML += listElementId;
+
+                li.setAttribute('id', listElementId);
+
+                li.addEventListener('mouseover', function (evt) {
+                    funcProps.onMouseOver({
+                        cy: cy,
+                        listItemId: evt.target.id
+                    });
+                });
+
+
+                li.addEventListener('mouseout', function (evt) {
+                    funcProps.onMouseOut({
+                        cy: cy,
+                        listItemId: evt.target.id
+                    });
+                });
+
+                li.addEventListener('click', function (evt) {
+                    funcProps.onClick({
+                        evt: evt,
+                        elementId: listElementId,
+                        currentDetail: props.currentDetail,
+                        classToToggle: classNames.tab.elements.listItem.selected,
+                        setCurrentDetail: function () {
+                            console.log("stub set detail")
+                        }
+                    })
+                });
+
+                ul.appendChild(li);
+            });
+            return ul;
+        }
+
+
         /** @function updateTabs
          *  Description
          *  @param {Object} variable - Desc.
@@ -638,7 +802,9 @@ define([
         }
 
         return {
+            contentContainer: contentContainer,
             elementsContent: elementsContent,
+            elementsFilter: elementsFilter,
             graphsContent: graphsContent,
             graphListItem: graphListItem,
             menu: menu,
@@ -646,7 +812,13 @@ define([
             stylesContent: stylesContent,
             tabs: tabs,
             textPreview: textPreview,
-            updateTabs: updateTabs
+            updateTabs: updateTabs,
+            info: function(){
+                return {
+                    name: "UI",
+                    description: "userinterface components."
+                }
+            }
         }
     }
 );

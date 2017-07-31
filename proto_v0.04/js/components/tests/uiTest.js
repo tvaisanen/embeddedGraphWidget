@@ -6,10 +6,11 @@ define([
     "components/ui",
     "configuration/classNames",
     "utils/eventListeners",
+    "utils/graphUtils",
     "utils/gwClient",
     "components/menuItems",
 
-], function (ui, classNames, eventListeners, gwClient, menuItems) {
+], function (ui, classNames, eventListeners, graphUtils, gwClient, menuItems) {
 
     var el = eventListeners;
 
@@ -101,11 +102,23 @@ define([
     });
 
     QUnit.test("elementsFilter()", function (assert) {
-        assert.ok(false, "NOT IMPLEMENTED");
+        console.debug("Test elementsFilter()");
+        var cyContainer = document.createElement('div');
+        document.body.appendChild(cyContainer);
+        var filter = ui.elementsFilter();
+        var childInput = filter.childNodes[0];
+        assert.deepEqual(filter.childElementCount, 3, "returns with correct childElementCount");
+        assert.deepEqual(childInput.id, "filter", "returns with correct input id");
+        document.body.removeChild(cyContainer);
     });
 
     QUnit.test("elementsList()", function (assert) {
-        assert.ok(false, "NOT IMPLEMENTED");
+        var cy = graphUtils.testCy(cyContainer);
+        var elementsList = ui.elementsList({
+            cy: cy
+        });
+        console.log(elementsList);
+        assert.ok(elementsList, "returns");
     });
 
     QUnit.test("tabs()", function (assert) {
