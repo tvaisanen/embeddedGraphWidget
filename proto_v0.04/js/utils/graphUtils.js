@@ -188,9 +188,6 @@ define([
                                     var nodesConnectedTo = node.out[category];
 
                                     // for each connected node create a new edge
-                                    console.group("I think that the problem is here!");
-                                    console.debug(nodesConnectedTo);
-                                    console.groupEnd();
                                     createEdgesToNodes({
                                         sourceNodeId: nodeId,
                                         nodesToCreateEdges: nodesConnectedTo,
@@ -215,7 +212,7 @@ define([
                             newCategoriesIn.forEach(function (category) {
                                 var nodesConnectedTo = node.in[category];
                                 createEdgesFromNodes({
-                                    sourceNodeId: nodeId,
+                                    targetNodeId: nodeId,
                                     nodesFromCreateEdges: nodesConnectedTo,
                                     category: category,
                                     cy: cy
@@ -285,7 +282,8 @@ define([
             var targetType = typeof targetNodeId;
 
             if (sourceType === 'undefined' || targetType === 'undefined'){
-                console.debug("undefined node");
+                console.debug("Exception raised by createEdgeId()");
+                console.debug("called by: " + arguments.callee.caller.name);
                 throw TypeError('createEdgeId() called with undefined node id');
             } else {
                 return sourceNodeId + "_to_" + targetNodeId;
@@ -351,6 +349,7 @@ define([
 
             } catch (e) {
                 console.groupCollapsed("Exception raised by createNewEdge()");
+                console.debug("called by: " + arguments.callee.caller.name);
                 console.info("Parameters passed:");
                 console.info(props);
                 console.warn(e);
@@ -367,6 +366,7 @@ define([
         function createNewNode(id, cy) {
 
             if (typeof id === 'undefined'){
+                console.debug("Exception raised by createNewNode()");
                 throw TypeError("createNewNode() called with undefined id");
             }
 
@@ -413,7 +413,6 @@ define([
 
                 // If nodes do not exist, create them.
                 // nodeIdAvailable: true === node do not exist.
-
 
                 nodeIdAvailable(props.sourceNodeId, props.cy) ?
                     createNewNode(props.sourceNodeId, props.cy) : null;
@@ -475,7 +474,6 @@ define([
              * If nodes do not exist, create them and add to cy.elements.
              */
 
-            // FixMe!
             props.nodesFromCreateEdges.forEach(function (sourceNodeId) {
                 props.sourceNodeId = sourceNodeId;
                 createNodesAndEdgeBetween(props);
