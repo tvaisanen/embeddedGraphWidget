@@ -200,6 +200,29 @@ define([
 
     QUnit.test("elementHasCategoryClass()", function (assert) {
 
+        var cy = cytoscape({elements: [{group: 'nodes', data: {id: 'existingNode'}}]})
+        var existingNodeId = 'existingNode';
+        var node = cy.getElementById(existingNodeId);
+        var fooClass = 'foo';
+        var barClass = 'bar';
+        var categories = [fooClass, barClass];
+
+        assert.notOk(gu.elementHasCategoryClass({
+                element: node,
+                categories: categories
+            }),
+            "Returns false when there is no category assigned."
+        );
+
+        node.addClass(fooClass);
+        console.debug("has class 'foo': " + node.hasClass(fooClass));
+
+        assert.ok(gu.elementHasCategoryClass({
+                element: node,
+                categories: categories
+            }),
+            "Returns true when there are category assigned."
+        );
     });
 
     QUnit.test("expandNode", function (assert) {

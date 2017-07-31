@@ -11,26 +11,39 @@ define([
         "../components/ui",
         "../utils/cyInitUtils"
     ],
-    function (cytoscape, configs, elementStyles, gwClient, edgeCategories, ui, cyInitUtils) {
-
-        // todo: add active CY instance here and use it through this module?
+    function (
+        cytoscape,
+        configs,
+        elementStyles,
+        gwClient,
+        edgeCategories,
+        ui,
+        cyInitUtils) {
+        /**
+         * Wrapper for cytoscape.
+         * @exports graphUtils
+         */
 
         // active graph instance
         var cy;
 
-        /** @function elementHasCategoryClass
-         *  Check if the given element has been assigned with existing
-         *  category style classes.
-         *  @param {Object} element - Cytoscape element
-         *  @param {Array} categories - Array of category names.
+
+        /**
+         *  @function
+         *  @name elementHasCategoryClass
+         *  @description Check if the given element has bee assigned with existing category style classes.
+         *  @param {Object} props
+         *  @param {Element} props.element Cytoscape element.
+         *  @param {Array} props.categories Array of category names.
          *  @return {Boolean} True if element have assigned classes.
          */
-        function elementHasCategoryClass(element, categories) {
+        function elementHasCategoryClass(props) {
             try {
-                var categoryClassFound = categories.some(function (c) {
-                    return element.hasClass(c);
+                var found = props.categories.some(function (c) {
+                    return props.element.hasClass(c);
                 });
-                return categoryClassFound;
+                return found;
+
 
             } catch (e) {
                 console.groupCollapsed("Exception raised by graphingwikiBrowser.elementHasCategoryClass()");
@@ -252,7 +265,7 @@ define([
              */
             props.nodesToCreateEdges.forEach(function (targetNodeId) {
                 try {
-                    if (targetNodeId === 'undefined'){
+                    if (targetNodeId === 'undefined') {
                         console.warn("graphUtils.createEdgesToNodes() is trying to create edge to undefined node!");
                         console.debug(props);
                     } else {
@@ -281,7 +294,7 @@ define([
             var sourceType = typeof sourceNodeId;
             var targetType = typeof targetNodeId;
 
-            if (sourceType === 'undefined' || targetType === 'undefined'){
+            if (sourceType === 'undefined' || targetType === 'undefined') {
                 console.debug("Exception raised by createEdgeId()");
                 console.debug("called by: " + arguments.callee.caller.name);
                 throw TypeError('createEdgeId() called with undefined node id');
@@ -365,7 +378,7 @@ define([
          * */
         function createNewNode(id, cy) {
 
-            if (typeof id === 'undefined'){
+            if (typeof id === 'undefined') {
                 console.debug("Exception raised by createNewNode()");
                 throw TypeError("createNewNode() called with undefined id");
             }
@@ -424,27 +437,23 @@ define([
                 createNewEdge(props);
 
 
-
-
-
-
                 var edgeId = createEdgeId(
                     props.sourceNodeId,
                     props.targetNodeId
                 );
-/*
-                console.group("Debugging edge creation!");
-                console.debug("sourceNodeId: " + props.sourceNodeId);
-                console.debug("sourceNodeId: " + props.targetNodeId);
-                if (typeof props.targetNodeId === 'undefined'){
-                    console.log("%cHere's the problem", "color:red;");
-                    console.debug(props);
+                /*
+                 console.group("Debugging edge creation!");
+                 console.debug("sourceNodeId: " + props.sourceNodeId);
+                 console.debug("sourceNodeId: " + props.targetNodeId);
+                 if (typeof props.targetNodeId === 'undefined'){
+                 console.log("%cHere's the problem", "color:red;");
+                 console.debug(props);
 
-                }
-                console.debug(props);
-                console.debug(edgeId);
-                console.groupEnd();
-*/
+                 }
+                 console.debug(props);
+                 console.debug(edgeId);
+                 console.groupEnd();
+                 */
                 addClassToEdge({
                     edgeId: edgeId,
                     category: props.category,
@@ -675,6 +684,7 @@ define([
             createNewNode: createNewNode,
             createNodesAndEdgeBetween: createNodesAndEdgeBetween,
             edgeExists: edgeExists,
+            elementHasCategoryClass: elementHasCategoryClass,
             expandNode: expandNode,
             cy: function () {
                 return cy;
