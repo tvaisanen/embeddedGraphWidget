@@ -1,4 +1,32 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: utils/graphUtils.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: utils/graphUtils.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * Created by toni on 19.7.2017.
  */
 
@@ -11,38 +39,27 @@ define([
         "../components/ui",
         "../utils/cyInitUtils"
     ],
-    function (cytoscape,
-              configs,
-              elementStyles,
-              gwClient,
-              edgeCategories,
-              ui,
-              cyInitUtils) {
-        /**
-         * Wrapper for cytoscape.
-         * @module graphUtils
-         */
+    function (cytoscape, configs, elementStyles, gwClient, edgeCategories, ui, cyInitUtils) {
 
-            // active graph instance
+        // todo: add active CY instance here and use it through this module?
+
+        // active graph instance
         var cy;
 
 
-        /**
-         *  @function
-         *  @name elementHasCategoryClass
-         *  @description Check if the given element has bee assigned with existing category style classes.
-         *  @param {Object} props
-         *  @param {Element} props.element Cytoscape element.
-         *  @param {Array} props.categories Array of category names.
+        /** @function elementHasCategoryClass
+         *  Check if the given element has been assigned with existing
+         *  category style classes.
+         *  @param {Object} element - Cytoscape element
+         *  @param {Array} categories - Array of category names.
          *  @return {Boolean} True if element have assigned classes.
          */
-        function elementHasCategoryClass(props) {
+        function elementHasCategoryClass(element, categories) {
             try {
-                var found = props.categories.some(function (c) {
-                    return props.element.hasClass(c);
+                var categoryClassFound = categories.some(function (c) {
+                    return element.hasClass(c);
                 });
-                return found;
-
+                return categoryClassFound;
 
             } catch (e) {
                 console.groupCollapsed("Exception raised by graphingwikiBrowser.elementHasCategoryClass()");
@@ -54,9 +71,8 @@ define([
             }
         }
 
-        /** @function
-         *  @name addClassToEdge
-         *  @description Todo: Redundant? Decide what to do with this.
+        /** @function addClassToEdge
+         *  Todo: Decide what to do with this.
          *  @param {String} edgeId- Id of the edge.
          *  @param {String} classForEdge - Style category for the edge.
          */
@@ -109,60 +125,39 @@ define([
             }
         }
 
-        /** @function
-         *  @name setAndRunLayout
-         *  @description Update cytoscape graph layout.
-         *  @param {Object} props
-         *  @param {Object} props.cy cytoscape instance
-         *  @param {String} props.layout layout name.
-         *  @return {Boolean} True if no errors.
+        /** @function setAndRunLayout
+         *  Description
+         *  @param {Object} variable - Desc.
+         *  @return {Type} desc.
          */
-        function setAndRunLayout(props) {
-            try {
-                var layoutStyle = props.layout || "circle";
-                var layout = props.cy.makeLayout({name: layoutStyle});
-                //var layout = cy.makeLayout({name: "cola"});
-                layout.run();
-                return true;
-            } catch (e) {
-                console.group("Exception raised by graphUtils.setAndRunLayout()");
-                console.debug("props:");
-                console.debug(props);
-                console.warn(e);
-                console.groupEnd();
-                return false;
-            }
+        function setAndRunLayout(cy) {
+            var layout = cy.makeLayout({name: "circle"});
+            //var layout = cy.makeLayout({name: "cola"});
+            layout.run();
         }
 
-        /** @function
-         *  @name nodeIdAvailable
-         *  @description Check if a node of given id is already defined in the graph.
+        /** @function nodeIdAvailable
+         *  Check if a node of given id is already defined in the graph.
          *  @param {String} nodeId- Id of node.
          *  @return {Boolean} True if id is available for use, else False.
          */
-        function nodeIdAvailable(props, nodeId, cy) {
-            return !props.cy.getElementById(props.nodeId).isNode();
+        function nodeIdAvailable(nodeId, cy) {
+            return !cy.getElementById(nodeId).isNode();
         }
 
-        /** @function
-         *  @name edgeExists
-         *  @description Check if a node of given id is already defined in the graph.
-         *  @param {Objec} props
-         *  @param {String} props.cy Cytoscape instance.
-         *  @param {String} props.edgeId Id of edge element.
+        /** @function edgeExists
+         *  Check if a node of given id is already defined in the graph.
+         *  @param {String} edgeId - Id of edge.
          *  @return {Boolean} True if edge already defined, else False.
          */
-        function edgeExists(props) {
-            return props.cy.getElementById(props.edgeId).isEdge();
+        function edgeExists(edgeId, cy) {
+            return cy.getElementById(edgeId).isEdge();
         }
 
-        /**
-         *  @function
-         *  @name expandNode
-         *  @description Chain of events to trigger when node needs to be expanded
-         *  @param {Object} props
-         *  @param {String} props.nodeId Id of the node to expand.
-         *  @param {Object} props.cy Cytoscape instance.
+        /** @function expandNode
+         *  Description
+         *  @param {String} nodeId - Id of the node to expand.
+         *  @param {Object} cy - Cytoscape instance.
          *
          */
         function expandNode(props) {
@@ -257,7 +252,7 @@ define([
                             console.warn(e);
                             console.groupEnd();
                         }
-                        setAndRunLayout(props);
+                        setAndRunLayout(props.cy);
 
 
                     }
@@ -270,15 +265,12 @@ define([
             }
         }
 
-        /**
-         * @function
-         * @name createEdgesToNodes
-         * @description Create edges from given node to every node of given array. Nodes are created if do not exist.
-         * @param {Object} props
-         * @param {String} props.sourceNodeId source node ID
-         * @param {Array} props.nodesToCreateEdges target node IDs
-         * @param {String} props.category category for edges
-         * @param {Object} props.cy Cytoscape instance
+        /** @function createNodesAndEdgeBetween
+         *  Description
+         *  @param {String} sourceNodeId- Id of the source node.
+         *  @param {Array} nodesToCreateEdges - Array of nodes?.
+         *  @param {String} category - Category for edges.
+         *  @param {Object} cy - Cytoscape instance.
          */
         function createEdgesToNodes(props) {
 
@@ -289,7 +281,7 @@ define([
              */
             props.nodesToCreateEdges.forEach(function (targetNodeId) {
                 try {
-                    if (targetNodeId === 'undefined') {
+                    if (targetNodeId === 'undefined'){
                         console.warn("graphUtils.createEdgesToNodes() is trying to create edge to undefined node!");
                         console.debug(props);
                     } else {
@@ -314,28 +306,16 @@ define([
             });
         }
 
+        function createEdgeId(sourceNodeId, targetNodeId) {
+            var sourceType = typeof sourceNodeId;
+            var targetType = typeof targetNodeId;
 
-        /**
-         * @function
-         * @name createEdgeId
-         * @description Generate edge ID from source and target node IDs.
-         * @param {Object} props
-         * @param {String} props.sourceNodeId source node ID
-         * @param {Array} props.nodesToCreateEdges target node IDs
-         * @param {String} props.category category for edges
-         * @param {Object} props.cy Cytoscape instance
-         */
-        function createEdgeId(props) {
-
-            var sourceType = typeof props.sourceNodeId;
-            var targetType = typeof props.targetNodeId;
-
-            if (sourceType === 'undefined' || targetType === 'undefined') {
+            if (sourceType === 'undefined' || targetType === 'undefined'){
                 console.debug("Exception raised by createEdgeId()");
                 console.debug("called by: " + arguments.callee.caller.name);
                 throw TypeError('createEdgeId() called with undefined node id');
             } else {
-                return props.sourceNodeId + "_to_" + props.targetNodeId;
+                return sourceNodeId + "_to_" + targetNodeId;
             }
         }
 
@@ -350,10 +330,10 @@ define([
         function createNewEdge(props) {
 
             try {
-                var edgeId = createEdgeId({
-                    sourceNodeId: props.sourceNodeId,
-                    targetNodeID: props.targetNodeId
-                });
+                var edgeId = createEdgeId(
+                    props.sourceNodeId,
+                    props.targetNodeId
+                );
                 // Create new edge.
                 var newEdge = {
                     group: 'edges',
@@ -365,7 +345,7 @@ define([
                 };
 
                 // If edge is already defined, return the existing one.
-                if (edgeExists({edgeId: edgeId, cy: props.cy})) {
+                if (edgeExists(edgeId, props.cy)) {
                     return props.cy.getElementById(edgeId);
 
                 } else {
@@ -414,7 +394,7 @@ define([
          * */
         function createNewNode(id, cy) {
 
-            if (typeof id === 'undefined') {
+            if (typeof id === 'undefined'){
                 console.debug("Exception raised by createNewNode()");
                 throw TypeError("createNewNode() called with undefined id");
             }
@@ -429,7 +409,7 @@ define([
 
                 // after saving page to moin
                 // Can not create element with invalid string ID ``
-                if (nodeIdAvailable({nodeId: id, cy: cy})) {
+                if (nodeIdAvailable(id, cy)) {
                     cy.add(newNode);
                     return true;
                 } else {
@@ -463,33 +443,37 @@ define([
                 // If nodes do not exist, create them.
                 // nodeIdAvailable: true === node do not exist.
 
-                nodeIdAvailable({nodeId: props.sourceNodeId, cy: props.cy}) ?
+                nodeIdAvailable(props.sourceNodeId, props.cy) ?
                     createNewNode(props.sourceNodeId, props.cy) : null;
 
-                nodeIdAvailable({nodeId: props.targetNodeId, cy: props.cy}) ?
+                nodeIdAvailable(props.targetNodeId, props.cy) ?
                     createNewNode(props.targetNodeId, props.cy) : null;
 
                 // createNewEdge checks if the edge already exists.
                 createNewEdge(props);
 
 
-                var edgeId = createEdgeId({
-                    sourceNodeId: props.sourceNodeId,
-                    targetNodeId: props.targetNodeId
-                });
-                /*
-                 console.group("Debugging edge creation!");
-                 console.debug("sourceNodeId: " + props.sourceNodeId);
-                 console.debug("sourceNodeId: " + props.targetNodeId);
-                 if (typeof props.targetNodeId === 'undefined'){
-                 console.log("%cHere's the problem", "color:red;");
-                 console.debug(props);
 
-                 }
-                 console.debug(props);
-                 console.debug(edgeId);
-                 console.groupEnd();
-                 */
+
+
+
+                var edgeId = createEdgeId(
+                    props.sourceNodeId,
+                    props.targetNodeId
+                );
+/*
+                console.group("Debugging edge creation!");
+                console.debug("sourceNodeId: " + props.sourceNodeId);
+                console.debug("sourceNodeId: " + props.targetNodeId);
+                if (typeof props.targetNodeId === 'undefined'){
+                    console.log("%cHere's the problem", "color:red;");
+                    console.debug(props);
+
+                }
+                console.debug(props);
+                console.debug(edgeId);
+                console.groupEnd();
+*/
                 addClassToEdge({
                     edgeId: edgeId,
                     category: props.category,
@@ -691,15 +675,6 @@ define([
             });
         }
 
-        function createNewCy(props) {
-            var style = props.style || configs.style;
-            cy = cytoscape({
-                data: props.data,
-                style: style
-            })
-            return cy;
-        }
-
         /** @function initCytoscape
          *  Description
          *  @param {Object} variable - Desc.
@@ -707,7 +682,7 @@ define([
          */
         function initCytoscape(props) {
             /*
-             *   Return <div id="cy">
+             *   Return &lt;div id="cy">
              *   Initialize empty Cytoscape graph
              *
              * */
@@ -725,12 +700,10 @@ define([
             createEdgesFromNodes: createEdgesFromNodes,
             createEdgesToNodes: createEdgesToNodes,
             createEdgeId: createEdgeId,
-            createNewCy: createNewCy,
             createNewEdge: createNewEdge,
             createNewNode: createNewNode,
             createNodesAndEdgeBetween: createNodesAndEdgeBetween,
             edgeExists: edgeExists,
-            elementHasCategoryClass: elementHasCategoryClass,
             expandNode: expandNode,
             cy: function () {
                 return cy;
@@ -741,4 +714,67 @@ define([
         }
 
 
-    });
+    });</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-graphingwikiBrowser.html">graphingwikiBrowser</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addClassToEdgeTodo:Decidewhattodowiththis.">addClassToEdge
+ Todo: Decide what to do with this.</a></li><li><a href="global.html#createEdgesFromNodesDescription">createEdgesFromNodes
+ Description</a></li><li><a href="global.html#createNewEdgeDescription">createNewEdge
+ Description</a></li><li><a href="global.html#createNewNodeCreatenewnodeandaddittothegivencytoscapeinstance.">createNewNode
+ Create new node and add it to the given cytoscape instance.</a></li><li><a href="global.html#createNodesAndEdgeBetweenCreatesedgebetweentwonodesandifthenodesdonotexist,thesearealsocreated.">createNodesAndEdgeBetween
+ Creates edge between two nodes and if the nodes do not
+ exist, these are also created.</a></li><li><a href="global.html#createNodesAndEdgeBetweenDescription">createNodesAndEdgeBetween
+ Description</a></li><li><a href="global.html#cycontextmenuinitTodo:separateulrenderingandeventListenerbinding">cy context menu init
+Todo: separate ul rendering and eventListener binding</a></li><li><a href="global.html#edgeExistsCheckifanodeofgivenidisalreadydefinedinthegraph.">edgeExists
+ Check if a node of given id is already defined in the graph.</a></li><li><a href="global.html#elementHasCategoryClassCheckifthegivenelementhasbeenassignedwithexistingcategorystyleclasses.">elementHasCategoryClass
+ Check if the given element has been assigned with existing
+ category style classes.</a></li><li><a href="global.html#elementsContentDescription">elementsContent
+ Description</a></li><li><a href="global.html#elementsList.onClick()elementsList.onClick()">elementsList.onClick()
+ elementsList.onClick()</a></li><li><a href="global.html#elementsList.onMouseout()elementsList.onMouseout()">elementsList.onMouseout()
+ elementsList.onMouseout()</a></li><li><a href="global.html#elementsList.onMouseover()elementsList.onMouseover()">elementsList.onMouseover()
+ elementsList.onMouseover()</a></li><li><a href="global.html#expandNodeDescription">expandNode
+ Description</a></li><li><a href="global.html#generateContentDescription">generateContent
+ Description</a></li><li><a href="global.html#graphColumnDescription">graphColumn
+ Description</a></li><li><a href="global.html#graphList.listItem.onClick()graphList.listItem.onClick()LoadnewgraphtocanvaswithgwClient.todo:thegwaction.Graphingwikiactionistheinterfaceforthisaction.">graphList.listItem.onClick()
+ graphList.listItem.onClick()
+ Load new graph to canvas with gwClient.
+ todo: the gw action.
+ Graphingwiki action is the interface for this action.</a></li><li><a href="global.html#handleNavClickDescription">handleNavClick
+ Description</a></li><li><a href="global.html#inArray">inArray</a></li><li><a href="global.html#initCytoscapeDescription">initCytoscape
+ Description</a></li><li><a href="global.html#nodeIdAvailableCheckifanodeofgivenidisalreadydefinedinthegraph.">nodeIdAvailable
+ Check if a node of given id is already defined in the graph.</a></li><li><a href="global.html#on">on</a></li><li><a href="global.html#popupConnect.btnConnect.onClick()popupConnect.btnConnect.onClick()">popupConnect.btnConnect.onClick()
+ popupConnect.btnConnect.onClick()</a></li><li><a href="global.html#popupConnect.btnSelect.onClick()popupConnect.btnSelect.onClick()">popupConnect.btnSelect.onClick()
+ popupConnect.btnSelect.onClick()</a></li><li><a href="global.html#renderContentContainerDescription">renderContentContainer
+ Description</a></li><li><a href="global.html#renderElementsfilterDescription">renderElementsfilter
+ Description</a></li><li><a href="global.html#renderElementsListDescriptionTodo:Refactor">renderElementsList
+ Description
+ Todo: Refactor</a></li><li><a href="global.html#renderGraphListItemDescription">renderGraphListItem
+ Description</a></li><li><a href="global.html#renderGraphsContentDescription">renderGraphsContent
+ Description</a></li><li><a href="global.html#renderMenuDescription">renderMenu
+ Description</a></li><li><a href="global.html#renderNavigationDescription">renderNavigation
+ Description</a></li><li><a href="global.html#renderPanelrenderPanel:returnsuipanel,wichcontain%253CDESCRIBE%253E">renderPanel
+ renderPanel : returns ui panel, wich contain <DESCRIBE></a></li><li><a href="global.html#renderStylesContentDescription">renderStylesContent
+ Description</a></li><li><a href="global.html#renderTabsDescription">renderTabs
+ Description</a></li><li><a href="global.html#renderTextPreviewrenderTextPreview()">renderTextPreview
+ renderTextPreview()</a></li><li><a href="global.html#setAndRunLayoutDescription">setAndRunLayout
+ Description</a></li><li><a href="global.html#updateTabsDescription">updateTabs
+ Description</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Mon Jul 31 2017 10:01:26 GMT+0300 (EEST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

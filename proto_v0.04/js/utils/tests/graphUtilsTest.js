@@ -26,7 +26,12 @@ define([
         var sourceId = 'source';
         var targetId = 'target';
         var edgeId = sourceId + '_to_' + targetId;
-        assert.deepEqual(gu.createEdgeId(sourceId, targetId), edgeId, "returns id in correct format");
+        assert.deepEqual(
+            gu.createEdgeId({
+                sourceNodeId: sourceId,
+                targetNodeId: targetId
+            }), edgeId,
+            "returns id in correct format");
     });
 
     QUnit.test("createNewEdge()", function (assert) {
@@ -41,9 +46,24 @@ define([
                 {group: 'edges', data: {id: edgeId, source: sourceId, target: targetId}}
             ]
         });
+
         var edge = cy.getElementById(edgeId);
-        assert.ok(gu.edgeExists(edge.id(), cy), "Returned edge can be found from cy");
-        assert.ok(gu.edgeExists(edgeId, cy), "New edge can be found with getElementById");
+
+        assert.ok(
+            gu.edgeExists({
+                edgeId: edge.id(),
+                cy: cy}
+            ),
+            "Returned edge can be found from cy");
+
+        assert.ok(
+            gu.edgeExists({
+                edgeId: edgeId,
+                cy: cy
+            }),
+            "New edge can be found with getElementById"
+        );
+
         assert.deepEqual(edge.id(), edgeId, "Returned edgeId() matches with with intended Id");
     });
 
@@ -92,10 +112,32 @@ define([
         });
 
 
-        var edgeOne = cy.getElementById(gu.createEdgeId(idSource, idTarget));
-        var edgeTwo = cy.getElementById(gu.createEdgeId(idSource, idOne));
-        var edgeThree = cy.getElementById(gu.createEdgeId(idTwo, idTarget));
-        var edgeFour = cy.getElementById(gu.createEdgeId(idThree, idFour));
+        var edgeOne = cy.getElementById(
+            gu.createEdgeId({
+                sourceNodeId: idSource,
+                targetNodeId: idTarget
+            })
+        );
+        var edgeTwo = cy.getElementById(
+            gu.createEdgeId({
+                sourceNodeId: idSource,
+                targetNodeId: idOne
+            })
+        );
+
+        var edgeThree = cy.getElementById(
+            gu.createEdgeId({
+                sourceNodeId: idTwo,
+                targetNodeId: idTarget
+            })
+        );
+
+        var edgeFour = cy.getElementById(
+            gu.createEdgeId({
+                sourceNodeId: idThree,
+                targetNodeId: idFour
+            })
+        );
 
         var nodeOne = cy.getElementById(idOne);
         var nodeTwo = cy.getElementById(idTwo);
@@ -106,13 +148,34 @@ define([
         console.debug(edgeOne);
         console.debug(edgeOne.isEdge());
 
-        assert.ok(edgeOne.isEdge(), "returns edge and is edge for existing nodes");
-        assert.ok(edgeTwo.isEdge(), "returns edge and is edge for existing source and created target");
-        assert.ok(edgeThree.isEdge(), "returns edge and is edge for existing target and created source");
-        assert.ok(edgeFour.isEdge(), "returns edge and is edge for created source and target");
-        assert.ok(nodeOne.isNode(), "creates the target node if not exist");
-        assert.ok(nodeTwo.isNode(), "creates the source node if not exist");
-        assert.ok(nodeThree.isNode() && nodeFour.isNode(), "creates the source node and target if not exist");
+        assert.ok(
+            edgeOne.isEdge(),
+            "returns edge and is edge for existing nodes"
+        );
+        assert.ok(
+            edgeTwo.isEdge(),
+            "returns edge and is edge for existing source and created target"
+        );
+        assert.ok(
+            edgeThree.isEdge(),
+            "returns edge and is edge for existing target and created source"
+        );
+        assert.ok(
+            edgeFour.isEdge(),
+            "returns edge and is edge for created source and target"
+        );
+        assert.ok(
+            nodeOne.isNode(),
+            "creates the target node if not exist"
+        );
+        assert.ok(
+            nodeTwo.isNode(),
+            "creates the source node if not exist"
+        );
+        assert.ok(
+            nodeThree.isNode() && nodeFour.isNode(),
+            "creates the source node and target if not exist"
+        );
 
     });
 
