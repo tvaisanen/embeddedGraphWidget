@@ -285,7 +285,8 @@ define([
 
             console.debug(props);
 
-            var content = props.content;
+            // var content = props.content;
+            var filter = "";
             var cy = graphUtils.cy();
             var gw = gwClient;
 
@@ -300,10 +301,10 @@ define([
                 try {
                     cy.elements(selector).forEach(function (el) {
                         var id = el.id();
-                        var filter = content.filter.toLowerCase();
+                        // var filter = content.filter.toLowerCase();
                         var filterIncludes = id.toLowerCase().includes(filter);
 
-                        if (content.filter == '' || content.filter == 'undefined') {
+                        if (filter == '' || filter == 'undefined') {
                             idArray.push(id);
                         } else {
                             if (filterIncludes) {
@@ -323,6 +324,10 @@ define([
             var nodes = getElementIDsToArray("node");
             var edges = getElementIDsToArray("edge");
 
+            console.debug("debugging elementsList");
+            console.debug(cy);
+            console.debug(nodes);
+            console.debug(edges);
 
             var div = document.createElement('div');
 
@@ -342,7 +347,7 @@ define([
                 onClick: eventListeners.elementsList.onClick,
                 onMouseOver: eventListeners.elementsList.onMouseOver,
                 onMouseOut: eventListeners.elementsList.onMouseOut,
-                toggleVisibility: toggleVisibility
+                toggleVisibility: graphUtils.toggleVisibility
             });
 
             var ulEdges = unorderedListFromArray({
@@ -351,7 +356,7 @@ define([
                 onClick: eventListeners.elementsList.onClick,
                 onMouseOver: eventListeners.elementsList.onMouseOver,
                 onMouseOut: eventListeners.elementsList.onMouseOut,
-                toggleVisibility: toggleVisibility
+                toggleVisibility: graphUtils.toggleVisibility
             });
 
             div.setAttribute('id', "elements-list");

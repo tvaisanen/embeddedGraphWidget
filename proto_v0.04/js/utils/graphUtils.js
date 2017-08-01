@@ -690,6 +690,32 @@ define([
             });
         }
 
+        /** @function
+         *  @name toggleVisibility
+         *  @description toggle visibility of cy element .parameter is a object, which contains string:elementId
+         *  and object:cy (cytoscape instance).
+         *  @param {Object} props
+         *  @param {Object} props.elementId
+         *  @param {Object} props.cy
+         */
+        function toggleVisibility(props) {
+            try {
+                var el = props.cy.getElementById(props.elementId);
+                if (el.hidden()) {
+                    el.show();
+                } else {
+                    el.hide();
+                }
+            } catch (e) {
+                console.group("Exception raised by toggleVisibility()");
+                console.warn(e);
+                console.info("elementId: " + elementId);
+                console.info("cy: ");
+                console.info(cy);
+                console.groupEnd();
+            }
+        }
+
         function createNewCy(props) {
             try {
                 var style = props.style || configs.style;
