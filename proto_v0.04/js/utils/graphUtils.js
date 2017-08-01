@@ -698,8 +698,8 @@ define([
                     elements: props.data.elements,
                     style: props.data.style
                 });
-                console.debug(cy);
-                console.debug(props);
+
+                cy.on('tap', 'node', bindExpandNode);
                 return cy;
             } catch (e) {
                 console.group("Exception raised by graphUtils.createNewCy()");
