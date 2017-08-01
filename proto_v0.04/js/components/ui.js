@@ -4,14 +4,15 @@
 
 
 define([
+        "../components/elementStyles",
         "../utils/eventListeners",
         "../configuration/classNames",
         "../configuration/configs",
         "../utils/graphUtils",
         "../utils/gwClient",
-        "../components/menuItems",
+        "../components/menuItems"
     ],
-    function (eventListeners, classNames, configs, graphUtils, gwClient, menuItems) {
+    function (elementStyles, eventListeners, classNames, configs, graphUtils, gwClient, menuItems) {
 
 
 
@@ -283,8 +284,6 @@ define([
          */
         function elementsList(props) {
 
-            console.debug(props);
-
             // var content = props.content;
             var filter = "";
             var cy = graphUtils.cy();
@@ -323,11 +322,6 @@ define([
 
             var nodes = getElementIDsToArray("node");
             var edges = getElementIDsToArray("edge");
-
-            console.debug("debugging elementsList");
-            console.debug(cy);
-            console.debug(nodes);
-            console.debug(edges);
 
             var div = document.createElement('div');
 
@@ -402,23 +396,26 @@ define([
              }
              * */
 
-            var styles = props.content;
+            var styles = elementStyles.styles();
             var div = document.createElement('div');
             div.setAttribute('id', "styles-content");
             var ul = document.createElement('ul');
-            var cy = props.cy;
+            var cy = graphUtils.cy();
 
             // Todo: make this generic version to work for all of the following use cases
-            function styleSelection(funcProps) {
+            function styleSelection(props) {
                 try {
                     var div = d.createElement('div');
                     var selection = d.createElement('select');
-                    selection.setAttribute('id', funcProps.selectionId);
+                    selection.setAttribute('id', props.selectionId);
 
                     // generate options for selection
-                    funcProps.options.forEach(function (option) {
+                    props.options.forEach(function (option) {
                         var opt = d.createElement('option');
-                        opt.setAttribute('id', funcProps.attributeId + option.label);
+                        opt.setAttribute(
+                            'id',
+                            props.attributeId + option.label
+                        );
                         opt.innerHTML = option.label;
                         opt.value = option.styleClass;
                         selection.appendChild(opt);
@@ -429,17 +426,18 @@ define([
                     selection.addEventListener('change', function () {
                         props.styleSelectionListener({
                             baseClass: 'edge',
-                            category: funcProps.category,
-                            parameter: funcProps.parameter,
+                            category: props.category,
+                            parameter: props.parameter,
                             value: selection.value
                         });
                     });
                     div.appendChild(selection);
                     return div;
                 } catch (e) {
-                    console.groupCollapsed('Exception raised by styleSelection()');
+                    console.group('Exception raised by styleSelection()');
+                    console.debug("props:");
+                    console.debug(props);
                     console.warn(e);
-                    console.debug(funcPropS);
                     console.groupEnd();
                 }
 
@@ -706,7 +704,8 @@ define([
                     graphsContent({
                         cy: props.cy,
                         gwClient: props.gwClient
-                    }));
+                    })
+                );
 
             } else if (configs.tabs.elements.active) {
                 divContent.appendChild(elementsContent(props));
@@ -721,23 +720,21 @@ define([
         /**
          * @function
          * @name unorderedListFromArray
-         * @description Todo
+         * @description Create unordered list of Cytoscape elements and bind event listeners to list elements.
          * @param {Object} props
          * @param {Type} props.PROP
-         * @return {Object}
+         * @return {HTMLUListElement} list of elements with event listeners
          */
-        function unorderedListFromArray(funcProps) {
+        function unorderedListFromArray(props) {
             /*
-             * Todo: add support for the array containing evenListener -methods
+             * Todo: get event listeners from eventListeners
              * array: array of string items
              * return: unordered html element with list items
              * from the array
              * */
 
-            var cy = funcProps.cy;
-            var array = funcProps.array;
-            var toggleVisibility = funcProps.toggleVisibility;
-
+            var cy = props.cy;
+            var array = props.array;toggl
 
             var ul = d.createElement('ul');
 
@@ -756,7 +753,7 @@ define([
                 //console.log(checkBox);
                 checkBox.addEventListener('click', function (event) {
                     console.log(event.target);
-                    toggleVisibility(event.target);
+                    graphUtils.toggleVisibility(event.target);
                     console.log(event.target.id);
                 });
 
@@ -768,7 +765,7 @@ define([
                 li.setAttribute('id', listElementId);
 
                 li.addEventListener('mouseover', function (evt) {
-                    funcProps.onMouseOver({
+                    props.onMouseOver({
                         cy: cy,
                         listItemId: evt.target.id
                     });
@@ -776,14 +773,14 @@ define([
 
 
                 li.addEventListener('mouseout', function (evt) {
-                    funcProps.onMouseOut({
+                    props.onMouseOut({
                         cy: cy,
                         listItemId: evt.target.id
                     });
                 });
 
                 li.addEventListener('click', function (evt) {
-                    funcProps.onClick({
+                    props.onClick({
                         evt: evt,
                         elementId: listElementId,
                         currentDetail: props.currentDetail,

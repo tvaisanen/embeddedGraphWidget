@@ -2,10 +2,10 @@
  * Created by toni on 19.7.2017.
  */
 
-define(["../utils/graphUtils"], function (graphUtils) {
+define(["../utils/graphUtils", "../configuration/classNames"], function (graphUtils, classNames) {
     "use strict";
     /**
-     * eventListeners
+     * @description Event listeners description here
      * @exports eventListeners
      */
 
@@ -125,12 +125,12 @@ define(["../utils/graphUtils"], function (graphUtils) {
              *  elementsList.onClick()
              * @param {Object} funcProps
              */
-            onClick: function (funcProps) {
-                var evt = funcProps.evt;
+            onClick: function (props) {
+                var evt = props.evt;
 
                 if (evt.target.type === 'checkbox') {
-                    toggleVisibility({
-                        elementId: funcProps.elementId,
+                    graphUtils.toggleVisibility({
+                        elementId: props.elementId,
                         cy: cy
                     });
 
@@ -153,31 +153,39 @@ define(["../utils/graphUtils"], function (graphUtils) {
                 }
             },
 
-            /** @function elementsList.onMouseover()
-             *  elementsList.onMouseover()
-             * @param {Object} funcProps
+            /**
+             * @function
+             * @name onMouseover
+             * @description event listener on mouse cytoscape element
+             * @param {Object} props
              */
-            onMouseOver: function mouseOver(funcProps) {
+            onMouseOver: function mouseOver(props) {
                 try {
-                    var node = funcProps.cy.getElementById(funcProps.listItemId);
+                    var node = props.cy.getElementById(props.listItemId);
                     node.toggleClass('hover-on');
-                    toggleNeighbourhood(node);
+                    graphUtils.toggleNeighborhood({node: node});
                 } catch (e) {
-                    console.warn("Exception raised by elementsList.onMouseOver()");
+                    console.group("Exception raised by elementsList.onMouseOver()");
+                    console.debug("props");
+                    console.debug(props);
                     console.warn(e);
                 }
             },
-            /** @function elementsList.onMouseout()
-             *  elementsList.onMouseout()
-             * @param {Object} funcProps
+            /**
+             * @function
+             * @name onMouseout()
+             * @description elementsList.onMouseout()
+             * @param {Object} props
              */
-            onMouseOut: function mouseOut(funcProps) {
+            onMouseOut: function mouseOut(props) {
                 try {
-                    var node = funcProps.cy.getElementById(funcProps.listItemId);
+                    var node = props.cy.getElementById(props.listItemId);
                     node.toggleClass('hover-on');
-                    toggleNeighbourhood(node);
+                    graphUtils.toggleNeighborhood(node);
                 } catch (e) {
-                    console.warn("Exception raised by elementsList.onMouseOut()");
+                    console.group("Exception raised by elementsList.onMouseOut()");
+                    console.debug("props");
+                    console.debug(props);
                     console.warn(e);
                 }
             }

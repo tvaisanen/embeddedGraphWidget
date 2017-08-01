@@ -38,6 +38,10 @@ define([
          */
         function elementHasCategoryClass(props) {
             try {
+                if (typeof props.categories === 'undefined') {
+                    return false;
+                }
+
                 var found = props.categories.some(function (c) {
                     return props.element.hasClass(c);
                 });
@@ -147,7 +151,7 @@ define([
         /** @function
          *  @name edgeExists
          *  @description Check if a node of given id is already defined in the graph.
-         *  @param {Objec} props
+         *  @param {Object} props
          *  @param {String} props.cy Cytoscape instance.
          *  @param {String} props.edgeId Id of edge element.
          *  @return {Boolean} True if edge already defined, else False.
@@ -326,16 +330,30 @@ define([
          */
         function createEdgeId(props) {
 
+            console.debug("createEdgeID");
+            console.debug(props);
+
             var sourceType = typeof props.sourceNodeId;
             var targetType = typeof props.targetNodeId;
 
-            if (sourceType === 'undefined' || targetType === 'undefined') {
-                console.debug("Exception raised by createEdgeId()");
-                console.debug("called by: " + arguments.callee.caller.name);
-                throw TypeError('createEdgeId() called with undefined node id');
+            console.debug("source type: " + sourceType + " : " + (sourceType === 'undefined'));
+            console.debug("target type: " + targetType + " : " + (targetType === 'undefined'));
+            if (sourceType == 'undefined') {
+                console.debug("source type undefined");
+                //throw TypeError('createEdgeId() called with undefined node id');
             } else {
-                return props.sourceNodeId + "_to_" + props.targetNodeId;
+                console.debug("source type defined");
             }
+
+            if (targetType == 'undefined') {
+                console.debug("source type undefined");
+                //throw TypeError('createEdgeId() called with undefined node id');
+            } else {
+                console.debug("source type defined");
+            }
+
+            return props.sourceNodeId + "_to_" + props.targetNodeId;
+
         }
 
         /** @function createNewEdge
@@ -347,6 +365,11 @@ define([
          *  @return {Object} The new edge element.
          */
         function createNewEdge(props) {
+
+            console.debug("debuggin createNewEdge");
+            console.debug("source: " + props.sourceNodeId);
+            console.debug("target: " + props.targetNodeId);
+
 
             try {
                 var edgeId = createEdgeId({
@@ -525,6 +548,27 @@ define([
         }
 
         /**
+         * @function
+         * @name getEdgeCategories
+         * @description Return an array of edge categories used in current graph.
+         * @return {Array} edge category names
+         */
+        function getEdgeCategories() {
+            try {
+                var categories = edgeCategories.get();
+                if (categories === 'undefined') {
+                    return []
+                } else {
+                    return categories;
+                }
+            } catch (e) {
+                console.groupCollapsed("Exception raised by graphingwikiBrowser.getEdgeCategories()");
+                console.warn(e);
+                console.groupEnd();
+            }
+        }
+
+        /**
          *
          * @param evt
          */
@@ -690,6 +734,33 @@ define([
             });
         }
 
+        /**
+         * @function
+         * @name toggleNeighborhood
+         * @description toggle highlight class of the neighborhood of given element.
+         * @param {Object} props
+         * @param {Object} props.node
+         */
+        function toggleNeighbourhood(props) {
+            var neighborhood = props.node.neighborhood('node');
+            var edges = props.node.neighborhood('edge');
+
+            try {
+                neighborhood.forEach(function (e) {
+                    e.toggleClass('highlight');
+                });
+                edges.forEach(function (e) {
+                    e.toggleClass('highlight');
+                });
+            } catch (e) {
+                console.group("Exception raised by toggleNeighbourhood()");
+                console.debug("props");
+                console.debug(props);
+                console.warn(e);
+                console.groupEnd();
+            }
+        }
+
         /** @function
          *  @name toggleVisibility
          *  @description toggle visibility of cy element .parameter is a object, which contains string:elementId
@@ -755,6 +826,117 @@ define([
             // cy.contextMenus(initCyContextMenu(cy));
             cy = _cy;
             return cy;
+        }
+
+        /** @function cy context menu init
+         * initCyContextMenu
+         * @param cy
+         * @return {Object}
+         */
+        function initCyContextMenu(cy) {
+            return {
+                menuItems: [
+                    {
+                        id: 'edge-details',
+                        content: 'details',
+                        tooltipText: 'node details for debugging',
+                        selector: 'edge',
+                        onClickFunction: function (event) {
+                            var source = event.target || event.cyTarget;
+                            console.info("Id: " + source.id());
+                            console.info("classes:");
+                            console.info(source.classes());
+                            console.info(source.style());
+                        }
+                    },
+                    {
+                        id: 'add-edge',
+                        content: 'connect',
+                        tooltipText: 'add edge between this node and the chosen node',
+                        selector: 'node',
+                        onClickFunction: function (event) {
+                            var source = event.target || event.cyTarget;
+                            console.info('I am ' + source.id() + ' and I want to connect!');
+                            createPopUp({
+                                context: 'createEdge',
+                                sourceNode: source
+
+                            });
+                        }
+                    },
+                    {
+                        id: 'hide',
+                        content: 'hide',
+                        tooltipText: 'hide',
+                        selector: '*',
+                        onClickFunction: function (event) {
+                            var target = event.target || event.cyTarget;
+                            target.hide();
+                        },
+                        disabled: false
+                    },
+                    {
+                        id: 'add-node',
+                        content: 'add node',
+                        tooltipText: 'add node',
+                        coreAsWell: true,
+                        onClickFunction: function (event) {
+                            var targetId = prompt('Provide id for the new node.');
+                            var data = {
+                                group: 'nodes',
+                                id: targetId
+                            };
+
+                            var pos = event.position || event.cyPosition;
+                            // todo: refactor to be standalone function
+                            var promise = props.gw.savePageToMoin(targetId, 'hello');
+                            promise.then(function (response) {
+                                var j = response.json();
+                                console.log(j);
+                                return j;
+                            }).then(function (obj) {
+                                console.log(obj);
+                                createNewNode(targetId, cy);
+                            });
+                            /*
+                             cy.add({
+                             data: data,
+                             position: {
+                             x: pos.x,
+                             y: pos.y
+                             }
+                             });*/
+                        }
+                    },
+                    {
+                        id: 'remove-selected',
+                        content: 'remove selected',
+                        tooltipText: 'remove selected',
+                        coreAsWell: true,
+                        onClickFunction: function (event) {
+                            cy.$(':selected').remove();
+                        }
+                    },
+                    /*{
+                     id: 'select-all-nodes',
+                     content: 'select all nodes',
+                     tooltipText: 'select all nodes',
+                     selector: 'node',
+                     onClickFunction: function (event) {
+                     selectAllOfTheSameType(event.target || event.cyTarget);
+                     }
+                     },
+                     {
+                     id: 'select-all-edges',
+                     content: 'select all edges',
+                     tooltipText: 'select all edges',
+                     selector: 'edge',
+                     onClickFunction: function (event) {
+                     selectAllOfTheSameType(event.target || event.cyTarget);
+                     }
+                     }*/
+                ]
+            };
         }
 
         return {

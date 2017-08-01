@@ -30,10 +30,10 @@
  * Created by toni on 19.7.2017.
  */
 
-define(["../utils/graphUtils"], function (graphUtils) {
+define(["../utils/graphUtils", "../configuration/classNames"], function (graphUtils, classNames) {
     "use strict";
     /**
-     * eventListeners
+     * @description Event listeners description here
      * @exports eventListeners
      */
 
@@ -153,12 +153,12 @@ define(["../utils/graphUtils"], function (graphUtils) {
              *  elementsList.onClick()
              * @param {Object} funcProps
              */
-            onClick: function (funcProps) {
-                var evt = funcProps.evt;
+            onClick: function (props) {
+                var evt = props.evt;
 
                 if (evt.target.type === 'checkbox') {
-                    toggleVisibility({
-                        elementId: funcProps.elementId,
+                    graphUtils.toggleVisibility({
+                        elementId: props.elementId,
                         cy: cy
                     });
 
@@ -181,31 +181,39 @@ define(["../utils/graphUtils"], function (graphUtils) {
                 }
             },
 
-            /** @function elementsList.onMouseover()
-             *  elementsList.onMouseover()
-             * @param {Object} funcProps
+            /**
+             * @function
+             * @name onMouseover
+             * @description event listener on mouse cytoscape element
+             * @param {Object} props
              */
-            onMouseOver: function mouseOver(funcProps) {
+            onMouseOver: function mouseOver(props) {
                 try {
-                    var node = funcProps.cy.getElementById(funcProps.listItemId);
+                    var node = props.cy.getElementById(props.listItemId);
                     node.toggleClass('hover-on');
-                    toggleNeighbourhood(node);
+                    graphUtils.toggleNeighborhood({node: node});
                 } catch (e) {
-                    console.warn("Exception raised by elementsList.onMouseOver()");
+                    console.group("Exception raised by elementsList.onMouseOver()");
+                    console.debug("props");
+                    console.debug(props);
                     console.warn(e);
                 }
             },
-            /** @function elementsList.onMouseout()
-             *  elementsList.onMouseout()
-             * @param {Object} funcProps
+            /**
+             * @function
+             * @name onMouseout()
+             * @description elementsList.onMouseout()
+             * @param {Object} props
              */
-            onMouseOut: function mouseOut(funcProps) {
+            onMouseOut: function mouseOut(props) {
                 try {
-                    var node = funcProps.cy.getElementById(funcProps.listItemId);
+                    var node = props.cy.getElementById(props.listItemId);
                     node.toggleClass('hover-on');
-                    toggleNeighbourhood(node);
+                    graphUtils.toggleNeighborhood(node);
                 } catch (e) {
-                    console.warn("Exception raised by elementsList.onMouseOut()");
+                    console.group("Exception raised by elementsList.onMouseOut()");
+                    console.debug("props");
+                    console.debug(props);
                     console.warn(e);
                 }
             }
@@ -408,16 +416,14 @@ define(["../utils/graphUtils"], function (graphUtils) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-graphingwikiBrowser.html">graphingwikiBrowser</a></li><li><a href="module-graphUtils.html">graphUtils</a></li><li><a href="module-gwClient.html">gwClient</a></li><li><a href="module-ui.html">ui</a></li></ul><h3>Global</h3><ul><li><a href="global.html#elementsList.onClick()elementsList.onClick()">elementsList.onClick()
- elementsList.onClick()</a></li><li><a href="global.html#elementsList.onMouseout()elementsList.onMouseout()">elementsList.onMouseout()
- elementsList.onMouseout()</a></li><li><a href="global.html#elementsList.onMouseover()elementsList.onMouseover()">elementsList.onMouseover()
- elementsList.onMouseover()</a></li><li><a href="global.html#generateContentDescription">generateContent
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-elementStyles.html">elementStyles</a></li><li><a href="module-graphingwikiBrowser.html">graphingwikiBrowser</a></li><li><a href="module-graphUtils.html">graphUtils</a></li><li><a href="module-gwClient.html">gwClient</a></li><li><a href="module-ui.html">ui</a></li></ul><h3>Global</h3><ul><li><a href="global.html#elementsList.onClick()elementsList.onClick()">elementsList.onClick()
+ elementsList.onClick()</a></li><li><a href="global.html#generateContentDescription">generateContent
  Description</a></li><li><a href="global.html#graphList.listItem.onClick()graphList.listItem.onClick()LoadnewgraphtocanvaswithgwClient.todo:thegwaction.Graphingwikiactionistheinterfaceforthisaction.">graphList.listItem.onClick()
  graphList.listItem.onClick()
  Load new graph to canvas with gwClient.
  todo: the gw action.
  Graphingwiki action is the interface for this action.</a></li><li><a href="global.html#handleNavClickDescription">handleNavClick
- Description</a></li><li><a href="global.html#popupConnect.btnConnect.onClick()popupConnect.btnConnect.onClick()">popupConnect.btnConnect.onClick()
+ Description</a></li><li><a href="global.html#onMouseout()">onMouseout()</a></li><li><a href="global.html#onMouseover">onMouseover</a></li><li><a href="global.html#popupConnect.btnConnect.onClick()popupConnect.btnConnect.onClick()">popupConnect.btnConnect.onClick()
  popupConnect.btnConnect.onClick()</a></li><li><a href="global.html#popupConnect.btnSelect.onClick()popupConnect.btnSelect.onClick()">popupConnect.btnSelect.onClick()
  popupConnect.btnSelect.onClick()</a></li></ul>
 </nav>
@@ -425,7 +431,7 @@ define(["../utils/graphUtils"], function (graphUtils) {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Mon Jul 31 2017 14:50:27 GMT+0300 (EEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Aug 01 2017 11:01:40 GMT+0300 (EEST)
 </footer>
 
 <script> prettyPrint(); </script>

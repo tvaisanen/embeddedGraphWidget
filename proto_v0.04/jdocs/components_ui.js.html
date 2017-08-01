@@ -32,15 +32,15 @@
 
 
 define([
+        "../components/elementStyles",
         "../utils/eventListeners",
-        "../components/menuItems",
         "../configuration/classNames",
         "../configuration/configs",
         "../utils/graphUtils",
         "../utils/gwClient",
-        "../utils/eventListeners"
+        "../components/menuItems"
     ],
-    function (eventListeners, menuItems, classNames, configs, graphUtils, gwClient) {
+    function (elementStyles, eventListeners, classNames, configs, graphUtils, gwClient, menuItems) {
 
 
 
@@ -50,6 +50,7 @@ define([
          */
 
         var d = document;
+        console.debug(menuItems);
 
         /** @function
          *  @name contentContainer
@@ -216,9 +217,8 @@ define([
             var divToggleMenu = d.createElement('div');
             divToggleMenu.innerHTML = '#';
             //divMenu.appendChild(divToggleMenu);
-            var MI = menuItems;
-            console.log(MI);
-            var menus = Object.keys(MI);
+            console.log(menuItems);
+            var menus = Object.keys(menuItems);
 
             var itemKeys = Object.keys(props.menuItems);
             itemKeys.forEach(function (key) {
@@ -312,9 +312,8 @@ define([
          */
         function elementsList(props) {
 
-            console.debug(props);
-
-            var content = props.content;
+            // var content = props.content;
+            var filter = "";
             var cy = graphUtils.cy();
             var gw = gwClient;
 
@@ -329,10 +328,10 @@ define([
                 try {
                     cy.elements(selector).forEach(function (el) {
                         var id = el.id();
-                        var filter = content.filter.toLowerCase();
+                        // var filter = content.filter.toLowerCase();
                         var filterIncludes = id.toLowerCase().includes(filter);
 
-                        if (content.filter == '' || content.filter == 'undefined') {
+                        if (filter == '' || filter == 'undefined') {
                             idArray.push(id);
                         } else {
                             if (filterIncludes) {
@@ -352,7 +351,6 @@ define([
             var nodes = getElementIDsToArray("node");
             var edges = getElementIDsToArray("edge");
 
-
             var div = document.createElement('div');
 
             var hdNodes = d.createElement('h2');
@@ -371,7 +369,7 @@ define([
                 onClick: eventListeners.elementsList.onClick,
                 onMouseOver: eventListeners.elementsList.onMouseOver,
                 onMouseOut: eventListeners.elementsList.onMouseOut,
-                toggleVisibility: toggleVisibility
+                toggleVisibility: graphUtils.toggleVisibility
             });
 
             var ulEdges = unorderedListFromArray({
@@ -380,7 +378,7 @@ define([
                 onClick: eventListeners.elementsList.onClick,
                 onMouseOver: eventListeners.elementsList.onMouseOver,
                 onMouseOut: eventListeners.elementsList.onMouseOut,
-                toggleVisibility: toggleVisibility
+                toggleVisibility: graphUtils.toggleVisibility
             });
 
             div.setAttribute('id', "elements-list");
@@ -394,8 +392,8 @@ define([
         /**
          *
          */
-        function render(){
-
+        function setMenuItems(props){
+            menuItems = props.menuItems;
         }
 
         // Todo: refactor - too big function!
@@ -426,23 +424,26 @@ define([
              }
              * */
 
-            var styles = props.content;
+            var styles = elementStyles.styles();
             var div = document.createElement('div');
             div.setAttribute('id', "styles-content");
             var ul = document.createElement('ul');
-            var cy = props.cy;
+            var cy = graphUtils.cy();
 
             // Todo: make this generic version to work for all of the following use cases
-            function styleSelection(funcProps) {
+            function styleSelection(props) {
                 try {
                     var div = d.createElement('div');
                     var selection = d.createElement('select');
-                    selection.setAttribute('id', funcProps.selectionId);
+                    selection.setAttribute('id', props.selectionId);
 
                     // generate options for selection
-                    funcProps.options.forEach(function (option) {
+                    props.options.forEach(function (option) {
                         var opt = d.createElement('option');
-                        opt.setAttribute('id', funcProps.attributeId + option.label);
+                        opt.setAttribute(
+                            'id',
+                            props.attributeId + option.label
+                        );
                         opt.innerHTML = option.label;
                         opt.value = option.styleClass;
                         selection.appendChild(opt);
@@ -453,17 +454,18 @@ define([
                     selection.addEventListener('change', function () {
                         props.styleSelectionListener({
                             baseClass: 'edge',
-                            category: funcProps.category,
-                            parameter: funcProps.parameter,
+                            category: props.category,
+                            parameter: props.parameter,
                             value: selection.value
                         });
                     });
                     div.appendChild(selection);
                     return div;
                 } catch (e) {
-                    console.groupCollapsed('Exception raised by styleSelection()');
+                    console.group('Exception raised by styleSelection()');
+                    console.debug("props:");
+                    console.debug(props);
                     console.warn(e);
-                    console.debug(funcPropS);
                     console.groupEnd();
                 }
 
@@ -730,7 +732,8 @@ define([
                     graphsContent({
                         cy: props.cy,
                         gwClient: props.gwClient
-                    }));
+                    })
+                );
 
             } else if (configs.tabs.elements.active) {
                 divContent.appendChild(elementsContent(props));
@@ -745,23 +748,21 @@ define([
         /**
          * @function
          * @name unorderedListFromArray
-         * @description Todo
+         * @description Create unordered list of Cytoscape elements and bind event listeners to list elements.
          * @param {Object} props
          * @param {Type} props.PROP
-         * @return {Object}
+         * @return {HTMLUListElement} list of elements with event listeners
          */
-        function unorderedListFromArray(funcProps) {
+        function unorderedListFromArray(props) {
             /*
-             * Todo: add support for the array containing evenListener -methods
+             * Todo: get event listeners from eventListeners
              * array: array of string items
              * return: unordered html element with list items
              * from the array
              * */
 
-            var cy = funcProps.cy;
-            var array = funcProps.array;
-            var toggleVisibility = funcProps.toggleVisibility;
-
+            var cy = props.cy;
+            var array = props.array;toggl
 
             var ul = d.createElement('ul');
 
@@ -780,7 +781,7 @@ define([
                 //console.log(checkBox);
                 checkBox.addEventListener('click', function (event) {
                     console.log(event.target);
-                    toggleVisibility(event.target);
+                    graphUtils.toggleVisibility(event.target);
                     console.log(event.target.id);
                 });
 
@@ -792,7 +793,7 @@ define([
                 li.setAttribute('id', listElementId);
 
                 li.addEventListener('mouseover', function (evt) {
-                    funcProps.onMouseOver({
+                    props.onMouseOver({
                         cy: cy,
                         listItemId: evt.target.id
                     });
@@ -800,14 +801,14 @@ define([
 
 
                 li.addEventListener('mouseout', function (evt) {
-                    funcProps.onMouseOut({
+                    props.onMouseOut({
                         cy: cy,
                         listItemId: evt.target.id
                     });
                 });
 
                 li.addEventListener('click', function (evt) {
-                    funcProps.onClick({
+                    props.onClick({
                         evt: evt,
                         elementId: listElementId,
                         currentDetail: props.currentDetail,
@@ -859,7 +860,7 @@ define([
             graphListItem: graphListItem,
             menu: menu,
             navigation: navigation,
-            render: render,
+            setMenuItems: setMenuItems,
             stylesContent: stylesContent,
             tabs: tabs,
             textPreview: textPreview,
@@ -882,16 +883,14 @@ define([
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-graphingwikiBrowser.html">graphingwikiBrowser</a></li><li><a href="module-graphUtils.html">graphUtils</a></li><li><a href="module-gwClient.html">gwClient</a></li><li><a href="module-ui.html">ui</a></li></ul><h3>Global</h3><ul><li><a href="global.html#elementsList.onClick()elementsList.onClick()">elementsList.onClick()
- elementsList.onClick()</a></li><li><a href="global.html#elementsList.onMouseout()elementsList.onMouseout()">elementsList.onMouseout()
- elementsList.onMouseout()</a></li><li><a href="global.html#elementsList.onMouseover()elementsList.onMouseover()">elementsList.onMouseover()
- elementsList.onMouseover()</a></li><li><a href="global.html#generateContentDescription">generateContent
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-elementStyles.html">elementStyles</a></li><li><a href="module-graphingwikiBrowser.html">graphingwikiBrowser</a></li><li><a href="module-graphUtils.html">graphUtils</a></li><li><a href="module-gwClient.html">gwClient</a></li><li><a href="module-ui.html">ui</a></li></ul><h3>Global</h3><ul><li><a href="global.html#elementsList.onClick()elementsList.onClick()">elementsList.onClick()
+ elementsList.onClick()</a></li><li><a href="global.html#generateContentDescription">generateContent
  Description</a></li><li><a href="global.html#graphList.listItem.onClick()graphList.listItem.onClick()LoadnewgraphtocanvaswithgwClient.todo:thegwaction.Graphingwikiactionistheinterfaceforthisaction.">graphList.listItem.onClick()
  graphList.listItem.onClick()
  Load new graph to canvas with gwClient.
  todo: the gw action.
  Graphingwiki action is the interface for this action.</a></li><li><a href="global.html#handleNavClickDescription">handleNavClick
- Description</a></li><li><a href="global.html#popupConnect.btnConnect.onClick()popupConnect.btnConnect.onClick()">popupConnect.btnConnect.onClick()
+ Description</a></li><li><a href="global.html#onMouseout()">onMouseout()</a></li><li><a href="global.html#onMouseover">onMouseover</a></li><li><a href="global.html#popupConnect.btnConnect.onClick()popupConnect.btnConnect.onClick()">popupConnect.btnConnect.onClick()
  popupConnect.btnConnect.onClick()</a></li><li><a href="global.html#popupConnect.btnSelect.onClick()popupConnect.btnSelect.onClick()">popupConnect.btnSelect.onClick()
  popupConnect.btnSelect.onClick()</a></li></ul>
 </nav>
@@ -899,7 +898,7 @@ define([
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Mon Jul 31 2017 14:50:27 GMT+0300 (EEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Aug 01 2017 11:01:40 GMT+0300 (EEST)
 </footer>
 
 <script> prettyPrint(); </script>
