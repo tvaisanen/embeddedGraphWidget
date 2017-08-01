@@ -51,14 +51,15 @@ define([
          * @module graphUtils
          */
 
-            // active graph instance
+        // active graph instance
         var cy;
 
         /** @function
          *  @name addClassToEdge
-         *  @description Todo: Redundant? Decide what to do with this.
-         *  @param {String} edgeId- Id of the edge.
-         *  @param {String} classForEdge - Style category for the edge.
+         *  @description Add style class for edge.
+         *  @param {Object} props
+         *  @param {String} props.edgeId Id of the edge.
+         *  @param {String} props.classForEdge Style category for the edge.
          */
         function addClassToEdge(props, edgeId, classToAdd) {
             /**
@@ -330,6 +331,77 @@ define([
         }
 
         /**
+         * @function
+         * @name createNodesAndEdgeBetween
+         * @description Creates edge between two nodes and if the nodes do not exist, these are also created.
+         * @param {Object} props
+         * @param {String} props.sourceNodeId Id of the source node.
+         * @param {String} props.targetNodeId Id of the target node.
+         * @param {String} props.classForEdge Style category for the edge.
+         * @param {Object} props.cy Cytoscape instance.
+         */
+        function createNodesAndEdgeBetween(props) {
+            try {
+
+                // If nodes do not exist, create them.
+                // nodeIdAvailable: true === node do not exist.
+
+                nodeIdAvailable({nodeId: props.sourceNodeId, cy: props.cy}) ?
+                    createNewNode({id: props.sourceNodeId, cy: props.cy}) : null;
+
+                nodeIdAvailable({nodeId: props.targetNodeId, cy: props.cy}) ?
+                    createNewNode({id: props.targetNodeId, cy: props.cy}) : null;
+
+                // createNewEdge checks if the edge already exists.
+                createNewEdge(props);
+
+
+                var edgeId = createEdgeId({
+                    sourceNodeId: props.sourceNodeId,
+                    targetNodeId: props.targetNodeId
+                });
+                /*
+                 console.group("Debugging edge creation!");
+                 console.debug("sourceNodeId: " + props.sourceNodeId);
+                 console.debug("sourceNodeId: " + props.targetNodeId);
+                 if (typeof props.targetNodeId === 'undefined'){
+                 console.log("%cHere's the problem", "color:red;");
+                 console.debug(props);
+
+                 }
+                 console.debug(props);
+                 console.debug(edgeId);
+                 console.groupEnd();
+                 */
+                addClassToEdge({
+                    edgeId: edgeId,
+                    category: props.category,
+                    cy: props.cy
+                });
+
+            } catch (e) {
+                console.groupCollapsed("Exception with createNodesAndEdgeBetween()");
+                console.info("Parameters passed:");
+                console.debug(props);
+                console.warn(e);
+                console.groupEnd();
+            }
+
+        }
+
+        /** @function
+         *  @name edgeExists
+         *  @description Check if a node of given id is already defined in the graph.
+         *  @param {Object} props
+         *  @param {String} props.cy Cytoscape instance.
+         *  @param {String} props.edgeId Id of edge element.
+         *  @return {Boolean} True if edge already defined, else False.
+         */
+        function edgeExists(props) {
+            return props.cy.getElementById(props.edgeId).isEdge();
+        }
+
+        /**
          *  @function
          *  @name elementHasCategoryClass
          *  @description Check if the given element has bee assigned with existing category style classes.
@@ -358,54 +430,6 @@ define([
                 console.info(element);
                 console.groupEnd();
             }
-        }
-
-
-        /** @function
-         *  @name setAndRunLayout
-         *  @description Update cytoscape graph layout.
-         *  @param {Object} props
-         *  @param {Object} props.cy cytoscape instance
-         *  @param {String} props.layout layout name.
-         *  @return {Boolean} True if no errors.
-         */
-        function setAndRunLayout(props) {
-            try {
-                var layoutStyle = props.layout || "circle";
-                var layout = props.cy.makeLayout({name: layoutStyle});
-                //var layout = cy.makeLayout({name: "cola"});
-                layout.run();
-                return true;
-            } catch (e) {
-                console.group("Exception raised by graphUtils.setAndRunLayout()");
-                console.debug("props:");
-                console.debug(props);
-                console.warn(e);
-                console.groupEnd();
-                return false;
-            }
-        }
-
-        /** @function
-         *  @name nodeIdAvailable
-         *  @description Check if a node of given id is already defined in the graph.
-         *  @param {String} nodeId- Id of node.
-         *  @return {Boolean} True if id is available for use, else False.
-         */
-        function nodeIdAvailable(props, nodeId, cy) {
-            return !props.cy.getElementById(props.nodeId).isNode();
-        }
-
-        /** @function
-         *  @name edgeExists
-         *  @description Check if a node of given id is already defined in the graph.
-         *  @param {Object} props
-         *  @param {String} props.cy Cytoscape instance.
-         *  @param {String} props.edgeId Id of edge element.
-         *  @return {Boolean} True if edge already defined, else False.
-         */
-        function edgeExists(props) {
-            return props.cy.getElementById(props.edgeId).isEdge();
         }
 
         /**
@@ -522,65 +546,6 @@ define([
             }
         }
 
-
-        /** @function createNodesAndEdgeBetween
-         *  Creates edge between two nodes and if the nodes do not
-         *  exist, these are also created.
-         *  @param {String} sourceNodeId - Id of the source node.
-         *  @param {String} targetNodeId - Id of the target node.
-         *  @param {String} classForEdge - Style category for the edge.
-         *  @param {Object} cy - Cytoscape instance.
-         */
-        function createNodesAndEdgeBetween(props) {
-            try {
-
-                // If nodes do not exist, create them.
-                // nodeIdAvailable: true === node do not exist.
-
-                nodeIdAvailable({nodeId: props.sourceNodeId, cy: props.cy}) ?
-                    createNewNode({id: props.sourceNodeId, cy: props.cy}) : null;
-
-                nodeIdAvailable({nodeId: props.targetNodeId, cy: props.cy}) ?
-                    createNewNode({id: props.targetNodeId, cy: props.cy}) : null;
-
-                // createNewEdge checks if the edge already exists.
-                createNewEdge(props);
-
-
-                var edgeId = createEdgeId({
-                    sourceNodeId: props.sourceNodeId,
-                    targetNodeId: props.targetNodeId
-                });
-                /*
-                 console.group("Debugging edge creation!");
-                 console.debug("sourceNodeId: " + props.sourceNodeId);
-                 console.debug("sourceNodeId: " + props.targetNodeId);
-                 if (typeof props.targetNodeId === 'undefined'){
-                 console.log("%cHere's the problem", "color:red;");
-                 console.debug(props);
-
-                 }
-                 console.debug(props);
-                 console.debug(edgeId);
-                 console.groupEnd();
-                 */
-                addClassToEdge({
-                    edgeId: edgeId,
-                    category: props.category,
-                    cy: props.cy
-                });
-
-            } catch (e) {
-                console.groupCollapsed("Exception with createNodesAndEdgeBetween()");
-                console.info("Parameters passed:");
-                console.debug(props);
-                console.warn(e);
-                console.groupEnd();
-            }
-
-        }
-
-
         /**
          * @function
          * @name getEdgeCategories
@@ -601,6 +566,180 @@ define([
                 console.groupEnd();
             }
         }
+
+
+        /**
+         * @function
+         * @name initCyContextMenu
+         * @description initCyContextMenus FIXME!
+         * @param cy
+         * @return {Object} cy
+         */
+        function initCyContextMenu(cy) {
+            return {
+                menuItems: [
+                    {
+                        id: 'edge-details',
+                        content: 'details',
+                        tooltipText: 'node details for debugging',
+                        selector: 'edge',
+                        onClickFunction: function (event) {
+                            var source = event.target || event.cyTarget;
+                            console.info("Id: " + source.id());
+                            console.info("classes:");
+                            console.info(source.classes());
+                            console.info(source.style());
+                        }
+                    },
+                    {
+                        id: 'add-edge',
+                        content: 'connect',
+                        tooltipText: 'add edge between this node and the chosen node',
+                        selector: 'node',
+                        onClickFunction: function (event) {
+                            var source = event.target || event.cyTarget;
+                            console.info('I am ' + source.id() + ' and I want to connect!');
+                            createPopUp({
+                                context: 'createEdge',
+                                sourceNode: source
+
+                            });
+                        }
+                    },
+                    {
+                        id: 'hide',
+                        content: 'hide',
+                        tooltipText: 'hide',
+                        selector: '*',
+                        onClickFunction: function (event) {
+                            var target = event.target || event.cyTarget;
+                            target.hide();
+                        },
+                        disabled: false
+                    },
+                    {
+                        id: 'add-node',
+                        content: 'add node',
+                        tooltipText: 'add node',
+                        coreAsWell: true,
+                        onClickFunction: function (event) {
+                            var targetId = prompt('Provide id for the new node.');
+                            var data = {
+                                group: 'nodes',
+                                id: targetId
+                            };
+
+                            var pos = event.position || event.cyPosition;
+                            // todo: refactor to be standalone function
+                            var promise = props.gw.savePageToMoin(targetId, 'hello');
+                            promise.then(function (response) {
+                                var j = response.json();
+                                console.log(j);
+                                return j;
+                            }).then(function (obj) {
+                                console.log(obj);
+                                createNewNode({
+                                    id: targetId,
+                                    cy: cy
+                                });
+                            });
+                            /*
+                             cy.add({
+                             data: data,
+                             position: {
+                             x: pos.x,
+                             y: pos.y
+                             }
+                             });*/
+                        }
+                    },
+                    {
+                        id: 'remove-selected',
+                        content: 'remove selected',
+                        tooltipText: 'remove selected',
+                        coreAsWell: true,
+                        onClickFunction: function (event) {
+                            cy.$(':selected').remove();
+                        }
+                    },
+                    /*{
+                     id: 'select-all-nodes',
+                     content: 'select all nodes',
+                     tooltipText: 'select all nodes',
+                     selector: 'node',
+                     onClickFunction: function (event) {
+                     selectAllOfTheSameType(event.target || event.cyTarget);
+                     }
+                     },
+                     {
+                     id: 'select-all-edges',
+                     content: 'select all edges',
+                     tooltipText: 'select all edges',
+                     selector: 'edge',
+                     onClickFunction: function (event) {
+                     selectAllOfTheSameType(event.target || event.cyTarget);
+                     }
+                     }*/
+                ]
+            };
+        }
+
+        /** @function initCytoscape
+         *  Description
+         *  @param {Object} variable - Desc.
+         *  @return {Type} desc.
+         */
+        function initCytoscape(props) {
+            /*
+             *   Return &lt;div id="cy">
+             *   Initialize empty Cytoscape graph
+             *
+             * */
+            cyInitUtils.init();
+            _cy = testCy(props.container);
+            _cy.on('tap', 'node', bindExpandNode);
+
+            // initialize the context menu plugin
+            // cy.contextMenus(initCyContextMenu(cy));
+            cy = _cy;
+            return cy;
+        }
+
+        /** @function
+         *  @name nodeIdAvailable
+         *  @description Check if a node of given id is already defined in the graph.
+         *  @param {String} nodeId- Id of node.
+         *  @return {Boolean} True if id is available for use, else False.
+         */
+        function nodeIdAvailable(props, nodeId, cy) {
+            return !props.cy.getElementById(props.nodeId).isNode();
+        }
+
+        /** @function
+         *  @name setAndRunLayout
+         *  @description Update cytoscape graph layout.
+         *  @param {Object} props
+         *  @param {Object} props.cy cytoscape instance
+         *  @param {String} props.layout layout name.
+         *  @return {Boolean} True if no errors.
+         */
+        function setAndRunLayout(props) {
+            try {
+                var layoutStyle = props.layout || "circle";
+                var layout = props.cy.makeLayout({name: layoutStyle});
+                //var layout = cy.makeLayout({name: "cola"});
+                layout.run();
+                return true;
+            } catch (e) {
+                console.group("Exception raised by graphUtils.setAndRunLayout()");
+                console.debug("props:");
+                console.debug(props);
+                console.warn(e);
+                console.groupEnd();
+                return false;
+            }
+        }
+
 
         /**
          *
@@ -841,140 +980,6 @@ define([
             }
         }
 
-        /** @function initCytoscape
-         *  Description
-         *  @param {Object} variable - Desc.
-         *  @return {Type} desc.
-         */
-        function initCytoscape(props) {
-            /*
-             *   Return &lt;div id="cy">
-             *   Initialize empty Cytoscape graph
-             *
-             * */
-            cyInitUtils.init();
-            _cy = testCy(props.container);
-            _cy.on('tap', 'node', bindExpandNode);
-
-            // initialize the context menu plugin
-            // cy.contextMenus(initCyContextMenu(cy));
-            cy = _cy;
-            return cy;
-        }
-
-        /** @function cy context menu init
-         * initCyContextMenu
-         * @param cy
-         * @return {Object}
-         */
-        function initCyContextMenu(cy) {
-            return {
-                menuItems: [
-                    {
-                        id: 'edge-details',
-                        content: 'details',
-                        tooltipText: 'node details for debugging',
-                        selector: 'edge',
-                        onClickFunction: function (event) {
-                            var source = event.target || event.cyTarget;
-                            console.info("Id: " + source.id());
-                            console.info("classes:");
-                            console.info(source.classes());
-                            console.info(source.style());
-                        }
-                    },
-                    {
-                        id: 'add-edge',
-                        content: 'connect',
-                        tooltipText: 'add edge between this node and the chosen node',
-                        selector: 'node',
-                        onClickFunction: function (event) {
-                            var source = event.target || event.cyTarget;
-                            console.info('I am ' + source.id() + ' and I want to connect!');
-                            createPopUp({
-                                context: 'createEdge',
-                                sourceNode: source
-
-                            });
-                        }
-                    },
-                    {
-                        id: 'hide',
-                        content: 'hide',
-                        tooltipText: 'hide',
-                        selector: '*',
-                        onClickFunction: function (event) {
-                            var target = event.target || event.cyTarget;
-                            target.hide();
-                        },
-                        disabled: false
-                    },
-                    {
-                        id: 'add-node',
-                        content: 'add node',
-                        tooltipText: 'add node',
-                        coreAsWell: true,
-                        onClickFunction: function (event) {
-                            var targetId = prompt('Provide id for the new node.');
-                            var data = {
-                                group: 'nodes',
-                                id: targetId
-                            };
-
-                            var pos = event.position || event.cyPosition;
-                            // todo: refactor to be standalone function
-                            var promise = props.gw.savePageToMoin(targetId, 'hello');
-                            promise.then(function (response) {
-                                var j = response.json();
-                                console.log(j);
-                                return j;
-                            }).then(function (obj) {
-                                console.log(obj);
-                                createNewNode({
-                                    id: targetId,
-                                    cy: cy
-                                });
-                            });
-                            /*
-                             cy.add({
-                             data: data,
-                             position: {
-                             x: pos.x,
-                             y: pos.y
-                             }
-                             });*/
-                        }
-                    },
-                    {
-                        id: 'remove-selected',
-                        content: 'remove selected',
-                        tooltipText: 'remove selected',
-                        coreAsWell: true,
-                        onClickFunction: function (event) {
-                            cy.$(':selected').remove();
-                        }
-                    },
-                    /*{
-                     id: 'select-all-nodes',
-                     content: 'select all nodes',
-                     tooltipText: 'select all nodes',
-                     selector: 'node',
-                     onClickFunction: function (event) {
-                     selectAllOfTheSameType(event.target || event.cyTarget);
-                     }
-                     },
-                     {
-                     id: 'select-all-edges',
-                     content: 'select all edges',
-                     tooltipText: 'select all edges',
-                     selector: 'edge',
-                     onClickFunction: function (event) {
-                     selectAllOfTheSameType(event.target || event.cyTarget);
-                     }
-                     }*/
-                ]
-            };
-        }
 
         return {
             createEdgesFromNodes: createEdgesFromNodes,
@@ -994,9 +999,7 @@ define([
             initCy: initCytoscape,
             testCy: testCy
         }
-
-
-    });</code></pre>
+});</code></pre>
         </article>
     </section>
 
@@ -1021,7 +1024,7 @@ define([
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Aug 01 2017 15:06:38 GMT+0300 (EEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Aug 01 2017 15:15:39 GMT+0300 (EEST)
 </footer>
 
 <script> prettyPrint(); </script>
