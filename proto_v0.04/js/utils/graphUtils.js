@@ -122,8 +122,9 @@ define([
         /**
          * @function
          * @name createEdgesFromNodes
-         * @description Create edges to target node from every node of given array node.
+         * @description Create edges to target node from every node of given array node. Todo: ATM cy is passed as a prop. Is this the way to go?
          * @param {Object} props
+         * @param {Object} props.cy Cytoscape instance
          * @param {String} props.targetNodeId Id of the target node.
          * @param {Array} props.nodesFromCreateEdges Array of nodes to connect to the target node.
          * @param {String} props.category Category to add for edges. Edges are parsed in category batches. Hence, one category per array.
@@ -139,6 +140,165 @@ define([
                 props.sourceNodeId = sourceNodeId;
                 createNodesAndEdgeBetween(props);
             });
+        }
+
+        /**
+         * @function
+         * @name createEdgesToNodes
+         * @description Create edges from source node from every node of given array node. Todo: ATM cy is passed as a prop. Is this the way to go?
+         * @param {Object} props
+         * @param {Object} props.cy Cytoscape instance
+         * @param {String} props.sourceNodeId Id of the target node.
+         * @param {Array} props.nodesToCreateEdges Array of nodes to connect the source node.
+         * @param {String} props.category Category to add for edges. Edges are parsed in category batches. Hence, one category per array.
+         * @example
+         * createEdgesToNodes({
+         *          sourceNodeId: "connectThis",
+         *          nodesFromCreateEdges: ["connect", "source", "to", "these"],
+         *          category: "categoryForTheEdges"
+         * });
+         */
+        function createEdgesToNodes(props) {
+
+            /*
+             * Iterate through the nodesToCreateEdges array and add
+             * edges between the source node and target nodes.
+             * If nodes do not exist, create them and add to cy.elements.
+             */
+            props.nodesToCreateEdges.forEach(function (targetNodeId) {
+                try {
+                    if (targetNodeId === 'undefined') {
+                        console.warn("graphUtils.createEdgesToNodes() is trying to create edge to undefined node!");
+                        console.debug(props);
+                    } else {
+                        createNodesAndEdgeBetween({
+                            sourceNodeId: props.sourceNodeId,
+                            targetNodeId: targetNodeId,
+                            category: props.category,
+                            cy: props.cy,
+                            elementStyles: props.elementStyles
+                        });
+                    }
+
+                } catch (e) {
+                    console.groupCollapsed("Exception with createEdgesToNodes()");
+                    console.info("Parameters passed:");
+                    console.info("sourceNodeId: " + props.sourceNodeId);
+                    console.info("nodesToCreateEdges: " + props.nodesToCreateEdges);
+                    console.info("category: " + props.category);
+                    console.warn(e);
+                    console.groupEnd();
+                }
+            });
+        }
+
+        /**
+         * @function
+         * @name createNewEdge
+         * @description Create new edge to the cytoscapge graph instance.
+         * @param {Object} props
+         * @param {String} props.sourceNodeId Id of the source node.
+         * @param {String} props.targetNodeId Id of the target node.
+         * @param {String} props.classForEdge Selector for assigning style.
+         * @param {Object} props.cy Cytoscape instance.
+         * @return {Element} Edge element.
+         */
+        function createNewEdge(props) {
+            try {
+                var edgeId = createEdgeId({
+                    sourceNodeId: props.sourceNodeId,
+                    targetNodeID: props.targetNodeId
+                });
+                // Create new edge.
+                var newEdge = {
+                    group: 'edges',
+                    data: {
+                        id: edgeId,
+                        source: props.sourceNodeId,
+                        target: props.targetNodeId
+                    }
+                };
+
+                // If edge is already defined, return the existing one.
+                if (edgeExists({edgeId: edgeId, cy: props.cy})) {
+                    return props.cy.getElementById(edgeId);
+
+                } else {
+
+                    props.cy.add(newEdge);
+                    var edge = props.cy.getElementById(edgeId);
+
+                    var categoryExists = elementStyles.categoryExists(props.category);
+
+                    // console.debug(elementStyles);
+                    // console.debug(categoryExists);
+                    var classesToAdd = elementStyles.getStyle(props.category);
+                    if (!classesToAdd) {
+                        console.debug('Add generic styles');
+                        classesToAdd = elementStyles.getStyle();
+                    } else {
+                        // console.debug('Add ' + props.category + ' styles.');
+                    }
+
+                    // Add the new edge to cy.elements.
+
+                    // console.debug(classesToAdd);
+
+                    classesToAdd.forEach(function (styleClass) {
+                        //console.debug('add style: ' + styleClass);
+                        edge.addClass(styleClass);
+                    });
+                    return edge;
+                }
+
+            } catch (e) {
+                console.groupCollapsed("Exception raised by createNewEdge()");
+                console.debug("called by: " + arguments.callee.caller.name);
+                console.info("Parameters passed:");
+                console.info(props);
+                console.warn(e);
+                console.groupEnd();
+            }
+
+        }
+
+        /**
+         * @function
+         * @name createNewNode
+         * @description Create new node and add it to the given cytoscape instance.
+         * @param {Object} props
+         * @param {String} props.id Id for the node.
+         * @param {Object} props.cy Cytoscape instance
+         * */
+        function createNewNode(props) {
+
+            try {
+                if (typeof props.id === 'undefined') {
+                    throw TypeError("createNewNode() called with undefined id");
+                }
+
+                if (nodeIdAvailable({nodeId: props.id, cy: props.cy})) {
+                    cy.add({
+                        group: 'nodes',
+                        data: {
+                            id: props.id
+                        }
+                    });
+                    return true;
+                } else {
+                    return false;
+                }
+
+            } catch (e) {
+                console.groupCollapsed("Exception raised by graphingwikiBrowser.createNewNode(id)");
+                console.warn(e);
+                console.debug("props:");
+                console.debug(props);
+                console.groupEnd();
+                console.debug('returning false from second catch');
+
+                return false;
+            }
         }
 
         /**
@@ -334,165 +494,6 @@ define([
             }
         }
 
-        /**
-         * @function
-         * @name createEdgesToNodes
-         * @description Create edges from given node to every node of given array. Nodes are created if do not exist.
-         * @param {Object} props
-         * @param {String} props.sourceNodeId source node ID
-         * @param {Array} props.nodesToCreateEdges target node IDs
-         * @param {String} props.category category for edges
-         * @param {Object} props.cy Cytoscape instance
-         */
-        function createEdgesToNodes(props) {
-
-            /*
-             * Iterate through the nodesToCreateEdges array and add
-             * edges between the source node and target nodes.
-             * If nodes do not exist, create them and add to cy.elements.
-             */
-            props.nodesToCreateEdges.forEach(function (targetNodeId) {
-                try {
-                    if (targetNodeId === 'undefined') {
-                        console.warn("graphUtils.createEdgesToNodes() is trying to create edge to undefined node!");
-                        console.debug(props);
-                    } else {
-                        createNodesAndEdgeBetween({
-                            sourceNodeId: props.sourceNodeId,
-                            targetNodeId: targetNodeId,
-                            category: props.category,
-                            cy: props.cy,
-                            elementStyles: props.elementStyles
-                        });
-                    }
-
-                } catch (e) {
-                    console.groupCollapsed("Exception with createEdgesToNodes()");
-                    console.info("Parameters passed:");
-                    console.info("sourceNodeId: " + props.sourceNodeId);
-                    console.info("nodesToCreateEdges: " + props.nodesToCreateEdges);
-                    console.info("category: " + props.category);
-                    console.warn(e);
-                    console.groupEnd();
-                }
-            });
-        }
-
-
-        /** @function createNewEdge
-         *  Description
-         *  @param {String} sourceId - Id of the source node.
-         *  @param {String} targetId - Id of the target node.
-         *  @param {String} classForEdge - Selector for assigning style.
-         *  @param {Object} cy - Cytoscape instance.
-         *  @return {Object} The new edge element.
-         */
-        function createNewEdge(props) {
-
-            console.debug("debuggin createNewEdge");
-            console.debug("source: " + props.sourceNodeId);
-            console.debug("target: " + props.targetNodeId);
-
-
-            try {
-                var edgeId = createEdgeId({
-                    sourceNodeId: props.sourceNodeId,
-                    targetNodeID: props.targetNodeId
-                });
-                // Create new edge.
-                var newEdge = {
-                    group: 'edges',
-                    data: {
-                        id: edgeId,
-                        source: props.sourceNodeId,
-                        target: props.targetNodeId
-                    }
-                };
-
-                // If edge is already defined, return the existing one.
-                if (edgeExists({edgeId: edgeId, cy: props.cy})) {
-                    return props.cy.getElementById(edgeId);
-
-                } else {
-
-                    props.cy.add(newEdge);
-                    var edge = props.cy.getElementById(edgeId);
-
-                    var categoryExists = elementStyles.categoryExists(props.category);
-
-                    // console.debug(elementStyles);
-                    // console.debug(categoryExists);
-                    var classesToAdd = elementStyles.getStyle(props.category);
-                    if (!classesToAdd) {
-                        console.debug('Add generic styles');
-                        classesToAdd = elementStyles.getStyle();
-                    } else {
-                        // console.debug('Add ' + props.category + ' styles.');
-                    }
-
-                    // Add the new edge to cy.elements.
-
-                    // console.debug(classesToAdd);
-
-                    classesToAdd.forEach(function (styleClass) {
-                        //console.debug('add style: ' + styleClass);
-                        edge.addClass(styleClass);
-                    });
-                    return edge;
-                }
-
-            } catch (e) {
-                console.groupCollapsed("Exception raised by createNewEdge()");
-                console.debug("called by: " + arguments.callee.caller.name);
-                console.info("Parameters passed:");
-                console.info(props);
-                console.warn(e);
-                console.groupEnd();
-            }
-
-        }
-
-        /** @function createNewNode
-         *  Create new node and add it to the given cytoscape instance.
-         *  @param {string} id - ID for the node.
-         *  @param {Object} cy - Cytoscape instance
-         * */
-        function createNewNode(id, cy) {
-
-            if (typeof id === 'undefined') {
-                console.debug("Exception raised by createNewNode()");
-                throw TypeError("createNewNode() called with undefined id");
-            }
-
-            try {
-                var newNode = {
-                    group: 'nodes',
-                    data: {
-                        id: id
-                    }
-                };
-
-                // after saving page to moin
-                // Can not create element with invalid string ID ``
-                if (nodeIdAvailable({nodeId: id, cy: cy})) {
-                    cy.add(newNode);
-                    return true;
-                } else {
-                    return false;
-                }
-
-            } catch (e) {
-                console.groupCollapsed("Exception raised by graphingwikiBrowser.createNewNode(id)");
-                console.warn(e);
-                console.debug("Parameters passed:");
-                console.debug("id:");
-                console.debug(id);
-                console.groupEnd();
-                console.debug('returning false from second catch');
-
-                return false;
-            }
-        }
 
         /** @function createNodesAndEdgeBetween
          *  Creates edge between two nodes and if the nodes do not
@@ -509,10 +510,10 @@ define([
                 // nodeIdAvailable: true === node do not exist.
 
                 nodeIdAvailable({nodeId: props.sourceNodeId, cy: props.cy}) ?
-                    createNewNode(props.sourceNodeId, props.cy) : null;
+                    createNewNode({id: props.sourceNodeId, cy: props.cy}) : null;
 
                 nodeIdAvailable({nodeId: props.targetNodeId, cy: props.cy}) ?
-                    createNewNode(props.targetNodeId, props.cy) : null;
+                    createNewNode({id: props.targetNodeId, cy: props.cy}) : null;
 
                 // createNewEdge checks if the edge already exists.
                 createNewEdge(props);
@@ -901,7 +902,10 @@ define([
                                 return j;
                             }).then(function (obj) {
                                 console.log(obj);
-                                createNewNode(targetId, cy);
+                                createNewNode({
+                                    id: targetId,
+                                    cy: cy
+                                });
                             });
                             /*
                              cy.add({

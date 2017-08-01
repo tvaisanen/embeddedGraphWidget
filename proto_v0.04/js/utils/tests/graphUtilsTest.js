@@ -10,6 +10,8 @@ define([
 
     var gu = graphUtils;
 
+    console.debug(gu);
+
     QUnit.module("Unit Tests - utils.graphUtils: ");
 
     QUnit.test("addClassToEdge()", function (assert) {
@@ -257,8 +259,20 @@ define([
         var existingNodeId = 'existingNode';
         var newNodeId = 'newNode';
 
-        assert.ok(gu.createNewNode(newNodeId, cy), "Return true upon creating new node");
-        assert.notOk(gu.createNewNode(existingNodeId, cy), "Return false if trying to create node with an existing id.");
+        assert.ok(
+            gu.createNewNode({
+                id: newNodeId,
+                cy: cy
+            }),
+            "Return true upon creating new node"
+        );
+        assert.notOk(
+            gu.createNewNode({
+                id: existingNodeId,
+                cy: cy
+            }),
+            "Return false if trying to create node with an existing id."
+        );
     });
 
     QUnit.test("elementHasCategoryClass()", function (assert) {
@@ -270,7 +284,8 @@ define([
         var barClass = 'bar';
         var categories = [fooClass, barClass];
 
-        assert.notOk(gu.elementHasCategoryClass({
+        assert.notOk(
+            gu.elementHasCategoryClass({
                 element: node,
                 categories: categories
             }),

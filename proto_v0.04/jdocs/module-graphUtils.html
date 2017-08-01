@@ -547,7 +547,7 @@
 
 
 <div class="description">
-    Create edges to target node from every node of given array node.
+    Create edges to target node from every node of given array node. Todo: ATM cy is passed as a prop. Is this the way to go?
 </div>
 
 
@@ -621,6 +621,29 @@
     </thead>
 
     <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>cy</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Cytoscape instance</td>
+        </tr>
+
     
 
         <tr>
@@ -782,7 +805,265 @@
 
 
 <div class="description">
-    Create edges from given node to every node of given array. Nodes are created if do not exist.
+    Create edges from source node from every node of given array node. Todo: ATM cy is passed as a prop. Is this the way to go?
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>props</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>cy</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Cytoscape instance</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>sourceNodeId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Id of the target node.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>nodesToCreateEdges</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Array of nodes to connect the source node.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>category</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Category to add for edges. Edges are parsed in category batches. Hence, one category per array.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line145">line 145</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>createEdgesToNodes({
+         sourceNodeId: "connectThis",
+         nodesFromCreateEdges: ["connect", "source", "to", "these"],
+         category: "categoryForTheEdges"
+});</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="~createNewEdge"><span class="type-signature">(inner) </span>createNewEdge<span class="signature">(props)</span><span class="type-signature"> &rarr; {Element}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Create new edge to the cytoscapge graph instance.
 </div>
 
 
@@ -876,210 +1157,6 @@
 
             
 
-            <td class="description last">source node ID</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>nodesToCreateEdges</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">target node IDs</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>category</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">category for edges</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>cy</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Cytoscape instance</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line337">line 337</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="~createNewEdgeDescription"><span class="type-signature">(inner) </span>createNewEdge
- Description<span class="signature">(sourceId, targetId, classForEdge, cy)</span><span class="type-signature"> &rarr; {Object}</span></h4>
-
-    
-
-
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>sourceId</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
             <td class="description last">Id of the source node.</td>
         </tr>
 
@@ -1087,7 +1164,7 @@
 
         <tr>
             
-                <td class="name"><code>targetId</code></td>
+                <td class="name"><code>targetNodeId</code></td>
             
 
             <td class="type">
@@ -1156,173 +1233,7 @@
     </tbody>
 </table>
 
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line382">line 382</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    The new edge element.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Object</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="~createNewNodeCreatenewnodeandaddittothegivencytoscapeinstance."><span class="type-signature">(inner) </span>createNewNode
- Create new node and add it to the given cytoscape instance.<span class="signature">(id, cy)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>id</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
             </td>
-
-            
-
-            
-
-            <td class="description last">ID for the node.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>cy</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Cytoscape instance</td>
         </tr>
 
     
@@ -1363,7 +1274,232 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line455">line 455</a>
+        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line195">line 195</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Edge element.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Element</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="~createNewNode"><span class="type-signature">(inner) </span>createNewNode<span class="signature">(props)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Create new node and add it to the given cytoscape instance.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>props</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Id for the node.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cy</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Cytoscape instance</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line265">line 265</a>
     </li></ul></dd>
     
 
@@ -1561,7 +1697,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line497">line 497</a>
+        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line498">line 498</a>
     </li></ul></dd>
     
 
@@ -1684,7 +1820,7 @@ initCyContextMenu<span class="signature">(cy)</span><span class="type-signature"
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line836">line 836</a>
+        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line837">line 837</a>
     </li></ul></dd>
     
 
@@ -1905,7 +2041,7 @@ initCyContextMenu<span class="signature">(cy)</span><span class="type-signature"
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line211">line 211</a>
+        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line371">line 371</a>
     </li></ul></dd>
     
 
@@ -2130,7 +2266,7 @@ initCyContextMenu<span class="signature">(cy)</span><span class="type-signature"
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line144">line 144</a>
+        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line304">line 304</a>
     </li></ul></dd>
     
 
@@ -2355,7 +2491,7 @@ initCyContextMenu<span class="signature">(cy)</span><span class="type-signature"
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line223">line 223</a>
+        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line383">line 383</a>
     </li></ul></dd>
     
 
@@ -2437,7 +2573,7 @@ initCyContextMenu<span class="signature">(cy)</span><span class="type-signature"
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line555">line 555</a>
+        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line556">line 556</a>
     </li></ul></dd>
     
 
@@ -2587,7 +2723,7 @@ initCyContextMenu<span class="signature">(cy)</span><span class="type-signature"
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line815">line 815</a>
+        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line816">line 816</a>
     </li></ul></dd>
     
 
@@ -2740,7 +2876,7 @@ initCyContextMenu<span class="signature">(cy)</span><span class="type-signature"
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line201">line 201</a>
+        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line361">line 361</a>
     </li></ul></dd>
     
 
@@ -2965,7 +3101,7 @@ initCyContextMenu<span class="signature">(cy)</span><span class="type-signature"
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line176">line 176</a>
+        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line336">line 336</a>
     </li></ul></dd>
     
 
@@ -3167,7 +3303,7 @@ initCyContextMenu<span class="signature">(cy)</span><span class="type-signature"
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line742">line 742</a>
+        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line743">line 743</a>
     </li></ul></dd>
     
 
@@ -3371,7 +3507,7 @@ initCyContextMenu<span class="signature">(cy)</span><span class="type-signature"
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line769">line 769</a>
+        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line770">line 770</a>
     </li></ul></dd>
     
 
@@ -3428,7 +3564,7 @@ initCyContextMenu<span class="signature">(cy)</span><span class="type-signature"
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Aug 01 2017 11:15:37 GMT+0300 (EEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Aug 01 2017 15:06:38 GMT+0300 (EEST)
 </footer>
 
 <script> prettyPrint(); </script>
