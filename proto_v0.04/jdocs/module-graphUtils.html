@@ -260,7 +260,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line61">line 61</a>
+        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line29">line 29</a>
     </li></ul></dd>
     
 
@@ -509,7 +509,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line321">line 321</a>
+        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line84">line 84</a>
     </li></ul></dd>
     
 
@@ -540,12 +540,15 @@
 
     
 
-    <h4 class="name" id="~createEdgesFromNodesDescription"><span class="type-signature">(inner) </span>createEdgesFromNodes
- Description<span class="signature">(sourceNodeId-, nodesToCreateEdges, category)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="~createEdgesFromNodes"><span class="type-signature">(inner) </span>createEdgesFromNodes<span class="signature">(props)</span><span class="type-signature"></span></h4>
 
     
 
 
+
+<div class="description">
+    Create edges to target node from every node of given array node.
+</div>
 
 
 
@@ -580,7 +583,49 @@
 
         <tr>
             
-                <td class="name"><code>sourceNodeId-</code></td>
+                <td class="name"><code>props</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>targetNodeId</code></td>
             
 
             <td class="type">
@@ -596,14 +641,14 @@
 
             
 
-            <td class="description last">Id of the source node.</td>
+            <td class="description last">Id of the target node.</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>nodesToCreateEdges</code></td>
+                <td class="name"><code>nodesFromCreateEdges</code></td>
             
 
             <td class="type">
@@ -619,7 +664,7 @@
 
             
 
-            <td class="description last">Array of nodes?.</td>
+            <td class="description last">Array of nodes to connect to the target node.</td>
         </tr>
 
     
@@ -642,7 +687,14 @@
 
             
 
-            <td class="description last">Category for edges.</td>
+            <td class="description last">Category to add for edges. Edges are parsed in category batches. Hence, one category per array.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -683,7 +735,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line531">line 531</a>
+        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line122">line 122</a>
     </li></ul></dd>
     
 
@@ -706,6 +758,15 @@
 
 
 
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>createEdgesFromNodes({
+         targetNodeId: "connectToThis",
+         nodesFromCreateEdges: ["connect", "these", "to", "the", "target"],
+         category: "categoryForTheEdges"
+});</code></pre>
 
 
 
@@ -932,7 +993,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line277">line 277</a>
+        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line337">line 337</a>
     </li></ul></dd>
     
 
@@ -1129,7 +1190,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line359">line 359</a>
+        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line382">line 382</a>
     </li></ul></dd>
     
 
@@ -1302,7 +1363,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line432">line 432</a>
+        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line455">line 455</a>
     </li></ul></dd>
     
 
@@ -1500,7 +1561,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line474">line 474</a>
+        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line497">line 497</a>
     </li></ul></dd>
     
 
@@ -1623,7 +1684,7 @@ initCyContextMenu<span class="signature">(cy)</span><span class="type-signature"
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line831">line 831</a>
+        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line836">line 836</a>
     </li></ul></dd>
     
 
@@ -1844,7 +1905,7 @@ initCyContextMenu<span class="signature">(cy)</span><span class="type-signature"
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line151">line 151</a>
+        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line211">line 211</a>
     </li></ul></dd>
     
 
@@ -2069,7 +2130,7 @@ initCyContextMenu<span class="signature">(cy)</span><span class="type-signature"
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line30">line 30</a>
+        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line144">line 144</a>
     </li></ul></dd>
     
 
@@ -2294,7 +2355,7 @@ initCyContextMenu<span class="signature">(cy)</span><span class="type-signature"
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line163">line 163</a>
+        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line223">line 223</a>
     </li></ul></dd>
     
 
@@ -2376,7 +2437,7 @@ initCyContextMenu<span class="signature">(cy)</span><span class="type-signature"
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line550">line 550</a>
+        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line555">line 555</a>
     </li></ul></dd>
     
 
@@ -2526,7 +2587,7 @@ initCyContextMenu<span class="signature">(cy)</span><span class="type-signature"
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line810">line 810</a>
+        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line815">line 815</a>
     </li></ul></dd>
     
 
@@ -2679,7 +2740,7 @@ initCyContextMenu<span class="signature">(cy)</span><span class="type-signature"
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line141">line 141</a>
+        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line201">line 201</a>
     </li></ul></dd>
     
 
@@ -2904,7 +2965,7 @@ initCyContextMenu<span class="signature">(cy)</span><span class="type-signature"
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line116">line 116</a>
+        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line176">line 176</a>
     </li></ul></dd>
     
 
@@ -3106,7 +3167,7 @@ initCyContextMenu<span class="signature">(cy)</span><span class="type-signature"
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line737">line 737</a>
+        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line742">line 742</a>
     </li></ul></dd>
     
 
@@ -3310,7 +3371,7 @@ initCyContextMenu<span class="signature">(cy)</span><span class="type-signature"
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line764">line 764</a>
+        <a href="utils_graphUtils.js.html">utils/graphUtils.js</a>, <a href="utils_graphUtils.js.html#line769">line 769</a>
     </li></ul></dd>
     
 
@@ -3367,7 +3428,7 @@ initCyContextMenu<span class="signature">(cy)</span><span class="type-signature"
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Aug 01 2017 11:01:40 GMT+0300 (EEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Aug 01 2017 11:15:37 GMT+0300 (EEST)
 </footer>
 
 <script> prettyPrint(); </script>
