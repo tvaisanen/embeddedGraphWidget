@@ -5,14 +5,13 @@
 
 define([
         "../utils/eventListeners",
-        "../components/menuItems",
         "../configuration/classNames",
         "../configuration/configs",
         "../utils/graphUtils",
         "../utils/gwClient",
-        "../utils/eventListeners"
+        "../components/menuItems",
     ],
-    function (eventListeners, menuItems, classNames, configs, graphUtils, gwClient) {
+    function (eventListeners, classNames, configs, graphUtils, gwClient, menuItems) {
 
 
 
@@ -22,6 +21,7 @@ define([
          */
 
         var d = document;
+        console.debug(menuItems);
 
         /** @function
          *  @name contentContainer
@@ -188,9 +188,8 @@ define([
             var divToggleMenu = d.createElement('div');
             divToggleMenu.innerHTML = '#';
             //divMenu.appendChild(divToggleMenu);
-            var MI = menuItems;
-            console.log(MI);
-            var menus = Object.keys(MI);
+            console.log(menuItems);
+            var menus = Object.keys(menuItems);
 
             var itemKeys = Object.keys(props.menuItems);
             itemKeys.forEach(function (key) {
@@ -366,8 +365,8 @@ define([
         /**
          *
          */
-        function render(){
-
+        function setMenuItems(props){
+            menuItems = props.menuItems;
         }
 
         // Todo: refactor - too big function!
@@ -831,7 +830,7 @@ define([
             graphListItem: graphListItem,
             menu: menu,
             navigation: navigation,
-            render: render,
+            setMenuItems: setMenuItems,
             stylesContent: stylesContent,
             tabs: tabs,
             textPreview: textPreview,

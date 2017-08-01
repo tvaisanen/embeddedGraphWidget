@@ -7,7 +7,7 @@ define(["../utils/eventListeners"], function (eventListeners) {
 
     /**
      * menuItems
-     * @exports components/menuItems
+     * @exports menuItems
      */
 
 
@@ -24,6 +24,9 @@ define(["../utils/eventListeners"], function (eventListeners) {
     }
 
     function getItems() {
+
+    }
+
         return {
             download: {
                 label: "Download",
@@ -45,9 +48,4 @@ define(["../utils/eventListeners"], function (eventListeners) {
                 generateContent: generateContent
             }
         }
-    }
-
-    return {
-        items: getItems()
-    }
 });

@@ -6,14 +6,12 @@
 define([
         "./configuration/classNames",
         "./components/elementStyles",
-        "./components/menuItems",
         "./components/ui",
         "./configuration/configs",
-
         "./utils/edgeCategories",
         "./utils/graphUtils",
         "./utils/gwClient"],
-    function (classNames, elementStyles, menuItems, ui, configs, edgeCategories, graphUtils, gwClient) {
+    function (classNames, elementStyles, ui, configs, edgeCategories, graphUtils, gwClient) {
         /**
          * Graphingwikibrowser module.
          * @exports graphingwikiBrowser
@@ -306,63 +304,7 @@ define([
             return cy;
         }
 
-        function testInitNewGraph() {
-            var data = {
-                elements: {
-                    nodes: [
-                        {
-                            data: {id: "personA"},
-                            position: {"x": 420.97222900390625, "y": 243.05557250976562},
-                            group: "nodes",
-                            removed: false,
-                            selected: true,
-                            selectable: true,
-                            locked: false,
-                            grabbable: true,
-                            classes: ""
-                        }
-                    ]
-                },
-                style: [{
-                    selector: "node",
-                    style: {
-                        "background-color": "#6490af",
-                        "label": "data(id)"
-                    }
-                }]
-            };
 
-            // init should return element like this
-            var cyExpect = cytoscape({
-                container: document.getElementById('cy'),
-                elements: data.elements,
-                style: data.style,
-                layout: {name: 'preset'}
-            });
-            cyExpect.on('tap', 'node', function (evt) {
-                var node = evt.target;
-                var nodeId = node.id();
-                var cy = this;
-                expandNode(nodeId, cy);
-            });
-            /*----------------------------------------*/
-
-            var cy = initNewGraph(data);
-
-            var cyExEles = JSON.stringify(cyExpect.json().elements);
-            var cyEles = JSON.stringify(cy.json().elements);
-            var cyExStyle = JSON.stringify(cyExpect.json().style);
-            var cyStyle = JSON.stringify(cy.json().style);
-
-            console.debug(JSON.stringify(cyExEles));
-            console.debug(JSON.stringify(cyEles));
-            console.debug(JSON.stringify(cyExEles) === JSON.stringify(cyEles));
-            QUnit.test("initNewGraph()", function (assert) {
-                assert.ok(cy, "Function returns");
-                assert.deepEqual(cyEles, cyExEles, "Returns cytoscape instance with expected elements.");
-                assert.deepEqual(cyStyle, cyExStyle, "Returns cytoscape instance with expected style.");
-            });
-        }
 
 
         /*
@@ -947,7 +889,7 @@ define([
                 console.debug(ui.info());
 
                 render({
-                    gwClient: gwClient
+                    gwClient: gwClient,
                 });
 
                 graphUtils.initCy({

@@ -314,7 +314,6 @@ define([
             });
         }
 
-
         /**
          * @function
          * @name createEdgeId
@@ -692,12 +691,23 @@ define([
         }
 
         function createNewCy(props) {
-            var style = props.style || configs.style;
-            cy = cytoscape({
-                data: props.data,
-                style: style
-            })
-            return cy;
+            try {
+                var style = props.style || configs.style;
+                cy = cytoscape({
+                    container: document.getElementById(configs.graphContainerId),
+                    elements: props.data.elements,
+                    style: props.data.style
+                });
+                console.debug(cy);
+                console.debug(props);
+                return cy;
+            } catch (e) {
+                console.group("Exception raised by graphUtils.createNewCy()");
+                console.debug("props:");
+                console.debug(props);
+                console.warn(e);
+                console.groupEnd();
+            }
         }
 
         /** @function initCytoscape
