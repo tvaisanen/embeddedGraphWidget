@@ -94,7 +94,7 @@ define([
          */
         function createEdgeId(props) {
 
-            console.debug("createEdgeID");
+            console.debug("createEdgeID(props) : ");
             console.debug(props);
 
             var sourceType = typeof props.sourceNodeId;
@@ -208,7 +208,7 @@ define([
             try {
                 var edgeId = createEdgeId({
                     sourceNodeId: props.sourceNodeId,
-                    targetNodeID: props.targetNodeId
+                    targetNodeId: props.targetNodeId
                 });
                 // Create new edge.
                 var newEdge = {
@@ -539,7 +539,6 @@ define([
             }
         }
 
-
         /**
          * @function
          * @name initCyContextMenu
@@ -712,7 +711,6 @@ define([
             }
         }
 
-
         /**
          *
          * @param evt
@@ -741,6 +739,13 @@ define([
             }
         }
 
+        /**
+         * @function
+         * @name testCy
+         * @description generate cytoscape instance for development context.
+         * @param {HTMLDivElement} containerElement div container for cytoscape graph
+         * @param {Object} cytoscape instance
+         */
         function testCy(containerElement) {
             return cytoscape({
                 container: containerElement,
@@ -940,7 +945,6 @@ define([
                     elements: props.data.elements,
                     style: props.data.style
                 });
-
                 cy.on('tap', 'node', bindExpandNode);
                 return cy;
             } catch (e) {
@@ -951,7 +955,6 @@ define([
                 console.groupEnd();
             }
         }
-
 
         return {
             createEdgesFromNodes: createEdgesFromNodes,
