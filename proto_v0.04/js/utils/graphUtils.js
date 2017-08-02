@@ -94,26 +94,17 @@ define([
          */
         function createEdgeId(props) {
 
-            console.debug("createEdgeID(props) : ");
-            console.debug(props);
-
             var sourceType = typeof props.sourceNodeId;
             var targetType = typeof props.targetNodeId;
 
-            console.debug("source type: " + sourceType + " : " + (sourceType === 'undefined'));
-            console.debug("target type: " + targetType + " : " + (targetType === 'undefined'));
             if (sourceType == 'undefined') {
                 console.debug("source type undefined");
                 //throw TypeError('createEdgeId() called with undefined node id');
-            } else {
-                console.debug("source type defined");
             }
 
             if (targetType == 'undefined') {
                 console.debug("source type undefined");
                 //throw TypeError('createEdgeId() called with undefined node id');
-            } else {
-                console.debug("source type defined");
             }
 
             return props.sourceNodeId + "_to_" + props.targetNodeId;

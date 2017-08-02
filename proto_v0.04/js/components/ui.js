@@ -266,7 +266,7 @@ define([
             });
             inFilter.addEventListener('keypress', function (event) {
                 console.debug(filtProps.elesContent);
-                listenerFunctions.elementsFilter.inFilter.keypress(filtProps);
+                eventListeners.elementsFilter.inFilter.keypress(filtProps);
             });
 
             div.appendChild(inFilter);
@@ -663,6 +663,7 @@ define([
                 menuItems: menuItems
             });
 
+            // Todo: clean up temporary refactoring aux.
 
             var navProps = props;
             navProps.configs = configs;
@@ -674,6 +675,7 @@ define([
 
             console.debug("TabProps:");
             console.debug(props);
+            props.tabs = props.configs.tabs;
             var tabsDiv = tabs(props);
 
             divPanel.appendChild(menuDiv);
@@ -683,38 +685,49 @@ define([
             return divPanel;
         }
 
-        /** @function renderTabs
-         *  Description
-         *  @param {Object} variable - Desc.
-         *  @return {Type} desc.
+        /**
+         * @function
+         * @name tabs
+         * @description Tab content rendering logic.
+         * @param {Object} prosp
+         * @return {Type} desc.
          */
         function tabs(props) {
-            /*
-             * Returns the container for tabs in the side panel
-             */
+            try {
+                console.debug("debugging tabs()");
+                console.debug(props);
 
-            var divContent = d.createElement('div');
-            divContent.classList.add(classNames.tab.container);
-            divContent.id = classNames.tab.container;
+                props.cy = graphUtils.cy();
 
-            props.gwClient = gwClient;
+                var divContent = d.createElement('div');
+                divContent.classList.add(classNames.tab.container);
+                divContent.id = classNames.tab.container;
 
-            if (configs.tabs.graphs.active) {
-                divContent.appendChild(
-                    graphsContent({
-                        cy: props.cy,
-                        gwClient: props.gwClient
-                    })
-                );
+                props.gwClient = gwClient;
 
-            } else if (configs.tabs.elements.active) {
-                divContent.appendChild(elementsContent(props));
+                if (props.tabs.graphs.active) {
+                    divContent.appendChild(
+                        graphsContent({
+                            cy: props.cy,
+                            gwClient: props.gwClient
+                        })
+                    );
 
-            } else if (configs.tabs.styles.active) {
-                divContent.appendChild(stylesContent());
+                } else if (props.tabs.elements.active) {
+                    divContent.appendChild(elementsContent(props));
+
+                } else if (props.tabs.styles.active) {
+                    divContent.appendChild(stylesContent());
+                }
+
+                return divContent;
+            } catch (e) {
+                console.group("Exception raised by tabs()");
+                console.debug("props");
+                console.debug(props);
+                console.warn(e);
+                console.groupEnd();
             }
-
-            return divContent;
         }
 
         /**
@@ -797,21 +810,21 @@ define([
         }
 
 
-        /** @function updateTabs
-         *  Description
-         *  @param {Object} variable - Desc.
-         *  @return {Type} desc.
+        /**
+         * @function
+         * @name updateTabs
+         * @description Called when tab links are clicked. Removes content to make room for the tab clicked.
+         * Updates tab content by calling tabs().
+         * @param {Object} props
+         * @return {Type} to be refactored.
          */
         function updateTabs(props) {
 
-            /*
-             *   Clear the tabs container and re-render content.
-             *   Append the content to panelContainer.
-             */
+            console.debug("updateTabs()");
+            console.debug(props);
+
             var divTabContainer = d.getElementById(classNames.tab.container);
-
             var panelContainer = d.getElementById(classNames.panel.container);
-
             var childsToRemove = divTabContainer.childNodes;
 
             childsToRemove.forEach(function (child) {
@@ -819,7 +832,8 @@ define([
             });
 
             var tabsContent = tabs({
-                cy: props.cy
+                cy: props.cy,
+                tabs: configs.tabs
             });
             panelContainer.appendChild(tabsContent);
         }

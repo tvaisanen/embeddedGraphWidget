@@ -326,17 +326,20 @@ define(["../utils/graphUtils", "../configuration/classNames"], function (graphUt
             }
         },
         ui: {
-            navClick: /** @function handleNavClick
+            /** @function handleNavClick
              *  Description
              *  @param {Object} variable - Desc.
              *  @return {Type} desc.
              */
-                function handleNavClick(props) {
+            navClick: function (props) {
+                console.debug("debugging navClick()");
+                console.debug(props);
 
                 var keyToActivate = props.keyToActivate;
                 var tabs = props.configs.tabs;
                 var navItemClasses = props.classNames.tab.nav.item;
-                // toggle all navlink classes to inactive
+
+                // remove active class from every link
                 var links = Object.keys(tabs);
                 links.forEach(function (key) {
                     tabs[key].active = false;
@@ -344,17 +347,14 @@ define(["../utils/graphUtils", "../configuration/classNames"], function (graphUt
                         .classList.remove(navItemClasses.active);
                 });
 
-                // activate clicked navlink
+                // activate clicked link
                 tabs[keyToActivate].active = true;
                 document.getElementById("nav-item-" + keyToActivate)
                     .classList.add(navItemClasses.active);
-                var divTabContainer = document.getElementById(props.classNames.tab.container);
-                console.log(divTabContainer);
-                console.debug("Debugging eventListeners.ui.navClick()");
-                console.debug(props);
+
                 props.updateTabs({
                     cy: props.cy,
-                    configs: props.configs
+                    tabs: props.configs.tabs
                 });
             }
         },
