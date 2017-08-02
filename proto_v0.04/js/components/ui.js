@@ -734,7 +734,7 @@ define([
              * */
 
             var cy = props.cy;
-            var array = props.array;toggl
+            var array = props.array;
 
             var ul = d.createElement('ul');
 
@@ -788,7 +788,7 @@ define([
                         setCurrentDetail: function () {
                             console.log("stub set detail")
                         }
-                    })
+                    });
                 });
 
                 ul.appendChild(li);

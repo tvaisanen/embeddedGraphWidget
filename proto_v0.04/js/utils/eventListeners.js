@@ -174,19 +174,22 @@ define(["../utils/graphUtils", "../configuration/classNames"], function (graphUt
             /**
              * @function
              * @name onMouseout()
-             * @description elementsList.onMouseout()
+             * @description Action to be triggered when mouse hovers out of list item element.
              * @param {Object} props
+             * @param {Object} props.cy Cytoscape instance
+             * @param {Object} props.listItemId Element id shown by the list item.
              */
             onMouseOut: function mouseOut(props) {
                 try {
                     var node = props.cy.getElementById(props.listItemId);
                     node.toggleClass('hover-on');
-                    graphUtils.toggleNeighborhood(node);
+                    graphUtils.toggleNeighborhood({node: node});
                 } catch (e) {
                     console.group("Exception raised by elementsList.onMouseOut()");
                     console.debug("props");
                     console.debug(props);
                     console.warn(e);
+                    console.groupEnd();
                 }
             }
         },

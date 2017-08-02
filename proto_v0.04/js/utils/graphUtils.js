@@ -891,7 +891,7 @@ define([
          * @param {Object} props
          * @param {Object} props.node
          */
-        function toggleNeighbourhood(props) {
+        function toggleNeighborhood(props) {
             var neighborhood = props.node.neighborhood('node');
             var edges = props.node.neighborhood('edge');
 
@@ -972,6 +972,7 @@ define([
             },
             nodeIdAvailable: nodeIdAvailable,
             initCy: initCytoscape,
-            testCy: testCy
+            testCy: testCy,
+            toggleNeighborhood: toggleNeighborhood
         }
 });
