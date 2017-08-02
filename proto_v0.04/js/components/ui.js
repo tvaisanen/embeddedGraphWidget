@@ -465,8 +465,8 @@ define([
                 hCategory.innerHTML = props.category;
 
                 // Fixme: configs.styleOptions.lineWidth needs to be implemented with generator?
-                // var parameters = ["arrowShape", "lineColor", "lineWidth"];
-                var parameters = ["arrowShape", "lineColor"];
+                var parameters = ["arrowShape", "lineColor", "lineWidth"];
+                //var parameters = ["arrowShape", "lineColor"];
 
                 divCategory.appendChild(hCategory);
 
