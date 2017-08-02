@@ -23,7 +23,7 @@ define([
          * @module graphUtils
          */
 
-        // active graph instance
+            // active graph instance
         var cy;
 
         /** @function
@@ -402,8 +402,14 @@ define([
          *  @param {Object} props
          *  @param {String} props.nodeId Id of the node to expand.
          *  @param {Object} props.cy Cytoscape instance.
-         *
-         */
+         *  @example                         /*
+         *  node = {
+         *      in: Object,
+         *      out: Object,
+         *      meta: Object
+         *  }
+         **/
+
         function expandNode(props) {
             console.log(props);
             try {
@@ -431,6 +437,10 @@ define([
 
                         console.debug("expandNode().node");
                         console.debug(node);
+
+                        // 1. parse edges
+                        var connectedNodes = parseEdgesFromResponseData({data: node});
+                        console.debug(connectedNodes);
 
                         try {
                             // If node has outgoing edges refresh the categories
@@ -675,6 +685,76 @@ define([
          */
         function nodeIdAvailable(props, nodeId, cy) {
             return !props.cy.getElementById(props.nodeId).isNode();
+        }
+
+        /**
+         * @function
+         * @name parseEdgesFromResponseData
+         * @param {Object} props
+         * @param {Object} props.data Node data in JSON format.
+         * @return {Object}
+         * @example
+         *  node = {
+         *      in: Object,
+         *      out: Object,
+         *      meta: Object
+         *  }
+         */
+        function parseEdgesFromResponseData(props) {
+            try {
+                // check if out/in nodes defined
+                var hasEdgesOut = (props.data.out != 'undefined');
+                var hasEdgesIn = (props.data.in != 'undefined');
+                var newCategoriesOut = {};
+                var newCategoriesIn = {};
+
+                // if defined get the id's of connected nodes
+                if (hasEdgesOut) {
+                    try {
+                        newCategoriesOut = Object.keys(props.data.out);
+                        props.edgeCategories.update({
+                            newCategories: newCategoriesOut
+                        });
+                    } catch (e) {
+                        console.groupCollapsed("Exception raised while updating categories in expandNode()");
+                        console.warn(e);
+                        console.info("%cNode", "color:red;");
+                        console.info(props.data);
+                        console.groupEnd();
+                    }
+                }
+
+                if (hasEdgesIn) {
+                    try {
+                        newCategoriesIn = Object.keys(props.data.in);
+                        edgeCategories.update({
+                            newCategories: newCategoriesIn
+                        });
+
+                    } catch (e) {
+                        console.groupCollapsed("Exception raised while updating categories in expandNode()");
+                        console.warn(e);
+                        console.info("%cNode", "color:red;");
+                        console.info(props.data);
+                        console.groupEnd();
+                    }
+                }
+
+                return {
+                    data: props.data,
+                    hasEdgesIn: hasEdgesIn,
+                    hasEdgesOut: hasEdgesOut,
+                    connectFrom: newCategoriesIn,
+                    connectTo: newCategoriesOut
+                };
+            } catch (e) {
+                console.group("Exception raised by parseEdgesFromResponseData()");
+                console.debug("props:");
+                console.debug(props);
+                console.warn(e);
+                console.groupEnd();
+            }
+
         }
 
         /** @function
@@ -935,14 +1015,16 @@ define([
          * @param {Object} props
          * @param {Object} props.category
          * @param {Object} props.style styles to assign
-         *
+         * Todo: Impelmentation after updating the categories is functional!
          * */
-        function updateCategoryElementsStyle(props){
+        function updateCategoryElementsStyle(props) {
             try {
                 console.info("%cupdateCategoryElementStyle()", "color:green;size:20px;");
                 console.info(props);
-            } catch (e){
-                console.group();
+                var elementsToUpdate = cy.elements("edge." + props.category);
+                console.log(elementsToUpdate);
+            } catch (e) {
+                console.group("updateCategoryElementsStyle()");
                 console.debug("props:");
                 console.debug(props);
                 console.warn(e);
@@ -989,4 +1071,4 @@ define([
             toggleNeighborhood: toggleNeighborhood,
             updateCategoryElementStyle: updateCategoryElementsStyle
         }
-});
+    });

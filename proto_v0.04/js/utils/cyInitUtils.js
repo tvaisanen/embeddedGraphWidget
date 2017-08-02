@@ -20,10 +20,10 @@ define([
                 // contextMenus( cytoscape, jquery);
                 // var instance = cy.contextMenus();
 
-                console.log("CyInitUtils!");
-                console.log(require);
-                console.log(jquery);
-                console.log(cytoscape);
+                // console.log("CyInitUtils!");
+                // console.log(require);
+                // console.log(jquery);
+                // console.log(cytoscape);
 
 
 

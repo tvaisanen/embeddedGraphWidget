@@ -256,13 +256,13 @@ define([
                         category: props.category,
                         info: "Update style classes of the elements in the category."
                     });
-                    
+
                 } catch (e) {
-                    console.debug('1. catch.');
                     console.groupCollapsed("Exception raised by styleSelectionEventListener().");
-                    console.warn(e);
-                    console.warn("props:");
+                    console.debug("props:");
                     console.debug(props);
+                    console.warn(e);
+                    console.groupEnd();
                 }
             }
         },

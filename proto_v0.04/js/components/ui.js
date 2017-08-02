@@ -187,7 +187,7 @@ define([
             var divToggleMenu = d.createElement('div');
             divToggleMenu.innerHTML = '#';
             //divMenu.appendChild(divToggleMenu);
-            console.log(menuItems);
+            // console.log(menuItems);
             var menus = Object.keys(menuItems);
 
             var itemKeys = Object.keys(props.menuItems);
@@ -762,12 +762,12 @@ define([
             navProps.configs = configs;
             navProps.classNames = classNames;
             navProps.cy = graphUtils.cy();
-            console.debug("NavProps!");
-            console.debug(navProps);
+            // console.debug("NavProps!");
+            // console.debug(navProps);
             var tabNavDiv = navigation(navProps);
 
-            console.debug("TabProps:");
-            console.debug(props);
+            // console.debug("TabProps:");
+            // console.debug(props);
             props.tabs = props.configs.tabs;
             var tabsDiv = tabs(props);
 
