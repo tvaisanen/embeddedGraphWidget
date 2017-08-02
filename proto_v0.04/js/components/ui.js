@@ -21,7 +21,6 @@ define([
          */
 
         var d = document;
-        console.debug(menuItems);
 
         /** @function
          *  @name contentContainer
@@ -407,17 +406,12 @@ define([
             // Todo: make this generic version to work for all of the following use cases
             function styleSelection(props) {
                 try {
-                    console.debug("styleSelection()");
-                    console.debug("props");
-                    console.debug(props);
-
                     var div = d.createElement('div');
                     var selection = d.createElement('select');
                     selection.setAttribute('id', props.selectionId);
 
                     // generate options for selection
                     props.options.forEach(function (option) {
-                        console.debug(option);
                         var opt = d.createElement('option');
                         opt.setAttribute(
                             'id',
@@ -428,13 +422,18 @@ define([
                         selection.appendChild(opt);
                     });
 
+                    console.debug("Here we should have the new style to replace the old one!");
+                    console.debug(props);
+
+                    var style = {update: "this"};
 
                     // event listener for selection
                     selection.addEventListener('change', function () {
-                        props.styleSelectionListener({
+                        eventListeners.styleList.styleSelection({
                             baseClass: 'edge',
                             category: props.category,
                             parameter: props.parameter,
+                            style: style,
                             value: selection.value
                         });
                     });
@@ -474,7 +473,7 @@ define([
 
                 parameters.forEach(function (parameter) {
                     var p = document.createElement('p');
-                    p.innerHTML = parameter + " : " + props.style[parameter];
+                    p.innerHTML = parameter;
                     divCategory.appendChild(p);
 
                     var options = configs.styleOptions[parameter];
@@ -485,18 +484,14 @@ define([
                         });
                     }
 
-                    console.debug("values:");
-                    console.debug(values);
-                    console.debug("configs.styleOptions." + parameter);
-                    console.debug(options);
                     try {
-                    var selection = styleSelection({
-                        attributeId: 'select-line-style',
-                        category: props.category,
-                        selectionId: 'option-line-style',
-                        options: options,
-                        parameter: parameter
-                    });
+                        var selection = styleSelection({
+                            attributeId: 'select-line-style',
+                            category: props.category,
+                            selectionId: 'option-line-style',
+                            options: options,
+                            parameter: parameter
+                        });
                     } catch (e){
                         console.warn("parameter not found");
                     }
@@ -792,9 +787,6 @@ define([
          */
         function tabs(props) {
             try {
-                console.debug("debugging tabs()");
-                console.debug(props);
-
                 props.cy = graphUtils.cy();
 
                 var divContent = d.createElement('div');
@@ -917,9 +909,6 @@ define([
          * @return {Type} to be refactored.
          */
         function updateTabs(props) {
-
-            console.debug("updateTabs()");
-            console.debug(props);
 
             var divTabContainer = d.getElementById(classNames.tab.container);
             var panelContainer = d.getElementById(classNames.panel.container);

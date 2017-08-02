@@ -928,6 +928,28 @@ define([
             }
         }
 
+        /**
+         * @function
+         * @name updateCategoryElementsStyle
+         * @description update cytoscape elements style
+         * @param {Object} props
+         * @param {Object} props.category
+         * @param {Object} props.style styles to assign
+         *
+         * */
+        function updateCategoryElementsStyle(props){
+            try {
+                console.info("%cupdateCategoryElementStyle()", "color:green;size:20px;");
+                console.info(props);
+            } catch (e){
+                console.group();
+                console.debug("props:");
+                console.debug(props);
+                console.warn(e);
+                console.groupEnd();
+            }
+        }
+
         function createNewCy(props) {
             try {
                 var style = props.style || configs.style;
@@ -964,6 +986,7 @@ define([
             nodeIdAvailable: nodeIdAvailable,
             initCy: initCytoscape,
             testCy: testCy,
-            toggleNeighborhood: toggleNeighborhood
+            toggleNeighborhood: toggleNeighborhood,
+            updateCategoryElementStyle: updateCategoryElementsStyle
         }
 });

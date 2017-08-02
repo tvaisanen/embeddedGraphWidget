@@ -53,8 +53,9 @@ define([
 
         assert.ok(
             gu.edgeExists({
-                edgeId: edge.id(),
-                cy: cy}
+                    edgeId: edge.id(),
+                    cy: cy
+                }
             ),
             "Returned edge can be found from cy");
 
@@ -396,6 +397,15 @@ define([
     QUnit.test("setAndRunLayout()", function (assert) {
         assert.ok(false, "NOT IMPLEMENTED");
 
-    })
+    });
+
+    QUnit.test("updateCategoryElementsStyle", function (assert) {
+        var container = document.createElement('div');
+        container.setAttribute('id', 'cy');
+        document.body.appendChild(container);
+        assert.ok(gu.initCy(container), "NOT IMPLEMENTED");
+        document.body.removeChild(container);
+
+    });
 
 });

@@ -33,8 +33,8 @@ define(["../configuration/configs"], function (configs) {
     function addCategory(props) {
         // init new category with generic style
         styles[props.name] = getDefaultStyle();
-        if (typeof props.style !== 'undefined'){
-            Object.keys(props.style).forEach(function (key){
+        if (typeof props.style !== 'undefined') {
+            Object.keys(props.style).forEach(function (key) {
                 styles[props.name][key] = props.style[key];
             });
         }
@@ -64,7 +64,7 @@ define(["../configuration/configs"], function (configs) {
     /**
      * @function
      * @name getStyle
-     * @description Get specific style.
+     * @description Get specific style as string array.
      * @param {String} style Style category name.
      * @return {Object} Return the style. If do not exist return default style.
      */
@@ -76,7 +76,25 @@ define(["../configuration/configs"], function (configs) {
         if (!style) {
             return Object.values(styles.generic);
         }
-        return Object.values(styles.generic);
+        return Object.values(styles);
+    }
+
+    /**
+     * @function
+     * @name getStyleObject
+     * @description Get specific style object.
+     * @param {String} style Style category name.
+     * @return {Object} Return the style. If do not exist return default style.
+     */
+    function getStyleObject(style) {
+        // return styles as array
+        /*
+         * if no style get generic
+         * */
+        if (!style) {
+            return styles.generic;
+        }
+        return styles[style]
     }
 
     /**
@@ -105,6 +123,43 @@ define(["../configuration/configs"], function (configs) {
         }
     }
 
+    /**
+     * @function
+     * @name updateStyle
+     * @description Update category style
+     * @param {Object} props
+     * @param {String} props.category Category to update.
+     * @param {Object} props.style Style object containing updated key value pairs.
+     * @return {Object} The style defined.
+     */
+    function updateStyleParameter(props) {
+        try {
+            console.debug("%cupdateStyle(props)", "color:green;size:20px;");
+            console.debug(props);
+            var styleToUpdate = getStyleObject[props.category];
+            console.debug("Before updating:");
+            console.debug("getStyleObject["+props.category+"]");
+            console.debug(styleToUpdate);
+            Object.keys(props.style).forEach(function (styleKey) {
+                styleToUpdate[styleKey] = props.style[styleKey];
+            });
+            console.debug("After updating:");
+            console.debug(styleToUpdate);
+
+
+            return getStyle(props.category);
+            // use graphUtils.updateElementStyles() here!
+            // var elementsToUpdate = funcProps.cy.elements(selector);
+            // console.debug('setStyle() - elementsToUpdate.forEach()');
+            // this[fp.category][fp.style] = fp.value;
+            // console.debug(funcProps.cy);
+        } catch (e) {
+            console.group("Exception raised by elementStyles.updateStyle()");
+            console.warn(e);
+            console.groupEnd();
+        }
+    }
+
     return {
         addCategory: addCategory,
         categoryExists: categoryExists,
@@ -113,6 +168,7 @@ define(["../configuration/configs"], function (configs) {
         setStyle: setStyle,
         styles: function () {
             return styles;
-        }
+        },
+        updateStyleParameter: updateStyleParameter
     };
 });

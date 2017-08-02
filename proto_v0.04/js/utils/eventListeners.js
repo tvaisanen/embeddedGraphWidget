@@ -2,7 +2,11 @@
  * Created by toni on 19.7.2017.
  */
 
-define(["../utils/graphUtils", "../configuration/classNames"], function (graphUtils, classNames) {
+define([
+    "../utils/graphUtils",
+    "../configuration/classNames",
+    "../components/elementStyles"
+], function (graphUtils, classNames, elementStyles) {
     "use strict";
     /**
      * @description Event listeners description here
@@ -237,58 +241,79 @@ define(["../utils/graphUtils", "../configuration/classNames"], function (graphUt
             }
         },
         styleList: {
-            styleSelection: function (funcProps, value) {
+            styleSelection: function (props) {
                 try {
                     console.group('styleSelectionEventListener()');
                     console.debug('1. try - catch block.');
-                    var selector = funcProps.baseClass + '.' + funcProps.category;
-                    var categoryElements = cy.elements(funcProps.baseClass + '.' + funcProps.category);
+
+                    console.debug(props);
+                    console.debug(elementStyles.styles());
+
+                    var cy = graphUtils.cy();
+                    var selector = props.baseClass + '.' + props.category;
+                    var categoryElements = cy.elements(props.baseClass + '.' + props.category);
+
                     console.debug(selector);
                     console.debug('CategoryElements');
                     console.debug(categoryElements);
-                    // defaults
-                    var classesToRemove = elementStyles.getStyle();
+
+                    var styleParameterToUpdate = {};
+                    styleParameterToUpdate[props.parameter] = props.value;
+
+                    elementStyles.updateStyleParameter({
+                        category: props.category,
+                        style: styleParameterToUpdate,
+                        info: "Update style values to elementsStyle.category."
+                    });
+
+                    graphUtils.updateCategoryElementStyle({
+                        category: props.category,
+                        info: "Update style classes of the elements in the category."
+                    });
 
                     // do only if the value is not all ready in the category styles
                     try {
                         console.debug('2. try - catch block.');
-                        var categoryNotListed =
-                            elementStyles.categoryExists(funcProps.category);
+
+                        var categoryNotListed = elementStyles.categoryExists(props.category);
+
                         if (categoryNotListed) {
+
                             console.debug('condition: categoryNotListed');
                             // if category is not listed, the defaults are in use
                             console.debug('setting value');
-                            console.debug(funcProps);
+                            console.debug(props);
+
                             elementStyles.setStyle({
-                                category: funcProps.category,
+                                category: props.category,
                                 cy: cy,
-                                style: funcProps.parameter,
-                                value: funcProps.value,
-                                baseClass: funcProps.baseClass
+                                style: props.parameter,
+                                value: props.value,
+                                baseClass: props.baseClass
                             });
-                            var addThese = elementStyles.getStyle(funcProps.category);
-                            console.debug(addThese);
+
+                            var addThese = elementStyles.getStyle(props.category);
+
+
                             element.addClass(addThese);
-                            console.debug("Updated category to elementStyles");
-                            console.debug(funcProps);
-                            console.debug(elementStyles.getStyle(funcProps.category));
+
                         }
                     } catch (e) {
                         console.debug('2. catch.');
                         // if category not listed add it
                         elementStyles.setStyle({
-                            category: funcProps.category,
+                            category: props.category,
                             cy: cy,
-                            style: funcProps.parameter,
-                            value: funcProps.value,
-                            baseClass: funcProps.baseClass
+                            style: props.parameter,
+                            value: props.value,
+                            baseClass: props.baseClass
                         });
                         console.debug("Add category to elementStyles");
-                        console.debug(funcProps);
-                        console.debug(elementStyles.getStyle(funcProps.category));
+                        console.debug(props);
+                        console.debug(elementStyles.getStyle(props.category));
                     }
 
-                    var classesToAdd = elementStyles.getStyle(funcProps.category);
+                    var classesToAdd = elementStyles.getStyle(props.category);
                     /*
                      console.debug('reached categoryElements.forEach()');
                      categoryElements.forEach(function (element) {
@@ -316,10 +341,11 @@ define(["../utils/graphUtils", "../configuration/classNames"], function (graphUt
                     console.groupCollapsed("Exception raised by styleSelectionEventListener().");
                     console.warn(e);
                     console.warn("props:");
-                    console.debug(funcProps);
+                    console.debug(props);
                 }
 
                 console.debug(elementStyles);
+                console.debug(elementStyles.styles());
                 console.groupEnd();
 
 

@@ -10,7 +10,7 @@ define([
 
     return {
         start: function () {
-            console.debug("starting the app!");
+            console.info("Starting the graphingwikiBrowser!");
             graphingwikiBrowser.start(configs);
         }
     }
