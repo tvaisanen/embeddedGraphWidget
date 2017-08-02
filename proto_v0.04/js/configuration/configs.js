@@ -40,30 +40,32 @@ define(function () {
                 arrowShape: 'arrow-shape-triangle'
             }
         },
-        lines: [
-            {label: 'solid', styleClass: 'line-style-solid'},
-            {label: 'dotted', styleClass: 'line-style-dotted'},
-            {label: 'dashed', styleClass: 'line-style-dashed'}
-        ],
-        arrows: [
-            {label: 'tee', styleClass: 'arrow-shape-tee'},
-            {label: 'triangle', styleClass: 'arrow-shape-triangle'},
-            {label: 'triangle-tee', styleClass: 'arrow-shape-triangle-tee'},
-            {label: 'triangle-cross', styleClass: 'arrow-shape-triangle-cross'},
-            {label: 'triangle-backcurve', styleClass: 'arrow-shape-triangle-backcurve'},
-            {label: 'square', styleClass: 'arrow-shape-square'},
-            {label: 'circle', styleClass: 'arrow-shape-circle'},
-            {label: 'diamond', styleClass: 'arrow-shape-diamond'},
-            {label: 'none', styleClass: 'arrow-shape-none'}
-        ],
-        colors: [
-            {label: 'red', styleClass: 'line-color-red'},
-            {label: 'green', styleClass: 'line-color-green'},
-            {label: 'orange', styleClass: 'line-color-orange'},
-            {label: 'yellow', styleClass: 'line-color-yellow'},
-            {label: 'cyan', styleClass: 'line-color-cyan'},
-            {label: 'blue', styleClass: 'line-color-blue'}
-        ],
+        styleOptions: {
+            lineStyle: [
+                {label: 'solid', styleClass: 'line-style-solid'},
+                {label: 'dotted', styleClass: 'line-style-dotted'},
+                {label: 'dashed', styleClass: 'line-style-dashed'}
+            ],
+            arrowShape: [
+                {label: 'tee', styleClass: 'arrow-shape-tee'},
+                {label: 'triangle', styleClass: 'arrow-shape-triangle'},
+                {label: 'triangle-tee', styleClass: 'arrow-shape-triangle-tee'},
+                {label: 'triangle-cross', styleClass: 'arrow-shape-triangle-cross'},
+                {label: 'triangle-backcurve', styleClass: 'arrow-shape-triangle-backcurve'},
+                {label: 'square', styleClass: 'arrow-shape-square'},
+                {label: 'circle', styleClass: 'arrow-shape-circle'},
+                {label: 'diamond', styleClass: 'arrow-shape-diamond'},
+                {label: 'none', styleClass: 'arrow-shape-none'}
+            ],
+            lineColor: [
+                {label: 'red', styleClass: 'line-color-red'},
+                {label: 'green', styleClass: 'line-color-green'},
+                {label: 'orange', styleClass: 'line-color-orange'},
+                {label: 'yellow', styleClass: 'line-color-yellow'},
+                {label: 'cyan', styleClass: 'line-color-cyan'},
+                {label: 'blue', styleClass: 'line-color-blue'}
+            ]
+        },
         widths: function () {
             // generate array of width objects {label: VALUE, styleClass: 'line-width-VALUE'}
             var range = Array.from(Array(31).keys());
