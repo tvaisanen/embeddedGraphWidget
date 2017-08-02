@@ -243,20 +243,6 @@ define([
         styleList: {
             styleSelection: function (props) {
                 try {
-                    console.group('styleSelectionEventListener()');
-                    console.debug('1. try - catch block.');
-
-                    console.debug(props);
-                    console.debug(elementStyles.styles());
-
-                    var cy = graphUtils.cy();
-                    var selector = props.baseClass + '.' + props.category;
-                    var categoryElements = cy.elements(props.baseClass + '.' + props.category);
-
-                    console.debug(selector);
-                    console.debug('CategoryElements');
-                    console.debug(categoryElements);
-
                     var styleParameterToUpdate = {};
                     styleParameterToUpdate[props.parameter] = props.value;
 
@@ -270,72 +256,7 @@ define([
                         category: props.category,
                         info: "Update style classes of the elements in the category."
                     });
-
-                    // do only if the value is not all ready in the category styles
-                    try {
-                        console.debug('2. try - catch block.');
-
-                        var categoryNotListed = elementStyles.categoryExists(props.category);
-
-                        if (categoryNotListed) {
-
-                            console.debug('condition: categoryNotListed');
-                            // if category is not listed, the defaults are in use
-                            console.debug('setting value');
-                            console.debug(props);
-
-                            elementStyles.setStyle({
-                                category: props.category,
-                                cy: cy,
-                                style: props.parameter,
-                                value: props.value,
-                                baseClass: props.baseClass
-                            });
-
-                            var addThese = elementStyles.getStyle(props.category);
-
-
-                            element.addClass(addThese);
-
-                        }
-                    } catch (e) {
-                        console.debug('2. catch.');
-                        // if category not listed add it
-                        elementStyles.setStyle({
-                            category: props.category,
-                            cy: cy,
-                            style: props.parameter,
-                            value: props.value,
-                            baseClass: props.baseClass
-                        });
-                        console.debug("Add category to elementStyles");
-                        console.debug(props);
-                        console.debug(elementStyles.getStyle(props.category));
-                    }
-
-                    var classesToAdd = elementStyles.getStyle(props.category);
-                    /*
-                     console.debug('reached categoryElements.forEach()');
-                     categoryElements.forEach(function (element) {
-                     var addThese = classesToAdd.join().replace(',', ' ');
-                     var removeThese = classesToRemove.join().replace(',', ' ');
-
-                     classesToRemove.forEach(function(item){
-                     console.debug(element.id()+".removeClass('"+item+"')");
-                     element.removeClass(item);
-                     });
-
-                     classesToAdd.forEach(function(item){
-                     console.debug(element.id()+".addClass('"+item+"')");
-                     element.toggleClass(item);
-                     });
-
-                     // element.removeClass(removeThese);
-                     // element.addClass(addThese);
-                     console.debug("Element classes!");
-                     console.debug(element.classes());
-                     //element.toggleClass(funcProps.value);
-                     });*/
+                    
                 } catch (e) {
                     console.debug('1. catch.');
                     console.groupCollapsed("Exception raised by styleSelectionEventListener().");
@@ -343,12 +264,6 @@ define([
                     console.warn("props:");
                     console.debug(props);
                 }
-
-                console.debug(elementStyles);
-                console.debug(elementStyles.styles());
-                console.groupEnd();
-
-
             }
         },
         ui: {

@@ -40,6 +40,11 @@ define([
         assert.ok(style, configs.style.generic, "returns style");
     });
 
+    QUnit.test("getStyleObject()", function (assert) {
+        var style = es.getStyleObject('generic');
+        assert.equal(style, configs.style.generic, "returns style");
+    });
+
     QUnit.test("setStyle()", function (assert) {
         var style = {
                 name: "newStyle",

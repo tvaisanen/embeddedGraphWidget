@@ -87,11 +87,10 @@ define(["../configuration/configs"], function (configs) {
      * @return {Object} Return the style. If do not exist return default style.
      */
     function getStyleObject(style) {
-        // return styles as array
-        /*
-         * if no style get generic
-         * */
+        console.debug("getStyleObject()");
+        console.debug(style);
         if (!style) {
+            console.debug("no style!");
             return styles.generic;
         }
         return styles[style]
@@ -136,9 +135,8 @@ define(["../configuration/configs"], function (configs) {
         try {
             console.debug("%cupdateStyle(props)", "color:green;size:20px;");
             console.debug(props);
-            var styleToUpdate = getStyleObject[props.category];
+            var styleToUpdate = styles[props.category];
             console.debug("Before updating:");
-            console.debug("getStyleObject["+props.category+"]");
             console.debug(styleToUpdate);
             Object.keys(props.style).forEach(function (styleKey) {
                 styleToUpdate[styleKey] = props.style[styleKey];
@@ -165,6 +163,7 @@ define(["../configuration/configs"], function (configs) {
         categoryExists: categoryExists,
         getDefaultStyle: getDefaultStyle,
         getStyle: getStyle,
+        getStyleObject: getStyleObject,
         setStyle: setStyle,
         styles: function () {
             return styles;
