@@ -443,75 +443,24 @@ define([
                             nodeId: props.nodeId,
                             data: node
                         });
+
                         console.debug(connectedNodes);
 
-                        try {
-                            // If node has outgoing edges refresh the categories
-                            var nodeHasOutgoingEdges = (node.out != 'undefined');
-                            var newCategoriesOut = [];
+                        console.debug("elementStyles before updating");
+                        console.debug(elementStyles.styles());
 
-                            if (nodeHasOutgoingEdges) {
-                                try {
-                                    newCategoriesOut = Object.keys(node.out);
-                                    var categoriesToUpdate = props.edgeCategories.get();
-                                    props.edgeCategories.update({
-                                        newCategories: newCategoriesOut
-                                    });
-                                } catch (e) {
-                                    console.groupCollapsed("Exception raised while updating categories in expandNode()");
-                                    console.warn(e);
-                                    console.info("%cNode", "color:red;");
-                                    console.info(node);
-                                    console.groupEnd();
-                                }
-                            }
+                        // 2. update elementStyle categories
+                        elementStyles.addCategories({
+                            categories: connectedNodes.categoriesIn
+                        });
+                        elementStyles.addCategories({
+                            categories: connectedNodes.categoriesOut
+                        });
 
-                            // Iterate the outgoing edge categories.
+                        console.debug("elementStyles afters updating");
+                        console.debug(elementStyles.styles());
 
-                            try {
-                                newCategoriesOut.forEach(function (category) {
-                                    // get list of nodes where the clicked node is connected t
-                                    var nodesConnectedTo = node.out[category];
-
-                                    // for each connected node create a new edge
-                                    createEdgesToNodes({
-                                        sourceNodeId: nodeId,
-                                        nodesToCreateEdges: nodesConnectedTo,
-                                        category: category,
-                                        cy: cy,
-                                        configs: props.configs,
-                                        elementStyles: props.elementStyles
-                                    });
-                                });
-                            } catch (e) {
-                                console.group("Exception raised by graphUtilsExpandNode()");
-                                console.warn(e);
-                                console.groupEnd();
-                            }
-                            var newCategoriesIn = Object.keys(node.in);
-                            categoriesToUpdate = edgeCategories.get();
-                            edgeCategories.update({
-                                newCategories: newCategoriesIn
-                            });
-
-                            // Iterate the incoming edge categories.
-                            newCategoriesIn.forEach(function (category) {
-                                var nodesConnectedTo = node.in[category];
-                                createEdgesFromNodes({
-                                    targetNodeId: nodeId,
-                                    nodesFromCreateEdges: nodesConnectedTo,
-                                    category: category,
-                                    cy: cy
-                                });
-                            });
-                        } catch (e) {
-                            console.groupCollapsed("Exception raised by expandNode()");
-                            console.warn(e);
-                            console.groupEnd();
-                        }
                         setAndRunLayout(props);
-
-
                     }
                 );
             } catch (e) {
@@ -707,19 +656,17 @@ define([
         function parseEdgesFromResponseData(props) {
             try {
                 /*
-                * By default incoming edges are in "_notype" category.
-                * This is due the graphingwiki backend API. Hence,
-                * the incoming edge categories do not need to be iterated.
-                * But the same logic is going to be used for incoming and outgoing
-                * edges to enable changes in the API.
-                */
-
-                console.debug("Parsing edge data of " + props.nodeId);
+                 * By default incoming edges are in "_notype" category.
+                 * This is due the graphingwiki backend API. Hence,
+                 * the incoming edge categories do not need to be iterated.
+                 * But the same logic is going to be used for incoming and outgoing
+                 * edges to enable changes in the API.
+                 */
 
                 // check if out/in nodes defined
                 var hasEdgesOut = (props.data.out != 'undefined');
                 var hasEdgesIn = (props.data.in != 'undefined');
-                var newCategoriesOut = {};
+                var newCategoriesOut = {};
                 var newCategoriesIn = {};
                 var edgeOut = {};
                 var edgeIn = {};
@@ -728,35 +675,23 @@ define([
                 // if defined get the id's of connected nodes
                 if (hasEdgesOut) {
                     try {
-                        console.debug("%cEdges out:", "color:green;background-color:yellow;");
                         newCategoriesOut = Object.keys(props.data.out);
-                        newCategoriesOut.forEach(function(category) {
+                        newCategoriesOut.forEach(function (category) {
                             edgeOut[category] = props.data.out[category];
-                            console.info(category + " : " + JSON.stringify(props.data.out[category]));
                         });
                     } catch (e) {
-                        console.groupCollapsed("Exception raised while updating categories in expandNode()");
                         console.warn(e);
-                        console.info("%cNode", "color:red;");
-                        console.info(props.data);
-                        console.groupEnd();
                     }
                 }
 
                 if (hasEdgesIn) {
                     try {
-                        console.debug("%cEdges in:", "color:green;background-color:yellow;");
                         newCategoriesIn = Object.keys(props.data.in);
-                        newCategoriesIn.forEach(function(category) {
+                        newCategoriesIn.forEach(function (category) {
                             edgeIn[category] = props.data.in[category];
-                            console.info(category + " : " + JSON.stringify(props.data.out[category]));
                         });
                     } catch (e) {
-                        console.groupCollapsed("Exception raised while updating categories in expandNode()");
                         console.warn(e);
-                        console.info("%cNode", "color:red;");
-                        console.info(props.data);
-                        console.groupEnd();
                     }
                 }
 
@@ -764,10 +699,12 @@ define([
                     data: props.data,
                     hasEdgesIn: hasEdgesIn,
                     hasEdgesOut: hasEdgesOut,
-                    connectFrom: newCategoriesIn,
-                    connectTo: newCategoriesOut,
-                    edges: response
+                    categoriesIn: newCategoriesIn,
+                    categoriesOut: newCategoriesOut,
+                    edgesOut: edgeOut,
+                    edgesIn: edgeIn
                 };
+
             } catch (e) {
                 console.group("Exception raised by parseEdgesFromResponseData()");
                 console.debug("props:");
@@ -775,7 +712,6 @@ define([
                 console.warn(e);
                 console.groupEnd();
             }
-
         }
 
         /** @function

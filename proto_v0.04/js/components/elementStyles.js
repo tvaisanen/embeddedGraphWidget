@@ -32,11 +32,32 @@ define(["../configuration/configs"], function (configs) {
      */
     function addCategory(props) {
         // init new category with generic style
-        styles[props.name] = getDefaultStyle();
-        if (typeof props.style !== 'undefined') {
-            Object.keys(props.style).forEach(function (key) {
-                styles[props.name][key] = props.style[key];
+        if (!categoryExists(props.name)) {
+            styles[props.name] = getDefaultStyle();
+        } else {
+            console.info("Category: " + props.name + " is already listed.");
+        }
+    }
+
+    /**
+     * @function
+     * @name addCategories
+     * @description Add multiple categores to styles.
+     * @param {Object} props
+     * @param {Array} props.categories category name array.
+     */
+    function addCategories(props) {
+        try {
+            // init new category with generic style
+            props.categories.forEach(function (category) {
+                addCategory({name: category});
             });
+        } catch (e) {
+            console.group("Exception raised by addCategories()");
+            console.debug("props:");
+            console.debug(props);
+            console.warn(e);
+            console.groupEnd();
         }
     }
 
@@ -160,6 +181,7 @@ define(["../configuration/configs"], function (configs) {
 
     return {
         addCategory: addCategory,
+        addCategories: addCategories,
         categoryExists: categoryExists,
         getDefaultStyle: getDefaultStyle,
         getStyle: getStyle,
