@@ -46,7 +46,7 @@ define(["../utils/eventListeners", "../components/elementStyles"],
                     var graphId = prompt("Save graph\nId:");
                     eventListeners.ui.menu.save({
                             gwClient: props.gw,
-                            id: graphId,
+                            graphId: graphId,
                             graph: props.cy.json(),
                             styles: elementStyles.styles()
                     });

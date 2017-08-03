@@ -15,6 +15,7 @@ MOIN_PATH = 'http://localhost/'
 
 def save_to_db(graph):
     try:
+        print(graph['id'])
         d = shelve.open(DATABASE)
         print(graph['id'])
         key = graph['id']  # version control

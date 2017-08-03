@@ -145,6 +145,30 @@ define(["../configuration/configs"], function (configs) {
 
     /**
      * @function
+     * @name setStyles
+     * @description Init styles. Used when new graph is loaded with predefined styles.
+     * @param {Object} props
+     * @param {String} props.styles New styles object.
+     * @return {Object} The style defined.
+     */
+    function setStyles(props) {
+        try {
+            console.group("info: setStyle(props) called!");
+            console.debug("before");
+            console.debug(styles);
+            styles = props.styles;
+            console.debug("after:");
+            console.debug(styles);
+            console.groupEnd();
+        } catch (e) {
+            console.group("Exception raised by elementStyles.setStyles()");
+            console.warn(e);
+            console.groupEnd();
+        }
+    }
+
+    /**
+     * @function
      * @name updateStyle
      * @description Update category style
      * @param {Object} props
@@ -187,6 +211,7 @@ define(["../configuration/configs"], function (configs) {
         getStyle: getStyle,
         getStyleObject: getStyleObject,
         setStyle: setStyle,
+        setStyles: setStyles,
         styles: function () {
             return styles;
         },

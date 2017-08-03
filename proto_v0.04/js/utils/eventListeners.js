@@ -225,9 +225,13 @@ define([
                                 return json;
                             }).then(function (json) {
                                 graphUtils.cy().destroy();
+                                console.debug("I'm here!");
+                                console.debug(json);
                                 graphUtils.createNewCy({
-                                    data: json.data
+                                    data: json.data.graph
                                 });
+
+                                elementStyles.setStyles(json.data.styles);
                                 // props.cy = initNewGraph(json.data);
                             });
                         }
@@ -301,6 +305,16 @@ define([
                 });
             },
             menu: {
+                /**
+                 * @function
+                 * @name menu.save()
+                 * @description Description
+                 * @param {Object} props
+                 * @param {String} props.graphId
+                 * @param {Object} props.graph
+                 * @param {Object} props.styles
+                 * @return {Type} desc.
+                 */
                 save: function (props) {
                     try {
                         console.debug("menu.save(props)");
@@ -322,9 +336,9 @@ define([
 
 
                         var promise = props.gwClient.postGraph({
-                            graphId: props.id,
+                            graphId: props.graphId,
                             graph: props.graph,
-                            styles: props.style
+                            styles: props.styles
                         });
 
                         promise.then(function (response) {

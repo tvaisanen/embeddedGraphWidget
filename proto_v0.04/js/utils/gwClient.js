@@ -151,21 +151,22 @@ define(["../configuration/configs"], function (configs) {
      *  @param {Object} props
      *  @param {Object} props.graph Cytoscape.json() representation
      *  @param {Object} props.gwClient gwClient reference.
-     *  @param {String} props.id Id for the graph.
+     *  @param {String} props.graphId Id for the graph.
      *  @param {Object} props.styles elementStyles.styles() to be loaded when graph is loaded.
      *  @return {Promise} Promise response of given action.
      */
     function postGraph(props) {
         var developmentPath = configs.API_PATH + 'save/';
         var payload = {
-            id: props.id,
+            id: props.graphId,
             data: {
                 graph: props.graph,
                 styles: props.styles
             }
         };
         console.debug("id: " + props.graphId);
-        console.debug(props.graph);
+        console.debug(props);
+        console.debug(payload);
         var saveGraphRequest = new Request(developmentPath, {
             headers: new Headers({
                 'Content-Type': 'application/json'
