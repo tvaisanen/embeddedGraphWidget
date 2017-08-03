@@ -439,7 +439,10 @@ define([
                         console.debug(node);
 
                         // 1. parse edges
-                        var connectedNodes = parseEdgesFromResponseData({data: node});
+                        var connectedNodes = parseEdgesFromResponseData({
+                            nodeId: props.nodeId,
+                            data: node
+                        });
                         console.debug(connectedNodes);
 
                         try {
@@ -690,9 +693,10 @@ define([
         /**
          * @function
          * @name parseEdgesFromResponseData
+         * @description Parse edges and their categories from gwClient response.
          * @param {Object} props
          * @param {Object} props.data Node data in JSON format.
-         * @return {Object}
+         * @return {Object} edgeData
          * @example
          *  node = {
          *      in: Object,
@@ -702,18 +706,33 @@ define([
          */
         function parseEdgesFromResponseData(props) {
             try {
+                /*
+                * By default incoming edges are in "_notype" category.
+                * This is due the graphingwiki backend API. Hence,
+                * the incoming edge categories do not need to be iterated.
+                * But the same logic is going to be used for incoming and outgoing
+                * edges to enable changes in the API.
+                */
+
+                console.debug("Parsing edge data of " + props.nodeId);
+
                 // check if out/in nodes defined
                 var hasEdgesOut = (props.data.out != 'undefined');
                 var hasEdgesIn = (props.data.in != 'undefined');
                 var newCategoriesOut = {};
                 var newCategoriesIn = {};
+                var edgeOut = {};
+                var edgeIn = {};
+
 
                 // if defined get the id's of connected nodes
                 if (hasEdgesOut) {
                     try {
+                        console.debug("%cEdges out:", "color:green;background-color:yellow;");
                         newCategoriesOut = Object.keys(props.data.out);
-                        props.edgeCategories.update({
-                            newCategories: newCategoriesOut
+                        newCategoriesOut.forEach(function(category) {
+                            edgeOut[category] = props.data.out[category];
+                            console.info(category + " : " + JSON.stringify(props.data.out[category]));
                         });
                     } catch (e) {
                         console.groupCollapsed("Exception raised while updating categories in expandNode()");
@@ -726,11 +745,12 @@ define([
 
                 if (hasEdgesIn) {
                     try {
+                        console.debug("%cEdges in:", "color:green;background-color:yellow;");
                         newCategoriesIn = Object.keys(props.data.in);
-                        edgeCategories.update({
-                            newCategories: newCategoriesIn
+                        newCategoriesIn.forEach(function(category) {
+                            edgeIn[category] = props.data.in[category];
+                            console.info(category + " : " + JSON.stringify(props.data.out[category]));
                         });
-
                     } catch (e) {
                         console.groupCollapsed("Exception raised while updating categories in expandNode()");
                         console.warn(e);
@@ -745,7 +765,8 @@ define([
                     hasEdgesIn: hasEdgesIn,
                     hasEdgesOut: hasEdgesOut,
                     connectFrom: newCategoriesIn,
-                    connectTo: newCategoriesOut
+                    connectTo: newCategoriesOut,
+                    edges: response
                 };
             } catch (e) {
                 console.group("Exception raised by parseEdgesFromResponseData()");

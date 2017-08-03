@@ -30,7 +30,11 @@
  * Created by toni on 19.7.2017.
  */
 
-define(["../utils/graphUtils", "../configuration/classNames"], function (graphUtils, classNames) {
+define([
+    "../utils/graphUtils",
+    "../configuration/classNames",
+    "../components/elementStyles"
+], function (graphUtils, classNames, elementStyles) {
     "use strict";
     /**
      * @description Event listeners description here
@@ -265,92 +269,29 @@ define(["../utils/graphUtils", "../configuration/classNames"], function (graphUt
             }
         },
         styleList: {
-            styleSelection: function (funcProps, value) {
+            styleSelection: function (props) {
                 try {
-                    console.group('styleSelectionEventListener()');
-                    console.debug('1. try - catch block.');
-                    var selector = funcProps.baseClass + '.' + funcProps.category;
-                    var categoryElements = cy.elements(funcProps.baseClass + '.' + funcProps.category);
-                    console.debug(selector);
-                    console.debug('CategoryElements');
-                    console.debug(categoryElements);
-                    // defaults
-                    var classesToRemove = elementStyles.getStyle();
+                    var styleParameterToUpdate = {};
+                    styleParameterToUpdate[props.parameter] = props.value;
 
-                    // do only if the value is not all ready in the category styles
-                    try {
-                        console.debug('2. try - catch block.');
-                        var categoryNotListed =
-                            elementStyles.categoryExists(funcProps.category);
-                        if (categoryNotListed) {
-                            console.debug('condition: categoryNotListed');
-                            // if category is not listed, the defaults are in use
-                            console.debug('setting value');
-                            console.debug(funcProps);
-                            elementStyles.setStyle({
-                                category: funcProps.category,
-                                cy: cy,
-                                style: funcProps.parameter,
-                                value: funcProps.value,
-                                baseClass: funcProps.baseClass
-                            });
-                            var addThese = elementStyles.getStyle(funcProps.category);
-                            console.debug(addThese);
-                            element.addClass(addThese);
-                            console.debug("Updated category to elementStyles");
-                            console.debug(funcProps);
-                            console.debug(elementStyles.getStyle(funcProps.category));
-                        }
-                    } catch (e) {
-                        console.debug('2. catch.');
-                        // if category not listed add it
-                        elementStyles.setStyle({
-                            category: funcProps.category,
-                            cy: cy,
-                            style: funcProps.parameter,
-                            value: funcProps.value,
-                            baseClass: funcProps.baseClass
-                        });
-                        console.debug("Add category to elementStyles");
-                        console.debug(funcProps);
-                        console.debug(elementStyles.getStyle(funcProps.category));
-                    }
+                    elementStyles.updateStyleParameter({
+                        category: props.category,
+                        style: styleParameterToUpdate,
+                        info: "Update style values to elementsStyle.category."
+                    });
 
-                    var classesToAdd = elementStyles.getStyle(funcProps.category);
-                    /*
-                     console.debug('reached categoryElements.forEach()');
-                     categoryElements.forEach(function (element) {
-                     var addThese = classesToAdd.join().replace(',', ' ');
-                     var removeThese = classesToRemove.join().replace(',', ' ');
+                    graphUtils.updateCategoryElementStyle({
+                        category: props.category,
+                        info: "Update style classes of the elements in the category."
+                    });
 
-                     classesToRemove.forEach(function(item){
-                     console.debug(element.id()+".removeClass('"+item+"')");
-                     element.removeClass(item);
-                     });
-
-                     classesToAdd.forEach(function(item){
-                     console.debug(element.id()+".addClass('"+item+"')");
-                     element.toggleClass(item);
-                     });
-
-                     // element.removeClass(removeThese);
-                     // element.addClass(addThese);
-                     console.debug("Element classes!");
-                     console.debug(element.classes());
-                     //element.toggleClass(funcProps.value);
-                     });*/
                 } catch (e) {
-                    console.debug('1. catch.');
                     console.groupCollapsed("Exception raised by styleSelectionEventListener().");
+                    console.debug("props:");
+                    console.debug(props);
                     console.warn(e);
-                    console.warn("props:");
-                    console.debug(funcProps);
+                    console.groupEnd();
                 }
-
-                console.debug(elementStyles);
-                console.groupEnd();
-
-
             }
         },
         ui: {
@@ -434,7 +375,7 @@ define(["../utils/graphUtils", "../configuration/classNames"], function (graphUt
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Wed Aug 02 2017 08:53:32 GMT+0300 (EEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Aug 03 2017 08:29:55 GMT+0300 (EEST)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -43,14 +43,12 @@ define([
     function (elementStyles, eventListeners, classNames, configs, graphUtils, gwClient, menuItems) {
 
 
-
         /**
          * User interface components. Collection of functions to    create UI components.
          * @exports ui
          */
 
         var d = document;
-        console.debug(menuItems);
 
         /** @function
          *  @name contentContainer
@@ -217,7 +215,7 @@ define([
             var divToggleMenu = d.createElement('div');
             divToggleMenu.innerHTML = '#';
             //divMenu.appendChild(divToggleMenu);
-            console.log(menuItems);
+            // console.log(menuItems);
             var menus = Object.keys(menuItems);
 
             var itemKeys = Object.keys(props.menuItems);
@@ -392,7 +390,7 @@ define([
         /**
          *
          */
-        function setMenuItems(props){
+        function setMenuItems(props) {
             menuItems = props.menuItems;
         }
 
@@ -452,13 +450,18 @@ define([
                         selection.appendChild(opt);
                     });
 
+                    console.debug("Here we should have the new style to replace the old one!");
+                    console.debug(props);
+
+                    var style = {update: "this"};
 
                     // event listener for selection
                     selection.addEventListener('change', function () {
-                        props.styleSelectionListener({
+                        eventListeners.styleList.styleSelection({
                             baseClass: 'edge',
                             category: props.category,
                             parameter: props.parameter,
+                            style: style,
                             value: selection.value
                         });
                     });
@@ -474,128 +477,208 @@ define([
 
             }
 
-            // Create the style option selection list
+            /**
+             * @function
+             * @name styleList
+             * @description TELL ABOUT IT
+             * @param props
+             * @returns {HTMLDivElement}
+             */
+            function styleList(props) {
+                var divCategory = d.createElement('div');
+
+                var hCategory = d.createElement('h4');
+                hCategory.classList.add('list-header');
+                hCategory.innerHTML = props.category;
+
+                // Fixme: configs.styleOptions.lineWidth needs to be implemented with generator?
+                var parameters = ["arrowShape", "lineColor", "lineWidth"];
+                //var parameters = ["arrowShape", "lineColor"];
+
+                divCategory.appendChild(hCategory);
+
+                console.debug(configs.styleOptions);
+
+                parameters.forEach(function (parameter) {
+                    var p = document.createElement('p');
+                    p.innerHTML = parameter;
+                    divCategory.appendChild(p);
+
+                    var options = configs.styleOptions[parameter];
+                    var values = [];
+                    if (typeof options != 'undefined'){
+                        values = options.map(function(option){
+                            return option.styleClass;
+                        });
+                    }
+
+                    try {
+                        var selection = styleSelection({
+                            attributeId: 'select-line-style',
+                            category: props.category,
+                            selectionId: 'option-line-style',
+                            options: options,
+                            parameter: parameter
+                        });
+                    } catch (e){
+                        console.warn("parameter not found");
+                    }
+                    divCategory.appendChild(selection);
+
+                });
+
+                // this is populated with options
+                var ulCategory = document.createElement('ul');
+
+                var liParam = document.createElement('li');
+                var div = d.createElement('div');
+                var spanLabel = d.createElement('span');
+                div.classList.add('style-selection-div');
+
+                parameters.forEach(function (parameter) {
+                    spanLabel.innerHTML = parameter;
+                    div.appendChild(spanLabel);
+
+                    liParam.appendChild(div);
+
+                    /*
+                     if (parameter === 'line-style') {
+                     var lineStyleSelection = styleSelection({
+                     attributeId: 'select-line-style',
+                     category: props.category,
+                     selectionId: 'option-line-style',
+                     options: configs.lines,
+                     parameter: 'lineStyle'
+                     });
+                     liParam.appendChild(lineStyleSelection);
+                     }*/
+                });
+
+
+                divCategory.appendChild(ulCategory);
+
+                return divCategory;
+            }
+
             try {
-                styles.categories.forEach(function (category) {
+                console.group("Inside Styles.");
+                var keys = Object.keys(styles);
+                keys.forEach(function (category) {
+                    console.debug("These needs to be rendered!");
+                    console.debug(styles[category]);
 
-                    var divCategory = d.createElement('div');
-                    var hCategory = d.createElement('h4');
-                    hCategory.classList.add('list-header');
-                    hCategory.innerHTML = category;
-
-                    divCategory.appendChild(hCategory);
-
-
-                    var ulCategory = document.createElement('ul');
-                    configs.params.forEach(function (parameter) {
-                        var liParam = document.createElement('li');
-                        var div = d.createElement('div');
-                        var spanLabel = d.createElement('span');
-                        div.classList.add('style-selection-div');
-
-                        spanLabel.innerHTML = parameter;
-                        div.appendChild(spanLabel);
-
-                        liParam.appendChild(div);
-
-                        // generate line style selection
-
-                        if (parameter === 'line-style') {
-                            var lineStyleSelection = styleSelection({
-                                attributeId: 'select-line-style',
-                                category: category,
-                                selectionId: 'option-line-style',
-                                options: configs.lines,
-                                parameter: 'lineStyle'
-                            });
-                            liParam.appendChild(lineStyleSelection);
-                        }
-
-                        ulCategory.appendChild(liParam);
-
-                        // generate arrow selection
-                        if (parameter === 'arrow-shape') {
-                            var arrowStyleSelection = styleSelection({
-                                attributeId: 'select-arrow-shape',
-                                category: category,
-                                selectionId: 'option-arrow-shape',
-                                options: configs.arrows,
-                                parameter: 'arrowShape'
-                            });
-                            liParam.appendChild(arrowStyleSelection);
-                        }
-
-                        ulCategory.appendChild(liParam);
-
-                        // generate color selection
-                        if (parameter === 'line-color') {
-                            var lineColorSelection = styleSelection({
-                                attributeId: 'select-line-color',
-                                category: category,
-                                selectionId: 'option-line-color',
-                                options: configs.colors,
-                                parameter: 'lineColor'
-                            });
-                            liParam.appendChild(lineColorSelection);
-                        }
-
-                        ulCategory.appendChild(liParam);
-
-                        // generate linewidth selection
-                        if (parameter === 'line-width') {
-                            var lineWidthSelection = styleSelection({
-                                attributeId: 'select-line-width',
-                                category: category,
-                                selectionId: 'option-line-width',
-                                options: configs.widths(),
-                                parameter: 'lineWidth'
-                            });
-                            liParam.appendChild(lineWidthSelection);
-                        }
-
-                        ulCategory.appendChild(liParam);
-                        /*
-                         if (parameter === 'line-width') {
-                         var selLineWidth = d.createElement('select');
-                         selLineWidth.setAttribute('id', 'select-line-width');
-
-                         selLineWidth.addEventListener('change', function () {
-                         styleSelectionEventListener({
-                         baseClass: 'edge',
-                         category: category,
-                         parameter: "line-width",
-                         selector: 'line-width',
-                         value: selLineWidth.value
-                         });
-                         });
-
-
-                         Array.from(Array(31).keys()).forEach(function (lineWidth) {
-                         var optLineWidth = d.createElement('option');
-                         optLineWidth.setAttribute('id', 'option-line-width');
-                         optLineWidth.innerHTML = lineWidth;
-                         selLineWidth.appendChild(optLineWidth);
-                         });
-
-                         liParam.appendChild(selLineWidth);
-
-                         }*/
-                        ulCategory.appendChild(liParam);
-
+                    var divCategory = styleList({
+                        category: category,
+                        style: styles[category]
                     });
-                    divCategory.appendChild(ulCategory);
+
                     div.appendChild(divCategory);
                 });
             } catch (e) {
-                console.group("Exception raised by stylesContent()");
-                console.debug("props:");
-                console.debug(props);
+                console.group("Exception Styles");
                 console.warn(e);
-                console.groupEnd();
-
-                // return something
-                div.innerHTML = "no edge categories";
             }
+
+            console.groupEnd();
+
+            // Create the style option selection list
+            /*
+             try {
+             elementStyles.styles().forEach(function (category) {
+
+             var divCategory = d.createElement('div');
+             var hCategory = d.createElement('h4');
+             hCategory.classList.add('list-header');
+             hCategory.innerHTML = category;
+
+             divCategory.appendChild(hCategory);
+
+
+             var ulCategory = document.createElement('ul');
+             configs.params.forEach(function (parameter) {
+             var liParam = document.createElement('li');
+             var div = d.createElement('div');
+             var spanLabel = d.createElement('span');
+             div.classList.add('style-selection-div');
+
+             spanLabel.innerHTML = parameter;
+             div.appendChild(spanLabel);
+
+             liParam.appendChild(div);
+
+             // generate line style selection
+
+             if (parameter === 'line-style') {
+             var lineStyleSelection = styleSelection({
+             attributeId: 'select-line-style',
+             category: category,
+             selectionId: 'option-line-style',
+             options: configs.lines,
+             parameter: 'lineStyle'
+             });
+             liParam.appendChild(lineStyleSelection);
+             }
+
+             ulCategory.appendChild(liParam);
+
+             // generate arrow selection
+             if (parameter === 'arrow-shape') {
+             var arrowStyleSelection = styleSelection({
+             attributeId: 'select-arrow-shape',
+             category: category,
+             selectionId: 'option-arrow-shape',
+             options: configs.arrows,
+             parameter: 'arrowShape'
+             });
+             liParam.appendChild(arrowStyleSelection);
+             }
+
+             ulCategory.appendChild(liParam);
+
+             // generate color selection
+             if (parameter === 'line-color') {
+             var lineColorSelection = styleSelection({
+             attributeId: 'select-line-color',
+             category: category,
+             selectionId: 'option-line-color',
+             options: configs.colors,
+             parameter: 'lineColor'
+             });
+             liParam.appendChild(lineColorSelection);
+             }
+
+             ulCategory.appendChild(liParam);
+
+             // generate linewidth selection
+             if (parameter === 'line-width') {
+             var lineWidthSelection = styleSelection({
+             attributeId: 'select-line-width',
+             category: category,
+             selectionId: 'option-line-width',
+             options: configs.widths(),
+             parameter: 'lineWidth'
+             });
+             liParam.appendChild(lineWidthSelection);
+             }
+
+             ulCategory.appendChild(liParam);
+
+             ulCategory.appendChild(liParam);
+
+             });
+             divCategory.appendChild(ulCategory);
+             div.appendChild(divCategory);
+             });
+             } catch (e) {
+             console.group("Exception raised by stylesContent()");
+             console.debug("props:");
+             console.debug(props);
+             console.warn(e);
+             console.groupEnd();
+
+             // return something
+             div.innerHTML = "no edge categories";
+             }*/
             return div;
         }
 
@@ -707,12 +790,12 @@ define([
             navProps.configs = configs;
             navProps.classNames = classNames;
             navProps.cy = graphUtils.cy();
-            console.debug("NavProps!");
-            console.debug(navProps);
+            // console.debug("NavProps!");
+            // console.debug(navProps);
             var tabNavDiv = navigation(navProps);
 
-            console.debug("TabProps:");
-            console.debug(props);
+            // console.debug("TabProps:");
+            // console.debug(props);
             props.tabs = props.configs.tabs;
             var tabsDiv = tabs(props);
 
@@ -732,9 +815,6 @@ define([
          */
         function tabs(props) {
             try {
-                console.debug("debugging tabs()");
-                console.debug(props);
-
                 props.cy = graphUtils.cy();
 
                 var divContent = d.createElement('div');
@@ -858,9 +938,6 @@ define([
          */
         function updateTabs(props) {
 
-            console.debug("updateTabs()");
-            console.debug(props);
-
             var divTabContainer = d.getElementById(classNames.tab.container);
             var panelContainer = d.getElementById(classNames.panel.container);
             var childsToRemove = divTabContainer.childNodes;
@@ -922,7 +999,7 @@ define([
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Wed Aug 02 2017 08:53:32 GMT+0300 (EEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Aug 03 2017 08:29:55 GMT+0300 (EEST)
 </footer>
 
 <script> prettyPrint(); </script>
