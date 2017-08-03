@@ -97,7 +97,7 @@ define(["../configuration/configs"], function (configs) {
         if (!style) {
             return Object.values(styles.generic);
         }
-        return Object.values(styles);
+        return Object.values(styles[style]);
     }
 
     /**
@@ -153,9 +153,18 @@ define(["../configuration/configs"], function (configs) {
      */
     function setStyles(props) {
         try {
+            if (props.styles === 'undefined'){
+                throw {
+                    name: "InvalidPropsError",
+                    message: "setStyle(props) called with invalid parameters",
+                    props: props
+                }
+            }
             console.group("info: setStyle(props) called!");
+            console.debug(props);
             console.debug("before");
             console.debug(styles);
+            styles = "temporary";
             styles = props.styles;
             console.debug("after:");
             console.debug(styles);

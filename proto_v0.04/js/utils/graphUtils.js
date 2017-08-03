@@ -1017,6 +1017,15 @@ define([
                 console.info("%cupdateCategoryElementStyle()", "color:green;size:20px;");
                 console.info(props);
                 var elementsToUpdate = cy.elements("edge." + props.category);
+                var stylesArray = elementStyles.getStyle(props.category);
+
+                // this overrides all classes so the category has to be kept manually
+                elementsToUpdate.classes(props.category + " " + stylesArray.join(" "));
+
+                console.debug("elementsToUpdate.classes(stylesArray)");
+                console.debug(typeof stylesArray);
+                console.debug(stylesArray.join(" "));
+                console.debug(stylesArray);
                 console.log(elementsToUpdate);
             } catch (e) {
                 console.group("updateCategoryElementsStyle()");

@@ -224,18 +224,14 @@ define([
                                 var json = response.json();
                                 return json;
                             }).then(function (json) {
+                                // todo: make function out of this!
                                 graphUtils.cy().destroy();
-                                console.debug("I'm here!");
-                                console.debug(json);
                                 graphUtils.createNewCy({
                                     data: json.data.graph
                                 });
-
-                                elementStyles.setStyles(json.data.styles);
-                                // props.cy = initNewGraph(json.data);
+                                elementStyles.setStyles({styles: json.data.styles});
                             });
                         }
-
                     } catch (e) {
                         console.group("eventListeners.graphList.listItem.onClick()");
                         console.debug("props:");
@@ -384,8 +380,6 @@ define([
                 }
             }
         }
-    }
-        ;
+    };
 
-})
-;
+});
