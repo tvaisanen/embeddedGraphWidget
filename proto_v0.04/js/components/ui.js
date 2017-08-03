@@ -201,7 +201,7 @@ define([
                 // Bind an action to the click of the label.
                 div.addEventListener('click', function () {
                     item.onClick({
-                        cy: cy,
+                        cy: graphUtils.cy(),
                         gw: gw,
                         msg: item.label + " clicked"
                     });

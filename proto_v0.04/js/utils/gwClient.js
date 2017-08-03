@@ -148,18 +148,24 @@ define(["../configuration/configs"], function (configs) {
     /** @function
      *  @name postGraph
      *  @description Save new graph to Graphingwiki DB.
-     *  @param {String} graphId Id for the graph.
-     *  @param {String} graphToSave cytoscape.json() graph element to save.
+     *  @param {Object} props
+     *  @param {Object} props.graph Cytoscape.json() representation
+     *  @param {Object} props.gwClient gwClient reference.
+     *  @param {String} props.id Id for the graph.
+     *  @param {Object} props.styles elementStyles.styles() to be loaded when graph is loaded.
      *  @return {Promise} Promise response of given action.
      */
-    function postGraph(graphId, graphToSave) {
+    function postGraph(props) {
         var developmentPath = configs.API_PATH + 'save/';
         var payload = {
-            id: graphId,
-            data: graphToSave
+            id: props.id,
+            data: {
+                graph: props.graph,
+                styles: props.styles
+            }
         };
-        console.log("GRAPHID: " + graphId);
-        console.debug(graphToSave);
+        console.debug("id: " + props.graphId);
+        console.debug(props.graph);
         var saveGraphRequest = new Request(developmentPath, {
             headers: new Headers({
                 'Content-Type': 'application/json'

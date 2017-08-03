@@ -23,7 +23,10 @@ define([
          * @module graphUtils
          */
 
-            // active graph instance
+        console.info("ui module is defined?");
+        console.info(ui);
+
+        // active graph instance
         var cy;
 
         /** @function
@@ -411,7 +414,6 @@ define([
          **/
 
         function expandNode(props) {
-            console.log(props);
             try {
                 var gw = props.gwClient;
                 var nodeId = props.nodeId;
@@ -426,43 +428,77 @@ define([
                 nodePromise.then(function (response) {
                     return response.json();
                 }).then(function (json) {
-                        /*
-                         *  node = {
-                         *      in: Object,
-                         *      out: Object,
-                         *      meta: Object
-                         *  }
-                         * */
-                        var node = json.data;
+                    /*
+                     *  node = {
+                     *      in: Object,
+                     *      out: Object,
+                     *      meta: Object
+                     *  }
+                     * */
+                    var node = json.data;
 
-                        console.debug("expandNode().node");
-                        console.debug(node);
+                    console.debug("expandNode().node");
+                    console.debug(node);
 
-                        // 1. parse edges
-                        var connectedNodes = parseEdgesFromResponseData({
-                            nodeId: props.nodeId,
-                            data: node
-                        });
+                    // 1. parse edges
+                    var connectedNodes = parseEdgesFromResponseData({
+                        nodeId: props.nodeId,
+                        data: node
+                    });
 
-                        console.debug(connectedNodes);
+                    // 2. update elementStyle categories
+                    elementStyles.addCategories({
+                        categories: connectedNodes.categoriesIn
+                    });
+                    elementStyles.addCategories({
+                        categories: connectedNodes.categoriesOut
+                    });
 
-                        console.debug("elementStyles before updating");
-                        console.debug(elementStyles.styles());
+                    try {
+                        // Iterate the outgoing edge categories.
+                        if (connectedNodes.categoriesOut !== "undefined") {
+                            connectedNodes.categoriesOut.forEach(function (category) {
+                                // get list of nodes where the clicked node is connected t
+                                var nodesConnectedTo = node.out[category];
 
-                        // 2. update elementStyle categories
-                        elementStyles.addCategories({
-                            categories: connectedNodes.categoriesIn
-                        });
-                        elementStyles.addCategories({
-                            categories: connectedNodes.categoriesOut
-                        });
+                                // for each connected node create a new edge
+                                createEdgesToNodes({
+                                    sourceNodeId: nodeId,
+                                    nodesToCreateEdges: nodesConnectedTo,
+                                    category: category,
+                                    cy: cy,
+                                    configs: props.configs,
+                                    elementStyles: props.elementStyles
+                                });
+                            });
+                        }
+                    } catch (e){
+                        console.warn(e);
+                        console.warn(connectedNodes.categoriesOut);
 
-                        console.debug("elementStyles afters updating");
-                        console.debug(elementStyles.styles());
-
-                        setAndRunLayout(props);
                     }
-                );
+
+                    try {
+                        // Iterate the incoming edge categories.
+                        if (connectedNodes.categoriesIn !== "undefined") {
+                            connectedNodes.categoriesIn.forEach(function (category) {
+                                var nodesConnectedTo = node.in[category];
+                                createEdgesFromNodes({
+                                    targetNodeId: nodeId,
+                                    nodesFromCreateEdges: nodesConnectedTo,
+                                    category: category,
+                                    cy: cy
+                                });
+                            });
+                        }
+                    } catch (e){
+                        console.warn(e);
+                        console.warn(connectedNodes.categoriesIn);
+                    }
+                });
+
+                setAndRunLayout(props);
+
             } catch (e) {
                 console.group("Exception raised by graphUtils.expandNode()");
                 console.warn(e);
@@ -744,7 +780,7 @@ define([
          * @param evt
          */
         function bindExpandNode(evt) {
-            console.debug('debugging bindExpandNodE()');
+            console.debug('debugging bindExpandNode()');
             try {
                 var node = evt.target;
                 var nodeId = node.id();
@@ -755,6 +791,8 @@ define([
                     edgeCategories: edgeCategories,
                     elementStyles: elementStyles
                 });
+                console.debug("UI:");
+                console.debug(ui);
                 ui.updateTabs({
                     cy: cy
                 });
@@ -1028,4 +1066,5 @@ define([
             toggleNeighborhood: toggleNeighborhood,
             updateCategoryElementStyle: updateCategoryElementsStyle
         }
-    });
+    })
+;

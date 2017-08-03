@@ -164,6 +164,8 @@ define([
              * @param {Object} props
              */
             onMouseOver: function mouseOver(props) {
+                console.log("mouseover");
+                console.log(props);
                 try {
                     var node = props.cy.getElementById(props.listItemId);
                     node.toggleClass('hover-on');
@@ -297,6 +299,54 @@ define([
                     cy: props.cy,
                     tabs: props.configs.tabs
                 });
+            },
+            menu: {
+                save: function (props) {
+                    try {
+                        console.debug("menu.save(props)");
+                        console.debug(props);
+                        console.debug(Object.values(props));
+                        var containsUndefined = Object.values(props).some(function (value) {
+                            return typeof value === 'undefined';
+                        });
+
+                        if (containsUndefined) {
+                            throw {
+                                name: "InvalidPropsError",
+                                message: "Invalid props!",
+                                props: props
+                            };
+                        }
+
+                        console.debug("Props passed the check!");
+
+
+                        var promise = props.gwClient.postGraph({
+                            graphId: props.id,
+                            graph: props.graph,
+                            styles: props.style
+                        });
+
+                        promise.then(function (response) {
+                            var j = response.json();
+                            console.info(j);
+                            return j;
+                        }).then(function (obj) {
+                            console.info(obj);
+                            console.groupEnd();
+                        }).catch(function (error) {
+                            console.warn(error);
+                            console.groupEnd();
+                        });
+
+                    } catch (e) {
+                        console.group("Exception raised by eventListeners.ui.menu.save()");
+                        console.debug("props:");
+                        console.debug(props);
+                        console.warn(e);
+                        console.groupEnd();
+                    }
+                }
             }
         },
         window: {
@@ -320,6 +370,8 @@ define([
                 }
             }
         }
-    };
+    }
+        ;
 
-});
+})
+;

@@ -2,7 +2,8 @@
  * Created by toni on 19.7.2017.
  */
 
-define(["../utils/eventListeners"], function (eventListeners) {
+define(["../utils/eventListeners", "../components/elementStyles"],
+    function (eventListeners, elementStyles) {
     "use strict";
 
     /**
@@ -39,9 +40,17 @@ define(["../utils/eventListeners"], function (eventListeners) {
             save: {
                 label: "Save",
                 content: "form to input graph name",
-                onClick: function (funcProps) {
+                onClick: function (props) {
                     console.log("save.onClick()");
-                    console.log(funcProps);
+                    console.log(props);
+                    var graphId = prompt("Save graph\nId:");
+                    eventListeners.ui.menu.save({
+                            gwClient: props.gw,
+                            id: graphId,
+                            graph: props.cy.json(),
+                            styles: elementStyles.styles()
+                    });
+
                     // funcProps.context = 'save';
                     // createPopUp(funcProps);
                 },
