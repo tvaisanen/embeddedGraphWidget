@@ -2,7 +2,7 @@
  * Created by toni on 19.7.2017.
  */
 
-define(["../configuration/configs"], function (configs) {
+define(["configuration/configs"], function (configs) {
     "use strict";
     /**
      * @description Store current style categories of a graph. Provides utils to manage the styles.

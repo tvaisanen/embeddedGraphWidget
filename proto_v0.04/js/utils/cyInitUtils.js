@@ -3,48 +3,61 @@
  */
 
 define([
-        "require",
-        "../dependencies/jquery-3.2.1.min",
-        "../dependencies/cytoscape",
-        "../dependencies/cytoscape-context-menus",
-        "../dependencies/cola",
-        "../dependencies/cytoscape-cola"
-], function (require, cytoscape) {
+    "require",
+    "lib/cola",
+    "configuration/configs",
+    "lib/cytoscape-context-menus",
+    "lib/cytoscape",
+    "lib/cytoscape-cola"
+], function (require,
+             cola,
+             configs,
+             contextMenus,
+             cytoscape,
+             cycola) {
 
-        function init(props) {
-            try {
+    function init(props) {
+        try {
 
-                var jquery = require("../dependencies/jquery-3.2.1.min");
-                var contextMenus = require("../dependencies/cytoscape-context-menus");
+            // var instance = cy.contextMenus();
 
-                // contextMenus( cytoscape, jquery);
-                // var instance = cy.contextMenus();
+            console.group("CyInitUtils!");
 
-                // console.log("CyInitUtils!");
-                // console.log(require);
-                // console.log(jquery);
-                // console.log(cytoscape);
+            console.debug('contextMenus');
+            console.log(contextMenus);
 
+            contextMenus(cytoscape, $);
+            cycola(cytoscape, cola);
 
 
+            console.debug("cola");
+            console.log(cola);
+            console.debug("cyto-cola");
+            console.log(cycola);
+            console.groupEnd();
+            cy = cytoscape({
+                    container: document.getElementById(configs.graphContainerId),
+                    elements: props.data.elements,
+                    style: props.data.style
+                });
 
+            return cy;
 
-
-            } catch (e) {
-                console.group("Exception raised by utils.cyInitUtils.init()");
-                console.warn(e);
-                console.group();
-            }
+        } catch (e) {
+            console.group("Exception raised by utils.cyInitUtils.init()");
+            console.warn(e);
+            console.group();
         }
+    }
 
-        return {
-            init: init
-        }
-    });
+    return {
+        init: init
+    }
+});
 
 /*
-*         "../dependencies/jquery-3.2.1.min",
-        "../dependencies/cytoscape",
-        "../dependencies/cytoscape-context-menus",
-        "../dependencies/cola",
-        "../dependencies/cytoscape-cola"*/
+ *         "../lib/jquery-3.2.1.min",
+ "../lib/cytoscape",
+ "../lib/cytoscape-context-menus",
+ "../lib/cola",
+ "../lib/cytoscape-cola"*/

@@ -4,7 +4,7 @@
 
 define([
     "utils/graphUtils",
-    "dependencies/cytoscape",
+    "../../lib/cytoscape",
     "components/elementStyles"
 ], function (graphUtils, cytoscape, elementStyles) {
 

@@ -713,8 +713,6 @@ define([
             start: function (props) {
 
                 console.debug(ui.info());
-
-
                 render({
                     gwClient: gwClient,
                 });

@@ -3,13 +3,13 @@
  */
 
 define([
-        "../dependencies/cytoscape",
-        "../configuration/configs",
-        "../components/elementStyles",
-        "../utils/gwClient",
-        "../utils/edgeCategories",
-        "../components/ui",
-        "../utils/cyInitUtils"
+        "lib/cytoscape",
+        "configuration/configs",
+        "components/elementStyles",
+        "utils/gwClient",
+        "utils/edgeCategories",
+        "components/ui",
+        "utils/cyInitUtils",
     ],
     function (cytoscape,
               configs,
@@ -17,7 +17,8 @@ define([
               gwClient,
               edgeCategories,
               ui,
-              cyInitUtils) {
+              cyInitUtils
+    ) {
         /**
          * Wrapper for cytoscape.
          * @module graphUtils
@@ -417,7 +418,6 @@ define([
             try {
                 var gw = props.gwClient;
                 var nodeId = props.nodeId;
-                cy = props.cy;
 
                 console.debug("expandNode()");
                 console.debug(props);
@@ -761,8 +761,12 @@ define([
         function setAndRunLayout(props) {
             try {
                 var layoutStyle = props.layout || "circle";
-                var layout = props.cy.makeLayout({name: layoutStyle});
-                //var layout = cy.makeLayout({name: "cola"});
+                // var layout = props.cy.makeLayout({name: layoutStyle});
+                console.group("setAndRunLayout()");
+                console.debug(props);
+                console.debug(cy);
+                console.groupEnd();
+                var layout = props.cy.makeLayout({name: "cola"});
                 layout.run();
                 return true;
             } catch (e) {
@@ -1040,14 +1044,15 @@ define([
             try {
                 console.debug("createNewCy()");
                 console.debug(props);
+                cy = cyInitUtils.init(props);
                 var style = props.style || configs.style;
 
                 // set the module level cy instance
-                cy = cytoscape({
+                /*cy = cytoscape({
                     container: document.getElementById(configs.graphContainerId),
                     elements: props.data.elements,
                     style: props.data.style
-                });
+                });*/
                 cy.on('tap', 'node', bindExpandNode);
                 console.debug(cy);
                 return cy;
