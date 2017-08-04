@@ -21,6 +21,90 @@ define([
         var cy;
         var props;
 
+        /**
+         * @function
+         * @name loadAppState
+         * @description Load the state of the previous session, which
+         * includes graphUtils.cy and elementStyles.styles.
+         * */
+        function loadAppState() {
+            /* If browser provides storage, check if there are
+             * session in storage.
+             */
+            if (typeof(Storage) !== "undefined") {
+
+                console.debug(localStorage);
+                var appState = JSON.parse(localStorage["graphingwikiState"]);
+                console.debug(appState);
+
+                console.debug(appState.cy.elements);
+
+                var elements = appState.cy.elements.nodes;
+
+                var loadThisState = {
+                    data: {
+                        elements: appState.cy.elements,
+                        style: appState.cy.style
+                    }
+                };
+
+                console.debug("loadThisState");
+                console.debug(loadThisState);
+
+                graphUtils.createNewCy(loadThisState);
+
+                /*
+                 if (graphUtils.cy().elements().length === 0) {
+                 graphUtils.initCy({
+                 gwClient: gwClient,
+                 container: document.getElementById('cy')
+                 });
+                 }*/
+
+            } else {
+                // Sorry! No Web Storage support..
+                console.debug("no local storage");
+                graphUtils.initCy({
+                    gwClient: gwClient,
+                    container: document.getElementById('cy')
+                });
+            }
+
+        }
+
+
+        // App state needs to be stored on exit!
+        window.onbeforeunload = function (e) {
+            try {
+                var message = "Your confirmation message goes here.";
+                var e = e || window.event;
+
+                /*
+                 // For IE and Firefox
+                 if (e) {
+                 //e.returnValue = message;
+                 console.log('IE and Firefox - exit?');
+                 return null;
+                 }*/
+
+                // For Safari
+
+                var appState = {
+                    cy: graphUtils.cy().json(),
+                    styles: elementStyles.styles()
+                };
+
+                localStorage.setItem(
+                    "graphingwikiState",
+                    JSON.stringify(appState)
+                );
+            } catch (e) {
+                alert(e);
+            }
+
+
+            return null;
+        };
 
         /** @function updateCategories
          *  Takes an array of categorynames as strings and updates the state of app
@@ -80,7 +164,6 @@ define([
         }
 
 
-
         /** @function initNewGraph
          *  Description
          *  @param {Object} variable - Desc.
@@ -102,8 +185,6 @@ define([
             cy.contextMenus(initCyContextMenu(cy));
             return cy;
         }
-
-
 
 
         /*
@@ -204,16 +285,6 @@ define([
             console.debug(a);
             a.click()
         }
-
-
-        /*
-         function initWindowListeners(){
-         // to close opened popup
-         window.addEventListener('click', function(event){
-         listenerFunctions.window.onClick(event);
-         })
-         }*/
-
 
         /** @function renderHeaderContainer
          *  Description
@@ -344,31 +415,6 @@ define([
             header.innerHTML = configs.header;
             return header;
         }
-
-
-        /*
-         console.log(targetId);
-         if (nodeIdAvailable(targetId, cy)) {
-         var confirmation = confirm("The node do not exist. Do you want to create it?");
-         console.log(confirmation);
-         if (confirmation) {
-         createNewNode(targetId, cy);
-         } else {
-         console.info('User replied no');
-         return null;
-         }
-         }
-         var edge = {
-         group: 'edges',
-         data: {
-         id: source.id() + "_to_" + targetId,
-         source: source.id(),
-         target: targetId
-         }
-         };
-         cy.add(edge);
-         * */
-
 
         var popup = {
             createEdge: {
@@ -668,14 +714,13 @@ define([
 
                 console.debug(ui.info());
 
+
                 render({
                     gwClient: gwClient,
                 });
 
-                graphUtils.initCy({
-                    gwClient: gwClient,
-                    container: document.getElementById('cy')
-                });
+
+                loadAppState();
             },
 
             state: function () {

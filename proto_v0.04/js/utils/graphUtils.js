@@ -1014,19 +1014,11 @@ define([
          * */
         function updateCategoryElementsStyle(props) {
             try {
-                console.info("%cupdateCategoryElementStyle()", "color:green;size:20px;");
-                console.info(props);
                 var elementsToUpdate = cy.elements("edge." + props.category);
                 var stylesArray = elementStyles.getStyle(props.category);
 
                 // this overrides all classes so the category has to be kept manually
                 elementsToUpdate.classes(props.category + " " + stylesArray.join(" "));
-
-                console.debug("elementsToUpdate.classes(stylesArray)");
-                console.debug(typeof stylesArray);
-                console.debug(stylesArray.join(" "));
-                console.debug(stylesArray);
-                console.log(elementsToUpdate);
             } catch (e) {
                 console.group("updateCategoryElementsStyle()");
                 console.debug("props:");
@@ -1036,15 +1028,28 @@ define([
             }
         }
 
+        /**
+         * @function
+         * @name createNewCy
+         * @description Set applications cytoscape instance.
+         * @param {Object} props
+         * @param {Object} props.data
+         * @param {Object} props.style styles to assign
+         * */
         function createNewCy(props) {
             try {
+                console.debug("createNewCy()");
+                console.debug(props);
                 var style = props.style || configs.style;
+
+                // set the module level cy instance
                 cy = cytoscape({
                     container: document.getElementById(configs.graphContainerId),
                     elements: props.data.elements,
                     style: props.data.style
                 });
                 cy.on('tap', 'node', bindExpandNode);
+                console.debug(cy);
                 return cy;
             } catch (e) {
                 console.group("Exception raised by graphUtils.createNewCy()");

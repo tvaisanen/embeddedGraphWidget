@@ -456,6 +456,8 @@ define([
              * @param props
              * @returns {HTMLDivElement}
              */
+
+            // Fixme: Too long function!
             function styleList(props) {
                 var divCategory = d.createElement('div');
 
@@ -552,105 +554,6 @@ define([
             }
 
             console.groupEnd();
-
-            // Create the style option selection list
-            /*
-             try {
-             elementStyles.styles().forEach(function (category) {
-
-             var divCategory = d.createElement('div');
-             var hCategory = d.createElement('h4');
-             hCategory.classList.add('list-header');
-             hCategory.innerHTML = category;
-
-             divCategory.appendChild(hCategory);
-
-
-             var ulCategory = document.createElement('ul');
-             configs.params.forEach(function (parameter) {
-             var liParam = document.createElement('li');
-             var div = d.createElement('div');
-             var spanLabel = d.createElement('span');
-             div.classList.add('style-selection-div');
-
-             spanLabel.innerHTML = parameter;
-             div.appendChild(spanLabel);
-
-             liParam.appendChild(div);
-
-             // generate line style selection
-
-             if (parameter === 'line-style') {
-             var lineStyleSelection = styleSelection({
-             attributeId: 'select-line-style',
-             category: category,
-             selectionId: 'option-line-style',
-             options: configs.lines,
-             parameter: 'lineStyle'
-             });
-             liParam.appendChild(lineStyleSelection);
-             }
-
-             ulCategory.appendChild(liParam);
-
-             // generate arrow selection
-             if (parameter === 'arrow-shape') {
-             var arrowStyleSelection = styleSelection({
-             attributeId: 'select-arrow-shape',
-             category: category,
-             selectionId: 'option-arrow-shape',
-             options: configs.arrows,
-             parameter: 'arrowShape'
-             });
-             liParam.appendChild(arrowStyleSelection);
-             }
-
-             ulCategory.appendChild(liParam);
-
-             // generate color selection
-             if (parameter === 'line-color') {
-             var lineColorSelection = styleSelection({
-             attributeId: 'select-line-color',
-             category: category,
-             selectionId: 'option-line-color',
-             options: configs.colors,
-             parameter: 'lineColor'
-             });
-             liParam.appendChild(lineColorSelection);
-             }
-
-             ulCategory.appendChild(liParam);
-
-             // generate linewidth selection
-             if (parameter === 'line-width') {
-             var lineWidthSelection = styleSelection({
-             attributeId: 'select-line-width',
-             category: category,
-             selectionId: 'option-line-width',
-             options: configs.widths(),
-             parameter: 'lineWidth'
-             });
-             liParam.appendChild(lineWidthSelection);
-             }
-
-             ulCategory.appendChild(liParam);
-
-             ulCategory.appendChild(liParam);
-
-             });
-             divCategory.appendChild(ulCategory);
-             div.appendChild(divCategory);
-             });
-             } catch (e) {
-             console.group("Exception raised by stylesContent()");
-             console.debug("props:");
-             console.debug(props);
-             console.warn(e);
-             console.groupEnd();
-
-             // return something
-             div.innerHTML = "no edge categories";
-             }*/
             return div;
         }
 
