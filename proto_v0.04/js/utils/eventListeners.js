@@ -225,8 +225,14 @@ define([
                                 return json;
                             }).then(function (json) {
                                 // todo: make function out of this!
-                                graphUtils.cy().destroy();
-                                graphUtils.createNewCy({
+                                try {
+                                    graphUtils.cy().destroy();
+                                } catch (e) {
+                                    if (e.type === typeof TypeError){
+                                        console.log("TYPEERRRO=R");
+                                    }
+                                }
+                                    graphUtils.createNewCy({
                                     data: json.data.graph
                                 });
                                 elementStyles.setStyles({styles: json.data.styles});

@@ -33,13 +33,7 @@ define([
              */
             if (typeof(Storage) !== "undefined") {
 
-                console.debug(localStorage);
                 var appState = JSON.parse(localStorage["graphingwikiState"]);
-                console.debug(appState);
-
-                console.debug(appState.cy.elements);
-
-                var elements = appState.cy.elements.nodes;
 
                 var loadThisState = {
                     data: {
@@ -48,18 +42,7 @@ define([
                     }
                 };
 
-                console.debug("loadThisState");
-                console.debug(loadThisState);
-
                 graphUtils.createNewCy(loadThisState);
-
-                /*
-                 if (graphUtils.cy().elements().length === 0) {
-                 graphUtils.initCy({
-                 gwClient: gwClient,
-                 container: document.getElementById('cy')
-                 });
-                 }*/
 
             } else {
                 // Sorry! No Web Storage support..
@@ -711,13 +694,7 @@ define([
 
         return {
             start: function (props) {
-
-                console.debug(ui.info());
-                render({
-                    gwClient: gwClient,
-                });
-
-
+                render({gwClient: gwClient});
                 loadAppState();
             },
 

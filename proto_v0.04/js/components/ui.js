@@ -13,14 +13,12 @@ define([
         "../components/menuItems"
     ],
     function (elementStyles, eventListeners, classNames, configs, graphUtils, gwClient, menuItems) {
-
+    'use strict';
 
         /**
          * User interface components. Collection of functions to    create UI components.
          * @exports ui
          */
-
-        var d = document;
 
         /** @function
          *  @name contentContainer
@@ -28,7 +26,7 @@ define([
          *  @return {HTMLDivElement} HTML div element.
          */
         function contentContainer(props) {
-            var container = d.createElement('div');
+            var container = document.createElement('div');
             //props.cy = graphUtils.cy();
             container.setAttribute('id', configs.containerId);
             container.classList.add("content-container");
@@ -49,7 +47,7 @@ define([
             console.debug(props);
             var content = props.content;
 
-            var div = d.createElement('div');
+            var div = document.createElement('div');
             div.setAttribute('id', "elements-content");
 
             div.appendChild(elementsFilter(props));
@@ -64,19 +62,19 @@ define([
          *  @return {Type} desc.
          */
         function graphColumn() {
-            var graphColumnContainer = d.createElement('div');
+            var graphColumnContainer = document.createElement('div');
             graphColumnContainer.setAttribute('id', 'graph-column-container');
             graphColumnContainer.classList.add("graph-column");
 
-            var messageContainer = d.createElement('div');
+            var messageContainer = document.createElement('div');
             messageContainer.setAttribute('id', 'message-container');
             messageContainer.classList.add('message-container');
 
-            var messageText = d.createElement('span');
+            var messageText = document.createElement('span');
             messageText.setAttribute('id', 'message-text');
             messageContainer.appendChild(messageText);
 
-            var graphContainer = d.createElement('div');
+            var graphContainer = document.createElement('div');
             graphContainer.setAttribute('id', configs.graphContainerId);
             graphContainer.classList.add("graph-container");
 
@@ -146,11 +144,11 @@ define([
          *  @param {Object} variable - Desc.
          *  @return {Type} desc.
          */
-        function graphListItem(listItemProps) {
-            var graphName = listItemProps.graphName;
-            var gwClient = listItemProps.gwClient;
-            var list = listItemProps.listElement;
-            var listItemClass = listItemProps.listItemClass;
+        function graphListItem(props) {
+            var graphName = props.graphName;
+            var gwClient = props.gwClient;
+            var list = props.listElement;
+            var listItemClass = props.listItemClass;
 
             var li = document.createElement('li');
             li.classList.add(listItemClass);
@@ -184,7 +182,7 @@ define([
             divMenu.classList.add(classes.container);
             divMenu.id = classes.container;
             divMenu.classList.add(classes.container);
-            var divToggleMenu = d.createElement('div');
+            var divToggleMenu = document.createElement('div');
             divToggleMenu.innerHTML = '#';
             //divMenu.appendChild(divToggleMenu);
             // console.log(menuItems);
@@ -193,9 +191,9 @@ define([
             var itemKeys = Object.keys(props.menuItems);
             itemKeys.forEach(function (key) {
                 var item = props.menuItems[key];
-                var div = d.createElement('div');
+                var div = document.createElement('div');
                 div.setAttribute('id', "panel-menu__item__" + key);
-                var divContent = d.createElement('div');
+                var divContent = documentcreateElement('div');
                 divContent.setAttribute('id', 'panel-menu__item__' + item.label.toLowerCase() + '-content');
 
                 // Bind an action to the click of the label.
@@ -231,29 +229,28 @@ define([
             return divMenu;
         }
 
-
         /** @function renderElementsfilter
          *  Description
          *  @param {Object} variable - Desc.
          *  @return {Type} desc.
          */
         function elementsFilter(props) {
-            var div = d.createElement('div');
-            var spanFilter = d.createElement('span');
-            var btnClearFilter = d.createElement("button");
+            var div = documentcreateElement('div');
+            var spanFilter = documentcreateElement('span');
+            var btnClearFilter = documentcreateElement("button");
 
             div.classList.add("element-filter");
 
             btnClearFilter.innerHTML = "ClearFilter";
 
-            var inFilter = d.createElement("input");
+            var inFilter = documentcreateElement("input");
             inFilter.type = "text";
             inFilter.placeholder = "Filter...";
             inFilter.setAttribute('id', 'filter');
             inFilter.classList.add(classNames.tab.elements.filterInput);
 
             var filtProps = {
-                divList: d.getElementById('elements-list'),
+                divList: documentgetElementById('elements-list'),
                 inFilter: inFilter,
                 renderNewContent: elementsList,
                 spanFilter: spanFilter
@@ -323,13 +320,13 @@ define([
 
             var div = document.createElement('div');
 
-            var hdNodes = d.createElement('h2');
+            var hdNodes = document.createElement('h2');
             hdNodes.innerHTML = "Pages";
 
-            var pNodeNotes = d.createElement('p');
+            var pNodeNotes = document.createElement('p');
             pNodeNotes.innerHTML = "order by degree?";
 
-            var hdEdges = d.createElement('h2');
+            var hdEdges = document.createElement('h2');
             hdEdges.innerHTML = "Links";
 
             var ulNodes = unorderedListFromArray({
@@ -406,13 +403,13 @@ define([
             // Todo: make this generic version to work for all of the following use cases
             function styleSelection(props) {
                 try {
-                    var div = d.createElement('div');
-                    var selection = d.createElement('select');
+                    var div = document.createElement('div');
+                    var selection = document.createElement('select');
                     selection.setAttribute('id', props.selectionId);
 
                     // generate options for selection
                     props.options.forEach(function (option) {
-                        var opt = d.createElement('option');
+                        var opt = document.createElement('option');
                         opt.setAttribute(
                             'id',
                             props.attributeId + option.label
@@ -421,9 +418,6 @@ define([
                         opt.value = option.styleClass;
                         selection.appendChild(opt);
                     });
-
-                    console.debug("Here we should have the new style to replace the old one!");
-                    console.debug(props);
 
                     var style = {update: "this"};
 
@@ -459,9 +453,9 @@ define([
 
             // Fixme: Too long function!
             function styleList(props) {
-                var divCategory = d.createElement('div');
+                var divCategory = document.createElement('div');
 
-                var hCategory = d.createElement('h4');
+                var hCategory = document.createElement('h4');
                 hCategory.classList.add('list-header');
                 hCategory.innerHTML = props.category;
 
@@ -505,8 +499,8 @@ define([
                 var ulCategory = document.createElement('ul');
 
                 var liParam = document.createElement('li');
-                var div = d.createElement('div');
-                var spanLabel = d.createElement('span');
+                var div = document.createElement('div');
+                var spanLabel = document.createElement('span');
                 div.classList.add('style-selection-div');
 
                 parameters.forEach(function (parameter) {
@@ -562,18 +556,18 @@ define([
          *  @return {Object} Div element with two child divs
          */
         function textPreview() {
-            var divTextPreviewContainer = d.createElement('div');
+            var divTextPreviewContainer = document.createElement('div');
             divTextPreviewContainer.classList.add(classNames.text.container);
             divTextPreviewContainer.setAttribute('id', classNames.text.container);
 
-            var textPreviewHeader = d.createElement('div');
+            var textPreviewHeader = document.createElement('div');
             textPreviewHeader.classList.add(classNames.text.header);
             textPreviewHeader.setAttribute('id', classNames.text.header);
-            var spHeader = d.createElement('span');
+            var spHeader = document.createElement('span');
             spHeader.setAttribute('id', 'header-text');
             textPreviewHeader.appendChild(spHeader);
 
-            var textPreviewContent = d.createElement('div');
+            var textPreviewContent = document.createElement('div');
             textPreviewContent.classList.add(classNames.text.content);
             textPreviewContent.setAttribute('id', classNames.text.content);
 
@@ -589,12 +583,6 @@ define([
          *  @return {Type} desc.
          */
         function navigation(props) {
-
-            console.debug("navigation()");
-            console.debug(props);
-
-            // Create the div which contains graphingwikiBrowser navigation tabs
-
             var tabs = props.configs.tabs;
 
             // css classes
@@ -610,7 +598,7 @@ define([
             links.forEach(function (key) {
 
                 var link = tabs[key];
-                var divLink = d.createElement('div');
+                var divLink = document.createElement('div');
                 divLink.addEventListener('click', function (event) {
                     eventListeners.ui.navClick({
                         cy: props.cy,
@@ -648,7 +636,7 @@ define([
          */
         function panel(props) {
 
-            var divPanel = d.createElement('div');
+            var divPanel = document.createElement('div');
 
             divPanel.setAttribute('id', classNames.panel.container);
             divPanel.classList.add(classNames.panel.container);
@@ -692,7 +680,7 @@ define([
             try {
                 props.cy = graphUtils.cy();
 
-                var divContent = d.createElement('div');
+                var divContent = document.createElement('div');
                 divContent.classList.add(classNames.tab.container);
                 divContent.id = classNames.tab.container;
 
@@ -742,12 +730,12 @@ define([
             var cy = props.cy;
             var array = props.array;
 
-            var ul = d.createElement('ul');
+            var ul = document.createElement('ul');
 
             array.forEach(function (listElementId) {
-                var li = d.createElement('li');
+                var li = document.createElement('li');
 
-                var checkBox = d.createElement('input');
+                var checkBox = document.createElement('input');
                 checkBox.setAttribute('id', 'visibility_' + listElementId);
                 checkBox.setAttribute('type', 'checkbox');
 
@@ -802,7 +790,6 @@ define([
             return ul;
         }
 
-
         /**
          * @function
          * @name updateTabs
@@ -813,8 +800,8 @@ define([
          */
         function updateTabs(props) {
 
-            var divTabContainer = d.getElementById(classNames.tab.container);
-            var panelContainer = d.getElementById(classNames.panel.container);
+            var divTabContainer = document.getElementById(classNames.tab.container);
+            var panelContainer = document.getElementById(classNames.panel.container);
             var childsToRemove = divTabContainer.childNodes;
 
             childsToRemove.forEach(function (child) {

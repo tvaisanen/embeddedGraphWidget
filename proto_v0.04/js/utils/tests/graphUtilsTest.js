@@ -4,7 +4,7 @@
 
 define([
     "utils/graphUtils",
-    "../../lib/cytoscape",
+    "lib/cytoscape",
     "components/elementStyles"
 ], function (graphUtils, cytoscape, elementStyles) {
 
@@ -15,7 +15,45 @@ define([
     QUnit.module("Unit Tests - utils.graphUtils: ");
 
     QUnit.test("addClassToEdge()", function (assert) {
-        assert.ok(false, "NOT IMPLEMENTED");
+        var sourceId = "sourceNodeId";
+        var targetId = "targetNodeId";
+        var edgeId = gu.createEdgeId({
+            sourceNodeId: sourceId,
+            targetNodeId: targetId
+        });
+        var classToAdd = 'foobar';
+
+        var cy = cytoscape({
+            elements: [
+                {group: 'nodes', data: {id: sourceId}},
+                {group: 'nodes', data: {id: targetId}},
+                {group: 'edges', data: {id: edgeId, source: sourceId, target: targetId}}
+            ]
+        });
+
+        var edge = cy.getElementById(edgeId);
+
+        assert.ok(
+            gu.edgeExists({
+                    edgeId: edge.id(),
+                    cy: cy
+                }
+            ),
+
+            "Edge is created"
+        );
+
+        assert.notOk(
+            gu.addClassToEdge()
+        )
+
+        assert.ok(
+            gu.edgeExists({
+                edgeId: edgeId,
+                cy: cy
+            }),
+            "New edge can be found with getElementById"
+        );
     });
 
     QUnit.test("bindExpandNode", function (assert) {

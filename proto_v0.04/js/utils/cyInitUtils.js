@@ -4,12 +4,14 @@
 
 define([
     "require",
+    "components/contextMenuItems",
     "lib/cola",
     "configuration/configs",
     "lib/cytoscape-context-menus",
     "lib/cytoscape",
     "lib/cytoscape-cola"
 ], function (require,
+             contextMenuItems,
              cola,
              configs,
              contextMenus,
@@ -21,25 +23,22 @@ define([
 
             // var instance = cy.contextMenus();
 
-            console.group("CyInitUtils!");
-
-            console.debug('contextMenus');
-            console.log(contextMenus);
-
+            // register extensions
             contextMenus(cytoscape, $);
             cycola(cytoscape, cola);
 
-
-            console.debug("cola");
-            console.log(cola);
-            console.debug("cyto-cola");
-            console.log(cycola);
-            console.groupEnd();
+            // initialize new cy instance
             cy = cytoscape({
                     container: document.getElementById(configs.graphContainerId),
                     elements: props.data.elements,
-                    style: props.data.style
+                    style: props.data.style,
+                    layout: {
+                        name: "preset"
+                    }
                 });
+
+            // initialize context menu items
+            cy.contextMenus(contextMenuItems);
 
             return cy;
 
@@ -55,9 +54,3 @@ define([
     }
 });
 
-/*
- *         "../lib/jquery-3.2.1.min",
- "../lib/cytoscape",
- "../lib/cytoscape-context-menus",
- "../lib/cola",
- "../lib/cytoscape-cola"*/

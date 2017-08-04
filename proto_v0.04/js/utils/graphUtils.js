@@ -9,7 +9,7 @@ define([
         "utils/gwClient",
         "utils/edgeCategories",
         "components/ui",
-        "utils/cyInitUtils",
+        "utils/cyInitUtils"
     ],
     function (cytoscape,
               configs,
@@ -23,9 +23,6 @@ define([
          * Wrapper for cytoscape.
          * @module graphUtils
          */
-
-        console.info("ui module is defined?");
-        console.info(ui);
 
         // active graph instance
         var cy;
@@ -503,7 +500,8 @@ define([
                 console.group("Exception raised by graphUtils.expandNode()");
                 console.warn(e);
                 console.groupEnd();
-                console.groupEnd();
+                // run the layout even if error
+                setAndRunLayout(props);
             }
         }
 
@@ -1042,19 +1040,8 @@ define([
          * */
         function createNewCy(props) {
             try {
-                console.debug("createNewCy()");
-                console.debug(props);
                 cy = cyInitUtils.init(props);
-                var style = props.style || configs.style;
-
-                // set the module level cy instance
-                /*cy = cytoscape({
-                    container: document.getElementById(configs.graphContainerId),
-                    elements: props.data.elements,
-                    style: props.data.style
-                });*/
                 cy.on('tap', 'node', bindExpandNode);
-                console.debug(cy);
                 return cy;
             } catch (e) {
                 console.group("Exception raised by graphUtils.createNewCy()");

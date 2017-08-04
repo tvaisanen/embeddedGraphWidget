@@ -3,6 +3,7 @@
  */
 
 define(["../configuration/configs"], function (configs) {
+    'use strict';
     /*
      * Client for requesting and posting data to graphingwiki
      * */

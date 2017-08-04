@@ -3,8 +3,9 @@
  */
 
 define(function () {
+    'use strict';
     return {
-        header: "GraphingWikiBrowser Prototype v0.03",
+        header: "Graphingwiki 2.0",
         appContainerId: "app-container",
         contentContainerId: "content-container",
         graphContainerId: "cy",
@@ -39,6 +40,10 @@ define(function () {
                 lineWidth: 'line-width-10',
                 arrowShape: 'arrow-shape-triangle'
             }
+        },
+        gwClient: {
+            API_PATH: 'http://127.0.0.1:5000/',
+            API_CREATE_NEW_NODE: 'http://127.0.0.1:5000/add-to-wiki/'
         },
         styleOptions: {
             lineStyle: [
@@ -97,15 +102,6 @@ define(function () {
                 {label: '29', styleClass: 'line-width-29'},
                 {label: '30', styleClass: 'line-width-30'}
             ]
-        },
-        widths: function () {
-            // generate array of width objects {label: VALUE, styleClass: 'line-width-VALUE'}
-            var range = Array.from(Array(31).keys());
-            var widths = [];
-            range.forEach(function (value) {
-                widths.push({label: value, styleClass: 'line-width-' + value});
-            });
-            return widths;
         },
         params: ['line-style', 'arrow-shape', 'line-color', 'line-width'],
         layoutOptions: ['cola', 'breadthfirst', 'circle', 'concentric', 'cose', 'grid', 'random']
