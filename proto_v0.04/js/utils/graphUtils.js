@@ -3,7 +3,7 @@
  */
 
 define([
-        "lib/cytoscape",
+
         "configuration/configs",
         "components/elementStyles",
         "utils/gwClient",
@@ -11,7 +11,7 @@ define([
         "components/ui",
         "utils/cyInitUtils"
     ],
-    function (cytoscape,
+    function (
               configs,
               elementStyles,
               gwClient,
@@ -648,18 +648,8 @@ define([
          *  @return {Type} desc.
          */
         function initCytoscape(props) {
-            /*
-             *   Return <div id="cy">
-             *   Initialize empty Cytoscape graph
-             *
-             * */
-            cyInitUtils.init();
-            _cy = testCy(props.container);
-            _cy.on('tap', 'node', bindExpandNode);
-
-            // initialize the context menu plugin
-            // cy.contextMenus(initCyContextMenu(cy));
-            cy = _cy;
+            cy = cyInitUtils.init(props);
+            cy.on('tap', 'node', bindExpandNode);
             return cy;
         }
 
@@ -814,7 +804,7 @@ define([
          * @param {HTMLDivElement} containerElement div container for cytoscape graph
          * @param {Object} cytoscape instance
          */
-        function testCy(containerElement) {
+        /*function testCy(containerElement) {
             return cytoscape({
                 container: containerElement,
                 elements: [{group: 'nodes', data: {id: 'personA'}}],
@@ -950,7 +940,7 @@ define([
                     }
                 ]
             });
-        }
+        }*/
 
         /**
          * @function
@@ -1068,7 +1058,6 @@ define([
             },
             nodeIdAvailable: nodeIdAvailable,
             initCy: initCytoscape,
-            testCy: testCy,
             toggleNeighborhood: toggleNeighborhood,
             updateCategoryElementStyle: updateCategoryElementsStyle
         }

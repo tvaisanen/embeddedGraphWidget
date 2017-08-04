@@ -193,7 +193,7 @@ define([
                 var item = props.menuItems[key];
                 var div = document.createElement('div');
                 div.setAttribute('id', "panel-menu__item__" + key);
-                var divContent = documentcreateElement('div');
+                var divContent = document.createElement('div');
                 divContent.setAttribute('id', 'panel-menu__item__' + item.label.toLowerCase() + '-content');
 
                 // Bind an action to the click of the label.
