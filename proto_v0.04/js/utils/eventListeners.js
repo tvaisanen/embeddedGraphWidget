@@ -102,20 +102,20 @@ define([
         },
         elementsFilter: {
             inFilter: {
-                keypress: function (filtProps) {
+                keypress: function (props) {
                     console.groupCollapsed("elementsFilter.inFilter.keypress()");
+                    console.debug(props);
                     try {
-                        var filterValue = filtProps.inFilter.value;
+                        var filterValue = props.inFilter.value;
 
-                        props.tabs.elements.filter = filterValue;
-                        filtProps.spanFilter.innerHTML = ": filter :" + filterValue;
+                        props.spanFilter.innerHTML = ": filter :" + filterValue;
 
                         /* elesContent has to be declared here
                          *  it is created dynamically and therefore can not
                          *  be passed as prop
                          */
-                        var elesContent = d.getElementById('elements-content');
-                        var newContent = filtProps.renderNewContent();
+                        var elesContent = document.getElementById('elements-content');
+                        var newContent = props.renderNewContent({filter: filterValue});
                         var oldContent = elesContent.childNodes[1];
                         elesContent.replaceChild(newContent, oldContent);
                     } catch (e) {
@@ -179,8 +179,6 @@ define([
              * @param {Object} props
              */
             onMouseOver: function mouseOver(props) {
-                console.log("mouseover");
-                console.log(props);
                 try {
                     var node = props.cy.getElementById(props.listItemId);
                     node.toggleClass('hover-on');
@@ -273,6 +271,12 @@ define([
                 try {
                     var styleParameterToUpdate = {};
                     styleParameterToUpdate[props.parameter] = props.value;
+
+                    console.debug("this will be passed on");
+                    console.debug(styleParameterToUpdate);
+                    console.debug()
+                    console.debug("styleSelection(props)");
+                    console.debug(props);
 
                     elementStyles.updateStyleParameter({
                         category: props.category,

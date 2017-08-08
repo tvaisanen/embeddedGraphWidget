@@ -41,12 +41,12 @@
 
 
 
-[class^="tab-graph__list-item"] {
-
+[class^="tab-graph"] {
+ margin: 0;
 }
 
 ul {
-    padding: 5px;
+    padding: 0px;
     list-style-type: none;
     overflow: auto;
 }
@@ -58,6 +58,16 @@ li {
     font-size: small;
     border-color: rgba(155, 155, 155, 0.51);
     border-width: 1px;
+}
+
+[class^="tab-elements"] {
+
+}
+
+
+.tab-elements__list {
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
 .tab-elements__list-item__selected li{
@@ -75,8 +85,6 @@ li {
 }
 
 [class^="style-selection-table"] {
-    display: flex;
-    flex-direction: column;
     text-size: small;
     width: auto;
     background-color: white;
@@ -88,11 +96,13 @@ label {
 
 span {
     display: flex;
-    flex-grow. 1;
-    background-color: #0D47A1;
+    flex-grow: 1;
+    background-color: #5f89af;
     color: white;
+    justify-content: center;
 }
 
-td {
-    width: 50%;
+select {
+    width: 100%;
+    overflow: hidden;
 }

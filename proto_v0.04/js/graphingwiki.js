@@ -43,6 +43,9 @@ define([
                 };
 
                 graphUtils.createNewCy(loadThisState);
+                elementStyles.setStyles({
+                    styles: appState.styles
+                });
 
             } else {
                 // Sorry! No Web Storage support..

@@ -43,6 +43,8 @@ define(function () {
             },
             elements: {
                 container: 'tab-elements',
+                list: 'tab-elements__list',
+                listContainer: 'tab_elements__list-container',
                 listHeader: 'tab-elements__list-header',
                 listItem: {
                     active: 'tab-elements__list-item--active',

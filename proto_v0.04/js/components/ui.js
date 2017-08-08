@@ -53,6 +53,9 @@ define([
             div.appendChild(elementsFilter(props));
             div.appendChild(elementsList(props));
 
+            console.debug("returning");
+            console.debug(div);
+
             return div;
         }
 
@@ -278,9 +281,10 @@ define([
          *  @return {Type} desc.
          */
         function elementsList(props) {
-
+            console.debug("elementList(props)");
+            console.debug(props);
             // var content = props.content;
-            var filter = "";
+            var filter = props.filterValue || "";
             var cy = graphUtils.cy();
             var gw = gwClient;
 
@@ -319,14 +323,15 @@ define([
             var edges = getElementIDsToArray("edge");
 
             var div = document.createElement('div');
+            div.classList.add(classNames.tab.elements.listContainer)
 
-            var hdNodes = document.createElement('h2');
+            var hdNodes = document.createElement('span');
             hdNodes.innerHTML = "Pages";
 
             var pNodeNotes = document.createElement('p');
             pNodeNotes.innerHTML = "order by degree?";
 
-            var hdEdges = document.createElement('h2');
+            var hdEdges = document.createElement('span');
             hdEdges.innerHTML = "Links";
 
             var ulNodes = unorderedListFromArray({
@@ -339,6 +344,8 @@ define([
                 toggleVisibility: graphUtils.toggleVisibility
             });
 
+            ulNodes.classList.add(classNames.tab.elements.list);
+
             var ulEdges = unorderedListFromArray({
                 cy: cy,
                 array: edges,
@@ -347,6 +354,8 @@ define([
                 onMouseOut: eventListeners.elementsList.onMouseOut,
                 toggleVisibility: graphUtils.toggleVisibility
             });
+
+            ulEdges.classList.add(classNames.tab.elements.list);
 
             div.setAttribute('id', "elements-list");
             div.appendChild(hdNodes);
@@ -406,6 +415,7 @@ define([
                 try {
                     var div = document.createElement('div');
                     var selection = document.createElement('select');
+
                     selection.classList.add('style-selection');
                     selection.setAttribute('id', props.selectionId);
 
@@ -414,14 +424,20 @@ define([
                         var opt = document.createElement('option');
                         opt.setAttribute(
                             'id',
-                            props.attributeId + option.label
+                            props.attributeId +"-"+ option.label
                         );
+                        var current = elementStyles.getStyleObject(props.category)[props.parameter];
                         opt.innerHTML = option.label;
                         opt.value = option.styleClass;
+
+                        // set selected option to same which is selected for the category
+                        if (current === option.styleClass){
+                            opt.selected = true;
+                        }
                         selection.appendChild(opt);
                     });
 
-                    var style = {update: "this"};
+
 
                     // event listener for selection
                     selection.addEventListener('change', function () {
@@ -429,7 +445,6 @@ define([
                             baseClass: 'edge',
                             category: props.category,
                             parameter: props.parameter,
-                            style: style,
                             value: selection.value
                         });
                     });
@@ -465,11 +480,6 @@ define([
                 table.classList.add(classNames.tab.styles.selectionTable);
 
                 var parameters = ["arrowShape", "lineColor", "lineWidth"];
-                //var parameters = ["arrowShape", "lineColor"];
-
-                //divCategory.appendChild(hCategory);
-
-                console.debug(configs.styleOptions);
 
                 parameters.forEach(function (parameter) {
                     var row = document.createElement('tr');
@@ -515,12 +525,8 @@ define([
             }
 
             try {
-                console.group("Inside Styles.");
                 var keys = Object.keys(styles);
                 keys.forEach(function (category) {
-                    console.debug("These needs to be rendered!");
-                    console.debug(styles[category]);
-
                     var divCategory = styleList({
                         category: category,
                         style: styles[category]

@@ -110,8 +110,6 @@ define(["configuration/configs"], function (configs) {
      * @return {Object} Return the style. If do not exist return default style.
      */
     function getStyleObject(style) {
-        console.debug("getStyleObject()");
-        console.debug(style);
         if (!style) {
             console.debug("no style!");
             return styles.generic;
@@ -162,15 +160,8 @@ define(["configuration/configs"], function (configs) {
                     props: props
                 }
             }
-            console.group("info: setStyle(props) called!");
-            console.debug(props);
-            console.debug("before");
-            console.debug(styles);
-            styles = "temporary";
             styles = props.styles;
-            console.debug("after:");
             console.debug(styles);
-            console.groupEnd();
         } catch (e) {
             console.group("Exception raised by elementStyles.setStyles()");
             console.warn(e);
