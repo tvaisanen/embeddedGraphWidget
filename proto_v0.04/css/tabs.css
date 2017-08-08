@@ -73,3 +73,26 @@ li {
     box-sizing: border-box;
     border-radius: 3px;
 }
+
+[class^="style-selection-table"] {
+    display: flex;
+    flex-direction: column;
+    text-size: small;
+    width: auto;
+    background-color: white;
+    overflow: hidden;
+}
+label {
+    text-underline-style: solid;
+}
+
+span {
+    display: flex;
+    flex-grow. 1;
+    background-color: #0D47A1;
+    color: white;
+}
+
+td {
+    width: 50%;
+}

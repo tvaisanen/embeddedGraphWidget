@@ -59,7 +59,8 @@ define(function () {
                 listItem: {
                     active: 'tab-styles__list-item--active',
                     inactive: 'tab-styles__list-item--inactive'
-                }
+                },
+                selectionTable: 'style-selection-table'
             }
         },
         text: {

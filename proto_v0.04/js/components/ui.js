@@ -235,29 +235,29 @@ define([
          *  @return {Type} desc.
          */
         function elementsFilter(props) {
-            var div = documentcreateElement('div');
-            var spanFilter = documentcreateElement('span');
-            var btnClearFilter = documentcreateElement("button");
+            var div = document.createElement('div');
+            var spanFilter = document.createElement('span');
+            var btnClearFilter = document.createElement("button");
 
             div.classList.add("element-filter");
 
             btnClearFilter.innerHTML = "ClearFilter";
 
-            var inFilter = documentcreateElement("input");
+            var inFilter = document.createElement("input");
             inFilter.type = "text";
             inFilter.placeholder = "Filter...";
             inFilter.setAttribute('id', 'filter');
             inFilter.classList.add(classNames.tab.elements.filterInput);
 
             var filtProps = {
-                divList: documentgetElementById('elements-list'),
+                divList: document.getElementById('elements-list'),
                 inFilter: inFilter,
                 renderNewContent: elementsList,
                 spanFilter: spanFilter
             };
 
             btnClearFilter.addEventListener('click', function () {
-                listenerFunctions.elementsFilter.btnClearFilter.onClick(updateTabs);
+                eventListeners.elementsFilter.btnClearFilter.onClick(updateTabs);
             });
             inFilter.addEventListener('keypress', function (event) {
                 console.debug(filtProps.elesContent);
@@ -397,6 +397,7 @@ define([
             var styles = elementStyles.styles();
             var div = document.createElement('div');
             div.setAttribute('id', "styles-content");
+            div.classList.add("styles-content");
             var ul = document.createElement('ul');
             var cy = graphUtils.cy();
 
@@ -405,6 +406,7 @@ define([
                 try {
                     var div = document.createElement('div');
                     var selection = document.createElement('select');
+                    selection.classList.add('style-selection');
                     selection.setAttribute('id', props.selectionId);
 
                     // generate options for selection
@@ -453,24 +455,31 @@ define([
 
             // Fixme: Too long function!
             function styleList(props) {
-                var divCategory = document.createElement('div');
+                var divStyleTable = document.createElement('div');
 
-                var hCategory = document.createElement('h4');
-                hCategory.classList.add('list-header');
-                hCategory.innerHTML = props.category;
+                var tableHeader = document.createElement('span');
+                tableHeader.innerHTML = props.category;
+                divStyleTable.appendChild(tableHeader);
 
-                // Fixme: configs.styleOptions.lineWidth needs to be implemented with generator?
+                var table = document.createElement('table');
+                table.classList.add(classNames.tab.styles.selectionTable);
+
                 var parameters = ["arrowShape", "lineColor", "lineWidth"];
                 //var parameters = ["arrowShape", "lineColor"];
 
-                divCategory.appendChild(hCategory);
+                //divCategory.appendChild(hCategory);
 
                 console.debug(configs.styleOptions);
 
                 parameters.forEach(function (parameter) {
-                    var p = document.createElement('p');
-                    p.innerHTML = parameter;
-                    divCategory.appendChild(p);
+                    var row = document.createElement('tr');
+                    var tdLabel = document.createElement('td');
+                    var tdSelection = document.createElement('td');
+                    var paramLabel = document.createElement('label');
+
+                    paramLabel.innerHTML = parameter;
+                    tdLabel.appendChild(paramLabel);
+
 
                     var options = configs.styleOptions[parameter];
                     var values = [];
@@ -491,41 +500,18 @@ define([
                     } catch (e){
                         console.warn("parameter not found");
                     }
-                    divCategory.appendChild(selection);
+                    tdSelection.appendChild(selection);
+                    row.appendChild(tdLabel);
+                    row.appendChild(tdSelection);
+                    table.appendChild(row);
+                    //divCategory.appendChild(selection);
 
                 });
 
-                // this is populated with options
-                var ulCategory = document.createElement('ul');
-
-                var liParam = document.createElement('li');
-                var div = document.createElement('div');
-                var spanLabel = document.createElement('span');
-                div.classList.add('style-selection-div');
-
-                parameters.forEach(function (parameter) {
-                    spanLabel.innerHTML = parameter;
-                    div.appendChild(spanLabel);
-
-                    liParam.appendChild(div);
-
-                    /*
-                     if (parameter === 'line-style') {
-                     var lineStyleSelection = styleSelection({
-                     attributeId: 'select-line-style',
-                     category: props.category,
-                     selectionId: 'option-line-style',
-                     options: configs.lines,
-                     parameter: 'lineStyle'
-                     });
-                     liParam.appendChild(lineStyleSelection);
-                     }*/
-                });
+                divStyleTable.appendChild(table);
 
 
-                divCategory.appendChild(ulCategory);
-
-                return divCategory;
+                return divStyleTable;
             }
 
             try {
@@ -799,7 +785,7 @@ define([
          * @return {Type} to be refactored.
          */
         function updateTabs(props) {
-
+            console.log('updateTabs()');
             var divTabContainer = document.getElementById(classNames.tab.container);
             var panelContainer = document.getElementById(classNames.panel.container);
             var childsToRemove = divTabContainer.childNodes;
@@ -831,7 +817,7 @@ define([
             info: function () {
                 return {
                     name: "UI",
-                    description: "userinterface components."
+                    description: "user interface components."
                 }
             }
         }

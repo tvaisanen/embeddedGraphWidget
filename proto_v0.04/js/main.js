@@ -20,8 +20,9 @@ requirejs.config({
 
 require([
     "./configuration/configs",
-    "./graphingwiki"
-], function (configs, graphingwiki) {
+    "./graphingwiki",
+    "utils/cyInitUtils"
+], function (configs, graphingwiki, cyInitUtils) {
     'use strict';
     console.info("Starting the graphingwikiBrowser!");
     var defined = ["configs", "graphingwikiBrowser", "jquery"];
@@ -33,5 +34,6 @@ require([
     console.debug("jquery: " + typeof $);
     console.info("defined:" + defined.join(", "));
     console.groupEnd();
+    cyInitUtils.registerExtensions();
     graphingwiki.start(configs);
 });

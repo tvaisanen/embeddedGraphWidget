@@ -14,7 +14,7 @@ define([
     function (classNames, elementStyles, ui, configs, edgeCategories, graphUtils, gwClient) {
         /**
          * Graphingwikibrowser module.
-         * @exports graphingwikiBrowser
+         * @exports graphingwiki
          */
 
         var d = document;
@@ -695,6 +695,7 @@ define([
         return {
             start: function (props) {
                 render({gwClient: gwClient});
+                graphUtils.setUpdateUI(ui.updateTabs);
                 loadAppState();
             },
 

@@ -3,17 +3,32 @@
  */
 
 define([
-    "../utils/graphUtils",
-    "../configuration/classNames",
-    "../components/elementStyles"
+    "utils/graphUtils",
+    "configuration/classNames",
+    "components/elementStyles",
 ], function (graphUtils, classNames, elementStyles) {
     "use strict";
-    /**
+    /**h
      * @description Event listeners description here
      * @exports eventListeners
      */
 
     return {
+        graph: {
+            clickNode: function (props) {
+                console.debug("graph.clickNode()");
+                console.debug(props);
+
+                /*graphUtils.expandNode({
+                    nodeId: props.nodeId,
+                    cy: props.cy,
+                    gwClient: props.gwClient,
+                    edgeCategories: props.edgeCategories,
+                    elementStyles: props.elementStyles
+                });*/
+                console.debug("UI:");
+            }
+        },
         popupSave: {
             btnSave: {
                 onClick: function (funcProps) {
@@ -209,6 +224,7 @@ define([
                  *  @param {Object} listItemProps
                  */
                 onClick: function (props) {
+                    console.debug("listItem.onClick(props)");
                     console.debug(props);
                     try {
                         var graphName = props.graphName;
@@ -232,10 +248,14 @@ define([
                                         console.log("TYPEERRRO=R");
                                     }
                                 }
-                                    graphUtils.createNewCy({
+                                graphUtils.createNewCy({
                                     data: json.data.graph
                                 });
-                                elementStyles.setStyles({styles: json.data.styles});
+                                console.debug("just before setstyles");
+                                console.debug(elementStyles);
+                                elementStyles.setStyles({
+                                    styles: json.data.styles
+                                });
                             });
                         }
                     } catch (e) {

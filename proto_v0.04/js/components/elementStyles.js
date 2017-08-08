@@ -49,9 +49,11 @@ define(["configuration/configs"], function (configs) {
     function addCategories(props) {
         try {
             // init new category with generic style
-            props.categories.forEach(function (category) {
-                addCategory({name: category});
-            });
+            if (!$.isEmptyObject(props.categories)){
+                props.categories.forEach(function (category) {
+                    addCategory({name: category});
+                });
+            }
         } catch (e) {
             console.group("Exception raised by addCategories()");
             console.debug("props:");

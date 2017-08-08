@@ -9,7 +9,7 @@ define([
         "utils/gwClient",
         "utils/edgeCategories",
         "components/ui",
-        "utils/cyInitUtils"
+        "utils/cyInitUtils",
     ],
     function (
               configs,
@@ -26,6 +26,7 @@ define([
 
         // active graph instance
         var cy;
+        var updateTabs;
 
         /** @function
          *  @name addClassToEdge
@@ -403,7 +404,7 @@ define([
          *  @param {Object} props
          *  @param {String} props.nodeId Id of the node to expand.
          *  @param {Object} props.cy Cytoscape instance.
-         *  @example                         /*
+         *  @example
          *  node = {
          *      in: Object,
          *      out: Object,
@@ -453,9 +454,10 @@ define([
 
                     try {
                         // Iterate the outgoing edge categories.
-                        if (connectedNodes.categoriesOut !== "undefined") {
+                        if (connectedNodes.categoriesOut !== "undefined"
+                        && !$.isEmptyObject(connectedNodes.categoriesOut)) {
                             connectedNodes.categoriesOut.forEach(function (category) {
-                                // get list of nodes where the clicked node is connected t
+                                // get list of nodes where the clicked node is connected to
                                 var nodesConnectedTo = node.out[category];
 
                                 // for each connected node create a new edge
@@ -477,7 +479,8 @@ define([
 
                     try {
                         // Iterate the incoming edge categories.
-                        if (connectedNodes.categoriesIn !== "undefined") {
+                        if (connectedNodes.categoriesIn !== "undefined"
+                        && !$.isEmptyObject(connectedNodes.categoriesIn)) {
                             connectedNodes.categoriesIn.forEach(function (category) {
                                 var nodesConnectedTo = node.in[category];
                                 createEdgesFromNodes({
@@ -494,7 +497,7 @@ define([
                     }
                 });
 
-                setAndRunLayout(props);
+            setAndRunLayout(props);
 
             } catch (e) {
                 console.group("Exception raised by graphUtils.expandNode()");
@@ -697,7 +700,7 @@ define([
 
 
                 // if defined get the id's of connected nodes
-                if (hasEdgesOut) {
+                if (hasEdgesOut && !$.isEmptyObject(props.data.out)) {
                     try {
                         newCategoriesOut = Object.keys(props.data.out);
                         newCategoriesOut.forEach(function (category) {
@@ -705,10 +708,12 @@ define([
                         });
                     } catch (e) {
                         console.warn(e);
+                        console.warn(hasEdgesOut);
+                        console.warn(props.data.out);
                     }
                 }
 
-                if (hasEdgesIn) {
+                if (hasEdgesIn && !$.isEmptyObject(props.data.in)) {
                     try {
                         newCategoriesIn = Object.keys(props.data.in);
                         newCategoriesIn.forEach(function (category) {
@@ -716,6 +721,7 @@ define([
                         });
                     } catch (e) {
                         console.warn(e);
+                        console.warn(props.data.in);
                     }
                 }
 
@@ -776,6 +782,13 @@ define([
             try {
                 var node = evt.target;
                 var nodeId = node.id();
+
+
+                /*
+                eventListeners.graph.clickNode({
+                    nodeId: nodeId
+                });*/
+
                 expandNode({
                     nodeId: nodeId,
                     cy: cy,
@@ -783,9 +796,12 @@ define([
                     edgeCategories: edgeCategories,
                     elementStyles: elementStyles
                 });
+
+
+
                 console.debug("UI:");
                 console.debug(ui);
-                ui.updateTabs({
+                updateTabs({
                     cy: cy
                 });
             } catch (e) {
@@ -1059,7 +1075,11 @@ define([
             nodeIdAvailable: nodeIdAvailable,
             initCy: initCytoscape,
             toggleNeighborhood: toggleNeighborhood,
-            updateCategoryElementStyle: updateCategoryElementsStyle
+            toggleVisibility: toggleVisibility,
+            updateCategoryElementStyle: updateCategoryElementsStyle,
+            setUpdateUI: function (f){
+                updateTabs = f;
+            }
         }
     })
 ;
