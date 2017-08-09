@@ -2,7 +2,11 @@
  * Created by toni on 9.8.2017.
  */
 
-define(["utils/eventListeners", "configuration/classNames"], function (eventListeners, classNames) {
+define([
+    "utils/eventListeners",
+    "configuration/classNames",
+    "components/elementStyles"
+], function (eventListeners, classNames, elementStyles) {
     "use strict";
 
     var popup = {
@@ -13,7 +17,18 @@ define(["utils/eventListeners", "configuration/classNames"], function (eventList
                 var btnConnect = document.createElement('button');
                 btnConnect.innerHTML = "connect";
                 btnConnect.addEventListener('click', function () {
-                    eventListeners.popupConnect.btnConnect.onClick(props);
+                    console.debug(props);
+                    var target = document.getElementById(props.targetNodeId).valueOf()
+                    cy.add({
+                        group: 'edges',
+                        data: {
+                            id: props.source + "_to_" + target,
+                            source: props.source,
+                            target: target
+                        }
+                    });
+
+                    //eventListeners.popupConnect.btnConnect.onClick(props);
                 });
                 return btnConnect;
             },
@@ -31,10 +46,10 @@ define(["utils/eventListeners", "configuration/classNames"], function (eventList
                 return btnSelect;
             },
             selection: function (props) {
-                console.debug(props);
                 var selection = document.createElement('select');
                 props.options.forEach(function (option) {
                     var o = document.createElement('option');
+                    o.setAttribute('id', props.id);
                     o.innerHTML = option;
                     selection.appendChild(o);
                 });
@@ -48,24 +63,49 @@ define(["utils/eventListeners", "configuration/classNames"], function (eventList
                 // pass target node input field
                 props.inTargetNodeId = input;
 
-                var options = [];
+                var nodeOptions = [];
+                var cy = props.cy;
                 var elements = props.cy.elements('node');
                 Object.keys(elements).forEach(function(el){
                     try {
-                        options.push(elements[el].id());
+                        nodeOptions.push(elements[el].id());
                     } catch (e){
                         console.log(elements[el]);
                     }
                 });
 
-                console.info("Option count: " + options.length);
+                console.info("Option count: " + nodeOptions.length);
 
+                div.appendChild(this.header({label: "Connect to"}));
                 div.appendChild(this.header({label: "select"}));
-                div.appendChild(this.selection({options: options}));
-                div.appendChild(this.header({label: "new"}));
+                div.appendChild(this.selection({
+                    id: "targetNodeSelection",
+                    options: nodeOptions
+                }));
+                div.appendChild(this.header({label: "create new"}));
+
+                var newNodeInput = document.createElement('input');
+                input.setAttribute('type', 'text');
+                input.placeholder = "node name..";
+                div.appendChild(newNodeInput);
+                div.appendChild(this.header({label: "Add category"}));
+                div.appendChild(this.header({label: "select"}));
+
+                var categoryOptions = elementStyles.getCategories();
+                div.appendChild(this.selection({
+                    id: "categorySelection",
+                    options: categoryOptions
+                }));
+                div.appendChild(this.header({label: "create new"}));
 
                 div.appendChild(input);
-                div.appendChild(this.connectButton(props));
+
+                div.appendChild(this.connectButton({
+                    sourceNodeId: props.sourceNode.id(),
+                    selectionNodeId: 'targetNodeSelection',
+                    selectionCategoryId: 'categorySelection',
+                    cy: cy
+                }));
                 div.appendChild(this.selectButton(props));
 
                 return div;
@@ -121,29 +161,18 @@ define(["utils/eventListeners", "configuration/classNames"], function (eventList
             console.debug("popup render");
             console.debug(props);
 
-
             var container = document.createElement('div');
-            var header = document.createElement('div');
 
             container.classList.add('popup');
-            header.classList.add('popup-header');
-
-
-            var spHeader = document.createElement('span');
-            spHeader.innerHTML = this[props.context].title;
-            spHeader.classList.add(classNames.popup.header.text);
-
 
             var btnClose = document.createElement('button');
             btnClose.innerHTML = "close";
             btnClose.classList.add(classNames.popup.header.btnClose);
             btnClose.addEventListener('click', destroyPopUp);
 
-            header.appendChild(spHeader);
-            header.appendChild(btnClose);
-
             var content = this[props.context].render(props);
-            container.appendChild(header);
+
+            container.appendChild(btnClose);
             container.appendChild(content);
 
             return container;

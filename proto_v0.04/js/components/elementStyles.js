@@ -76,6 +76,16 @@ define(["configuration/configs"], function (configs) {
 
     /**
      * @function
+     * @name getCategories
+     * @description Returns the style categories.
+     * @return {Array}
+     */
+    function getCategories() {
+        return Object.keys(styles);
+    }
+
+    /**
+     * @function
      * @name getDefaultStyle
      * @description Returns the default style.
      * @return {Object} Default style. Defined in configuration.
@@ -186,6 +196,7 @@ define(["configuration/configs"], function (configs) {
             console.debug("Before updating:");
             console.debug(styleToUpdate);
             Object.keys(props.style).forEach(function (styleKey) {
+                console.debug(styleToUpdate[styleKey] +" = "+ props.style[styleKey])
                 styleToUpdate[styleKey] = props.style[styleKey];
             });
             console.debug("After updating:");
@@ -209,6 +220,7 @@ define(["configuration/configs"], function (configs) {
         addCategory: addCategory,
         addCategories: addCategories,
         categoryExists: categoryExists,
+        getCategories: getCategories,
         getDefaultStyle: getDefaultStyle,
         getStyle: getStyle,
         getStyleObject: getStyleObject,

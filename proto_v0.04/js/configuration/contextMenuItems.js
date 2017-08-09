@@ -44,6 +44,7 @@ define(["components/popup"], function (popup) {
                     console.debug(event);
                     var source = event.target || event.cyTarget;
                     console.info('I am ' + source.id() + ' and I want to connect!');
+                    // todo: finish!
                     popup.create({
                         context: 'createEdge',
                         sourceNode: source,
