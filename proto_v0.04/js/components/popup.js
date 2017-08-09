@@ -18,13 +18,30 @@ define([
                 btnConnect.innerHTML = "connect";
                 btnConnect.addEventListener('click', function () {
                     console.debug(props);
-                    var target = document.getElementById(props.targetNodeId).valueOf()
+                    var target = document.getElementById(props.selectionNodeId);
+                    var targetNodeId = target.textContent;
+                    console.log("source: " + props.sourceNodeId);
+                    console.log("target: " + targetNodeId);
+                    console.log(target);
+                    /* Todo: Fix this!
+                    * {
+                    *   sourceNodeId: "object",
+                    *   selectionNodeId: "targetNodeSelection",
+                    *   selectionCategoryId: "categorySelection",
+                    *   cy: Core
+                    * }
+                    *   source: object
+                    *   target: personA
+                    *   <option id=​"targetNodeSelection">​personA​</option>​
+                    *   Can not create second element with ID `undefined_to_personA`
+                    **/
+
                     cy.add({
                         group: 'edges',
                         data: {
-                            id: props.source + "_to_" + target,
-                            source: props.source,
-                            target: target
+                            id: props.sourceNodeId + "_to_" + targetNodeId,
+                            source: props.sourceNodeId,
+                            target: targetNodeId
                         }
                     });
 
@@ -57,6 +74,7 @@ define([
             },
             render: function (props) {
                 console.debug(props);
+                console.debug(props.sourceNode.id());
                 var div = document.createElement('div');
                 var input = document.createElement('input');
                 input.setAttribute('type', 'text');
