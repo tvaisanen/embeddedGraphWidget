@@ -7,6 +7,21 @@ define(function () {
     return {
         menuItems: [
             {
+                id: 'element-class',
+                content: 'has class?',
+                tooltipText: 'prompt has class query',
+                selector: 'edge',
+                onClickFunction: function (event) {
+                    var source = event.target || event.cyTarget;
+                    var elClass = prompt("Has class:");
+                    var hasIt = source.hasClass(elClass);
+                    console.info(source.id() + " has class " + elClass + " : " + hasIt);
+                    console.info("classes:");
+                    console.info(source.renderedStyle());
+                    console.info(source.hasClass('arrow-shape-triangle'));
+                }
+            },
+            {
                 id: 'edge-details',
                 content: 'details',
                 tooltipText: 'node details for debugging',
@@ -15,8 +30,8 @@ define(function () {
                     var source = event.target || event.cyTarget;
                     console.info("Id: " + source.id());
                     console.info("classes:");
-                    console.info(source.classes());
-                    console.info(source.style());
+                    console.info(source.hasClass('line-width-8'));
+                    console.info(source.hasClass('arrow-shape-triangle'));
                 }
             },
             {

@@ -479,7 +479,7 @@ define([
                 var table = document.createElement('table');
                 table.classList.add(classNames.tab.styles.selectionTable);
 
-                var parameters = ["arrowShape", "lineColor", "lineWidth"];
+                var parameters = ["arrowShape", "lineColor", "lineStyle", "lineWidth"];
 
                 parameters.forEach(function (parameter) {
                     var row = document.createElement('tr');

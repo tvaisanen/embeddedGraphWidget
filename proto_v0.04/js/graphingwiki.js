@@ -33,20 +33,28 @@ define([
              */
             if (typeof(Storage) !== "undefined") {
 
-                var appState = JSON.parse(localStorage["graphingwikiState"]);
+                var loadState = confirm('Load previous state?');
+                if (loadState) {
+                    var appState = JSON.parse(localStorage["graphingwikiState"]);
 
-                var loadThisState = {
-                    data: {
-                        elements: appState.cy.elements,
-                        style: appState.cy.style
-                    }
-                };
-
+                    var loadThisState = {
+                        data: {
+                            elements: appState.cy.elements,
+                            style: appState.cy.style
+                        }
+                    };
+                    elementStyles.setStyles({
+                        styles: appState.styles
+                    });
+                } else {
+                    cy
+                    var loadThisState = {
+                        data: {
+                            elements: [{group: 'nodes', data:{id: 'OuluInfoSec'}}]
+                        }
+                    };
+                }
                 graphUtils.createNewCy(loadThisState);
-                elementStyles.setStyles({
-                    styles: appState.styles
-                });
-
             } else {
                 // Sorry! No Web Storage support..
                 console.debug("no local storage");

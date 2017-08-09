@@ -37,6 +37,7 @@ define(function () {
         style: {
             generic: {
                 lineColor: 'line-color-grey',
+                lineStyle: 'solid',
                 lineWidth: 'line-width-10',
                 arrowShape: 'arrow-shape-triangle'
             }

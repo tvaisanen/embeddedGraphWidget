@@ -7,6 +7,7 @@ define([
     "configuration/contextMenuItems",
     "lib/cola",
     "configuration/configs",
+    "configuration/cyStyles",
     "lib/cytoscape-context-menus",
     "lib/cytoscape",
     "lib/cytoscape-cola",
@@ -15,6 +16,7 @@ define([
              contextMenuItems,
              cola,
              configs,
+             cyStyles,
              contextMenus,
              cytoscape,
              cycola) {
@@ -22,12 +24,13 @@ define([
     function init(props) {
         try {
             // initialize new cy instance
+            console.debug(props.data.style);
             cy = cytoscape({
                 container: document.getElementById(configs.graphContainerId),
                 elements: props.data.elements,
-                style: props.data.style,
+                style: cyStyles,
                 layout: {
-                    name: "preset"
+                    name: "cola"
                 }
             });
 
