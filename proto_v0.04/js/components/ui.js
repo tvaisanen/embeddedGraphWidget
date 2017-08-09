@@ -13,7 +13,7 @@ define([
         "../components/menuItems"
     ],
     function (elementStyles, eventListeners, classNames, configs, graphUtils, gwClient, menuItems) {
-    'use strict';
+        'use strict';
 
         /**
          * User interface components. Collection of functions to    create UI components.
@@ -33,6 +33,50 @@ define([
             container.appendChild(panel(props));
             container.appendChild(graphColumn(props));
             return container;
+        }
+
+        /** @function createPopUp
+         *  popup for saving the graphs
+         */
+        function createPopUp(props) {
+
+            // naming should be more declarative
+            // the props act as a panelProps
+            // and props.props as props
+            // for the next function
+
+            var container = d.getElementById('message-container');
+            var content = menuExtension.render(props);
+            container.appendChild(content);
+
+
+
+             console.debug("createPopup()");
+             console.debug(props);
+
+             if (!funcProps.cy){
+             // todo: refactor this to eventlistener
+             funcProps.cy = props.cy;
+             }
+
+             console.log(funcProps.context);
+
+             var divPopup = d.createElement('div');
+             divPopup.classList.add('popup');
+             divPopup.setAttribute('id', 'popup');
+             var content = popup.render(props);
+             divPopup.appendChild(content);
+             document.body.appendChild(divPopup);
+             //var infoBox = d.getElementById('message-container');
+             //infoBox.appendChild(divPopup);
+
+             console.debug('popup');
+        }
+
+        function destroyPopUp() {
+            var p = d.getElementById('popup');
+            document.body.removeChild(p);
+            console.debug("closed popup!");
         }
 
         /**
@@ -424,19 +468,18 @@ define([
                         var opt = document.createElement('option');
                         opt.setAttribute(
                             'id',
-                            props.attributeId +"-"+ option.label
+                            props.attributeId + "-" + option.label
                         );
                         var current = elementStyles.getStyleObject(props.category)[props.parameter];
                         opt.innerHTML = option.label;
                         opt.value = option.styleClass;
 
                         // set selected option to same which is selected for the category
-                        if (current === option.styleClass){
+                        if (current === option.styleClass) {
                             opt.selected = true;
                         }
                         selection.appendChild(opt);
                     });
-
 
 
                     // event listener for selection
@@ -493,8 +536,8 @@ define([
 
                     var options = configs.styleOptions[parameter];
                     var values = [];
-                    if (typeof options != 'undefined'){
-                        values = options.map(function(option){
+                    if (typeof options != 'undefined') {
+                        values = options.map(function (option) {
                             return option.styleClass;
                         });
                     }
@@ -507,7 +550,7 @@ define([
                             options: options,
                             parameter: parameter
                         });
-                    } catch (e){
+                    } catch (e) {
                         console.warn("parameter not found");
                     }
                     tdSelection.appendChild(selection);
@@ -661,6 +704,46 @@ define([
             return divPanel;
         }
 
+        /** @function setTextPreviewContent
+         *  Description
+         *  Todo: TEST!
+         *  @param {Object} variable - Desc.
+         *  @return {Type} desc.
+         */
+        function setTextPreviewContent(param) {
+            // set header to reflect the content
+            setTextPreviewHeader(param);
+
+
+            var textPromise = gwClient.getPageText(param);
+
+            var textPreviewContent = document.getElementById(classNames.text.content);
+            console.debug(textPreviewContent);
+            var linkToSite = document.createElement('a');
+
+            linkToSite.innerHTML = param;
+
+            // Todo: use URL from config and use a function to generate the complete path
+            linkToSite.setAttribute('href', "http://localhost/" + param);
+            textPromise.then(function (response) {
+                return response.json();
+            }).then(function (json) {
+                textPreviewContent.innerHTML = json.data;
+                return json.data;
+            });
+        }
+
+        /** @function setTextPreviewHeader
+         *  Description
+         *  @param {Object} variable - Desc.
+         *  @return {Type} desc.
+         */
+        function setTextPreviewHeader(headerText) {
+            var spHeader = $('#header-text');
+            spHeader.innerHTML = headerText;
+        }
+
+
         /**
          * @function
          * @name tabs
@@ -771,8 +854,8 @@ define([
                         elementId: listElementId,
                         currentDetail: props.currentDetail,
                         classToToggle: classNames.tab.elements.listItem.selected,
-                        setCurrentDetail: function () {
-                            console.log("stub set detail")
+                        setTextPreview: function () {
+                            setTextPreviewContent(evt.target.id);
                         }
                     });
                 });

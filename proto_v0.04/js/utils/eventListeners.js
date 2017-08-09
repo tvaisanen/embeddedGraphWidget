@@ -108,7 +108,7 @@ define([
                     try {
                         var filterValue = props.inFilter.value;
 
-                        props.spanFilter.innerHTML = ": filter :" + filterValue;
+                        props.spanFilter.innerHTML = filterValue;
 
                         /* elesContent has to be declared here
                          *  it is created dynamically and therefore can not
@@ -139,12 +139,12 @@ define([
             }
         },
         elementsList: {
-
             /** @function elementsList.onClick()
              *  elementsList.onClick()
              * @param {Object} funcProps
              */
             onClick: function (props) {
+                console.log(props);
                 var evt = props.evt;
 
                 if (evt.target.type === 'checkbox') {
@@ -168,7 +168,7 @@ define([
                         console.warn("Exception raised by unorderedList -> li.addEventListener()");
                         console.warn(e);
                     }
-                    setTextPreviewContent(evt.target.id);
+                    props.setTextPreview(evt.target.id);
                 }
             },
 

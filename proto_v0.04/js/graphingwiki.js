@@ -35,7 +35,7 @@ define([
 
                 var loadState = confirm('Load previous state?');
                 if (loadState) {
-                    var appState = JSON.parse(localStorage["graphingwikiState"]);
+                    var appState = JSON.parse(localStorage.graphingwikiState);
 
                     var loadThisState = {
                         data: {
@@ -64,6 +64,15 @@ define([
                 });
             }
 
+        }
+
+        function loadFromFile(){
+            // Check for the various File API support.
+            if (window.File && window.FileReader && window.FileList && window.Blob) {
+              console.log("filesupport gogo");// Great success! All the File APIs are supported.
+            } else {
+              alert('The File APIs are not fully supported in this browser.');
+            }
         }
 
 
@@ -154,7 +163,7 @@ define([
                 if (categoryHasNoStyle) {
                     elementStyles.addCategory(category);
                 }
-            })
+            });
         }
 
 
@@ -179,12 +188,6 @@ define([
             cy.contextMenus(initCyContextMenu(cy));
             return cy;
         }
-
-
-        /*
-         When behaviour of the following functions are defined,
-         write the unit tests.
-         */
 
         /** @function generateContent
          *  Description
@@ -253,31 +256,18 @@ define([
             return div;
         }
 
-        /** @function menuItemLayout
-         *  Description
-         *  @param {Object} variable - Desc.
-         *  @return {Type} desc.
-         */
-
-
         /** @function downloadGraphPNG
          *  Description
          *  @param {Object} variable - Desc.
          *  @return {Type} desc.
          */
         function downloadGraphPNG() {
-            var cy = props.cy;
-            console.info('running downloadGraphPNG() -function');
-            console.debug(cy);
-            console.debug(cy.json());
-            console.debug(cy.png);
-            var pngGraph = cy.png({bg: 'white'});
+            var pngGraph = graphUtils.cy().png({bg: 'white'});
             var a = document.createElement('a');
-
             a.href = pngGraph;
             a.download = 'graph.png';
             console.debug(a);
-            a.click()
+            a.click();
         }
 
         /** @function renderHeaderContainer
@@ -360,44 +350,8 @@ define([
             return div;
         }
 
-        /** @function setTextPreviewHeader
-         *  Description
-         *  @param {Object} variable - Desc.
-         *  @return {Type} desc.
-         */
-        function setTextPreviewHeader(headerText) {
-            var spHeader = d.getElementById('header-text');
-            spHeader.innerHTML = headerText;
-        }
 
-        /** @function setTextPreviewContent
-         *  Description
-         *  Todo: TEST!
-         *  @param {Object} variable - Desc.
-         *  @return {Type} desc.
-         */
-        function setTextPreviewContent(param) {
-            // set header to reflect the content
-            setTextPreviewHeader(param);
 
-            // get paget text promise
-            var gw = props.gw;
-            var textPromise = gw.getPageText(param);
-
-            var textPreviewContent = d.getElementById(classNames.text.content);
-            var linkToSite = d.createElement('a');
-
-            linkToSite.innerHTML = param;
-
-            // Todo: use URL from config and use a function to generate the complete path
-            linkToSite.setAttribute('href', "http://localhost/" + param);
-            textPromise.then(function (response) {
-                return response.json();
-            }).then(function (json) {
-                textPreviewContent.innerHTML = json.data;
-                return json.data;
-            });
-        }
 
         /** @function renderHeader
          *  Description
@@ -524,156 +478,9 @@ define([
             }
         };
 
-        var menuExtension = {
-            items: {
-                createEdge: {
-                    // todo: refactor
-                    title: "Connect",
-                    connectButton: function (funcProps) {
-                        var btnConnect = d.createElement('button');
-                        btnConnect.innerHTML = "connect";
-                        btnConnect.addEventListener('click', function () {
-                            listenerFunctions.popupConnect.btnConnect.onClick(funcProps);
-                        });
-                        return btnConnect;
-                    },
-                    selectButton: function (funcProps) {
-                        var btnSelect = d.createElement('button');
-                        btnSelect.innerHTML = "select";
-                        btnSelect.addEventListener('click', function () {
-                            listenerFunctions.popupConnect.btnSelect.onClick(funcProps);
-                        });
-                        return btnSelect;
-                    },
-                    render: function (funcProps) {
-                        console.debug(funcProps);
-                        var div = d.createElement('div');
-                        var input = d.createElement('input');
-                        input.setAttribute('type', 'text');
-                        // pass target node input field
-                        funcProps.inTargetNodeId = input;
-
-                        div.appendChild(input);
-                        div.appendChild(this.connectButton(funcProps));
-                        div.appendChild(this.selectButton(funcProps));
-
-                        return div;
-                    }
-                },
-                save: {
-                    title: "Save the graph",
-                    saveButton: function (funcProps) {
-                        var btnSave = d.createElement('button');
-                        btnSave.innerHTML = "save";
-                        btnSave.addEventListener('click', function () {
-                            listenerFunctions.popupSave.btnSave.onClick({
-                                gw: funcProps.gw,
-                                name: input.value
-                            });
-                        });
-                        return btnSave;
-                    },
-
-                    render: function (funcProps) {
-
-                        console.debug(funcProps);
-
-                        var div = d.createElement('div');
-                        var input = d.createElement('input');
-
-                        input.setAttribute('type', 'text');
-
-                        div.appendChild(input);
-                        div.appendChild(this.saveButton(funcProps));
-
-                        return div;
-                    }
-                },
-
-                popupItem: {
-                    title: "Your title",
-                    render: function () {
-                        console.log('create popup with this!')
-                    }
-                }
-            },
-
-            render: function (funcProps) {
-                try {
-                    console.debug("menuExtension render");
-                    console.debug(funcProps);
 
 
-                    var container = d.createElement('div');
-                    var header = d.createElement('div');
 
-                    //container.classList.add('popup');
-                    //header.classList.add('popup-header');
-
-                    var btnClose = d.createElement('button');
-                    btnClose.innerHTML = "close";
-                    //btnClose.classList.add(classNames.popup.header.btnClose);
-                    btnClose.addEventListener('click', destroyPopUp);
-
-                    header.appendChild(btnClose);
-
-                    var content = this.items[funcProps.context].render(funcProps);
-                    container.appendChild(header);
-                    container.appendChild(content);
-
-                    return container;
-                } catch (e) {
-                    console.warn("Exception raised by menuExtension.render()");
-                    console.warn(e);
-                    console.warn("props:");
-                    console.warn(funcProps);
-                }
-            }
-        };
-
-        /** @function createPopUp
-         *  popup for saving the graphs
-         */
-        function createPopUp(funcProps) {
-
-            // naming should be more declarative
-            // the funcProps act as a panelProps
-            // and funcProps.props as funcProps
-            // for the next function
-
-            var container = d.getElementById('message-container');
-            var content = menuExtension.render(funcProps);
-            container.appendChild(content);
-
-
-            /*
-             console.debug("createPopup()");
-             console.debug(funcProps);
-
-             if (!funcProps.cy){
-             // todo: refactor this to eventlistener
-             funcProps.cy = props.cy;
-             }
-
-             console.log(funcProps.context);
-
-             var divPopup = d.createElement('div');
-             divPopup.classList.add('popup');
-             divPopup.setAttribute('id', 'popup');
-             var content = popup.render(funcProps);
-             divPopup.appendChild(content);
-             d.body.appendChild(divPopup);
-             //var infoBox = d.getElementById('message-container');
-             //infoBox.appendChild(divPopup);
-
-             console.debug('popup');*/
-        }
-
-        function destroyPopUp() {
-            var p = d.getElementById('popup');
-            document.body.removeChild(p);
-            console.debug("closed popup!");
-        }
 
 
         /** @function renderTextPreview

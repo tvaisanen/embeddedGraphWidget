@@ -24,7 +24,6 @@ define([
     function init(props) {
         try {
             // initialize new cy instance
-            console.debug(props.data.style);
             cy = cytoscape({
                 container: document.getElementById(configs.graphContainerId),
                 elements: props.data.elements,

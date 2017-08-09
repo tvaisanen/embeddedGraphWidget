@@ -1058,7 +1058,18 @@ define([
             }
         }
 
+        /**
+         * @function
+         * @name getNodes
+         * @description Wrapper cy.elements('node')
+         * @return {Array} Cytoscape elements
+         */
+        function getNodes(){
+            return cy.elements('node');
+        }
+
         return {
+            addClassToEdge: addClassToEdge,
             createEdgesFromNodes: createEdgesFromNodes,
             createEdgesToNodes: createEdgesToNodes,
             createEdgeId: createEdgeId,
@@ -1072,6 +1083,7 @@ define([
             cy: function () {
                 return cy;
             },
+            getNodes: getNodes,
             nodeIdAvailable: nodeIdAvailable,
             initCy: initCytoscape,
             toggleNeighborhood: toggleNeighborhood,

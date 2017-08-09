@@ -2,7 +2,7 @@
  * Created by toni on 4.8.2017.
  */
 
-define(function () {
+define(["components/popup"], function (popup) {
 
     return {
         menuItems: [
@@ -40,12 +40,14 @@ define(function () {
                 tooltipText: 'add edge between this node and the chosen node',
                 selector: 'node',
                 onClickFunction: function (event) {
+                    console.debug("context menu connect props");
+                    console.debug(event);
                     var source = event.target || event.cyTarget;
                     console.info('I am ' + source.id() + ' and I want to connect!');
-                    createPopUp({
+                    popup.create({
                         context: 'createEdge',
-                        sourceNode: source
-
+                        sourceNode: source,
+                        cy: event.cy
                     });
                 }
             },
