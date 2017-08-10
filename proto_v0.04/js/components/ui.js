@@ -902,6 +902,14 @@ define([
             panelContainer.appendChild(tabsContent);
         }
 
+        var actions = {
+            TEST_DISPATCH: function(props) {console.log('test');console.log(props)},
+            UPDATE_TABS: updateTabs,
+            trigger: function(props){
+                this[props.action](props);
+            }
+        };
+
         return {
             contentContainer: contentContainer,
             elementsContent: elementsContent,
@@ -922,6 +930,7 @@ define([
                 }
             },
             triggerEvent: function(props){
+                actions.trigger(props);
                 console.log(props);
             }
         }

@@ -38,8 +38,10 @@ define([
 
                 /**
                  * @param {Object} props
+                 * @param props.action Action to dispatch
                  * @param props.ctx Parent context
-                 * @param props.observer Observer to notify
+                 * @param props.id Id of the observer to notify
+                 * @param props.info Additional information for debugging
                  * @param props.fn Function to trigger
                  */
                 dispatch: function (props) {
@@ -49,7 +51,7 @@ define([
                           return observer.id == props.id;
                         });
                         if (index > -1) {
-                            observers[index].observer.triggerEvent({message: props.message});
+                            observers[index].observer.triggerEvent(props);
                         }
 
                     } catch (e) {

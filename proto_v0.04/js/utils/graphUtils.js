@@ -497,9 +497,19 @@ define([
                         console.warn(e);
                         console.warn(connectedNodes.categoriesIn);
                     }
+
+                                    setAndRunLayout(props);
+
+                dispatch({
+                    action: "UPDATE_TABS",
+                    ctx: this,
+                    id: "ui",
+                    fn: null,
+                    info: "Dispatch from graphUtils.bindExpandNodeU(). Called after elements have been updated and the ui needs to be refreshed.",
+                    cy: cy
+                });
                 });
 
-                setAndRunLayout(props);
 
             } catch (e) {
                 console.group("Exception raised by graphUtils.expandNode()");
@@ -800,12 +810,18 @@ define([
                     elementStyles: elementStyles
                 });
 
-
+                /*
                 console.debug("UI:");
                 console.debug(ui);
-                updateTabs({
+                dispatch({
+                    action: "UPDATE_TABS",
+                    ctx: this,
+                    id: "ui",
+                    fn: null,
+                    info: "Dispatch from graphUtils.bindExpandNodeU(). Called after elements have been updated and the ui needs to be refreshed.",
                     cy: cy
-                });
+                });*/
+
             } catch (e) {
                 console.group("Exception raised by graphUtils.bindExpandNode()");
                 console.warn(e);
@@ -1100,7 +1116,14 @@ define([
             updateCategoryElementStyle: updateCategoryElementsStyle,
             setDispatch: function (fn) {
                 dispatch = fn;
-                dispatch({id:"ui", message:"im dispatching from graphUtils to UI"});
+                dispatch({
+                    action: "TEST_DISPATCH",
+                    ctx: this,
+                    id: "ui",
+                    fn: null,
+                    info: "dev test"
+
+                });
             }
         }
     })
