@@ -4,7 +4,6 @@
 
 define([
     "require",
-    "configuration/contextMenuItems",
     "lib/cola",
     "configuration/configs",
     "configuration/cyStyles",
@@ -13,7 +12,6 @@ define([
     "lib/cytoscape-cola",
     "utils/eventListeners"
 ], function (require,
-             contextMenuItems,
              cola,
              configs,
              cyStyles,
@@ -33,8 +31,10 @@ define([
                 }
             });
 
+            var parentVariable = 'found it!';
+
             // initialize context menu items
-            cy.contextMenus(contextMenuItems);
+            cy.contextMenus(props.contextMenuItems);
 
             return cy;
 

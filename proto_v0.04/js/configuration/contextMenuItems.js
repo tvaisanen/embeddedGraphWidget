@@ -2,10 +2,23 @@
  * Created by toni on 4.8.2017.
  */
 
-define(["components/popup"], function (popup) {
+define(["components/popup", "utils/graphUtils"], function (popup, graphUtils) {
 
     return {
         menuItems: [
+            {
+                id: 'debug',
+                content: 'debug',
+                tooltipText: 'debug',
+                selector: '*',
+                onClickFunction: function (event) {
+                    console.log(event);
+                    console.log(parent);
+                    triggerMe();
+                    var test = prompt('debug');
+                    eval(test);
+                }
+            },
             {
                 id: 'element-class',
                 content: 'has class?',
@@ -45,8 +58,10 @@ define(["components/popup"], function (popup) {
                     var source = event.target || event.cyTarget;
                     console.info('I am ' + source.id() + ' and I want to connect!');
                     // todo: finish!
+                    console.log(parent);
                     popup.create({
                         context: 'createEdge',
+                        graphUtils: graphUtils,
                         sourceNode: source,
                         cy: event.cy
                     });

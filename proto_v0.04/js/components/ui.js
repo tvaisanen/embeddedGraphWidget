@@ -50,27 +50,26 @@ define([
             container.appendChild(content);
 
 
+            console.debug("createPopup()");
+            console.debug(props);
 
-             console.debug("createPopup()");
-             console.debug(props);
+            if (!funcProps.cy) {
+                // todo: refactor this to eventlistener
+                funcProps.cy = props.cy;
+            }
 
-             if (!funcProps.cy){
-             // todo: refactor this to eventlistener
-             funcProps.cy = props.cy;
-             }
+            console.log(funcProps.context);
 
-             console.log(funcProps.context);
+            var divPopup = d.createElement('div');
+            divPopup.classList.add('popup');
+            divPopup.setAttribute('id', 'popup');
+            var content = popup.render(props);
+            divPopup.appendChild(content);
+            document.body.appendChild(divPopup);
+            //var infoBox = d.getElementById('message-container');
+            //infoBox.appendChild(divPopup);
 
-             var divPopup = d.createElement('div');
-             divPopup.classList.add('popup');
-             divPopup.setAttribute('id', 'popup');
-             var content = popup.render(props);
-             divPopup.appendChild(content);
-             document.body.appendChild(divPopup);
-             //var infoBox = d.getElementById('message-container');
-             //infoBox.appendChild(divPopup);
-
-             console.debug('popup');
+            console.debug('popup');
         }
 
         function destroyPopUp() {
@@ -407,6 +406,19 @@ define([
             div.appendChild(hdEdges);
             div.appendChild(ulEdges);
             return div;
+        }
+
+        /** @function renderHeaderContainer
+         *  Description
+         *  @param {Object} variable - Desc.
+         *  @return {Type} desc.
+         */
+        function renderHeaderContainer() {
+            var headerContainer = d.createElement('div');
+            headerContainer.setAttribute('id', "header-container");
+            headerContainer.classList.add("header-container");
+            headerContainer.appendChild(renderHeader());
+            return headerContainer;
         }
 
         /**
@@ -908,6 +920,9 @@ define([
                     name: "UI",
                     description: "user interface components."
                 }
+            },
+            triggerEvent: function(props){
+                console.log(props);
             }
         }
     }

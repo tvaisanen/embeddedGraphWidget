@@ -262,12 +262,14 @@ define([
             gu.createEdgeId({
                 sourceNodeId: idSource,
                 targetNodeId: idTwo
-            }));
+            })
+        );
         var edgeThree = cy.getElementById(
             gu.createEdgeId({
                 sourceNodeId: idSource,
                 targetNodeId: idThree
-            }));
+            })
+        );
 
         console.log("edgeOne is edge: " + edgeOne.isEdge());
         console.log("edgeTwo is edge: " + edgeTwo.isEdge());
