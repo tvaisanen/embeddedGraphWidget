@@ -65,6 +65,7 @@ define([
 
         function subscribeComponents() {
             eventProxy.subscribe({id: "ui", observer: ui});
+            eventProxy.subscribe({id: "graphUtils", observer: graphUtils});
         }
 
 

@@ -8,16 +8,12 @@ define([
         "configuration/contextMenuItems",
         "components/elementStyles",
         "utils/gwClient",
-        "utils/edgeCategories",
-        "components/ui",
-        "utils/cyInitUtils",
+        "utils/cyInitUtils"
     ],
     function (configs,
               contextMenuItems,
               elementStyles,
               gwClient,
-              edgeCategories,
-              ui,
               cyInitUtils) {
         /**
          * Wrapper for cytoscape.
@@ -520,26 +516,6 @@ define([
             }
         }
 
-        /**
-         * @function
-         * @name getEdgeCategories
-         * @description Return an array of edge categories used in current graph.
-         * @return {Array} edge category names
-         */
-        function getEdgeCategories() {
-            try {
-                var categories = edgeCategories.get();
-                if (categories === 'undefined') {
-                    return []
-                } else {
-                    return categories;
-                }
-            } catch (e) {
-                console.groupCollapsed("Exception raised by graphingwikiBrowser.getEdgeCategories()");
-                console.warn(e);
-                console.groupEnd();
-            }
-        }
 
         /**
          * @function
@@ -806,7 +782,6 @@ define([
                     nodeId: nodeId,
                     cy: cy,
                     gwClient: gwClient,
-                    edgeCategories: edgeCategories,
                     elementStyles: elementStyles
                 });
 

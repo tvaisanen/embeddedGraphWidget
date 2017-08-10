@@ -19,21 +19,14 @@ requirejs.config({
 });
 
 require([
-    "./configuration/configs",
-    "./graphingwiki",
+    "graphingwiki",
     "utils/cyInitUtils"
-], function (configs, graphingwiki, cyInitUtils) {
+], function (graphingwiki, cyInitUtils) {
     'use strict';
     console.info("Starting the graphingwikiBrowser!");
-    var defined = ["configs", "graphingwikiBrowser", "jquery"];
-    console.groupCollapsed("App.defined:");
-    console.debug("configs: " + typeof configs);
-    console.debug("cytoscape: " + typeof cytoscape);
-    console.debug("graphingwikiBrowser: " + typeof graphingwikiBrowser);
-    console.info("%cjQuery is loadeed in index.html", "color:blue;");
-    console.debug("jquery: " + typeof $);
-    console.info("defined:" + defined.join(", "));
-    console.groupEnd();
+
+    // jQuery is loadeed in index.html
+
     cyInitUtils.registerExtensions();
-    graphingwiki.start(configs);
+    graphingwiki.start();
 });

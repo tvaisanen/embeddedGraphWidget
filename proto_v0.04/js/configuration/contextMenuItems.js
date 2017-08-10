@@ -2,7 +2,19 @@
  * Created by toni on 4.8.2017.
  */
 
-define(["components/popup", "utils/graphUtils"], function (popup, graphUtils) {
+define([
+    "components/popup",
+    "utils/eventListeners",
+    "utils/graphUtils"
+], function (popup, eventListeners, graphUtils) {
+
+    console.log("debugging contextMenu");
+    try {
+        console.log(eventListeners);
+    } catch (e) {
+        console.log(e);
+        console.log("eventListener load fail");
+    }
 
     return {
         menuItems: [
@@ -14,7 +26,7 @@ define(["components/popup", "utils/graphUtils"], function (popup, graphUtils) {
                 onClickFunction: function (event) {
                     console.log(event);
                     console.log(parent);
-                    triggerMe();
+                    console.log(graphUtils.info());
                     var test = prompt('debug');
                     eval(test);
                 }

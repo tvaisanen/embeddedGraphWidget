@@ -14,18 +14,27 @@ define([
      */
 
     return {
+        contextMenu: {
+            debug: function (event) {
+                console.log(event);
+                console.log(parent);
+                console.log(graphUtils.info());
+                var test = prompt('debug');
+                eval(test);
+            }
+        },
         graph: {
             clickNode: function (props) {
                 console.debug("graph.clickNode()");
                 console.debug(props);
 
                 /*graphUtils.expandNode({
-                    nodeId: props.nodeId,
-                    cy: props.cy,
-                    gwClient: props.gwClient,
-                    edgeCategories: props.edgeCategories,
-                    elementStyles: props.elementStyles
-                });*/
+                 nodeId: props.nodeId,
+                 cy: props.cy,
+                 gwClient: props.gwClient,
+                 edgeCategories: props.edgeCategories,
+                 elementStyles: props.elementStyles
+                 });*/
                 console.debug("UI:");
             }
         },
@@ -242,7 +251,7 @@ define([
                                 try {
                                     graphUtils.cy().destroy();
                                 } catch (e) {
-                                    if (e.type === typeof TypeError){
+                                    if (e.type === typeof TypeError) {
                                         console.log("TYPEERRRO=R");
                                     }
                                 }

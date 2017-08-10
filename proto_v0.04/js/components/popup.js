@@ -167,11 +167,27 @@ define([
                 return div;
             }
         },
+        preview: {
+            title: "Text preview",
+            render: function (props) {
 
+                console.debug(props);
+
+                var div = document.createElement('div');
+                var input = document.createElement('input');
+
+                input.setAttribute('type', 'text');
+
+                div.appendChild(input);
+                div.appendChild(this.saveButton(props));
+
+                return div;
+            }
+        },
         popupItem: {
             title: "Your title",
             render: function () {
-                console.log('create popup with this!')
+                console.log('create popup with this!');
             }
         },
 

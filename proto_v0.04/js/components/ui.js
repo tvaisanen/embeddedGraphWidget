@@ -741,6 +741,7 @@ define([
                 return response.json();
             }).then(function (json) {
                 textPreviewContent.innerHTML = json.data;
+                document.body.appendChild(textPreviewContent);
                 return json.data;
             });
         }
