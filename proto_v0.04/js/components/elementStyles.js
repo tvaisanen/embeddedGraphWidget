@@ -49,7 +49,7 @@ define(["configuration/configs"], function (configs) {
     function addCategories(props) {
         try {
             // init new category with generic style
-            if (!$.isEmptyObject(props.categories)){
+            if (!$.isEmptyObject(props.categories)) {
                 props.categories.forEach(function (category) {
                     addCategory({name: category});
                 });
@@ -106,9 +106,22 @@ define(["configuration/configs"], function (configs) {
         /*
          * if no style get generic
          * */
-        if (!style) {
+        console.debug('getStyle(style)');
+        console.debug(style);
+
+        var styleNotDefined = typeof style === 'undefined';
+        var styleNotListed = !Object.keys(styles).includes(style);
+
+        // if style not defined return generic
+        if (styleNotDefined) {
             return Object.values(styles.generic);
         }
+
+        if (styleNotListed) {
+            console.info("style category requested do not exist");
+            return null;
+        }
+
         return Object.values(styles[style]);
     }
 
@@ -163,7 +176,7 @@ define(["configuration/configs"], function (configs) {
      */
     function setStyles(props) {
         try {
-            if (props.styles === 'undefined'){
+            if (props.styles === 'undefined') {
                 throw {
                     name: "InvalidPropsError",
                     message: "setStyle(props) called with invalid parameters",
@@ -196,7 +209,7 @@ define(["configuration/configs"], function (configs) {
             console.debug("Before updating:");
             console.debug(styleToUpdate);
             Object.keys(props.style).forEach(function (styleKey) {
-                console.debug(styleToUpdate[styleKey] +" = "+ props.style[styleKey])
+                console.debug(styleToUpdate[styleKey] + " = " + props.style[styleKey])
                 styleToUpdate[styleKey] = props.style[styleKey];
             });
             console.debug("After updating:");

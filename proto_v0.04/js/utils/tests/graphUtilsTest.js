@@ -131,6 +131,15 @@ define([
             cy: cy
         });
 
+        console.debug('Debugging createNodesAndEdgeBetween()');
+
+        var firstEdge = gu.createEdgeId(idSource, idTarget);
+        console.debug(gu.edgeExists({
+                cy: cy,
+                edgeId: firstEdge
+            })
+        );
+
         gu.createNodesAndEdgeBetween({
             sourceNodeId: idSource,
             targetNodeId: idOne,
@@ -298,13 +307,16 @@ define([
         var existingNodeId = 'existingNode';
         var newNodeId = 'newNode';
 
+        gu.createNewNode({
+            id: newNodeId,
+            cy: cy
+        });
+
         assert.ok(
-            gu.createNewNode({
-                id: newNodeId,
-                cy: cy
-            }),
-            "Return true upon creating new node"
+            cy.getElementById(newNodeId),
+            "Node element can be found aftewards with getElementById()"
         );
+
         assert.notOk(
             gu.createNewNode({
                 id: existingNodeId,
@@ -427,9 +439,23 @@ define([
         console.debug(edge);
         console.debug(edge.id());
 
-        assert.ok(gu.edgeExists(edge.id(), cy), "Returned edge can be found from cy");
-        assert.ok(gu.edgeExists(edgeId, cy), "New edge can be found with getElementById");
-        assert.deepEqual(edge.id(), edgeId, "Returned edgeId() matches with with intended Id");
+        assert.ok(gu.edgeExists({
+                edgeId: edge.id(),
+                cy: cy
+            }),
+            "Returned edge can be found from cy"
+        );
+        assert.ok(gu.edgeExists({
+                edgeId: edge.id(),
+                cy: cy
+            }),
+            "New edge can be found with getElementById");
+
+        assert.deepEqual(
+            edge.id(),
+            edgeId,
+            "Returned edgeId() matches with with intended Id"
+        );
     });
 
     QUnit.test("setAndRunLayout()", function (assert) {
