@@ -44,8 +44,9 @@ define([
         );
 
         assert.notOk(
-            gu.addClassToEdge()
-        )
+            gu.addClassToEdge(),
+            "Exception returns false."
+        );
 
         assert.ok(
             gu.edgeExists({
@@ -251,9 +252,26 @@ define([
             cy: cy
         });
 
-        var edgeOne = cy.getElementById(gu.createEdgeId(idSource, idOne));
-        var edgeTwo = cy.getElementById(gu.createEdgeId(idSource, idTwo));
-        var edgeThree = cy.getElementById(gu.createEdgeId(idSource, idThree));
+        var edgeOne = cy.getElementById(
+            gu.createEdgeId({
+                sourceNodeId: idSource,
+                targetNodeId: idOne
+            })
+        );
+        var edgeTwo = cy.getElementById(
+            gu.createEdgeId({
+                sourceNodeId: idSource,
+                targetNodeId: idTwo
+            }));
+        var edgeThree = cy.getElementById(
+            gu.createEdgeId({
+                sourceNodeId: idSource,
+                targetNodeId: idThree
+            }));
+
+        console.log("edgeOne is edge: " + edgeOne.isEdge());
+        console.log("edgeTwo is edge: " + edgeTwo.isEdge());
+        console.log("edgeThree is edge: " + edgeThree.isEdge());
 
         var nodeOne = cy.getElementById(idOne);
         var nodeTwo = cy.getElementById(idTwo);

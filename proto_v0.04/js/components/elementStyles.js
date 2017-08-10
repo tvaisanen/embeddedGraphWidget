@@ -106,8 +106,6 @@ define(["configuration/configs"], function (configs) {
         /*
          * if no style get generic
          * */
-        console.debug('getStyle(style)');
-        console.debug(style);
 
         var styleNotDefined = typeof style === 'undefined';
         var styleNotListed = !Object.keys(styles).includes(style);
@@ -115,10 +113,9 @@ define(["configuration/configs"], function (configs) {
         // if style not defined return generic
         if (styleNotDefined) {
             return Object.values(styles.generic);
-        }
+        }0
 
         if (styleNotListed) {
-            console.info("style category requested do not exist");
             return null;
         }
 

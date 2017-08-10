@@ -81,6 +81,7 @@ define([
                 console.info(props);
                 console.warn(e);
                 console.groupEnd();
+                return false;
             }
         }
 
@@ -228,7 +229,6 @@ define([
                     // console.debug(categoryExists);
                     var classesToAdd = elementStyles.getStyle(props.category);
                     if (!classesToAdd) {
-                        console.debug('Add generic styles');
                         classesToAdd = elementStyles.getStyle();
                     } else {
                         // console.debug('Add ' + props.category + ' styles.');
