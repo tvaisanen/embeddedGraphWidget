@@ -78,21 +78,41 @@ define([
                 div.classList.add("popup__select-or-create");
                 div.appendChild(this.header({label: props.label}));
 
+                var active = "select"; // or "new"
+
+                var selection = this.selection({
+                    id: props.selectionId,
+                    options: props.options
+                });
+
                 var divChoices = document.createElement('div');
                 divChoices.setAttribute('id', props.selectionId + "Choices");
                 divChoices.classList.add("popup__select-or-create__choices");
 
-                function clickEvent (event) {
+                function clickEvent(event) {
                     console.debug("click choice");
                     console.debug(event.target);
                     var childs = document.getElementById(props.selectionId + "Choices").childNodes;
-                    childs.forEach(function(child){
+                    console.log(typeof event.target.id);
+                    console.log("select = " + event.target.id.endsWith("select"));
+                    console.log("new = " + event.target.id.endsWith("new"));
+                    childs.forEach(function (child) {
                         console.debug(child);
                         child.classList.remove("popup__select-or-create__choice-active");
                     });
-
                     event.target.classList.add("popup__select-or-create__choice-active");
 
+
+                    if (event.target.id.endsWith("select")) {
+                        // render selection
+                        div.replaceChild(selection, div.childNodes[2]);
+                        console.log(div.childNodes);
+                    } else if (event.target.id.endsWith("new")) {
+                        var input = document.createElement('input', 'text');
+                        div.replaceChild(input, div.childNodes[2]);
+                        console.log(div.childElementCount);
+                        // render input
+                    }
                 }
 
                 var spnSelect = document.createElement('span');
@@ -110,10 +130,7 @@ define([
                 divChoices.appendChild(spnSelect);
                 divChoices.appendChild(spnNew);
                 div.appendChild(divChoices);
-                div.appendChild(this.selection({
-                    id: props.selectionId,
-                    options: props.options
-                }));
+                div.appendChild(selection);
                 return div;
             },
             render: function (props) {
