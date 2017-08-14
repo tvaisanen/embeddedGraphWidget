@@ -26,3 +26,18 @@
 .popup-header__text {
     width: auto;
 }
+
+.popup__select-or-create {}
+
+.popup__select-or-create__choices {
+    display: flex;
+    flex-direction: row;
+}
+
+.popup__select-or-create__choice-active {
+    font-weight: bold;
+    border-top: solid;
+}
+.popup__select-or-create__choice-inactive {
+    cursor: pointer;
+}

@@ -81,8 +81,8 @@ define([
              */
             if (typeof(Storage) !== "undefined") {
 
-                var loadState = confirm('Load previous state?');
-                if (loadState) {
+                // var loadState = confirm('Load previous state?');
+                if (true) {
                     var appState = JSON.parse(localStorage.graphingwikiState);
 
                     var loadThisState = {

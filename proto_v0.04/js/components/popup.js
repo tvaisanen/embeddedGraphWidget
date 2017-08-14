@@ -25,17 +25,17 @@ define([
                     console.log("target: " + targetNodeId);
                     console.log(target);
                     /* Todo: Fix this!
-                    * {
-                    *   sourceNodeId: "object",
-                    *   selectionNodeId: "targetNodeSelection",
-                    *   selectionCategoryId: "categorySelection",
-                    *   cy: Core
-                    * }
-                    *   source: object
-                    *   target: personA
-                    *   <option id=​"targetNodeSelection">​personA​</option>​
-                    *   Can not create second element with ID `undefined_to_personA`
-                    **/
+                     * {
+                     *   sourceNodeId: "object",
+                     *   selectionNodeId: "targetNodeSelection",
+                     *   selectionCategoryId: "categorySelection",
+                     *   cy: Core
+                     * }
+                     *   source: object
+                     *   target: personA
+                     *   <option id=​"targetNodeSelection">​personA​</option>​
+                     *   Can not create second element with ID `undefined_to_personA`
+                     **/
 
                     cy.add({
                         group: 'edges',
@@ -50,7 +50,7 @@ define([
                 });
                 return btnConnect;
             },
-            header: function (props){
+            header: function (props) {
                 var header = document.createElement('span');
                 header.innerHTML = props.label;
                 return header;
@@ -63,15 +63,58 @@ define([
                 });
                 return btnSelect;
             },
-            selection: function (props) {
+            selection: function (props) {
                 var selection = document.createElement('select');
+                selection.setAttribute('id', props.id);
                 props.options.forEach(function (option) {
                     var o = document.createElement('option');
-                    o.setAttribute('id', props.id);
                     o.innerHTML = option;
                     selection.appendChild(o);
                 });
                 return selection;
+            },
+            selectOrCreate: function (props) {
+                var div = document.createElement('div');
+                div.classList.add("popup__select-or-create");
+                div.appendChild(this.header({label: props.label}));
+
+                var divChoices = document.createElement('div');
+                divChoices.setAttribute('id', props.selectionId + "Choices");
+                divChoices.classList.add("popup__select-or-create__choices");
+
+                function clickEvent (event) {
+                    console.debug("click choice");
+                    console.debug(event.target);
+                    var childs = document.getElementById(props.selectionId + "Choices").childNodes;
+                    childs.forEach(function(child){
+                        console.debug(child);
+                        child.classList.remove("popup__select-or-create__choice-active");
+                    });
+
+                    event.target.classList.add("popup__select-or-create__choice-active");
+
+                }
+
+                var spnSelect = document.createElement('span');
+                spnSelect.setAttribute('id', "selectOrCreate__choice-select");
+                spnSelect.classList.add("popup__select-or-create__choice-active");
+                spnSelect.innerHTML = "select";
+                spnSelect.addEventListener('click', clickEvent);
+
+                var spnNew = document.createElement('span');
+                spnNew.setAttribute('id', "selectOrCreate__choice-new");
+                spnNew.innerHTML = "new";
+                spnNew.classList.add("popup__select-or-create__choice-inactive");
+                spnNew.addEventListener('click', clickEvent);
+
+                divChoices.appendChild(spnSelect);
+                divChoices.appendChild(spnNew);
+                div.appendChild(divChoices);
+                div.appendChild(this.selection({
+                    id: props.selectionId,
+                    options: props.options
+                }));
+                return div;
             },
             render: function (props) {
                 console.debug(props);
@@ -85,39 +128,38 @@ define([
                 var nodeOptions = [];
                 var cy = props.cy;
                 var elements = props.cy.elements('node');
-                Object.keys(elements).forEach(function(el){
+                Object.keys(elements).forEach(function (el) {
                     try {
                         nodeOptions.push(elements[el].id());
-                    } catch (e){
+                    } catch (e) {
                         console.log(elements[el]);
                     }
                 });
 
                 console.info("Option count: " + nodeOptions.length);
 
-                div.appendChild(this.header({label: "Connect to"}));
-                div.appendChild(this.header({label: "select"}));
-                div.appendChild(this.selection({
-                    id: "targetNodeSelection",
-                    options: nodeOptions
-                }));
-                div.appendChild(this.header({label: "create new"}));
-
-                var newNodeInput = document.createElement('input');
                 input.setAttribute('type', 'text');
                 input.placeholder = "node name..";
-                div.appendChild(newNodeInput);
-                div.appendChild(this.header({label: "Add category"}));
-                div.appendChild(this.header({label: "select"}));
+                // div.appendChild(newNodeInput);
 
-                var categoryOptions = elementStyles.getCategories();
-                div.appendChild(this.selection({
-                    id: "categorySelection",
-                    options: categoryOptions
-                }));
-                div.appendChild(this.header({label: "create new"}));
+                var selectOrCreateNode = this.selectOrCreate({
+                    options: nodeOptions,
+                    label: "Connect to node",
+                    selectionId: "createEdgeTargetNode"
+                });
 
-                div.appendChild(input);
+                var selectOrCreateCategory = this.selectOrCreate({
+                    options: elementStyles.getCategories(),
+                    label: "Add category",
+                    selectionId: "createEdgeCategory"
+                });
+
+                div.appendChild(selectOrCreateNode);
+                div.appendChild(selectOrCreateCategory);
+
+                // div.appendChild(this.header({label: "create new"}));
+
+                // div.appendChild(input);
 
                 div.appendChild(this.connectButton({
                     sourceNodeId: props.sourceNode.id(),
@@ -190,7 +232,6 @@ define([
                 console.log('create popup with this!');
             }
         },
-
         render: function (props) {
 
             console.debug("popup render");
