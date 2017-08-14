@@ -20,7 +20,8 @@ define([
                 btnConnect.addEventListener('click', function () {
                     console.debug(props);
                     var target = document.getElementById(props.selectionNodeId);
-                    var targetNodeId = target.textContent;
+                    var targetNodeId = target.options[target.selectedIndex].text;
+
                     console.log("source: " + props.sourceNodeId);
                     console.log("target: " + targetNodeId);
                     console.log(target);
@@ -37,6 +38,8 @@ define([
                      *   Can not create second element with ID `undefined_to_personA`
                      **/
 
+
+                    // Todo: Dispatch me via eventproxy to graphUtils
                     cy.add({
                         group: 'edges',
                         data: {
@@ -180,7 +183,7 @@ define([
 
                 div.appendChild(this.connectButton({
                     sourceNodeId: props.sourceNode.id(),
-                    selectionNodeId: 'targetNodeSelection',
+                    selectionNodeId: "createEdgeTargetNode",
                     selectionCategoryId: 'categorySelection',
                     cy: cy
                 }));
