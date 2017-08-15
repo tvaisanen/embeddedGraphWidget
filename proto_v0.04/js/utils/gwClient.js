@@ -207,11 +207,19 @@ define(["../configuration/configs"], function (configs) {
 
     var dispatchActions = {
         TEST_DISPATCH: function (props) {
-            console.log('test');
+            console.debug("test dispatch");
             console.log(props);
+            return {response: "test response from gwClient"};
+        },
+        GET_NODE_DATA: function (props){
+            console.info("GET_NODE_DATA dispatch received");
+            console.info(props);
+            var promise = fetchNode(props.props.nodeId);
+            console.log(promise);
+            return {data: promise, info: "response from GET_NODE_DATA"};
         },
         trigger: function (props) {
-            this[props.action](props);
+            return this[props.action](props);
         }
     };
 
@@ -222,41 +230,33 @@ define(["../configuration/configs"], function (configs) {
         setConfigs: function (configs) {
             setConfiguration(configs);
         },
-
         getGraph: function (graphId) {
             return fetchGraph(graphId);
         },
-
         getNodeData: function (pagename) {
             // remember to use getNodeData(pagename).then( ... do stuff )
             return fetchNode(pagename);
         },
-
         getGraphList: function () {
             return fetchGraphList();
         },
-
         getModuleName: function () {
             return moduleName;
         },
-
         getPageText: function (pagename) {
             return fetchPageText(pagename);
         },
-
         name: function(){ return name; },
-
         postGraph: function (graphId, graphData) {
             return postGraph(graphId, graphData);
         },
-
         savePageToMoin: function (nodeId, content) {
             return postNode(nodeId, content);
         },
 
         triggerEvent: function (props) {
             console.log(props);
-            return actions.trigger(props);
+            return dispatchActions.trigger(props);
         },
 
         setDispatch: function (fn) {

@@ -77,7 +77,9 @@ define([
                             return observer.id == props.target;
                         });
                         if (index > -1) {
-                            observers[index].observer.triggerEvent(props);
+                            var r = observers[index].observer.triggerEvent(props);
+                            console.log(r);
+                            return r;
                         }
 
                     } catch (e) {

@@ -416,14 +416,26 @@ define([
 
         function expandNode(props) {
             try {
-                var gw = props.gwClient;
+                // var gw = props.gwClient;
                 var nodeId = props.nodeId;
 
                 console.debug("expandNode()");
                 console.debug(props);
 
+                var response = dispatch({
+                    action: "GET_NODE_DATA",
+                    ctx: this,
+                    fn: null,
+                    info: "Require response of gwClient.getNodeData(nodeID)",
+                    props: {nodeId: nodeId},
+                    source: "graphUtils",
+                    target: "gwClient"
+                });
+
+                var nodePromise = response.data;
                 //Get data for the clicked node.
-                var nodePromise = gw.getNodeData(nodeId);
+                // This would have been more efficient but more tightly coupled
+                // var nodePromise = gw.getNodeData(nodeId);
 
                 nodePromise.then(function (response) {
                     return response.json();
@@ -498,16 +510,16 @@ define([
                         console.warn(connectedNodes.categoriesIn);
                     }
 
-                                    setAndRunLayout(props);
+                    setAndRunLayout(props);
 
-                dispatch({
-                    action: "UPDATE_TABS",
-                    ctx: this,
-                    id: "ui",
-                    fn: null,
-                    info: "Dispatch from graphUtils.bindExpandNodeU(). Called after elements have been updated and the ui needs to be refreshed.",
-                    cy: cy
-                });
+                    dispatch({
+                        action: "UPDATE_TABS",
+                        ctx: this,
+                        id: "ui",
+                        fn: null,
+                        info: "Dispatch from graphUtils.bindExpandNodeU(). Called after elements have been updated and the ui needs to be refreshed.",
+                        cy: cy
+                    });
                 });
 
 
@@ -791,16 +803,16 @@ define([
                 });
 
                 /*
-                console.debug("UI:");
-                console.debug(ui);
-                dispatch({
-                    action: "UPDATE_TABS",
-                    ctx: this,
-                    id: "ui",
-                    fn: null,
-                    info: "Dispatch from graphUtils.bindExpandNodeU(). Called after elements have been updated and the ui needs to be refreshed.",
-                    cy: cy
-                });*/
+                 console.debug("UI:");
+                 console.debug(ui);
+                 dispatch({
+                 action: "UPDATE_TABS",
+                 ctx: this,
+                 id: "ui",
+                 fn: null,
+                 info: "Dispatch from graphUtils.bindExpandNodeU(). Called after elements have been updated and the ui needs to be refreshed.",
+                 cy: cy
+                 });*/
 
             } catch (e) {
                 console.group("Exception raised by graphUtils.bindExpandNode()");
@@ -1091,7 +1103,9 @@ define([
                 return cy;
             },
             getNodes: getNodes,
-            name: function(){ return name; },
+            name: function () {
+                return name;
+            },
             nodeIdAvailable: nodeIdAvailable,
             initCy: initCytoscape,
             toggleNeighborhood: toggleNeighborhood,
