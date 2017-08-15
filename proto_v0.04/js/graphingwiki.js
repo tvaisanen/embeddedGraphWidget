@@ -4,14 +4,13 @@
  */
 
 define([
-        "./configuration/classNames",
-        "./components/elementStyles",
-        "./components/ui",
-        "./configuration/configs",
-        "./utils/edgeCategories",
-        "./utils/graphUtils",
-        "./utils/gwClient"],
-    function (classNames, elementStyles, ui, configs, edgeCategories, graphUtils, gwClient) {
+
+        "components/elementStyles",
+        "components/ui",
+        "configuration/configs",
+        "utils/graphUtils",
+        "utils/gwClient"],
+    function (elementStyles, ui, configs, graphUtils, gwClient) {
         /**
          * Graphingwikibrowser module.
          * @exports graphingwiki
@@ -28,12 +27,36 @@ define([
              }
              }
              },*/
-            observers = [];
+            observers = [
+                {id: "eventProxy"}
+            ];
+
+            var dispatchActions = {
+                CONFIRM_SUBSCRIPTION: function (props) {
+                    console.log('Confirm observer subscription.');
+                    var index = observers.findIndex(function (observer) {
+                        return observer.id == props.source;
+                    });
+                    if (index == -1) {
+                        throw {name: "SubscriptionError", message: "EventProxy subscription failed"};
+                    } else {
+                        console.info("Subscription of " + observers[index].id + " confirmed.");
+                    }
+
+                },
+                TEST_DISPATCH: function (props) {
+                    console.log("EventProxy received dispatched action.");
+                },
+                trigger: function (props) {
+                    dispatchActions[props.action](props);
+                },
+
+            };
 
             return {
                 subscribe: function (observer) {
                     observers.push(observer);
-                    console.log(observer + " subscribed");
+                    observer.observer.setDispatch(eventProxy.dispatch);
                 },
 
                 /**
@@ -46,26 +69,34 @@ define([
                  */
                 dispatch: function (props) {
                     console.log(props);
+                    if (props.target === "eventProxy") {
+                        return dispatchActions.trigger(props);
+                    }
                     try {
-                        var index = observers.findIndex(function(observer){
-                          return observer.id == props.id;
+                        var index = observers.findIndex(function (observer) {
+                            return observer.id == props.target;
                         });
                         if (index > -1) {
                             observers[index].observer.triggerEvent(props);
                         }
 
                     } catch (e) {
+                        console.group("Exception raised by EventProxy.dispatch()");
                         console.log(e);
+                        console.groupEnd();
                     }
                 }
-            }
-        }
+            };
+        };
 
         var eventProxy = new EventProxy();
 
         function subscribeComponents() {
+            console.group("Subscribe event proxy modules.");
             eventProxy.subscribe({id: "ui", observer: ui});
             eventProxy.subscribe({id: "graphUtils", observer: graphUtils});
+            eventProxy.subscribe({id: "gwClient", observer: gwClient});
+            console.groupEnd();
         }
 
 
@@ -212,7 +243,7 @@ define([
             start: function (props) {
                 subscribeComponents();
                 render({gwClient: gwClient});
-                graphUtils.setDispatch(eventProxy.dispatch);
+
                 loadAppState();
             }
         }

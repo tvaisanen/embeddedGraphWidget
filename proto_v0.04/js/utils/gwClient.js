@@ -14,7 +14,8 @@ define(["../configuration/configs"], function (configs) {
      */
 
         // private methods
-    var moduleName = "GraphingWiki client";
+    var name = "GraphingWiki client";
+    var dispatch;
 
 
     /** @function
@@ -204,6 +205,16 @@ define(["../configuration/configs"], function (configs) {
         return fetch(postNodeRequest);
     }
 
+    var dispatchActions = {
+        TEST_DISPATCH: function (props) {
+            console.log('test');
+            console.log(props);
+        },
+        trigger: function (props) {
+            this[props.action](props);
+        }
+    };
+
 
     // public methods
     return {
@@ -233,12 +244,31 @@ define(["../configuration/configs"], function (configs) {
             return fetchPageText(pagename);
         },
 
+        name: function(){ return name; },
+
         postGraph: function (graphId, graphData) {
             return postGraph(graphId, graphData);
         },
 
         savePageToMoin: function (nodeId, content) {
             return postNode(nodeId, content);
+        },
+
+        triggerEvent: function (props) {
+            console.log(props);
+            return actions.trigger(props);
+        },
+
+        setDispatch: function (fn) {
+            dispatch = fn;
+            dispatch({
+                action: "CONFIRM_SUBSCRIPTION",
+                ctx: this,
+                target: "eventProxy",
+                source: "gwClient",
+                fn: null,
+                info: "dev test"
+            });
         }
     }
 

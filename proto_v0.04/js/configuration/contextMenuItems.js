@@ -25,7 +25,6 @@ define([
                 selector: '*',
                 onClickFunction: function (event) {
                     console.log(event);
-                    console.log(parent);
                     console.log(graphUtils.info());
                     var test = prompt('debug');
                     eval(test);
@@ -71,7 +70,7 @@ define([
                     console.info('I am ' + source.id() + ' and I want to connect!');
                     // todo: finish!
                     console.log(parent);
-                    popup.create({
+                    props.popup.create({
                         context: 'createEdge',
                         graphUtils: graphUtils,
                         sourceNode: source,
@@ -131,25 +130,9 @@ define([
                 onClickFunction: function (event) {
                     cy.$(':selected').remove();
                 }
-            },
-            /*{
-             id: 'select-all-nodes',
-             content: 'select all nodes',
-             tooltipText: 'select all nodes',
-             selector: 'node',
-             onClickFunction: function (event) {
-             selectAllOfTheSameType(event.target || event.cyTarget);
-             }
-             },
-             {
-             id: 'select-all-edges',
-             content: 'select all edges',
-             tooltipText: 'select all edges',
-             selector: 'edge',
-             onClickFunction: function (event) {
-             selectAllOfTheSameType(event.target || event.cyTarget);
-             }
-             }*/
+            }
         ]
     };
-})
+
+
+});

@@ -15,6 +15,9 @@ define([
     function (elementStyles, eventListeners, classNames, configs, graphUtils, gwClient, menuItems) {
         'use strict';
 
+        var name = "ui";
+        var dispatch;
+
         /**
          * User interface components. Collection of functions to    create UI components.
          * @exports ui
@@ -742,6 +745,7 @@ define([
             }).then(function (json) {
                 textPreviewContent.innerHTML = json.data;
                 document.body.appendChild(textPreviewContent);
+                dispatch()
                 return json.data;
             });
         }
@@ -918,6 +922,7 @@ define([
             graphsContent: graphsContent,
             graphListItem: graphListItem,
             menu: menu,
+            name: function() { return name; },
             navigation: navigation,
             setMenuItems: setMenuItems,
             stylesContent: stylesContent,
@@ -930,9 +935,20 @@ define([
                     description: "user interface components."
                 }
             },
+            setDispatch: function (fn) {
+                dispatch = fn;
+                dispatch({
+                    action: "CONFIRM_SUBSCRIPTION",
+                    ctx: this,
+                    target: "eventProxy",
+                    source: "ui",
+                    fn: null,
+                    info: "dev test"
+                });
+            },
             triggerEvent: function(props){
-                actions.trigger(props);
                 console.log(props);
+                return actions.trigger(props);
             }
         }
     }

@@ -2,7 +2,7 @@
  * Created by toni on 19.7.2017.
  */
 
-define(["../utils/eventListeners", "../components/elementStyles"],
+define(["utils/eventListeners", "components/elementStyles"],
     function (eventListeners, elementStyles) {
         "use strict";
 

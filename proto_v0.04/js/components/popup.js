@@ -5,9 +5,8 @@
 define([
     "utils/eventListeners",
     "configuration/classNames",
-    "components/elementStyles",
-    "utils/graphUtils"
-], function (eventListeners, classNames, elementStyles, graphUtils) {
+    "components/elementStyles"
+], function (eventListeners, classNames, elementStyles) {
     "use strict";
 
     var popup = {

@@ -8,17 +8,21 @@ define([
         "configuration/contextMenuItems",
         "components/elementStyles",
         "utils/gwClient",
-        "utils/cyInitUtils"
+        "utils/cyInitUtils",
+        "components/popup"
     ],
     function (configs,
               contextMenuItems,
               elementStyles,
               gwClient,
-              cyInitUtils) {
+              cyInitUtils,
+              popup) {
         /**
          * Wrapper for cytoscape.
          * @module graphUtils
          */
+
+        var name = "graphUtils";
 
         // active graph instance
         var cy;
@@ -639,7 +643,8 @@ define([
          *  @return {Type} desc.
          */
         function initCytoscape(props) {
-            props.contextMenuItems = contextMenuItems;
+            props.contextMenuItems = contextMenuItems();
+            contextMenuItems.hello();
             cy = cyInitUtils.init(props);
             cy.on('tap', 'node', bindExpandNode);
             return cy;
@@ -1039,7 +1044,9 @@ define([
          * */
         function createNewCy(props) {
             try {
+                console.debug(popup);
                 props.contextMenuItems = contextMenuItems;
+                console.debug(props.contextMenuItems);
                 cy = cyInitUtils.init(props);
                 cy.on('tap', 'node', bindExpandNode);
                 return cy;
@@ -1084,6 +1091,7 @@ define([
                 return cy;
             },
             getNodes: getNodes,
+            name: function(){ return name; },
             nodeIdAvailable: nodeIdAvailable,
             initCy: initCytoscape,
             toggleNeighborhood: toggleNeighborhood,
@@ -1092,12 +1100,12 @@ define([
             setDispatch: function (fn) {
                 dispatch = fn;
                 dispatch({
-                    action: "TEST_DISPATCH",
+                    action: "CONFIRM_SUBSCRIPTION",
                     ctx: this,
-                    id: "ui",
+                    target: "eventProxy",
+                    source: "graphUtils",
                     fn: null,
                     info: "dev test"
-
                 });
             }
         }
