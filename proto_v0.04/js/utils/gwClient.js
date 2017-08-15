@@ -2,7 +2,7 @@
  * Created by toni on 7.6.2017.
  */
 
-define(["../configuration/configs"], function (configs) {
+define(function () {
     'use strict';
     /*
      * Client for requesting and posting data to graphingwiki
@@ -16,6 +16,7 @@ define(["../configuration/configs"], function (configs) {
         // private methods
     var name = "GraphingWiki client";
     var dispatch;
+    var configs;
 
 
     /** @function
@@ -227,8 +228,8 @@ define(["../configuration/configs"], function (configs) {
     // public methods
     return {
 
-        setConfigs: function (configs) {
-            setConfiguration(configs);
+        setConfigs: function (props) {
+            configs = props.configs;
         },
         getGraph: function (graphId) {
             return fetchGraph(graphId);

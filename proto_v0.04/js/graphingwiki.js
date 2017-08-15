@@ -16,6 +16,7 @@ define([
          * @exports graphingwiki
          */
 
+        // mediator pattern
         var EventProxy = function () {
 
             /*
@@ -99,6 +100,13 @@ define([
             eventProxy.subscribe({id: "graphUtils", observer: graphUtils});
             eventProxy.subscribe({id: "gwClient", observer: gwClient});
             console.groupEnd();
+        }
+
+        function setConfigs() {
+            // dependency injection
+            ui.setConfigs({configs: configs});
+            graphUtils.setConfigs({configs: configs});
+            gwClient.setConfigs({configs: configs});
         }
 
 
@@ -244,6 +252,7 @@ define([
         return {
             start: function (props) {
                 subscribeComponents();
+                setConfigs();
                 render({gwClient: gwClient});
 
                 loadAppState();

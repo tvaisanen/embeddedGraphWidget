@@ -4,19 +4,19 @@
 
 
 define([
-        "../components/elementStyles",
-        "../utils/eventListeners",
-        "../configuration/classNames",
-        "../configuration/configs",
-        "../utils/graphUtils",
-        "../utils/gwClient",
-        "../components/menuItems"
+        "components/elementStyles",
+        "utils/eventListeners",
+        "configuration/classNames",
+        "utils/graphUtils",
+        "utils/gwClient",
+        "components/menuItems"
     ],
-    function (elementStyles, eventListeners, classNames, configs, graphUtils, gwClient, menuItems) {
+    function (elementStyles, eventListeners, classNames, graphUtils, gwClient, menuItems) {
         'use strict';
 
         var name = "ui";
         var dispatch;
+        var configs;
 
         /**
          * User interface components. Collection of functions to    create UI components.
@@ -342,6 +342,8 @@ define([
                  */
 
                 var idArray = [];
+
+
                 try {
                     cy.elements(selector).forEach(function (el) {
                         var id = el.id();
@@ -359,14 +361,28 @@ define([
                 } catch (e) {
                     console.error(e);
                 }
+
                 return idArray;
             }
 
 
 // extract the ids from aforementioned elements
 
+            var response = dispatch({
+                action: "ELEMENT_IDS_TO_ARRAY",
+                ctx: this,
+                fn: null,
+                info: "dev test",
+                props: {selector: "node", filter: ""},
+                target: "graphUtils",
+                source: "ui"
+            });
+
             var nodes = getElementIDsToArray("node");
             var edges = getElementIDsToArray("edge");
+
+            console.debug(response);
+            console.debug(response.data === nodes);
 
             var div = document.createElement('div');
             div.classList.add(classNames.tab.elements.listContainer)
@@ -907,10 +923,13 @@ define([
             panelContainer.appendChild(tabsContent);
         }
 
-        var actions = {
-            TEST_DISPATCH: function(props) {console.log('test');console.log(props)},
+        var dispatchActions = {
+            TEST_DISPATCH: function (props) {
+                console.log('test');
+                console.log(props)
+            },
             UPDATE_TABS: updateTabs,
-            trigger: function(props){
+            trigger: function (props) {
                 this[props.action](props);
             }
         };
@@ -922,7 +941,9 @@ define([
             graphsContent: graphsContent,
             graphListItem: graphListItem,
             menu: menu,
-            name: function() { return name; },
+            name: function () {
+                return name;
+            },
             navigation: navigation,
             setMenuItems: setMenuItems,
             stylesContent: stylesContent,
@@ -935,6 +956,9 @@ define([
                     description: "user interface components."
                 }
             },
+            setConfigs: function (props) {
+                configs = props.configs;
+            },
             setDispatch: function (fn) {
                 dispatch = fn;
                 dispatch({
@@ -946,9 +970,9 @@ define([
                     info: "dev test"
                 });
             },
-            triggerEvent: function(props){
+            triggerEvent: function (props) {
                 console.log(props);
-                return actions.trigger(props);
+                return dispatchActions.trigger(props);
             }
         }
     }

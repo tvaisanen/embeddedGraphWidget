@@ -3,18 +3,14 @@
  */
 
 define([
-
-        "configuration/configs",
         "configuration/contextMenuItems",
         "components/elementStyles",
-        "utils/gwClient",
         "utils/cyInitUtils",
         "components/popup"
     ],
-    function (configs,
+    function (
               contextMenuItems,
               elementStyles,
-              gwClient,
               cyInitUtils,
               popup) {
         /**
@@ -23,7 +19,7 @@ define([
          */
 
         var name = "graphUtils";
-
+        var configs;
         // active graph instance
         var cy;
         var dispatch;
@@ -399,6 +395,34 @@ define([
             }
         }
 
+        function getElementIDsToArray(props) {
+            /*
+             * param eles: cy.elements
+             * return: array of element id strings
+             */
+
+            var idArray = [];
+            var props = props.props;
+            try {
+                cy.elements(props.selector).forEach(function (el) {
+                    var id = el.id();
+                    // var filter = content.filter.toLowerCase();
+                    var filterIncludes = id.toLowerCase().includes(props.filter);
+
+                    if (props.filter == '' || props.filter == 'undefined') {
+                        idArray.push(id);
+                    } else {
+                        if (filterIncludes) {
+                            idArray.push(id);
+                        }
+                    }
+                });
+            } catch (e) {
+                console.error(e);
+            }
+            return idArray;
+        }
+
         /**
          *  @function
          *  @name expandNode
@@ -416,7 +440,6 @@ define([
 
         function expandNode(props) {
             try {
-                // var gw = props.gwClient;
                 var nodeId = props.nodeId;
 
                 console.debug("expandNode()");
@@ -798,7 +821,6 @@ define([
                 expandNode({
                     nodeId: nodeId,
                     cy: cy,
-                    gwClient: gwClient,
                     elementStyles: elementStyles
                 });
 
@@ -1081,6 +1103,16 @@ define([
             return cy.elements('node');
         }
 
+        var dispatchActions = {
+            ELEMENT_IDS_TO_ARRAY: getElementIDsToArray,
+            TOGGLE_VISIBILITY: toggleVisibility,
+            trigger: function (props) {
+                console.info("props passed to dispatchAction");
+                console.info(props);
+                this[props.action](props.props);
+            }
+        };
+
         return {
             addClassToEdge: addClassToEdge,
             createEdgesFromNodes: createEdgesFromNodes,
@@ -1111,6 +1143,9 @@ define([
             toggleNeighborhood: toggleNeighborhood,
             toggleVisibility: toggleVisibility,
             updateCategoryElementStyle: updateCategoryElementsStyle,
+            setConfigs: function (props) {
+                configs = props.configs;
+            },
             setDispatch: function (fn) {
                 dispatch = fn;
                 dispatch({
@@ -1121,6 +1156,10 @@ define([
                     fn: null,
                     info: "dev test"
                 });
+            },
+            triggerEvent: function (props) {
+                console.log(props);
+                return dispatchActions.trigger(props);
             }
         }
     })

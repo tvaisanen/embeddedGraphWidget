@@ -18,7 +18,6 @@ define([
             debug: function (event) {
                 console.log(event);
                 console.log(parent);
-                console.log(graphUtils.info());
                 var test = prompt('debug');
                 eval(test);
             }
@@ -148,9 +147,11 @@ define([
             }
         },
         elementsList: {
-            /** @function elementsList.onClick()
-             *  elementsList.onClick()
-             * @param {Object} funcProps
+            /**
+             * @function
+             * @name elementsList.onClick
+             * elementsList.onClick()
+             * @param {Object} props
              */
             onClick: function (props) {
                 console.log(props);
