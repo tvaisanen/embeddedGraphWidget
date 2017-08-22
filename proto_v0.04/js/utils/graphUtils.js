@@ -437,7 +437,6 @@ define([
          *      meta: Object
          *  }
          **/
-
         function expandNode(props) {
             try {
                 var nodeId = props.nodeId;
@@ -561,7 +560,6 @@ define([
                 setAndRunLayout(props);
             }
         }
-
 
         /**
          * @function
@@ -1113,11 +1111,16 @@ define([
 
         var dispatchActions = {
             ELEMENT_IDS_TO_ARRAY: getElementIDsToArray,
+            GET_ELEMENTS: function (props) {
+                var elementsToReturn = cy.elements(props.selector);
+                console.debug(elementsToReturn);
+                return elementsToReturn;
+            },
             TOGGLE_VISIBILITY: toggleVisibility,
             trigger: function (props) {
                 console.info("props passed to dispatchAction");
                 console.info(props);
-                this[props.action](props.props);
+                return this[props.action](props.data);
             }
         };
 

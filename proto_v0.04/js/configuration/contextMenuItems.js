@@ -82,12 +82,27 @@ define([
                     console.info('I am ' + source.id() + ' and I want to connect!');
                     // todo: finish!
                     console.log(parent);
+
+                    dispatch({
+                        action: "CREATE",
+                        ctx: this,
+                        data: {
+                            context: "createEdge",
+                            sourceNode: source
+                        },
+                        fn: null,
+                        info: "dev test",
+                        source: "contextMenuItems",
+                        target: "popup"
+                    });
+
+                    /*
                     props.popup.create({
                         context: 'createEdge',
                         graphUtils: graphUtils,
                         sourceNode: source,
                         cy: event.cy
-                    });
+                    });*/
                 }
             },
             {

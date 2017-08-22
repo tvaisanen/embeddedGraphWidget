@@ -8,7 +8,7 @@ define([
     "components/elementStyles"
 ], function (eventListeners, classNames, elementStyles) {
     "use strict";
-
+    var dispatch;
     var popup = {
         createEdge: {
             // todo: refactor
@@ -146,7 +146,19 @@ define([
 
                 var nodeOptions = [];
                 var cy = props.cy;
-                var elements = props.cy.elements('node');
+                // var elements = props.cy.elements('node');
+                var elements = dispatch({
+                    action: "GET_ELEMENTS",
+                    ctx: this,
+                    data: {
+                        selector: "node"
+                    },
+                    target: "graphUtils",
+                    source: "popup",
+                    fn: null,
+                    info: "dev test"
+                });
+                console.debug(elements);
                 Object.keys(elements).forEach(function (el) {
                     try {
                         nodeOptions.push(elements[el].id());
@@ -418,7 +430,35 @@ define([
         console.debug("closed popup!");
     }
 
+    var dispatchActions = {
+        TEST_DISPATCH: function (props) {
+            console.log('test');
+            console.log(props);
+        },
+        CREATE: function (props){
+            create(props.data);
+        },
+        trigger: function (props) {
+            this[props.action](props);
+        }
+    };
+
     return {
-        create: create
+        create: create,
+        setDispatch: function (fn) {
+            dispatch = fn;
+            dispatch({
+                action: "CONFIRM_SUBSCRIPTION",
+                ctx: this,
+                target: "eventProxy",
+                source: "popup",
+                fn: null,
+                info: "dev test"
+            });
+        },
+        triggerEvent: function (props) {
+            console.log(props);
+            return dispatchActions.trigger(props);
+        }
     }
 });

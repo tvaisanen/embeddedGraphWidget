@@ -382,7 +382,7 @@ define([
                     ctx: this,
                     fn: null,
                     info: "dev test",
-                    props: {selector: "node", filter: ""},
+                    data: {selector: "node", filter: ""},
                     target: "graphUtils",
                     source: "ui"
                 });

@@ -8,8 +8,9 @@ define([
         "components/ui",
         "configuration/configs",
         "utils/graphUtils",
-        "utils/gwClient"],
-    function (elementStyles, ui, configs, graphUtils, gwClient) {
+        "utils/gwClient",
+        "components/popup"],
+    function (elementStyles, ui, configs, graphUtils, gwClient, popup) {
         /**
          * Graphingwikibrowser module.
          * @exports graphingwiki
@@ -77,9 +78,10 @@ define([
                             return observer.id == props.target;
                         });
                         if (index > -1) {
-                            var r = observers[index].observer.triggerEvent(props);
-                            console.log(r);
-                            return r;
+                            var dispatchResponse = observers[index].observer.triggerEvent(props);
+                            console.log("EvenProxy returns dispatch response.");
+                            console.log(dispatchResponse);
+                            return dispatchResponse;
                         }
 
                     } catch (e) {
@@ -99,6 +101,7 @@ define([
             eventProxy.subscribe({id: "ui", observer: ui});
             eventProxy.subscribe({id: "graphUtils", observer: graphUtils});
             eventProxy.subscribe({id: "gwClient", observer: gwClient});
+            eventProxy.subscribe({id: "popup", observer: popup});
             console.groupEnd();
         }
 
