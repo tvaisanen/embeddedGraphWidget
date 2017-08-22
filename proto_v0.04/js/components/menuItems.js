@@ -69,23 +69,6 @@ define(["utils/eventListeners", "components/elementStyles"],
                     },
                     generateContent: generateContent
                 },
-                loadFile: {
-                    label: "Load from file",
-                    content: "Load graph from file",
-                    onClick: function () {
-                        if (window.File && window.FileReader && window.FileList && window.Blob) {
-                            console.log("file support gogo");// Great success! All the File APIs are supported.
-                            var fileInput = document.createElement('input');
-                            fileInput.setAttribute('type', 'file');
-                            fileInput.setAttribute('id', 'files');
-                            fileInput.click
-                            var reader = new FileReader();
-                        } else {
-                            alert('The File APIs are not fully supported in this browser.');
-                        }
-                    },
-                    generateContent: generateContent
-                },
                 save: {
                     label: "Save",
                     content: "form to input graph name",
