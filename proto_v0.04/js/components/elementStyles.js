@@ -181,7 +181,6 @@ define(["configuration/configs"], function (configs) {
                 }
             }
             styles = props.styles;
-            console.debug(styles);
         } catch (e) {
             console.group("Exception raised by elementStyles.setStyles()");
             console.warn(e);

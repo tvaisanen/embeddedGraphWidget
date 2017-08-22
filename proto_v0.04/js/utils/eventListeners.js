@@ -154,7 +154,6 @@ define([
              * @param {Object} props
              */
             onClick: function (props) {
-                console.log(props);
                 var evt = props.evt;
 
                 if (evt.target.type === 'checkbox') {

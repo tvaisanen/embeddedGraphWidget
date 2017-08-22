@@ -165,6 +165,7 @@ define([
 
                 div.setAttribute('id', classes.container);
 
+                // todo: implement via eventbus for loose coupling
                 var graphListPromise = gwClient.getGraphList();
 
                 graphListPromise.then(function (response) {
@@ -172,6 +173,7 @@ define([
 
                 }).then(function (json) {
                     var graphs = json.data;
+                    graphs.sort();
 
                     /* loop array of graphName strings and generate
                      * the list items for the panel */
@@ -229,6 +231,9 @@ define([
          */
         function menu(props) {
 
+            // setDispatch fn for menuItem interaction with eventProxy
+            menuItems.setDispatch(dispatch);
+
             // Create the div which contains graphingwikiBrowser navigation tabs.
             var gw = props.gwClient;
 
@@ -244,10 +249,11 @@ define([
             //divMenu.appendChild(divToggleMenu);
             // console.log(menuItems);
             var menus = Object.keys(menuItems);
-
-            var itemKeys = Object.keys(props.menuItems);
+            console.debug(props);
+            var itemKeys = Object.keys(props.menuItems.items);
             itemKeys.forEach(function (key) {
-                var item = props.menuItems[key];
+                console.log(key);
+                var item = props.menuItems.items[key];
                 var div = document.createElement('div');
                 div.setAttribute('id', "panel-menu__item__" + key);
                 var divContent = document.createElement('div');
@@ -458,6 +464,7 @@ define([
          */
         function setMenuItems(props) {
             menuItems = props.menuItems;
+
         }
 
         // Todo: refactor - too big function!
@@ -850,6 +857,8 @@ define([
 
             var cy = props.cy;
             var array = props.array;
+
+            array.sort();
 
             var ul = document.createElement('ul');
 

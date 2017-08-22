@@ -201,20 +201,6 @@ define([
         };
 
 
-        /** @function downloadGraphPNG
-         *  Description
-         *  @param {Object} variable - Desc.
-         *  @return {Type} desc.
-         */
-        function downloadGraphPNG() {
-            var pngGraph = graphUtils.cy().png({bg: 'white'});
-            var a = document.createElement('a');
-            a.href = pngGraph;
-            a.download = 'graph.png';
-            console.debug(a);
-            a.click();
-        }
-
         /** @function renderHeaderContainer
          *  Description
          *  @param {Object} variable - Desc.

@@ -1083,10 +1083,8 @@ define([
          * */
         function createNewCy(props) {
             try {
-                console.debug(popup);
                 contextMenuItems.setDispatch(dispatch);
                 props.contextMenuItems = contextMenuItems;
-                console.debug(props.contextMenuItems);
                 cy = cyInitUtils.init(props);
                 cy.on('tap', 'node', bindExpandNode);
                 return cy;
@@ -1109,6 +1107,10 @@ define([
             return cy.elements('node');
         }
 
+        function getPng() {
+            return cy.png({bg: 'white'});
+        }
+
         var dispatchActions = {
             ELEMENT_IDS_TO_ARRAY: getElementIDsToArray,
             GET_ELEMENTS: function (props) {
@@ -1116,6 +1118,7 @@ define([
                 console.debug(elementsToReturn);
                 return elementsToReturn;
             },
+            GET_PNG: getPng,
             TOGGLE_VISIBILITY: toggleVisibility,
             trigger: function (props) {
                 console.info("props passed to dispatchAction");
