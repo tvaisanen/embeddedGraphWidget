@@ -1086,6 +1086,7 @@ define([
         function createNewCy(props) {
             try {
                 console.debug(popup);
+                contextMenuItems.setDispatch(dispatch);
                 props.contextMenuItems = contextMenuItems;
                 console.debug(props.contextMenuItems);
                 cy = cyInitUtils.init(props);

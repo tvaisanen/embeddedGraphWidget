@@ -16,7 +16,20 @@ define([
         console.log("eventListener load fail");
     }
 
+    var dispatch;
+
     return {
+        setDispatch: function (fn) {
+            dispatch = fn;
+            dispatch({
+                action: "TEST_DISPATCH",
+                ctx: this,
+                target: "eventProxy",
+                source: "contextMenuItems",
+                fn: null,
+                info: "dev test"
+            });
+        },
         menuItems: [
             {
                 id: 'debug',
@@ -25,7 +38,6 @@ define([
                 selector: '*',
                 onClickFunction: function (event) {
                     console.log(event);
-                    console.log(graphUtils.info());
                     var test = prompt('debug');
                     eval(test);
                 }
@@ -95,31 +107,52 @@ define([
                 tooltipText: 'add node',
                 coreAsWell: true,
                 onClickFunction: function (event) {
-                    var targetId = prompt('Provide id for the new node.');
-                    var data = {
-                        group: 'nodes',
-                        id: targetId
-                    };
+                    try {
+                        var targetId = prompt('Provide id for the new node.');
+                        var data = {
+                            group: 'nodes',
+                            id: targetId
+                        };
 
-                    var pos = event.position || event.cyPosition;
-                    // todo: refactor to be standalone function
-                    var promise = props.gw.savePageToMoin(targetId, 'hello');
-                    promise.then(function (response) {
-                        var j = response.json();
-                        console.log(j);
-                        return j;
-                    }).then(function (obj) {
-                        console.log(obj);
-                        createNewNode(targetId, cy);
-                    });
-                    /*
-                     cy.add({
-                     data: data,
-                     position: {
-                     x: pos.x,
-                     y: pos.y
-                     }
-                     });*/
+                        var pos = event.position || event.cyPosition;
+                        // todo: refactor to be standalone function
+                        //var promise = props.gw.savePageToMoin(targetId, 'hello');
+
+                        var promise = dispatch({
+                            action: "POST_NODE",
+                            ctx: this,
+                            data: {
+                                nodeId: targetId,
+                                content: "hello"
+                            },
+                            fn: null,
+                            info: "dev test",
+                            source: "contextMenuItems",
+                            target: "gwClient"
+                        });
+
+                        promise.then(function (response) {
+                            var j = response.json();
+                            console.log(j);
+                            return j;
+                        }).then(function (obj) {
+                            console.log(obj);
+                            createNewNode(targetId, cy);
+                        });
+                        /*
+                         cy.add({
+                         data: data,
+                         position: {
+                         x: pos.x,
+                         y: pos.y
+                         }
+                         });*/
+                    }
+                    catch (e) {
+                        console.group("Exceptino raised by ctxMenuItems.addNode.onClickFunction()");
+                        console.warn(e);
+                        console.groupEnd();
+                    }
                 }
             },
             {

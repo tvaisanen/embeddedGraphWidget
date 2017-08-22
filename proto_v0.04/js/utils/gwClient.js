@@ -191,10 +191,10 @@ define(function () {
      *  @param {String} content content for the new page
      *  @return {Promise} Promise response of given action.
      */
-    function postNode(nodeId, content) {
+    function postNode(props) {
         var payload = {
-            pagename: nodeId,
-            content: "This is page is created by GraphingWikiBrowser" + content
+            pagename: props.nodeId,
+            content: "This is page is created by GraphingWikiBrowser: " + props.content
         };
         console.log(configs);
         var developmentPath = configs.API_CREATE_NEW_NODE;
@@ -221,6 +221,10 @@ define(function () {
             var promise = fetchNode(props.props.nodeId);
             console.log(promise);
             return {data: promise, info: "response from GET_NODE_DATA"};
+        },
+        POST_NODE: function (props) {
+            console.info("POST_NODE dispatch received");
+            return postNode(props);
         },
         trigger: function (props) {
             return this[props.action](props);
@@ -256,7 +260,7 @@ define(function () {
         postGraph: function (graphId, graphData) {
             return postGraph(graphId, graphData);
         },
-        savePageToMoin: function (nodeId, content) {
+        postNode: function (nodeId, content) {
             return postNode(nodeId, content);
         },
 
