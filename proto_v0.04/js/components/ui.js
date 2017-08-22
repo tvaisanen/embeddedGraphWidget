@@ -89,20 +89,28 @@ define([
          * @return {Type} desc.
          */
         function elementsContent(props) {
-            console.debug("elementsContent props!");
-            console.debug(props);
-            var content = props.content;
+            try {
+                console.debug("elementsContent props!");
+                console.debug(props);
+                var content = props.content;
 
-            var div = document.createElement('div');
-            div.setAttribute('id', "elements-content");
+                var div = document.createElement('div');
+                div.setAttribute('id', "elements-content");
 
-            div.appendChild(elementsFilter(props));
-            div.appendChild(elementsList(props));
+                div.appendChild(elementsFilter(props));
+                div.appendChild(elementsList(props));
 
-            console.debug("returning");
-            console.debug(div);
+                console.debug("returning");
+                console.debug(div);
 
-            return div;
+                return div;
+            } catch (e) {
+                console.group("Exception raised by ui.elementsContent()");
+                console.info("props");
+                console.info(props);
+                console.warn(e);
+                console.groupEnd();
+            }
         }
 
         /** @function graphColumn
@@ -327,104 +335,109 @@ define([
          *  @return {Type} desc.
          */
         function elementsList(props) {
-            console.debug("elementList(props)");
-            console.debug(props);
-            // var content = props.content;
-            var filter = props.filterValue || "";
-            var cy = graphUtils.cy();
-            var gw = gwClient;
+            try {
+                console.debug("elementList(props)");
+                console.debug(props);
+                // var content = props.content;
+                var filter = props.filterValue || "";
+                var cy = graphUtils.cy();
+                var gw = gwClient;
 
-// which are meant to be used with
-            function getElementIDsToArray(selector) {
-                /*
-                 * param eles: cy.elements
-                 * return: array of element id strings
-                 */
+                // which are meant to be used with
+                function getElementIDsToArray(selector) {
+                    /*
+                     * param eles: cy.elements
+                     * return: array of element id strings
+                     */
 
-                var idArray = [];
+                    var idArray = [];
 
 
-                try {
-                    cy.elements(selector).forEach(function (el) {
-                        var id = el.id();
-                        // var filter = content.filter.toLowerCase();
-                        var filterIncludes = id.toLowerCase().includes(filter);
+                    try {
+                        cy.elements(selector).forEach(function (el) {
+                            var id = el.id();
+                            // var filter = content.filter.toLowerCase();
+                            var filterIncludes = id.toLowerCase().includes(filter);
 
-                        if (filter == '' || filter == 'undefined') {
-                            idArray.push(id);
-                        } else {
-                            if (filterIncludes) {
+                            if (filter == '' || filter == 'undefined') {
                                 idArray.push(id);
+                            } else {
+                                if (filterIncludes) {
+                                    idArray.push(id);
+                                }
                             }
-                        }
-                    });
-                } catch (e) {
-                    console.error(e);
-                }
+                        });
+                    } catch (e) {
+                        console.error(e);
+                    }
 
-                return idArray;
-            }
+                    return idArray;
+                }
 
 
 // extract the ids from aforementioned elements
 
-            var response = dispatch({
-                action: "ELEMENT_IDS_TO_ARRAY",
-                ctx: this,
-                fn: null,
-                info: "dev test",
-                props: {selector: "node", filter: ""},
-                target: "graphUtils",
-                source: "ui"
-            });
+                var response = dispatch({
+                    action: "ELEMENT_IDS_TO_ARRAY",
+                    ctx: this,
+                    fn: null,
+                    info: "dev test",
+                    props: {selector: "node", filter: ""},
+                    target: "graphUtils",
+                    source: "ui"
+                });
 
-            var nodes = getElementIDsToArray("node");
-            var edges = getElementIDsToArray("edge");
+                var nodes = getElementIDsToArray("node");
+                var edges = getElementIDsToArray("edge");
 
-            console.debug(response);
-            console.debug(response.data === nodes);
+                var div = document.createElement('div');
+                div.classList.add(classNames.tab.elements.listContainer)
 
-            var div = document.createElement('div');
-            div.classList.add(classNames.tab.elements.listContainer)
+                var hdNodes = document.createElement('span');
+                hdNodes.innerHTML = "Pages";
 
-            var hdNodes = document.createElement('span');
-            hdNodes.innerHTML = "Pages";
+                var pNodeNotes = document.createElement('p');
+                pNodeNotes.innerHTML = "order by degree?";
 
-            var pNodeNotes = document.createElement('p');
-            pNodeNotes.innerHTML = "order by degree?";
+                var hdEdges = document.createElement('span');
+                hdEdges.innerHTML = "Links";
 
-            var hdEdges = document.createElement('span');
-            hdEdges.innerHTML = "Links";
+                var ulNodes = unorderedListFromArray({
+                    array: nodes,
+                    cy: cy,
+                    gw: gw,
+                    onClick: eventListeners.elementsList.onClick,
+                    onMouseOver: eventListeners.elementsList.onMouseOver,
+                    onMouseOut: eventListeners.elementsList.onMouseOut,
+                    toggleVisibility: graphUtils.toggleVisibility
+                });
 
-            var ulNodes = unorderedListFromArray({
-                array: nodes,
-                cy: cy,
-                gw: gw,
-                onClick: eventListeners.elementsList.onClick,
-                onMouseOver: eventListeners.elementsList.onMouseOver,
-                onMouseOut: eventListeners.elementsList.onMouseOut,
-                toggleVisibility: graphUtils.toggleVisibility
-            });
+                ulNodes.classList.add(classNames.tab.elements.list);
 
-            ulNodes.classList.add(classNames.tab.elements.list);
+                var ulEdges = unorderedListFromArray({
+                    cy: cy,
+                    array: edges,
+                    onClick: eventListeners.elementsList.onClick,
+                    onMouseOver: eventListeners.elementsList.onMouseOver,
+                    onMouseOut: eventListeners.elementsList.onMouseOut,
+                    toggleVisibility: graphUtils.toggleVisibility
+                });
 
-            var ulEdges = unorderedListFromArray({
-                cy: cy,
-                array: edges,
-                onClick: eventListeners.elementsList.onClick,
-                onMouseOver: eventListeners.elementsList.onMouseOver,
-                onMouseOut: eventListeners.elementsList.onMouseOut,
-                toggleVisibility: graphUtils.toggleVisibility
-            });
+                ulEdges.classList.add(classNames.tab.elements.list);
 
-            ulEdges.classList.add(classNames.tab.elements.list);
-
-            div.setAttribute('id', "elements-list");
-            div.appendChild(hdNodes);
-            div.appendChild(ulNodes);
-            div.appendChild(hdEdges);
-            div.appendChild(ulEdges);
-            return div;
+                div.setAttribute('id', "elements-list");
+                div.appendChild(hdNodes);
+                div.appendChild(ulNodes);
+                div.appendChild(hdEdges);
+                div.appendChild(ulEdges);
+                return div;
+            } catch (e) {
+                console.group("Exception raised by ui.elementsList()");
+                console.info("props");
+                console.info(props);
+                console.warn(e);
+                console.groupEnd();
+            }
         }
 
         /** @function renderHeaderContainer
@@ -907,26 +920,33 @@ define([
          * @return {Type} to be refactored.
          */
         function updateTabs(props) {
-            console.log('updateTabs()');
-            var divTabContainer = document.getElementById(classNames.tab.container);
-            var panelContainer = document.getElementById(classNames.panel.container);
-            var childsToRemove = divTabContainer.childNodes;
+            try {
+                console.log('updateTabs()');
+                var divTabContainer = document.getElementById(classNames.tab.container);
+                var panelContainer = document.getElementById(classNames.panel.container);
+                var childsToRemove = divTabContainer.childNodes;
 
-            childsToRemove.forEach(function (child) {
-                divTabContainer.remove(child);
-            });
+                childsToRemove.forEach(function (child) {
+                    divTabContainer.remove(child);
+                });
 
-            var tabsContent = tabs({
-                cy: props.cy,
-                tabs: configs.tabs
-            });
-            panelContainer.appendChild(tabsContent);
+                var tabsContent = tabs({
+                    cy: props.cy,
+                    tabs: configs.tabs
+                });
+                panelContainer.appendChild(tabsContent);
+            } catch (e) {
+                console.group("Exception raised by ui.updateTabs()");
+                console.info(props);
+                console.warn(e);
+                console.groupEnd();
+            }
         }
 
         var dispatchActions = {
             TEST_DISPATCH: function (props) {
                 console.log('test');
-                console.log(props)
+                console.log(props);
             },
             UPDATE_TABS: updateTabs,
             trigger: function (props) {

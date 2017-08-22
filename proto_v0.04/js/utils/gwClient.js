@@ -2,6 +2,7 @@
  * Created by toni on 7.6.2017.
  */
 
+
 define(function () {
     'use strict';
     /*
@@ -24,6 +25,54 @@ define(function () {
      *  @description Query node data from Graphingwiki.
      *  @param {String} pagename MoinMoin wikipage name
      *  @return {Promise} Promise of a JSON object containing the node data.
+     *  @example
+     *  -- response --
+     *        200 OK
+     *        Date:  Wed, 31 May 2017 09:39:36 GMT
+     *        Server:  Apache/2.4.18 (Ubuntu)
+     *        Vary:  Cookie,User-Agent,Accept-Language
+     *        Set-Cookie:  MOIN_SESSION_80_ROOT=9b96593c92f886182f30993f6657a1c5f05c94f4; Expires=Sat, 29-May-2027 09:39:00 GMT; Max-Age=315360000; Path=/
+     *        Content-Length:  780
+     *        Keep-Alive:  timeout=5, max=100
+     *        Connection:  Keep-Alive
+     *        Content-Type:  application/json
+     *
+     *        {
+     *            "debug": "<AllContext ['AllContext']>",
+     *            "data": {
+     *                "in": {
+     *                    "_notype": [
+     *                        "TestUser",
+     *                        "organizationA",
+     *                        "personB"
+     *                    ]
+     *                },
+     *                "acl": "",
+     *                "meta": {
+     *                    "foo": [
+     *                        "[[bar]]",
+     *                        "thisIsNotALink"
+     *                    ]
+     *                },
+     *                "mtime": 1496140265.359017,
+     *                "saved": true,
+     *                "out": {
+     *                    "_notype": [
+     *                        "organizationA",
+     *                        "CategoryCategory",
+     *                        "CategoryAsd"
+     *                    ],
+     *                    "gwikicategory": [
+     *                        "CategoryCategory",
+     *                        "CategoryAsd"
+     *                    ],
+     *                    "foo": [
+     *                        "bar"
+     *                    ]
+     *                }
+     *            },
+     *            "response_time": 0.000621795654296875
+     *        }
      */
     function fetchNode(pagename) {
         /*
@@ -31,52 +80,7 @@ define(function () {
          *
          *        GET http://localhost/?action=getGraphJSON&pagename=personA
          *
-         *        -- response --
-         *        200 OK
-         *        Date:  Wed, 31 May 2017 09:39:36 GMT
-         *        Server:  Apache/2.4.18 (Ubuntu)
-         *        Vary:  Cookie,User-Agent,Accept-Language
-         *        Set-Cookie:  MOIN_SESSION_80_ROOT=9b96593c92f886182f30993f6657a1c5f05c94f4; Expires=Sat, 29-May-2027 09:39:00 GMT; Max-Age=315360000; Path=/
-         *        Content-Length:  780
-         *        Keep-Alive:  timeout=5, max=100
-         *        Connection:  Keep-Alive
-         *        Content-Type:  application/json
-         *
-         *        {
-         *            "debug": "<AllContext ['AllContext']>",
-         *            "data": {
-         *                "in": {
-         *                    "_notype": [
-         *                        "TestUser",
-         *                        "organizationA",
-         *                        "personB"
-         *                    ]
-         *                },
-         *                "acl": "",
-         *                "meta": {
-         *                    "foo": [
-         *                        "[[bar]]"
-         *                    ]
-         *                },
-         *                "mtime": 1496140265.359017,
-         *                "saved": true,
-         *                "out": {
-         *                    "_notype": [
-         *                        "organizationA",
-         *                        "CategoryCategory",
-         *                        "CategoryAsd"
-         *                    ],
-         *                    "gwikicategory": [
-         *                        "CategoryCategory",
-         *                        "CategoryAsd"
-         *                    ],
-         *                    "foo": [
-         *                        "bar"
-         *                    ]
-         *                }
-         *            },
-         *            "response_time": 0.000621795654296875
-         *        }
+
          *
          * */
 
@@ -90,7 +94,6 @@ define(function () {
         });
         return fetch(nodeRequest);
     }
-
 
     /** @function
      *  @name fetchGraphList
@@ -212,7 +215,7 @@ define(function () {
             console.log(props);
             return {response: "test response from gwClient"};
         },
-        GET_NODE_DATA: function (props){
+        GET_NODE_DATA: function (props) {
             console.info("GET_NODE_DATA dispatch received");
             console.info(props);
             var promise = fetchNode(props.props.nodeId);
@@ -247,7 +250,9 @@ define(function () {
         getPageText: function (pagename) {
             return fetchPageText(pagename);
         },
-        name: function(){ return name; },
+        name: function () {
+            return name;
+        },
         postGraph: function (graphId, graphData) {
             return postGraph(graphId, graphData);
         },

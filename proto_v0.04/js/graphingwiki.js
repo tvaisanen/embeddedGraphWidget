@@ -4,7 +4,6 @@
  */
 
 define([
-
         "components/elementStyles",
         "components/ui",
         "configuration/configs",
@@ -85,7 +84,8 @@ define([
 
                     } catch (e) {
                         console.group("Exception raised by EventProxy.dispatch()");
-                        console.log(e);
+                        console.info(props);
+                        console.warn(e);
                         console.groupEnd();
                     }
                 }
@@ -254,7 +254,6 @@ define([
                 subscribeComponents();
                 setConfigs();
                 render({gwClient: gwClient});
-
                 loadAppState();
             }
         }

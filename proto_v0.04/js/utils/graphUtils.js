@@ -395,14 +395,14 @@ define([
             }
         }
 
-        function getElementIDsToArray(props) {
+        function getElementIDsToArray(kwargs) {
             /*
              * param eles: cy.elements
              * return: array of element id strings
              */
 
             var idArray = [];
-            var props = props.props;
+            var props = kwargs;
             try {
                 cy.elements(props.selector).forEach(function (el) {
                     var id = el.id();
@@ -461,6 +461,9 @@ define([
                 // var nodePromise = gw.getNodeData(nodeId);
 
                 nodePromise.then(function (response) {
+                    console.group("Response is here!");
+                    console.log(response);
+                    console.groupEnd();
                     return response.json();
                 }).then(function (json) {
                     /*
@@ -471,6 +474,10 @@ define([
                      *  }
                      * */
                     var node = json.data;
+                    console.group("Json is here");
+                    console.log(json);
+                    console.log(JSON.stringify(json));
+                    console.groupEnd();
 
                     console.debug("expandNode().node");
                     console.debug(node);

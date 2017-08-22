@@ -89,9 +89,6 @@ def get_page_text(node):
 
     return jsonify(r.json())
 
-
-
-
 @app.route("/save/", methods=['GET', 'POST'])
 def save_graph():
     print(request)
@@ -126,7 +123,10 @@ def add_to_moin():
         pagename = json['pagename']
         print(pagename)
 
+        # USE TEMPLATES
+        # fill using data provided by request
         content = 'mock content'
+
         r = add_page_to_moin(pagename, content)
         print("response: ")
         print(r.json())
@@ -154,6 +154,7 @@ def add_page_to_moin(pagename, content):
     return r
 
 
+# not essential
 def root_dir():  # pragma: no cover
     return os.path.abspath(os.path.dirname(__file__))
 
@@ -175,7 +176,6 @@ def get_file(filename):  # pragma: no cover
 def metrics():  # pragma: no cover
     content = get_file('jenkins_analytics.html')
     return Response(content, mimetype="text/html")
-
 
 @app.route('/asset/', defaults={'path': ''})
 @app.route('/asset/<path:path>')
