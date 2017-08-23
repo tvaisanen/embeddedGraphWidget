@@ -8,8 +8,7 @@ define([
         "utils/cyInitUtils",
         "components/popup"
     ],
-    function (
-              contextMenuItems,
+    function (contextMenuItems,
               elementStyles,
               cyInitUtils,
               popup) {
@@ -172,7 +171,7 @@ define([
                     }
 
                 } catch (e) {
-                    console.groupCollapsed("Exception with createEdgesToNodes()");
+                    console.groupCollapsed("Exception raised by createEdgesToNodes()");
                     console.info("Parameters passed:");
                     console.info("sourceNodeId: " + props.sourceNodeId);
                     console.info("nodesToCreateEdges: " + props.nodesToCreateEdges);
@@ -201,23 +200,30 @@ define([
                     targetNodeId: props.targetNodeId
                 });
                 // Create new edge.
-                var newEdge = {
-                    group: 'edges',
-                    data: {
-                        id: edgeId,
-                        source: props.sourceNodeId,
-                        target: props.targetNodeId
-                    }
-                };
+
+                var newEdge;
+                if (typeof props.edge === 'undefined') {
+                    newEdge = {
+                        group: 'edges',
+                        data: {
+                            id: edgeId,
+                            source: props.sourceNodeId,
+                            target: props.targetNodeId
+                        }
+                    };
+                } else {
+                    newEdge = props.edge;
+                }
+
 
                 // If edge is already defined, return the existing one.
                 if (edgeExists({edgeId: edgeId, cy: props.cy})) {
-                    return props.cy.getElementById(edgeId);
+                    return cy.getElementById(edgeId);
 
                 } else {
 
-                    props.cy.add(newEdge);
-                    var edge = props.cy.getElementById(edgeId);
+                    cy.add(newEdge);
+                    var edge = cy.getElementById(edgeId);
 
                     var categoryExists = elementStyles.categoryExists(props.category);
 
@@ -309,11 +315,13 @@ define([
                 // If nodes do not exist, create them.
                 // nodeIdAvailable: true === node do not exist.
 
-                nodeIdAvailable({nodeId: props.sourceNodeId, cy: props.cy}) ?
-                    createNewNode({id: props.sourceNodeId, cy: props.cy}) : null;
+                nodeIdAvailable({nodeId: props.sourceNodeId, cy: props.cy})
+                    ? createNewNode({id: props.sourceNodeId, cy: props.cy})
+                    : null;
 
-                nodeIdAvailable({nodeId: props.targetNodeId, cy: props.cy}) ?
-                    createNewNode({id: props.targetNodeId, cy: props.cy}) : null;
+                nodeIdAvailable({nodeId: props.targetNodeId, cy: props.cy})
+                    ? createNewNode({id: props.targetNodeId, cy: props.cy})
+                    : null;
 
                 // createNewEdge checks if the edge already exists.
                 createNewEdge(props);
@@ -361,7 +369,7 @@ define([
          *  @return {Boolean} True if edge already defined, else False.
          */
         function edgeExists(props) {
-            return props.cy.getElementById(props.edgeId).isEdge();
+            return cy.getElementById(props.edgeId).isEdge();
         }
 
         /**
@@ -460,9 +468,6 @@ define([
                 // var nodePromise = gw.getNodeData(nodeId);
 
                 nodePromise.then(function (response) {
-                    console.group("Response is here!");
-                    console.log(response);
-                    console.groupEnd();
                     return response.json();
                 }).then(function (json) {
                     /*
@@ -473,10 +478,6 @@ define([
                      *  }
                      * */
                     var node = json.data;
-                    console.group("Json is here");
-                    console.log(json);
-                    console.log(JSON.stringify(json));
-                    console.groupEnd();
 
                     console.debug("expandNode().node");
                     console.debug(node);
@@ -495,6 +496,9 @@ define([
                         categories: connectedNodes.categoriesOut
                     });
 
+                    // gwikicategory links should be interpreted as
+                    // node categories ie. ['person', 'employee']
+
                     try {
                         // Iterate the outgoing edge categories.
                         if (connectedNodes.categoriesOut !== "undefined"
@@ -503,6 +507,15 @@ define([
                                 // get list of nodes where the clicked node is connected to
                                 var nodesConnectedTo = node.out[category];
 
+                                var styles = dispatch({
+                                    action: "GET_STYLES",
+                                    ctx: this,
+                                    target: "elementStyles",
+                                    source: "graphUtils",
+                                    fn: null,
+                                    info: "Get styles for creating edges after expanding the node."
+                                });
+
                                 // for each connected node create a new edge
                                 createEdgesToNodes({
                                     sourceNodeId: nodeId,
@@ -510,7 +523,8 @@ define([
                                     category: category,
                                     cy: cy,
                                     configs: props.configs,
-                                    elementStyles: props.elementStyles
+                                    elementStyles: props.elementStyles,
+                                    styles: styles
                                 });
                             });
                         }
@@ -716,6 +730,8 @@ define([
          */
         function parseEdgesFromResponseData(props) {
             try {
+                console.debug("parseEdgesFromResponseData()");
+                console.debug(props);
                 /*
                  * By default incoming edges are in "_notype" category.
                  * This is due the graphingwiki backend API. Hence,
@@ -1112,6 +1128,7 @@ define([
         }
 
         var dispatchActions = {
+            CREATE_NEW_EDGE: createNewEdge,
             ELEMENT_IDS_TO_ARRAY: getElementIDsToArray,
             GET_ELEMENTS: function (props) {
                 var elementsToReturn = cy.elements(props.selector);

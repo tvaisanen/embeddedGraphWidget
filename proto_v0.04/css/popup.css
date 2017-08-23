@@ -1,6 +1,6 @@
 .popup {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     border: solid;
     border-color: #000;
     background-color: #ffffff;
@@ -17,6 +17,14 @@
 .popup-header {
     display: flex;
     flex-direction: column;
+}
+
+.popup__btn {
+    width: 50%;
+}
+
+.popup__input {
+    width: 100%;
 }
 
 .popup-header__btn-close {

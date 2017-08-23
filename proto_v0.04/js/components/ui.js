@@ -397,7 +397,7 @@ define([
                 var edges = getElementIDsToArray("edge");
 
                 var div = document.createElement('div');
-                div.classList.add(classNames.tab.elements.listContainer)
+                div.classList.add(classNames.tab.elements.listContainer);
 
                 var hdNodes = document.createElement('span');
                 hdNodes.innerHTML = "Pages";
@@ -983,7 +983,7 @@ define([
                 return {
                     name: "UI",
                     description: "user interface components."
-                }
+                };
             },
             setConfigs: function (props) {
                 configs = props.configs;

@@ -25,9 +25,7 @@ define(["utils/eventListeners", "components/elementStyles"],
             return div;
         }
 
-        function getItems() {
 
-        }
 
         return {
             setDispatch: function (fn) {

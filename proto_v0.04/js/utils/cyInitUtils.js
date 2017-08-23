@@ -31,8 +31,6 @@ define([
                 }
             });
 
-            var parentVariable = 'found it!';
-
             // initialize context menu items
             cy.contextMenus(props.contextMenuItems);
 

@@ -16,6 +16,7 @@ define([
             connectButton: function (props) {
                 var btnConnect = document.createElement('button');
                 btnConnect.innerHTML = "connect";
+                btnConnect.classList.add("popup__btn");
                 btnConnect.addEventListener('click', function () {
                     console.debug(props);
                     var target = document.getElementById(props.selectionNodeId);
@@ -39,6 +40,26 @@ define([
 
 
                     // Todo: Dispatch me via eventproxy to graphUtils
+
+                    dispatch({
+                        action: "CREATE_NEW_EDGE",
+                        ctx: this,
+                        data: {
+                            edge: {
+                                group: 'edges',
+                                data: {
+                                    id: props.sourceNodeId + "_to_" + targetNodeId,
+                                    source: props.sourceNodeId,
+                                    target: targetNodeId
+                                }
+                            }
+                        },
+                        fn: null,
+                        info: "dev test",
+                        source: "popup",
+                        target: "graphUtils"
+                    });
+                    /*
                     cy.add({
                         group: 'edges',
                         data: {
@@ -46,7 +67,7 @@ define([
                             source: props.sourceNodeId,
                             target: targetNodeId
                         }
-                    });
+                    });*/
 
                     //eventListeners.popupConnect.btnConnect.onClick(props);
                 });
@@ -59,6 +80,7 @@ define([
             },
             selectButton: function (props) {
                 var btnSelect = document.createElement('button');
+                btnSelect.classList.add("popup__btn");
                 btnSelect.innerHTML = "select";
                 btnSelect.addEventListener('click', function () {
                     eventListeners.popupConnect.btnSelect.onClick(props);
@@ -111,6 +133,7 @@ define([
                         console.log(div.childNodes);
                     } else if (event.target.id.endsWith("new")) {
                         var input = document.createElement('input', 'text');
+                        input.classList.add("popup__input");
                         div.replaceChild(input, div.childNodes[2]);
                         console.log(div.childElementCount);
                         // render input
@@ -224,7 +247,6 @@ define([
                 });
                 return btnSave;
             },
-
             render: function (props) {
 
                 console.debug(props);
@@ -279,8 +301,8 @@ define([
 
             var content = this[props.context].render(props);
 
-            container.appendChild(btnClose);
             container.appendChild(content);
+            container.appendChild(btnClose);
 
             return container;
         }
@@ -435,7 +457,7 @@ define([
             console.log('test');
             console.log(props);
         },
-        CREATE: function (props){
+        CREATE: function (props) {
             create(props.data);
         },
         trigger: function (props) {

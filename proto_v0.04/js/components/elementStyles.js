@@ -18,6 +18,7 @@ define(["configuration/configs"], function (configs) {
      * @exports elementStyles
      */
 
+    var dispatch;
     var styles = {
         generic: configs.style.generic
     };
@@ -113,9 +114,10 @@ define(["configuration/configs"], function (configs) {
         // if style not defined return generic
         if (styleNotDefined) {
             return Object.values(styles.generic);
-        }0
+        }
+        0
 
-        if (styleNotListed) {
+        if (styleNotListed) {
             return null;
         }
 
@@ -225,6 +227,19 @@ define(["configuration/configs"], function (configs) {
         }
     }
 
+    var dispatchActions = {
+        TEST_DISPATCH: function (props) {
+            console.log('test');
+            console.log(props);
+        },
+        GET_STYLES: function (props) {
+            return styles;
+        },
+        trigger: function (props) {
+            this[props.action](props);
+        }
+    };
+
     return {
         addCategory: addCategory,
         addCategories: addCategories,
@@ -238,6 +253,21 @@ define(["configuration/configs"], function (configs) {
         styles: function () {
             return styles;
         },
-        updateStyleParameter: updateStyleParameter
+        updateStyleParameter: updateStyleParameter,
+        setDispatch: function (fn) {
+            dispatch = fn;
+            dispatch({
+                action: "CONFIRM_SUBSCRIPTION",
+                ctx: this,
+                target: "eventProxy",
+                source: "elementStyles",
+                fn: null,
+                info: "dev test"
+            });
+        },
+        triggerEvent: function (props) {
+            console.log(props);
+            return dispatchActions.trigger(props);
+        }
     };
 });

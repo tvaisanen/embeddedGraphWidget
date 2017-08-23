@@ -102,6 +102,7 @@ define([
             eventProxy.subscribe({id: "graphUtils", observer: graphUtils});
             eventProxy.subscribe({id: "gwClient", observer: gwClient});
             eventProxy.subscribe({id: "popup", observer: popup});
+            eventProxy.subscribe({id: "elementStyles", observer: elementStyles});
             console.groupEnd();
         }
 
