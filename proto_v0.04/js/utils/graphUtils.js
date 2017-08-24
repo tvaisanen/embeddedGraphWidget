@@ -3,7 +3,7 @@
  */
 
 define([
-        "configuration/contextMenuItems",
+        "../components/contextMenuItems",
         "components/elementStyles",
         "utils/cyInitUtils",
         "components/popup"
@@ -1099,7 +1099,7 @@ define([
          * */
         function createNewCy(props) {
             try {
-                contextMenuItems.setDispatch(dispatch);
+                //contextMenuItems.setDispatch(dispatch);
                 props.contextMenuItems = contextMenuItems;
                 cy = cyInitUtils.init(props);
                 cy.on('tap', 'node', bindExpandNode);

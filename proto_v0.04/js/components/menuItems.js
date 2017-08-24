@@ -26,15 +26,14 @@ define(["utils/eventListeners", "components/elementStyles"],
         }
 
 
-
         return {
             setDispatch: function (fn) {
                 dispatch = fn;
                 dispatch({
-                    action: "TEST_DISPATCH",
+                    action: "CONFIRM_SET_DISPATCH",
                     ctx: this,
                     target: "eventProxy",
-                    source: "contextMenuItems",
+                    source: "menuItems",
                     fn: null,
                     info: "dev test"
                 });

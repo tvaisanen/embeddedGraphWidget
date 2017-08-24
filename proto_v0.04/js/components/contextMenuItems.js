@@ -3,10 +3,9 @@
  */
 
 define([
-    "components/popup",
     "utils/eventListeners",
     "utils/graphUtils"
-], function (popup, eventListeners, graphUtils) {
+], function (eventListeners, graphUtils) {
 
     console.log("debugging contextMenu");
     try {
@@ -18,19 +17,7 @@ define([
 
     var dispatch;
 
-    return {
-        setDispatch: function (fn) {
-            dispatch = fn;
-            dispatch({
-                action: "TEST_DISPATCH",
-                ctx: this,
-                target: "eventProxy",
-                source: "contextMenuItems",
-                fn: null,
-                info: "dev test"
-            });
-        },
-        menuItems: [
+    var items = [
             {
                 id: 'debug',
                 content: 'debug',
@@ -179,8 +166,22 @@ define([
                     cy.$(':selected').remove();
                 }
             }
-        ]
-    };
+        ];
+
+    return {
+        setDispatch: function (fn) {
+            dispatch = fn;
+            dispatch({
+                action: "CONFIRM_SET_DISPATCH",
+                ctx: this,
+                target: "eventProxy",
+                source: "contextMenuItems",
+                fn: null,
+                info: "dev test"
+            });
+        },
+        menuItems: items,
+    }
 
 
 });

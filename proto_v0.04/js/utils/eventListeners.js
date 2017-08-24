@@ -19,7 +19,7 @@ define([
         setDispatch: function (fn) {
             dispatch = fn;
             dispatch({
-                action: "TEST_DISPATCH",
+                action: "CONFIRM_SET_DISPATCH",
                 ctx: this,
                 target: "eventProxy",
                 source: "eventListeners",

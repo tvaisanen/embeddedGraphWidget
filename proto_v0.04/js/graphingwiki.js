@@ -10,8 +10,10 @@ define([
         "utils/graphUtils",
         "utils/gwClient",
         "components/popup",
-        "utils/eventListeners"],
-    function (elementStyles, ui, configs, graphUtils, gwClient, popup, eventListeners) {
+        "utils/eventListeners",
+    "components/menuItems",
+    "components/contextMenuItems"],
+    function (elementStyles, ui, configs, graphUtils, gwClient, popup, eventListeners, menuItems, contextMenuItems) {
         /**
          * Graphingwikibrowser module.
          * @exports graphingwiki
@@ -45,6 +47,9 @@ define([
                             console.info("Subscription of " + observers[index].id + " confirmed.");
                         }
 
+                    },
+                    CONFIRM_SET_DISPATCH: function (props) {
+                        console.info("Confirm setting dispatch for %s", props.source);
                     },
                     TEST_DISPATCH: function (props) {
                         console.log("EventProxy received dispatched action.");
@@ -119,7 +124,11 @@ define([
          * and these need to have access to dispatch
          */
         function setDispatch() {
-            eventListeners.setDispatch(eventProxy.dispatch)
+            console.group("Set dispatch for modules modules.");
+            eventListeners.setDispatch(eventProxy.dispatch);
+            menuItems.setDispatch(eventProxy.dispatch);
+            contextMenuItems.setDispatch(eventProxy.dispatch);
+            console.groupEnd();
         }
 
 
@@ -250,8 +259,8 @@ define([
 
         return {
             start: function (props) {
-                subscribeComponents();
                 setConfigs();
+                subscribeComponents();
                 setDispatch();
                 render({gwClient: gwClient});
                 loadAppState();

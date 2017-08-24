@@ -232,7 +232,7 @@ define([
         function menu(props) {
 
             // setDispatch fn for menuItem interaction with eventProxy
-            menuItems.setDispatch(dispatch);
+            // menuItems.setDispatch(dispatch);
 
             // Create the div which contains graphingwikiBrowser navigation tabs.
             var gw = props.gwClient;
