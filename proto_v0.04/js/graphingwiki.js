@@ -9,90 +9,91 @@ define([
         "configuration/configs",
         "utils/graphUtils",
         "utils/gwClient",
-        "components/popup"],
-    function (elementStyles, ui, configs, graphUtils, gwClient, popup) {
+        "components/popup",
+        "utils/eventListeners"],
+    function (elementStyles, ui, configs, graphUtils, gwClient, popup, eventListeners) {
         /**
          * Graphingwikibrowser module.
          * @exports graphingwiki
          */
 
-        // mediator pattern
+            // mediator pattern
         var EventProxy = function () {
 
-            /*
-             {
-             id: "first",
-             obj: {
-             fn: function(){
-             console.log("i was here first");
-             }
-             }
-             },*/
-            observers = [
-                {id: "eventProxy"}
-            ];
+                /*
+                 {
+                 id: "first",
+                 obj: {
+                 fn: function(){
+                 console.log("i was here first");
+                 }
+                 }
+                 },*/
+                observers = [
+                    {id: "eventProxy"}
+                ];
 
-            var dispatchActions = {
-                CONFIRM_SUBSCRIPTION: function (props) {
-                    console.log('Confirm observer subscription.');
-                    var index = observers.findIndex(function (observer) {
-                        return observer.id == props.source;
-                    });
-                    if (index == -1) {
-                        throw {name: "SubscriptionError", message: "EventProxy subscription failed"};
-                    } else {
-                        console.info("Subscription of " + observers[index].id + " confirmed.");
-                    }
-
-                },
-                TEST_DISPATCH: function (props) {
-                    console.log("EventProxy received dispatched action.");
-                },
-                trigger: function (props) {
-                    dispatchActions[props.action](props);
-                },
-
-            };
-
-            return {
-                subscribe: function (observer) {
-                    observers.push(observer);
-                    observer.observer.setDispatch(eventProxy.dispatch);
-                },
-
-                /**
-                 * @param {Object} props
-                 * @param props.action Action to dispatch
-                 * @param props.ctx Parent context
-                 * @param props.id Id of the observer to notify
-                 * @param props.info Additional information for debugging
-                 * @param props.fn Function to trigger
-                 */
-                dispatch: function (props) {
-                    console.log(props);
-                    if (props.target === "eventProxy") {
-                        return dispatchActions.trigger(props);
-                    }
-                    try {
+                var dispatchActions = {
+                    CONFIRM_SUBSCRIPTION: function (props) {
+                        console.log('Confirm observer subscription.');
                         var index = observers.findIndex(function (observer) {
-                            return observer.id == props.target;
+                            return observer.id == props.source;
                         });
-                        if (index > -1) {
-                            var dispatchResponse = observers[index].observer.triggerEvent(props);
-                            console.log("EvenProxy returns dispatch response.");
-                            console.log(dispatchResponse);
-                            return dispatchResponse;
+                        if (index == -1) {
+                            throw {name: "SubscriptionError", message: "EventProxy subscription failed"};
+                        } else {
+                            console.info("Subscription of " + observers[index].id + " confirmed.");
                         }
 
-                    } catch (e) {
-                        console.group("Exception raised by EventProxy.dispatch()");
-                        console.info(props);
-                        console.warn(e);
-                        console.groupEnd();
+                    },
+                    TEST_DISPATCH: function (props) {
+                        console.log("EventProxy received dispatched action.");
+                    },
+                    trigger: function (props) {
+                        dispatchActions[props.action](props);
+                    },
+
+                };
+
+                return {
+                    subscribe: function (observer) {
+                        observers.push(observer);
+                        observer.observer.setDispatch(eventProxy.dispatch);
+                    },
+
+                    /**
+                     * @param {Object} props
+                     * @param props.action Action to dispatch
+                     * @param props.ctx Parent context
+                     * @param props.id Id of the observer to notify
+                     * @param props.info Additional information for debugging
+                     * @param props.fn Function to trigger
+                     */
+                    dispatch: function (props) {
+                        console.log(props);
+                        if (props.target === "eventProxy") {
+                            return dispatchActions.trigger(props);
+                        }
+                        try {
+                            var index = observers.findIndex(function (observer) {
+                                return observer.id == props.target;
+                            });
+                            if (index > -1) {
+                                var dispatchResponse = observers[index].observer.triggerEvent(props);
+                                console.log("EvenProxy returns dispatch response.");
+                                console.log(dispatchResponse);
+                                return dispatchResponse;
+                            }
+
+                        } catch (e) {
+                            console.group("Exception raised by EventProxy.dispatch()");
+                            console.info(props);
+                            console.warn(e);
+                            console.groupEnd();
+                        }
                     }
-                }
+                };
             };
-        };
 
         var eventProxy = new EventProxy();
 
@@ -111,6 +112,14 @@ define([
             ui.setConfigs({configs: configs});
             graphUtils.setConfigs({configs: configs});
             gwClient.setConfigs({configs: configs});
+        }
+
+        /**
+         * @description eventListeners are injected to code
+         * and these need to have access to dispatch
+         */
+        function setDispatch() {
+            eventListeners.setDispatch(eventProxy.dispatch)
         }
 
 
@@ -243,6 +252,7 @@ define([
             start: function (props) {
                 subscribeComponents();
                 setConfigs();
+                setDispatch();
                 render({gwClient: gwClient});
                 loadAppState();
             }

@@ -13,7 +13,20 @@ define([
      * @exports eventListeners
      */
 
+    var dispatch;
+
     return {
+        setDispatch: function (fn) {
+            dispatch = fn;
+            dispatch({
+                action: "TEST_DISPATCH",
+                ctx: this,
+                target: "eventProxy",
+                source: "eventListeners",
+                fn: null,
+                info: "dev test"
+            });
+        },
         contextMenu: {
             debug: function (event) {
                 console.log(event);
@@ -111,8 +124,7 @@ define([
         elementsFilter: {
             inFilter: {
                 keypress: function (props) {
-                    console.groupCollapsed("elementsFilter.inFilter.keypress()");
-                    console.debug(props);
+
                     try {
                         var filterValue = props.inFilter.value;
 
@@ -126,11 +138,24 @@ define([
                         var newContent = props.renderNewContent({filter: filterValue});
                         var oldContent = elesContent.childNodes[1];
                         elesContent.replaceChild(newContent, oldContent);
+                        dispatch({
+                            action: "ELEMENTS_LIST",
+                            ctx: this,
+                            data: {
+                                filter: filterValue
+                            },
+                            target: "ui",
+                            source: "eventListeners",
+                            fn: null,
+                            info: "dev test"
+                        });
                     } catch (e) {
+                        console.groupCollapsed("elementsFilter.inFilter.keypress()");
                         console.warn("elementsFilter.inFilter.keypress()");
                         console.warn(e);
+                        console.groupEnd();
+
                     }
-                    console.groupEnd();
                 }
             },
             btnClearFilter: {

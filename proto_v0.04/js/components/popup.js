@@ -9,6 +9,31 @@ define([
 ], function (eventListeners, classNames, elementStyles) {
     "use strict";
     var dispatch;
+    var popupActive = false;
+
+    function closePopupOnWindowClick(event)
+    {
+        console.log("I SHOULD BE CALLED!");
+        console.log("popupActive: %s", popupActive);
+        console.log(event.target);
+        var x = event.clientX, y = event.clientY;
+        console.log("x:%s, y:%s", x, y);
+        var pop = document.getElementById('popup');
+        console.log(pop);
+        var r = pop.getBoundingClientRect();
+        console.log(r.top, r.right, r.bottom, r.left);
+        var xHit = (x > r.left && x < r.right);
+        var yHit = (y > r.top && y < r.bottom);
+        console.log("xhit: %s, yhit: %s", xHit, yHit);
+        if ((!xHit || !yHit) && popupActive) {
+            window.removeEventListener('click', closePopupOnWindowClick);
+            destroyPopUp();
+            popupActive = false;
+        } else {
+            popupActive = true;
+        }
+    }
+
     var popup = {
         createEdge: {
             // todo: refactor
@@ -290,8 +315,11 @@ define([
             console.debug("popup render");
             console.debug(props);
 
-            var container = document.createElement('div');
+            window.addEventListener('click', closePopupOnWindowClick);
 
+
+            var container = document.createElement('div');
+            container.setAttribute('id', 'popup')
             container.classList.add('popup');
 
             var btnClose = document.createElement('button');

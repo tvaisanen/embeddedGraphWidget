@@ -105,7 +105,7 @@ define([
                     });*/
                 }
             },
-            {
+            /*{
                 id: 'hide',
                 content: 'hide',
                 tooltipText: 'hide',
@@ -115,7 +115,7 @@ define([
                     target.hide();
                 },
                 disabled: false
-            },
+            },*/
             {
                 id: 'add-node',
                 content: 'add node',

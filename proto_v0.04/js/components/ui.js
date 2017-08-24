@@ -323,7 +323,7 @@ define([
                 eventListeners.elementsFilter.btnClearFilter.onClick(updateTabs);
             });
             inFilter.addEventListener('keypress', function (event) {
-                console.debug(filtProps.elesContent);
+                console.debug(filtProps);
                 eventListeners.elementsFilter.inFilter.keypress(filtProps);
             });
 
@@ -345,7 +345,7 @@ define([
                 console.debug("elementList(props)");
                 console.debug(props);
                 // var content = props.content;
-                var filter = props.filterValue || "";
+                var filter = props.filter || "";
                 var cy = graphUtils.cy();
                 var gw = gwClient;
 
@@ -957,9 +957,10 @@ define([
                 console.log('test');
                 console.log(props);
             },
+            ELEMENTS_LIST: elementsList,
             UPDATE_TABS: updateTabs,
             trigger: function (props) {
-                this[props.action](props);
+                this[props.action](props.data);
             }
         };
 
