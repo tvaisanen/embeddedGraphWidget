@@ -131,7 +131,6 @@ define([
             console.groupEnd();
         }
 
-
         /**
          * @function
          * @name loadAppState
@@ -219,7 +218,6 @@ define([
             return null;
         };
 
-
         /** @function renderHeaderContainer
          *  Description
          *  @param {Object} variable - Desc.
@@ -258,7 +256,7 @@ define([
 
 
         return {
-            start: function (props) {
+            start: function () {
                 setConfigs();
                 subscribeComponents();
                 setDispatch();

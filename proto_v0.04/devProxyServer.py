@@ -33,12 +33,13 @@ def get_graph_from_db(graphId):
     try:
         d = shelve.open(DATABASE)
         graph = d[graphId]
-        print(graph)
+        print(graph.keys())
+        print(graph['graph'].keys())
         d.close()
         print("get_graph_from_db() : SUCCESS")
         return {'status': 'ok', 'data': graph}
     except Exception as ex:
-        print("get_graph_from_db() : SUCCESS")
+        print("get_graph_from_db() : EXCEPTION")
         print(str(ex))
         return {'status': 'error', 'data': str(ex)}
 

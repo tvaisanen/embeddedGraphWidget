@@ -328,7 +328,7 @@ define([
             });
 
             div.appendChild(inFilter);
-            div.appendChild(btnClearFilter);
+            //div.appendChild(btnClearFilter);
             div.appendChild(spanFilter);
 
             return div;
@@ -953,10 +953,6 @@ define([
         }
 
         var dispatchActions = {
-            TEST_DISPATCH: function (props) {
-                console.log('test');
-                console.log(props);
-            },
             ELEMENTS_LIST: elementsList,
             UPDATE_TABS: updateTabs,
             trigger: function (props) {

@@ -718,13 +718,16 @@ define([
          * @function
          * @name parseEdgesFromResponseData
          * @description Parse edges and their categories from gwClient response.
+         * Todo: node metas need to be stored
          * @param {Object} props
          * @param {Object} props.data Node data in JSON format.
          * @return {Object} edgeData
          * @example
          *  node = {
          *      in: Object,
-         *      out: Object,
+         *      out: {
+         *          gwikicategory: ["CategoryCategory", "CategoryAsd"]
+         *      },
          *      meta: Object
          *  }
          */
@@ -743,11 +746,17 @@ define([
                 // check if out/in nodes defined
                 var hasEdgesOut = (props.data.out != 'undefined');
                 var hasEdgesIn = (props.data.in != 'undefined');
+                var hasMeta = (props.data.meta != 'undefined');
+                // gwikicategories acts as semantic class descriptions for pages?
+                var hasGwikiCategories = (props.data.out.gwikicategory != 'undefined')
                 var newCategoriesOut = {};
                 var newCategoriesIn = {};
                 var edgeOut = {};
                 var edgeIn = {};
 
+                console.group("Node data:");
+                console.info(props.data);
+                console.groupEnd();
 
                 // if defined get the id's of connected nodes
                 if (hasEdgesOut && !$.isEmptyObject(props.data.out)) {
@@ -763,6 +772,7 @@ define([
                     }
                 }
 
+                // iterate through in coming edges
                 if (hasEdgesIn && !$.isEmptyObject(props.data.in)) {
                     try {
                         newCategoriesIn = Object.keys(props.data.in);
@@ -773,6 +783,12 @@ define([
                         console.warn(e);
                         console.warn(props.data.in);
                     }
+                }
+
+                // check metas for node
+                if (hasGwikiCategories && !$.isEmptyObject(props.data.out.gwikicategory)){
+                    var msg = "The node has the following metas: " + JSON.stringify(props.data.out.gwikicategory);
+                    alert(msg);
                 }
 
                 return {
