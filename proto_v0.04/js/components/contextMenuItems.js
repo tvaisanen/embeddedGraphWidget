@@ -125,6 +125,7 @@ define([
                             ctx: this,
                             data: {
                                 nodeId: targetId,
+                                pagename: targetId,
                                 content: "hello"
                             },
                             fn: null,
@@ -140,6 +141,19 @@ define([
                         }).then(function (obj) {
                             console.log(obj);
                             createNewNode(targetId, cy);
+                            dispatch({
+                            action: "CREATE_NEW_NODE",
+                            ctx: this,
+                            data: {
+                                nodeId: targetId,
+                                pagename: targetId,
+                                content: "hello"
+                            },
+                            fn: null,
+                            info: "dev test",
+                            source: "contextMenuItems",
+                            target: "gwClient"
+                        });
                         });
                         /*
                          cy.add({

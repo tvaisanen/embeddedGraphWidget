@@ -748,7 +748,7 @@ define([
                 var hasEdgesIn = (props.data.in != 'undefined');
                 var hasMeta = (props.data.meta != 'undefined');
                 // gwikicategories acts as semantic class descriptions for pages?
-                var hasGwikiCategories = (props.data.out.gwikicategory != 'undefined')
+                var hasGwikiCategories = (props.data.out.gwikicategory != 'undefined') || null;
                 var newCategoriesOut = {};
                 var newCategoriesIn = {};
                 var edgeOut = {};
@@ -787,8 +787,13 @@ define([
 
                 // check metas for node
                 if (hasGwikiCategories && !$.isEmptyObject(props.data.out.gwikicategory)){
-                    var msg = "The node has the following metas: " + JSON.stringify(props.data.out.gwikicategory);
-                    alert(msg);
+                    alert('here');
+                    console.log("HERE");
+                    console.group("Getting the categories");
+                    var categoriesSorted = props.data.out.gwikicategory.sort();
+                    var gwikicategories = JSON.stringify(categoriesSorted);
+                    console.info(gwikicategories);
+                    console.groupEnd();
                 }
 
                 return {
@@ -1145,6 +1150,7 @@ define([
 
         var dispatchActions = {
             CREATE_NEW_EDGE: createNewEdge,
+            CREATE_NEW_NODE: createNewNode,
             ELEMENT_IDS_TO_ARRAY: getElementIDsToArray,
             GET_ELEMENTS: function (props) {
                 var elementsToReturn = cy.elements(props.selector);

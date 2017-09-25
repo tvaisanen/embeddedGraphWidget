@@ -4,6 +4,9 @@ import json
 from flask import Flask, jsonify, request, Response
 from flask_cors import CORS
 import shelve, os
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 app = Flask(__name__)
@@ -120,6 +123,10 @@ def add_to_moin():
     if request.method == 'POST':
         json = request.get_json()
         data = request.get_data()
+
+        logger.info("/add-to-wiki/ POST")
+        logger.info(json)
+
         print(json)
         pagename = json['pagename']
         print(pagename)

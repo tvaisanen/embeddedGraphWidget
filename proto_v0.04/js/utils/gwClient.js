@@ -196,7 +196,6 @@ define(function () {
             pagename: props.nodeId,
             content: "This is page is created by GraphingWikiBrowser: " + props.content
         };
-        console.log(configs);
         var developmentPath = configs.API_CREATE_NEW_NODE;
         var postNodeRequest = new Request(developmentPath, {
             headers: new Headers({
@@ -224,7 +223,8 @@ define(function () {
         },
         POST_NODE: function (props) {
             console.info("POST_NODE dispatch received");
-            return postNode(props);
+            console.info(props);
+            return postNode(props.data);
         },
         trigger: function (props) {
             return this[props.action](props);

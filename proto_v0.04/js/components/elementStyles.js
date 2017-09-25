@@ -256,6 +256,8 @@ define(["configuration/configs"], function (configs) {
         updateStyleParameter: updateStyleParameter,
         setDispatch: function (fn) {
             dispatch = fn;
+
+            // test dispatch to see that it really is initialized
             dispatch({
                 action: "CONFIRM_SUBSCRIPTION",
                 ctx: this,
