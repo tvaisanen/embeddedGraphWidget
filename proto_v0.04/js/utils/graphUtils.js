@@ -270,16 +270,17 @@ define([
 
             try {
 
-                if (typeof props.id === 'undefined') {
+                if (typeof props.nodeId === 'undefined') {
                     throw TypeError("createNewNode() called with undefined id");
                 }
 
-                var nodeIdOk = nodeIdAvailable({nodeId: props.id, cy: props.cy});
+
+                var nodeIdOk = nodeIdAvailable({nodeId: props.nodeId, cy: cy});
                 if (nodeIdOk) {
-                    props.cy.add({
+                    cy.add({
                         group: 'nodes',
                         data: {
-                            id: props.id
+                            id: props.nodeId
                         }
                     });
                     return true;

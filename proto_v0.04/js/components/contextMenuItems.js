@@ -140,7 +140,7 @@ define([
                             return j;
                         }).then(function (obj) {
                             console.log(obj);
-                            createNewNode(targetId, cy);
+                            //createNewNode(targetId, cy);
                             dispatch({
                             action: "CREATE_NEW_NODE",
                             ctx: this,
@@ -152,7 +152,7 @@ define([
                             fn: null,
                             info: "dev test",
                             source: "contextMenuItems",
-                            target: "gwClient"
+                            target: "graphUtils"
                         });
                         });
                         /*
