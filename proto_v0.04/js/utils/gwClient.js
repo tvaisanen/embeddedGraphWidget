@@ -194,7 +194,9 @@ define(function () {
     function postNode(props) {
         var payload = {
             pagename: props.nodeId,
-            content: "This is page is created by GraphingWikiBrowser: " + props.content
+            content: props.content,
+            info: "Created with Graphingwiki 2.0",
+            parameters: props
         };
         var developmentPath = configs.API_CREATE_NEW_NODE;
         var postNodeRequest = new Request(developmentPath, {

@@ -133,7 +133,7 @@ def add_to_moin():
 
         # USE TEMPLATES
         # fill using data provided by request
-        content = 'mock content'
+        content = str(json)
 
         r = add_page_to_moin(pagename, content)
         print("response: ")

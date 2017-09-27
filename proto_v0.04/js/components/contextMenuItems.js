@@ -111,6 +111,8 @@ define([
                 onClickFunction: function (event) {
                     try {
                         var targetId = prompt('Provide id for the new node.');
+                        var metas = prompt('Provide metas, separate by space. Ex. "meta1 meta2"');
+                        var metasArray = metas.split(" ").sort();
                         var data = {
                             group: 'nodes',
                             id: targetId
@@ -124,6 +126,7 @@ define([
                             action: "POST_NODE",
                             ctx: this,
                             data: {
+                                metas: metasArray,
                                 nodeId: targetId,
                                 pagename: targetId,
                                 content: "hello"
