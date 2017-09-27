@@ -1,6 +1,7 @@
 site_name: GraphingWikiBrowser
 pages:
   - Home: index.md
+  - Requirements: requirements.md
   - Development: development.md
   - Usage: usage.md
   - About: about.md

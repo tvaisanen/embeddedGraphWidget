@@ -1,8 +1,9 @@
 .popup {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     border: solid;
     border-color: #000;
+    border-width: 1px;
     background-color: #ffffff;
     height: 200px;
     width: 300px;
@@ -12,15 +13,21 @@
     margin-top: -100px;
     margin-left: -150px;
 }
+input {
+    width: inherit;
+}
+
+select {
+    width: inherit;
+}
 
 
 .popup-header {
-    display: flex;
-    flex-direction: column;
+
 }
 
 .popup-header__btn-close {
-    float: right;
+    height: 200px;
 }
 
 .popup-header__text {

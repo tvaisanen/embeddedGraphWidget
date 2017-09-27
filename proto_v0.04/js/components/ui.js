@@ -621,12 +621,14 @@ define([
             try {
                 var keys = Object.keys(styles);
                 keys.forEach(function (category) {
-                    var divCategory = styleList({
-                        category: category,
-                        style: styles[category]
-                    });
+                    if (category != 'generic') {
+                        var divCategory = styleList({
+                            category: category,
+                            style: styles[category]
+                        });
 
-                    div.appendChild(divCategory);
+                        div.appendChild(divCategory);
+                    }
                 });
             } catch (e) {
                 console.group("Exception Styles");
