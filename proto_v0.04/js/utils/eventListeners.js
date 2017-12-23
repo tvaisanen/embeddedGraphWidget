@@ -348,11 +348,19 @@ define([
 
                 // remove active class from every link
                 var links = Object.keys(tabs);
+                try {
                 links.forEach(function (key) {
                     tabs[key].active = false;
+                    console.debug("nav-item-" + key);
                     document.getElementById("nav-item-" + key)
                         .classList.remove(navItemClasses.active);
-                });
+                }); } catch (error) {
+                    console.group("ui.navClick()");
+                    console.info("setting nav item active state");
+                    console.info(props);
+                    console.warn(error);
+                    console.groupEnd();
+                }
 
                 // activate clicked link
                 tabs[keyToActivate].active = true;

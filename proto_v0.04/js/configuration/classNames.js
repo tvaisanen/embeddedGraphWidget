@@ -63,6 +63,14 @@ define(function () {
                     inactive: 'tab-styles__list-item--inactive'
                 },
                 selectionTable: 'style-selection-table'
+            },
+            nodeForm: {
+                container: 'node-form',
+                label: 'node-form__input-label',
+                inputBlock: 'node-form__input-block',
+                input: 'node-form__input',
+                button: 'node-form__button'
+
             }
         },
         text: {
@@ -74,6 +82,18 @@ define(function () {
             header: {
                 btnClose: 'popup-header__btn-close',
                 text: 'popup-header__text'
+            }
+        },
+        components: {
+            dynamiceListInput: {
+                container: "dynamic-list-input",
+                label: "dynamic-list-input__label",
+                input: "dynamic-list-input__input-text",
+                inputBlock: "dynamic-list-input__input-block",
+                button: "dynamic-list-input__button",
+                list: "dynamic-list-input__list",
+                listItem: "dynamic-list-input__list-item"
+
             }
         }
     }

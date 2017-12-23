@@ -9,9 +9,10 @@ define([
         "configuration/classNames",
         "utils/graphUtils",
         "utils/gwClient",
-        "components/menuItems"
+        "components/menuItems",
+        "components/nodeForm"
     ],
-    function (elementStyles, eventListeners, classNames, graphUtils, gwClient, menuItems) {
+    function (elementStyles, eventListeners, classNames, graphUtils, gwClient, menuItems, nodeForm) {
         'use strict';
 
         var name = "ui";
@@ -106,6 +107,30 @@ define([
                 return div;
             } catch (e) {
                 console.group("Exception raised by ui.elementsContent()");
+                console.info("props");
+                console.info(props);
+                console.warn(e);
+                console.groupEnd();
+            }
+        }
+
+        /**
+         * @function
+         * @name createNodeContent
+         * @description Create content for panel tab "Create node"
+         * @param {Object} variable - Desc.
+         * @return {HTMLElement} desc.
+         */
+        function createNodeContent(props) {
+            try {
+                console.debug("createnodeContent props!");
+                console.debug(props);
+                // var content = props.content;
+
+                return nodeForm.render();
+
+            } catch (e) {
+                console.group("Exception raised by ui.createnodeContent()");
                 console.info("props");
                 console.info(props);
                 console.warn(e);
@@ -709,7 +734,7 @@ define([
                 divLink.innerHTML = link.label;
 
                 // Fixme: clean the implementation!
-                divLink.setAttribute('id', "nav-item-" + link.label.toLowerCase());
+                divLink.setAttribute('id', "nav-item-" + link.key.toLowerCase());
                 divNav.appendChild(divLink);
             });
 
@@ -829,6 +854,8 @@ define([
 
                 } else if (props.tabs.styles.active) {
                     divContent.appendChild(stylesContent());
+                } else if (props.tabs.createnode.active){
+                    divContent.appendChild(createNodeContent());
                 }
 
                 return divContent;
@@ -936,6 +963,8 @@ define([
                 var divTabContainer = document.getElementById(classNames.tab.container);
                 var panelContainer = document.getElementById(classNames.panel.container);
                 var childsToRemove = divTabContainer.childNodes;
+
+
 
                 childsToRemove.forEach(function (child) {
                     divTabContainer.remove(child);

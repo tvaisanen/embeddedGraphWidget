@@ -12,6 +12,7 @@ define(function () {
 
         tabs: {
             graphs: {
+                key: "graphs",
                 label: "Graphs",
                 active: true,
                 graphs: [
@@ -20,20 +21,27 @@ define(function () {
                 ]
             },
             elements: {
+                key: "elements",
                 filter: "",
                 label: "Elements",
                 active: false,
                 data: "Data for elements"
             },
             styles: {
+                key: "styles",
                 label: "Styles",
                 active: false,
                 categories: []
+            },
+            createnode: {
+                key: "createnode",
+                label: "New Node",
+                active: false
             }
         },
 
-        API_PATH: 'http://127.0.0.1:5000/',
-        API_CREATE_NEW_NODE: 'http://127.0.0.1:5000/add-to-wiki/',
+        API_PATH: 'http://192.168.1.105:5000/',
+        API_CREATE_NEW_NODE: 'http://192.168.1.105:5000/add-to-wiki/',
         style: {
             generic: {
                 lineColor: 'line-color-grey',

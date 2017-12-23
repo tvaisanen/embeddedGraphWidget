@@ -1,0 +1,36 @@
+
+[class^="dynamic-list-input"] {
+    margin: 4px;
+    display: flex;
+    font-size: small;
+    flex-direction: column;
+    background: rgba(0,100,0,0.2);
+}
+
+.dynamic-list-input__label {
+    background: transparent;
+
+}
+
+.dynamic-list-input__input-text {
+ width: 80%;
+}
+
+.dynamic-list-input__input-block {
+    display:flex;
+    background: transparent;
+    flex-direction:row;
+    overflow: hidden;
+}
+
+.dynamic-list-input__button {
+    background: white;
+}
+
+.dynamic-list-input__list {
+        background: transparent;
+
+}
+
+
+

@@ -196,6 +196,7 @@ define(function () {
             pagename: props.nodeId,
             content: props.content,
             info: "Created with Graphingwiki 2.0",
+            // template: <SOME_TEMPLATE> // todo: templating
             parameters: props
         };
         var developmentPath = configs.API_CREATE_NEW_NODE;
