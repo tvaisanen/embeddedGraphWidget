@@ -23,6 +23,80 @@ define(["../../configuration/classNames",],
 
             var ctx = this;
 
+            /**
+             * clears text input
+             */
+            this.clearInput = function () {
+                this.input.value = "";
+            };
+
+            /**
+             * returns the array of items
+             * @returns {Array}
+             */
+            this.getItems = function () {
+                return this.listItems;
+            };
+
+            /**
+             * takes care of addBtn click event -> adds value from input to the list
+             */
+            this.addItemBtnHandler = function () {
+                console.debug('clicked add item');
+                if (this.input.value != "") {
+                    var newItem = this.input.value;
+                    this.listItems.push(newItem);
+                    var liItem = document.createElement('li');
+
+                    var liItemName = document.createElement('span');
+                    liItemName.className = styleClass.listItemText;
+                    liItemName.innerHTML = newItem;
+
+                    var btnDeleteItem = document.createElement('btn');
+                    btnDeleteItem.className = styleClass.listItemDeleteBtn;
+                    btnDeleteItem.innerHTML = 'x';
+                    btnDeleteItem.onclick = function () {
+                        ctx.removeItem(newItem);
+                    };
+
+                    liItem.className = styleClass.listItem;
+                    liItem.appendChild(liItemName);
+                    liItem.appendChild(btnDeleteItem);
+                    this.list.appendChild(liItem);
+                    this.clearInput();
+                }
+            };
+
+            this.refreshList = function () {
+                this.list.innerHTML = "";
+                this.listItems.forEach(function (item) {
+                    var liItem = document.createElement('li');
+
+                    var liItemName = document.createElement('span');
+                    liItemName.className = styleClass.listItemText;
+                    liItemName.innerHTML = item;
+
+                    var btnDeleteItem = document.createElement('btn');
+                    btnDeleteItem.className = styleClass.listItemDeleteBtn;
+                    btnDeleteItem.innerHTML = 'x';
+                    btnDeleteItem.onclick = function () {
+                        console.debug('delete click');
+                        ctx.removeItem(item);
+                    };
+
+                    liItem.className = styleClass.listItem;
+                    liItem.appendChild(liItemName);
+                    liItem.appendChild(btnDeleteItem);
+                    ctx.list.appendChild(liItem);
+                })
+            };
+
+            this.removeItem = function (itemToDelete) {
+                var removeIndex = ctx.listItems.indexOf(itemToDelete);
+                ctx.listItems.splice(removeIndex, 1);
+                ctx.refreshList();
+            };
+
             this.listItems = [];
 
             this.getComponentId = function (element) {
@@ -61,9 +135,17 @@ define(["../../configuration/classNames",],
             this.btnAddItem.className = styleClass.button;
             this.btnAddItem.setAttribute('id', this.getComponentId('btnAddItem'));
             this.btnAddItem.innerHTML = '+';
+
+
+            console.debug(ctx);
+
             this.btnAddItem.addEventListener('click', function () {
+                console.debug('btn');
                 ctx.addItemBtnHandler()
             });
+
+            this.input.value = 'compose';
+            this.btnAddItem.click();
 
             /**
              * Renders components inside the container and returns the container div
@@ -84,35 +166,6 @@ define(["../../configuration/classNames",],
                 }
             };
 
-            /**
-             * takes care of addBtn click event -> adds value from input to the list
-             */
-            this.addItemBtnHandler = function () {
-                console.log('Btn handler');
-                console.log(this);
-                var newItem = this.input.value;
-                this.listItems.push(newItem);
-                var liItem = document.createElement('li');
-                liItem.className = styleClass.listItem;
-                liItem.innerHTML = newItem;
-                this.list.appendChild(liItem);
-                this.clearInput();
-            };
-
-            /**
-             * clears text input
-             */
-            this.clearInput = function () {
-                this.input.value = "";
-            };
-
-            /**
-             * returns the array of items
-             * @returns {Array}
-             */
-            this.getItems = function () {
-                return this.listItems;
-            }
 
         }
 

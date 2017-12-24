@@ -45,7 +45,63 @@ define(["components/dynamicListInput/DynamicListInput", "configuration/className
 
     });
 
-    QUnit.test("List items are added correctly", function (assert) {});
+    QUnit.test("List item is added correctly", function (assert) {
+
+        // add item to input field and click the add button
+        // then return the items list to check if the arary
+        // has been updated correctly
+
+        var itemToAdd = "Add me to the itemsList";
+
+        var dynamicInput = new DynamicListInput('id', 'labelText');
+        var renderedComponent = dynamicInput.render();
+        var inputBlock = renderedComponent.childNodes[1];
+        var textInput = inputBlock.childNodes[0];
+        var addButton = inputBlock.childNodes[1];
+        console.debug(textInput);
+        console.debug(addButton);
+        textInput.value = itemToAdd;
+        addButton.click();
+
+        // items should have array = ["Add me to the itemList"]
+        var items = dynamicInput.getItems();
+
+        assert.equal(items[0], itemToAdd, "no test assertions done");
+    });
+
+        QUnit.test("List items are added correctly", function (assert) {
+
+        // add item to input field and click the add button
+        // then return the items list to check if the arary
+        // has been updated correctly
+
+        var firstItemToAdd = "first item";
+        var secondItemToAdd = "second item";
+
+        var dynamicInput = new DynamicListInput('id', 'labelText');
+        var renderedComponent = dynamicInput.render();
+        var inputBlock = renderedComponent.childNodes[1];
+        var textInput = inputBlock.childNodes[0];
+        var addButton = inputBlock.childNodes[1];
+
+        textInput.value = firstItemToAdd;
+        addButton.click();
+
+        textInput.value = secondItemToAdd;
+        addButton.click();
+
+        // items should have array = ["first item", "second item"]
+        var items = dynamicInput.getItems();
+
+        var firstItemCorrect = items[0] == firstItemToAdd;
+        var secondItemCorrect = items[1] == secondItemToAdd;
+        var bothItemsCorrect = firstItemCorrect && secondItemCorrect
+
+        assert.ok(bothItemsCorrect, "Items are added correctly");
+
+    });
+
+
     QUnit.test("List items can be returned correctly", function (assert) {});
     QUnit.test("List item can be removed correctly", function (assert) {});
 

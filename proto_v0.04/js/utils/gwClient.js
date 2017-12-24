@@ -101,15 +101,19 @@ define(function () {
      *  @return {Promise} Promise of a list containing stored graphs
      */
     function fetchGraphList() {
-        var requestUrl = configs.API_PATH + "graphs";
-        // console.log("Loading graphs");
-        var loadGraphsRequest = new Request(requestUrl, {
-            headers: new Headers({
-                'Content-Type': 'application/json'
-            }),
-            method: 'get'
-        });
-        return fetch(loadGraphsRequest);
+        try {
+            var requestUrl = configs.API_PATH + "graphs";
+            // console.log("Loading graphs");
+            var loadGraphsRequest = new Request(requestUrl, {
+                headers: new Headers({
+                    'Content-Type': 'application/json'
+                }),
+                method: 'get'
+            });
+            return fetch(loadGraphsRequest);
+        } catch (error){
+            return error;
+        }
     }
 
     /** @function

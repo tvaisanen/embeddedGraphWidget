@@ -191,26 +191,30 @@ define([
                 div.setAttribute('id', classes.container);
 
                 // todo: implement via eventbus for loose coupling
-                var graphListPromise = gwClient.getGraphList();
+                try {
+                    var graphListPromise = gwClient.getGraphList();
+                    graphListPromise.then(function (response) {
+                        return response.json();
 
-                graphListPromise.then(function (response) {
-                    return response.json();
+                    }).then(function (json) {
+                        var graphs = json.data;
+                        graphs.sort();
 
-                }).then(function (json) {
-                    var graphs = json.data;
-                    graphs.sort();
-
-                    /* loop array of graphName strings and generate
-                     * the list items for the panel */
-                    graphs.forEach(function (graph) {
-                        graphListItem({
-                            cy: props.cy,
-                            graphName: graph,
-                            gwClient: gwClient,
-                            listElement: ul
+                        /* loop array of graphName strings and generate
+                         * the list items for the panel */
+                        graphs.forEach(function (graph) {
+                            graphListItem({
+                                cy: props.cy,
+                                graphName: graph,
+                                gwClient: gwClient,
+                                listElement: ul
+                            });
                         });
                     });
-                });
+                } catch (error) {
+                    console.warn(error);
+                }
+
 
                 div.appendChild(ul);
                 console.groupEnd();
@@ -854,7 +858,7 @@ define([
 
                 } else if (props.tabs.styles.active) {
                     divContent.appendChild(stylesContent());
-                } else if (props.tabs.createnode.active){
+                } else if (props.tabs.createnode.active) {
                     divContent.appendChild(createNodeContent());
                 }
 
@@ -965,7 +969,6 @@ define([
                 var childsToRemove = divTabContainer.childNodes;
 
 
-
                 childsToRemove.forEach(function (child) {
                     divTabContainer.remove(child);
                 });
@@ -975,7 +978,7 @@ define([
                     tabs: configs.tabs
                 });
                 panelContainer.appendChild(tabsContent);
-            } catch (e) {
+            } catch (e) {
                 console.group("Exception raised by ui.updateTabs()");
                 console.info(props);
                 console.warn(e);

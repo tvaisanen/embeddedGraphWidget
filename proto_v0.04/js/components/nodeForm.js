@@ -20,7 +20,7 @@ define([
          */
 
         // instantiate metas as a dynamic
-        var metas = new DynamicListInput('metas-input', 'Metas');
+        var metas;
         var templateForm;
 
         var div = document.createElement('div');
@@ -30,10 +30,10 @@ define([
         var templateLabel = document.createElement('label');
         var templateBlock = document.createElement('div');
         var nameInput = document.createElement("input");
-        var inputMetaBlock = document.createElement('div');
-        var metaInput = document.createElement("input");
+
+
         var addButton = document.createElement("button");
-        var metasList = document.createElement('ul');
+
         var createButton = document.createElement("button");
         var selectTemplate = document.createElement("select");
 
@@ -54,17 +54,8 @@ define([
             nameInput.setAttribute('type', 'text');
             nameInput.className = classNames.tab.nodeForm.input;
 
-            metaInput.setAttribute('id', 'meta-input');
-            metaInput.className = classNames.tab.nodeForm.input;
-            metaInput.setAttribute('type', 'text');
-
-            inputMetaBlock.className = classNames.tab.nodeForm.inputBlock;
-
             addButton.innerHTML = "+";
             addButton.className = classNames.tab.nodeForm.button;
-
-
-            metasList.setAttribute('id', 'meta-list');
 
 
             selectTemplate.setAttribute('placeholder', 'select template');
@@ -103,15 +94,6 @@ define([
             setTemplateForm(templateForm)
         }
 
-        function addMetaBtnHandler() {
-            var newMeta = metaInput.value;
-            metas.push(newMeta);
-            var liMeta = document.createElement('li');
-            liMeta.innerHTML = newMeta;
-            metasList.appendChild(liMeta);
-            clearInput();
-        }
-
         function getTemplateParameters() {
             var templateParameters = {};
             for (var i = 0; i < templateForm.elements.length; i++) {
@@ -139,10 +121,6 @@ define([
             preview.appendChild(renderedTemplate);
         }
 
-        function clearInput() {
-            metaInput.value = "";
-        }
-
         function getName() {
             return nameInput.value;
         }
@@ -157,31 +135,19 @@ define([
             try {
 
                 setElementParameters();
-
-                var metas = new DynamicListInput('metas-input', 'Metas');
-
+                metas  = new DynamicListInput('metas', 'Metas');
                 inputNameBlock.appendChild(nameLabel);
                 inputNameBlock.appendChild(nameInput);
                 div.appendChild(inputNameBlock);
 
                 div.appendChild(metas.render());
-                div.appendChild(metasList);
-                div.innerHTML += "add template ?";
+
+
                 div.appendChild(templateLabel);
                 div.appendChild(selectTemplate);
                 div.appendChild(templateBlock);
 
                 div.appendChild(createButton);
-                // add metas to list
-                addButton.addEventListener('click', addMetaBtnHandler);
-                // Todo: bind Enter click to input
-                addButton.addEventListener('onKeyDown', function (event) {
-                    console.debug('pressed');
-                    event.preventDefault();
-                    if (event.keyCode == 13) {
-                        addButton.click();
-                    }
-                });
 
                 selectTemplate.onchange = function (event) {
                     selectTemplateHandler(event.target);

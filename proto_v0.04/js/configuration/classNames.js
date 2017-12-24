@@ -92,7 +92,9 @@ define(function () {
                 inputBlock: "dynamic-list-input__input-block",
                 button: "dynamic-list-input__button",
                 list: "dynamic-list-input__list",
-                listItem: "dynamic-list-input__list-item"
+                listItem: "dynamic-list-input__list-item",
+                listItemText: "dynamic-list-input__list-item__text",
+                listItemDeleteBtn: "dynamic-list-input__list-item__delete-btn",
 
             }
         }
