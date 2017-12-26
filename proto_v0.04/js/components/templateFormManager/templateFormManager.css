@@ -30,7 +30,7 @@
 
 .template-form-manager__input-block {
     display: flex;
-    background: gray;
+    background: transparent;
     flex-direction: row;
     overflow: hidden;
     padding: 0;

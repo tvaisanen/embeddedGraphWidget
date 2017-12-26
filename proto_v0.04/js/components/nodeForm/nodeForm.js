@@ -114,7 +114,8 @@ define([
                 name: getName(),
                 metas: metas.getItems(),
                 metastring: getMetasString(),
-                parameters: getTemplateParameters()
+                parameters: getTemplateParameters(),
+                templates: templateManager.getForms()
             };
             metas.clearList();
             console.info(newNodeData);

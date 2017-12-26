@@ -77,6 +77,7 @@ define(["configuration/classNames",],
         function getTemplateForm(index) {
             var form = document.createElement('form');
             var template = getTemplate(index);
+            form.setAttribute('name', template.name);
             template.data.forEach(function (item) {
                 var label = document.createElement('label');
                 label.className = classNames.tab.nodeForm.label;

@@ -171,6 +171,25 @@ define(["../../configuration/classNames",
                 self.addItemBtnHandler()
             });
 
+            /**
+             *
+             * @returns {Array} Array of objects containing the
+             * values entered in the form
+             */
+            this.getForms = function(){
+                var formValues = [];
+                self.listItems.forEach(function(form){
+                    console.info(form);
+                    var templateData = {name: form.name};
+                    for (var i=0; i < form.elements.length; i++){
+                        templateData[form[i].name] = form[i].value;
+                    }
+                    formValues.push(templateData);
+                });
+                console.info(formValues);
+                return formValues;
+            }
+
             // render one item for development
             // this.input.value = 'compose';
             // this.btnAddItem.click();
