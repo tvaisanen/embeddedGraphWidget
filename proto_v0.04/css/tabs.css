@@ -4,7 +4,7 @@
     flex-flow: row wrap;
     justify-content: space-around;
     flex-grow: 1;
-    background-color: #6490af;
+    background-color: #68afc4;
 
 }
 
@@ -19,7 +19,8 @@
     border-top-right-radius: 5px;
     background-color: rgba(145, 145, 145, 0.15);
     border-width: 1px;
-    border-color: #5f89af;
+    border-color: #68afc4;
+    padding: 0 3px;
 
 }
 
@@ -30,12 +31,15 @@
 }
 
 .panel-tab-nav__nav-item--active {
-    border-top-style: solid;
-    border-right-style: solid;
-    border-left-style: solid;
+
+    border-style: solid;
     border-width: 1px;
-    border-color: #5f89af;
-    background-color: #f7fcfe;
+    border-color: #6995c2;
+    background: #a5d0dd;
+}
+.panel-tab-nav__nav-item:hover{
+background: #225b78;
+    color: white;
 
 }
 
@@ -97,10 +101,11 @@ label {
 span {
     display: flex;
     flex-grow: 1;
-    background-color: #5f89af;
+    background-color: #68afc4;
     color: white;
     justify-content: center;
 }
+
 
 select {
     width: 100%;

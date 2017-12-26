@@ -4,13 +4,14 @@
 
 
 define([
-        "utils/eventListeners",
+        "../../utils/eventListeners",
         "configuration/classNames",
         "components/pageTemplates",
         "components/templateRenderer",
-        "components/dynamicListInput/DynamicListInput"
+        "components/dynamicListInput/DynamicListInput",
+        "../templateFormManager/TemplateFormManager"
     ],
-    function (eventListeners, classNames, pageTemplates, templateRenderer, DynamicListInput) {
+    function (eventListeners, classNames, pageTemplates, templateRenderer, DynamicListInput, TemplateFormManager) {
         "use strict";
 
         /**
@@ -20,8 +21,11 @@ define([
          */
 
         // instantiate metas as a dynamic
-        var metas;
+        var metas = new DynamicListInput('metas', 'Metas');
+        var templateManager = new TemplateFormManager();
         var templateForm;
+
+        var styleClasses = classNames.components.nodeForm;
 
         var div = document.createElement('div');
         var inputNameBlock = document.createElement('div');
@@ -41,21 +45,21 @@ define([
         function setElementParameters() {
 
             div.setAttribute('id', "node-form");
-            div.className = classNames.tab.nodeForm.container;
+            div.className = styleClasses.container;
 
-            inputNameBlock.className = classNames.tab.nodeForm.inputBlock;
+            inputNameBlock.className = styleClasses.inputBlock;
 
             nameLabel.innerHTML = "Name:";
             templateLabel.innerHTML = "Template";
-            nameLabel.className = classNames.tab.nodeForm.label;
+            nameLabel.className = styleClasses.label;
 
-            templateLabel.className = classNames.tab.nodeForm.label;
+            templateLabel.className = styleClasses.label;
 
             nameInput.setAttribute('type', 'text');
-            nameInput.className = classNames.tab.nodeForm.input;
+            nameInput.className = styleClasses.input;
 
             addButton.innerHTML = "+";
-            addButton.className = classNames.tab.nodeForm.button;
+            addButton.className = styleClasses.button;
 
 
             selectTemplate.setAttribute('placeholder', 'select template');
@@ -65,7 +69,7 @@ define([
             setTemplateForm(templateForm);
 
             createButton.setAttribute('id', 'create-node-button');
-            createButton.className = classNames.tab.nodeForm.button;
+            createButton.className = styleClasses.button;
             createButton.innerHTML = "Save";
 
         }
@@ -112,7 +116,7 @@ define([
                 metastring: getMetasString(),
                 parameters: getTemplateParameters()
             };
-
+            metas.clearList();
             console.info(newNodeData);
             var preview = document.getElementById(classNames.text.container);
             // for development and debugging
@@ -135,23 +139,16 @@ define([
             try {
 
                 setElementParameters();
-                metas  = new DynamicListInput('metas', 'Metas');
+
                 inputNameBlock.appendChild(nameLabel);
                 inputNameBlock.appendChild(nameInput);
                 div.appendChild(inputNameBlock);
 
                 div.appendChild(metas.render());
-
-
-                div.appendChild(templateLabel);
-                div.appendChild(selectTemplate);
-                div.appendChild(templateBlock);
+                div.appendChild(templateManager.render());
 
                 div.appendChild(createButton);
 
-                selectTemplate.onchange = function (event) {
-                    selectTemplateHandler(event.target);
-                };
 
                 createButton.addEventListener('click', createBtnHandler);
 

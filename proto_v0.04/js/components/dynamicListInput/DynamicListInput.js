@@ -17,11 +17,9 @@ define(["../../configuration/classNames",],
 
 
         function DynamicListInput(componentId, labelText) {
-            console.info('DynamicListInput()');
-            console.info(componentId);
-            console.info(labelText);
 
             var ctx = this;
+            var idPrefix = "dynamic-list-input__";
 
             /**
              * clears text input
@@ -97,10 +95,15 @@ define(["../../configuration/classNames",],
                 ctx.refreshList();
             };
 
+            this.clearList = function () {
+                ctx.listItems = [];
+                ctx.refreshList();
+            };
+
             this.listItems = [];
 
             this.getComponentId = function (element) {
-                return "dynamic-list-input__" + componentId + "-" + element;
+                return idPrefix + componentId + "-" + element;
             };
 
             // Contains the whole component.
@@ -144,8 +147,9 @@ define(["../../configuration/classNames",],
                 ctx.addItemBtnHandler()
             });
 
-            this.input.value = 'compose';
-            this.btnAddItem.click();
+            // render one item for development
+            // this.input.value = 'compose';
+            // this.btnAddItem.click();
 
             /**
              * Renders components inside the container and returns the container div
@@ -165,10 +169,7 @@ define(["../../configuration/classNames",],
                     console.groupEnd();
                 }
             };
-
-
         }
-
         return DynamicListInput;
     }
 );

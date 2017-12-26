@@ -13,7 +13,10 @@
     var testModules = [
         "js/utils/tests/graphUtilsTest.js",
         "js/components/tests/uiTest.js",
-        "js/components/tests/elementStyleTest.js"
+        "js/components/tests/elementStyleTest.js",
+        "js/components/dynamicListInput/test.js",
+        "js/components/nodeForm/test.js",
+        "js/components/templateFormManager/test.js"
     ];
 
     // Resolve all testModules and then start the Test Runner.

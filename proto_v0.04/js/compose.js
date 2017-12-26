@@ -19,14 +19,19 @@ requirejs.config({
 });
 
 require([
-    "components/dynamicListInput/nodeForm",
+    "components/nodeForm/nodeForm",
     "components/dynamicListInput/DynamicListInput",
+    "components/templateFormManager/TemplateFormManager",
 
-], function (DynamicListInput) {
+], function (nodeForm, DynamicListInput, TemplateFormManager) {
     'use strict';
     console.info("compose!");
     var c = document.querySelector('#container');
-    var list = new DynamicListInput('id', 'label');
-    c.appendChild(list.render());
+    var t = new TemplateFormManager();
+    //c.appendChild(t.render());
+    //var list = new DynamicListInput('id', 'label');
+    //c.appendChild(list.render());
+    c.appendChild(nodeForm.render());
+
 
 });

@@ -1,0 +1,50 @@
+
+[class^="node-form"] {
+    margin: 4px;
+    display: flex;
+    font-size: small;
+    flex-direction: column;
+    background: #a5d0dd;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
+.node-form__input-block {
+    display: flex;
+    background: transparent;
+    flex-direction: row;
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.node-form__input-text {
+    width: 100%;
+}
+
+.node-form__input-block-list{
+    background: transparent;
+}
+
+.node-form__input-label {
+    background: transparent;
+    padding: 4px 0;
+    margin-left: 6px;
+
+
+}
+.node-form__button {
+    width: auto;
+    align-self: center;
+    text-align: center;
+    align-items: center;
+}
+.node-form__button:hover {
+
+}
+.node-form__button:active {
+	position:relative;
+	top:1px;
+}

@@ -10,7 +10,7 @@ define([
         "utils/graphUtils",
         "utils/gwClient",
         "components/menuItems",
-        "components/nodeForm"
+        "components/nodeForm/nodeForm"
     ],
     function (elementStyles, eventListeners, classNames, graphUtils, gwClient, menuItems, nodeForm) {
         'use strict';

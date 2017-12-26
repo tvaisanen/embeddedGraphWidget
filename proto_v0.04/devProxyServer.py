@@ -13,7 +13,7 @@ app = Flask(__name__)
 CORS(app)
 
 DATABASE = 'development.db'
-MOIN_PATH = 'http://localhost/'
+MOIN_PATH = 'http://http://192.168.1.105/'
 
 
 def save_to_db(graph):

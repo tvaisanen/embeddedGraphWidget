@@ -70,7 +70,6 @@ define(function () {
                 inputBlock: 'node-form__input-block',
                 input: 'node-form__input',
                 button: 'node-form__button'
-
             }
         },
         text: {
@@ -86,7 +85,7 @@ define(function () {
         },
         components: {
             dynamiceListInput: {
-                container: "dynamic-list-input",
+                container: "dynamic-list-input__container",
                 label: "dynamic-list-input__label",
                 input: "dynamic-list-input__input-text",
                 inputBlock: "dynamic-list-input__input-block",
@@ -96,7 +95,31 @@ define(function () {
                 listItemText: "dynamic-list-input__list-item__text",
                 listItemDeleteBtn: "dynamic-list-input__list-item__delete-btn",
 
-            }
+            },
+
+            nodeForm: {
+                container: 'node-form',
+                label: 'node-form__input-label',
+                inputBlock: 'node-form__input-block',
+                input: 'node-form__input-text',
+                button: 'node-form__button'
+
+            },
+
+            templateFormManager: {
+                container: "template-form-manager__container",
+                formsContainer: "template-form-manager__forms",
+                form: "template-form-manager__form",
+                label: "template-form-manager__label",
+                input: "template-form-manager__input-text",
+                inputBlock: "template-form-manager__input-block",
+                button: "template-form-manager__button",
+                list: "template-form-manager__list",
+                listItem: "template-form-manager__list-item",
+                listItemText: "template-form-manager__list-item__text",
+                listItemDeleteBtn: "template-form-manager__list-item__delete-btn",
+
+            },
         }
     }
 });

@@ -1,4 +1,4 @@
-[class^="text-preview"] {
+.popup {
     display: flex;
     flex-direction: row;
     border: solid;
@@ -11,4 +11,12 @@
     left: 50%;
     margin-top: -100px;
     margin-left: -150px;
+}
+
+[class^="text-preview"]  {
+
+}
+
+.text-preview__header {
+     background: grey;
 }

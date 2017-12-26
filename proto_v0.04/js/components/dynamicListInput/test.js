@@ -72,7 +72,7 @@ define(["components/dynamicListInput/DynamicListInput", "configuration/className
         QUnit.test("List items are added correctly", function (assert) {
 
         // add item to input field and click the add button
-        // then return the items list to check if the arary
+        // then return the items list to check if the array
         // has been updated correctly
 
         var firstItemToAdd = "first item";
@@ -95,7 +95,7 @@ define(["components/dynamicListInput/DynamicListInput", "configuration/className
 
         var firstItemCorrect = items[0] == firstItemToAdd;
         var secondItemCorrect = items[1] == secondItemToAdd;
-        var bothItemsCorrect = firstItemCorrect && secondItemCorrect
+        var bothItemsCorrect = firstItemCorrect && secondItemCorrect;
 
         assert.ok(bothItemsCorrect, "Items are added correctly");
 
@@ -103,7 +103,8 @@ define(["components/dynamicListInput/DynamicListInput", "configuration/className
 
 
     QUnit.test("List items can be returned correctly", function (assert) {});
-    QUnit.test("List item can be removed correctly", function (assert) {});
+    QUnit.test("remove list item function works correctly", function (assert) {});
+    QUnit.test("delete list item button works correctly", function (assert) {});
 
 
 });

@@ -228,6 +228,11 @@ define([
             headerContainer.setAttribute('id', "header-container");
             headerContainer.classList.add("header-container");
             headerContainer.appendChild(renderHeader());
+var dropDown = document.createElement('span');
+dropDown.className = "header-dropdown-menu";
+            dropDown.innerHTML = "|V|";
+            headerContainer.appendChild(dropDown);
+
             return headerContainer;
         }
 
@@ -237,7 +242,8 @@ define([
          *  @return {Type} desc.
          */
         function renderHeader() {
-            var header = document.createElement('h2');
+            var header = document.createElement('span');
+            header.className = 'header-title';
             header.innerHTML = configs.header;
             return header;
         }
