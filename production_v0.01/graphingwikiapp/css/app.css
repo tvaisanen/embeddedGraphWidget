@@ -1,0 +1,37 @@
+
+#content div{
+    margin: 0;
+    padding: 0;
+}
+
+#message div {
+    overflow: auto;
+}
+
+#content {
+    display: flex;
+    justify-content: center;
+}
+
+
+.reset-margins {
+    margin: 0;
+    padding: 0;
+}
+
+.gwikibrowser {
+    font-family: "Bookman Old Style", Helvetica, sans-serif;
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+    height: 70vh;
+    min-height: 400px;
+    max-height: 1080px;
+    width: 90vw;
+    max-width: 1280px;
+    border: solid 1px #215b7a;
+    border-radius: 5px;
+    margin: 0;
+    padding: 0;
+}
+

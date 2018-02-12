@@ -1,0 +1,37 @@
+[class^="preview"] {
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    height: 100%;
+    border: solid 1px;
+    overflow: scroll;
+}
+
+.preview__header{
+    background: #328bb8;
+    margin: 4px 4px;
+    height: auto;
+}
+
+
+.preview__table{
+    margin: 5px;
+    height: auto;
+    width: 100%;
+    background-color: whitesmoke;
+    border-color: #9a9a9a;
+    overflow: hidden;
+}
+
+.preview__table-row{
+    height: auto;
+    background: #b5b5b5;
+}
+.preview__table-row-key{
+    height: auto;
+    width: 30%;
+}
+.preview__table-row-value{
+    background: #a5d0dd;
+    width: 70%;
+}

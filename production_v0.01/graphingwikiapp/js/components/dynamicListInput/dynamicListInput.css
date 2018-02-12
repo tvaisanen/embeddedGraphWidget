@@ -1,0 +1,111 @@
+
+[class^="dynamic-list-input"] {
+    margin: 4px;
+    display: flex;
+    font-size: small;
+    flex-direction: column;
+    background: #328bb8;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
+.dynamic-list-input__container {
+    border-bottom: outset 1px #a3a3a3;
+}
+
+.dynamic-list-input__label {
+    background: transparent;
+
+}
+
+
+
+.dynamic-list-input__input-block {
+    display: flex;
+    background: transparent;
+    flex-direction: row;
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+
+}
+
+.dynamic-list-input__input-text {
+    background: #a5d0dd;
+    width: 80%;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    margin-right: 0;
+    border-right: none 0;
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+    border-top: inset 2px #ffffff;
+    border-bottom: inset 1px #9a9a9a;
+}
+
+.dynamic-list-input__button {
+    background: transparent;
+    box-sizing: border-box;
+    height: 100%;
+    margin-left: 0;
+    border: inset 2px;
+    border-left: none 0;
+        border-top: inset 2px #ffffff;
+    border-bottom: inset 1px #9a9a9a;
+
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+}
+
+.dynamic-list-input__list {
+    background: transparent;
+    list-style: none;
+    padding-top: 0;
+    margin-top: 0;
+    padding-left: 0;
+}
+
+.dynamic-list-input__list-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background: whitesmoke;
+    border: solid 2px #b5b5b5;
+    color: black;
+}
+
+.dynamic-list-input__list-item__text {
+    background: transparent;
+    align-self: stretch;
+    color: black;
+    padding: 2px;
+    padding-left: 4px;
+    margin-left: 0;
+}
+
+.dynamic-list-input__list-item__delete-btn {
+    background: floralwhite;
+    align-self: flex-start;
+    padding: 0 2px ;
+    padding-bottom: 2px;
+    border: solid 1px #c8c8c8;
+    box-sizing: border-box;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: smaller;
+}
+
+.dynamic-list-input__list-item__delete-btn:hover {
+    background: #e30004;
+    color: white;
+    border: solid 1px #cbcbcb;
+    border-radius: 5px;
+
+}
+
+
+
+

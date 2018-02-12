@@ -1,0 +1,111 @@
+
+[class^="template-form-manager"] {
+    margin: 4px;
+    display: flex;
+    font-size: small;
+    flex-direction: column;
+    background: #328bb8;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
+.template-form-manager__container {
+    border-bottom: outset 1px #a3a3a3;
+}
+
+.template-form-manager__forms {
+    margin: 2px;
+}
+.template-form-manager__form {
+    margin: 4px;
+    background: white;
+}
+
+.template-form-manager__label {
+    background: transparent;
+}
+
+
+
+.template-form-manager__input-block {
+    display: flex;
+    background: transparent;
+    flex-direction: row;
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    margin-top: 10px;
+}
+
+.template-form-manager__input-text {
+    background: #a5d0dd;
+    width: 80%;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    margin-right: 0;
+    border-right: none 0;
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+    border-top: inset 2px #ffffff;
+    border-bottom: inset 1px #9a9a9a;
+}
+
+.template-form-manager__button {
+    background: transparent;
+    box-sizing: border-box;
+    height: 100%;
+    margin-left: 0;
+    border: inset 2px;
+    border-left: none 0;
+        border-top: inset 2px #ffffff;
+    border-bottom: inset 1px #9a9a9a;
+
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+}
+
+.template-form-manager__list {
+    background: blue;
+    list-style: none;
+    padding-top: 0;
+    margin-top: 0;
+    padding-left: 0;
+}
+
+.template-form-manager__list-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background: #b5b5b5;
+    color: black;
+}
+
+.template-form-manager__list-item__text {
+    background: transparent;
+    align-self: stretch;
+    padding-bottom: 2px;
+    margin-left: 0;
+}
+
+.template-form-manager__list-item__delete-btn {
+    background: floralwhite;
+    align-self: flex-end;
+    border: solid #f5f5f5;
+    padding: 0 2px ;
+    box-sizing: border-box;
+    cursor: pointer;
+    font-size: smaller;
+}
+
+.template-form-manager__list-item__delete-btn:hover {
+    background: #a57f3d;
+    border: solid #f5f5f5;
+
+}
+
+
+
+

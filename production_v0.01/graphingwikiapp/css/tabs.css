@@ -1,0 +1,129 @@
+.panel-tab-nav {
+    display: flex;
+    flex-direction: row;
+    flex-flow: row wrap;
+    justify-content: space-around;
+    flex-grow: 1;
+    /*background-color: #68afc4;*/
+
+}
+
+[class^="panel-tab-nav__nav-item"] {
+    display: flex;
+    flex-grow: 1;
+    font-size: small;
+    letter-spacing: 0;
+    flex-grow: 1;
+    justify-content: center;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    background-color: rgba(245, 245, 245, 0.15);
+    border-width: 1px;
+    border-color: #68afc4;
+    padding: 0 3px;
+
+}
+
+[class^="panel-tab-nav__nav-item"] {
+    cursor: pointer;
+    padding: 2px 4px;
+    padding-left: 100px;
+    width: inherit;
+    border-bottom-style: solid;
+}
+
+.panel-tab-nav__nav-item--active {
+
+    border-style: solid;
+    border-width: 1px;
+    border-color: #428bca;
+    background: #a5d0dd;
+}
+.panel-tab-nav__nav-item:hover{
+background: #225b78;
+    color: white;
+
+}
+
+
+
+[class^="tab-graph"] {
+ margin: 0;
+}
+
+.graphingwiki > ul {
+    padding: 0px;
+    list-style-type: none;
+    overflow: auto;
+}
+
+.graphingwiki > li {
+    background-color: #ffffff;
+    margin: 0;
+    border-radius: 2px;
+    font-size: small;
+    border-color: rgba(155, 155, 155, 0.51);
+    border-width: 1px;
+}
+
+[class^="tab-elements"] {
+
+}
+
+
+.tab-elements__list {
+    padding-top: 0;
+    padding-bottom: 0;
+    list-style: none;
+    margin: 0;
+}
+
+.tab-elements__list-container {
+    padding-top: 0;
+    padding-bottom: 0;
+    /*
+    Todo: make scroll including only the list of elements
+    height: 100%;
+    overflow-y: auto;
+    white-space: nowrap;
+    */
+}
+
+.tab-elements__list-item__selected li{
+    background-color: #af0027;
+    size: 30px;
+}
+
+.tab-elements__filter-input {
+    width: 100%;
+    background-color: white;
+    background-image: url('../media/magnifier.png');
+    background-repeat: no-repeat;
+    box-sizing: border-box;
+    border-radius: 3px;
+}
+
+[class^="style-selection-table"] {
+    text-size: small;
+    width: auto;
+    background-color: white;
+    overflow: hidden;
+}
+
+.graphingwiki .label {
+    text-underline-style: solid;
+}
+
+.graphingwiki span {
+    display: flex;
+    flex-grow: 1;
+    background-color: #68afc4;
+    color: white;
+    justify-content: center;
+}
+
+
+.graphingwiki select {
+    width: 100%;
+    overflow: hidden;
+}

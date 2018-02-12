@@ -1,0 +1,22 @@
+.popup {
+    display: flex;
+    flex-direction: row;
+    border: solid;
+    border-color: #000;
+    background-color: #ffffff;
+    height: 200px;
+    width: 300px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-top: -100px;
+    margin-left: -150px;
+}
+
+[class^="text-preview"]  {
+
+}
+
+.text-preview__header {
+     background: grey;
+}
